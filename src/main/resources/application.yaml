@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: capital
+  profiles:
+    active: ${ACTIVE_PROFILE:dev}
