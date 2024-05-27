@@ -28,6 +28,11 @@ public final class Constants {
         public static final String CREDIT_PARTNER_CREATED_SUCCESSFULLY = "Credit partner added successfully";
         public static final String CREDIT_PARTNER_UPDATED_SUCCESSFULLY = "Credit partner updated successfully";
         public static final String NO_RECORD_FOUND_WITH_GIVEN_DETAILS = "Invalid Request, No record found for given details";
+
+        public static final String BASE_BANK_CREATED_SUCCESSFULLY = "Base bank added successfully";
+
+        public static final String BASE_ACCOUNT_TYPE_CREATED_SUCCESSFULLY = "Base account type added successfully";
+
     }
 
     public static final class Separators {
@@ -55,6 +60,15 @@ public final class Constants {
         public static final String XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     }
 
+    public static class RedisKeys{
+        public static final String GLOBAL_KEY = "capital";
+        public static final String BASE_CREDIT_PARTNER =  "credit_partner";
+
+        public static final String BANK_DETAILS = "banks";
+
+        public static final String ACCOUNT_TYPE =  "account_type";
+
+    }
     public static final Map<String, String> FILE_CONTENT_TYPE_MAP = Map.of(CSV_EXTENSION, CSV_CONTENT_TYPE, XLS_EXTENSION, XLS_CONTENT_TYPE,
             XLSX_EXTENSION, XLSX_CONTENT_TYPE);
 }

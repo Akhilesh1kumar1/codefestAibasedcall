@@ -16,6 +16,10 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.ACCOUNT_TYP
 @Table(name = ACCOUNT_TYPE)
 public class AccountType extends LongBaseEntity{
 
+
+    @Column(name = "account_type_name")
+    String accountTypeName;
+
     @Column(name = "display_name")
     String displayName;
 

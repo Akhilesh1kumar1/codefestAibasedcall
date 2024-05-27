@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AccountTypeRepository extends CrudRepository<AccountType,Long> {
+
+    AccountType findByAccountTypeName(String accountTypeName);
 }

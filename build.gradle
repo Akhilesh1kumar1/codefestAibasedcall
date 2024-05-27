@@ -70,6 +70,8 @@ dependencies {
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.565'
 	implementation platform('software.amazon.awssdk:bom:2.20.56')
 	implementation 'software.amazon.awssdk:s3'
+	implementation group: 'org.redisson', name: 'redisson', version: '3.23.3'
+	implementation 'org.modelmapper:modelmapper:2.4.4'
 
 	//apache
 	implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.10.0'

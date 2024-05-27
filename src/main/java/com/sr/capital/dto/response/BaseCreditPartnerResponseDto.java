@@ -1,4 +1,4 @@
-package com.sr.capital.dto.request;
+package com.sr.capital.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -12,16 +12,16 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CreateBaseBankDto {
+public class BaseCreditPartnerResponseDto {
 
-    @NotNull(message = "bankName can't be null")
-    String bankName;
+    Long id;
+
+    String creditPartnerName;
 
     String description;
 
     String imageLink;
 
-    @NotNull(message = "displayName can't be null")
     String displayName;
 
     Boolean enabled;

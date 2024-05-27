@@ -12,17 +12,15 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CreateBaseBankDto {
+public class CreateBaseAccountTypeDto {
 
-    @NotNull(message = "bankName can't be null")
-    String bankName;
-
-    String description;
-
-    String imageLink;
+    @NotNull(message = "accountTypeName can't be null")
+    String accountTypeName;
 
     @NotNull(message = "displayName can't be null")
     String displayName;
 
     Boolean enabled;
+
+    String description;
 }
