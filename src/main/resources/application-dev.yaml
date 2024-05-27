@@ -75,6 +75,11 @@ aws:
   region: ${AWS_REGION:test}
   s3:
     bucketName: ${CAPITAL_BUCKET_NAME:test}
+  cdn:
+    url: ${CDN_URL:https://o2stage-capital-cdn.kartrocket.in}
 
-
+redis:
+  config: redisson.yaml
+fileUpload:
+  coolOffWindowInMinutes: ${FILE_UPLOAD_COOLOFF_WINDOW:60}
 

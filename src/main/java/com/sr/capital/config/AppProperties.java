@@ -37,5 +37,11 @@ public class AppProperties {
     @Value("${aws.s3.bucketName}")
     String bucketName;
 
+    @Value("${aws.cdn.url}")
+    String cdnUrl;
+
+    @Value("${fileUpload.coolOffWindowInMinutes}")
+    int fileUploadCoolOffWindow;
+
 
 }

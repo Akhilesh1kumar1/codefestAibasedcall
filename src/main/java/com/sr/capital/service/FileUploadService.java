@@ -1,6 +1,7 @@
 package com.sr.capital.service;
 
-import com.sr.capital.dto.request.FileUploadRequestDTO;
+
+import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 
 public interface FileUploadService {
 

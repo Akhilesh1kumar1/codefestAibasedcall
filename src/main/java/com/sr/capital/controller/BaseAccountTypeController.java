@@ -18,7 +18,7 @@ import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.BASE_ACCOUNT_TYPE_CREATED_SUCCESSFULLY;
 
 @RestController
-@RequestMapping("/account/type")
+@RequestMapping("/api/account/type")
 @RequiredArgsConstructor
 @Validated
 public class BaseAccountTypeController {

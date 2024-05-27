@@ -19,7 +19,7 @@ import static com.sr.capital.helpers.constants.Constants.MessageConstants.CREDIT
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.CREDIT_PARTNER_UPDATED_SUCCESSFULLY;
 
 @RestController
-@RequestMapping("/credit/partner")
+@RequestMapping("/api/credit/partner")
 @RequiredArgsConstructor
 @Validated
 public class BaseCreditPartnerController {

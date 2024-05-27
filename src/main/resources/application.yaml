@@ -3,5 +3,3 @@ spring:
     name: capital
   profiles:
     active: ${ACTIVE_PROFILE:dev}
-redis:
-  config: redisson.yaml

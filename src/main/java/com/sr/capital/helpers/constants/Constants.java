@@ -17,6 +17,11 @@ public final class Constants {
     public static class ServiceConstants{
         public static final String UTILITY_INSTANTIATION_ERROR = "This class should not be instantiated as it is a utility class.";
         public static final String REQUEST_FAILED = "Given request failed.";
+        public static final String FILE_FAILURE_REPORT_CSV_HEADER = "Error message\n";
+        public static final String ROW_FAILURE_REPORT_CSV_HEADER = " ACTION, REASON, Error message\n";
+        public static final String ERROR_FILE_NAME = "Error_%s%s%s";
+        public static final String FILE_UPLOAD_RECORD = "FILE_UPLOAD_RECORD";
+        public static final String PROGRESS_PERCENTAGE = "PROGRESS_PERCENTAGE";
 
 
     }
@@ -30,8 +35,17 @@ public final class Constants {
         public static final String NO_RECORD_FOUND_WITH_GIVEN_DETAILS = "Invalid Request, No record found for given details";
 
         public static final String BASE_BANK_CREATED_SUCCESSFULLY = "Base bank added successfully";
-
         public static final String BASE_ACCOUNT_TYPE_CREATED_SUCCESSFULLY = "Base account type added successfully";
+
+        public static final String UNSUPPORTED_FILE_TYPE = "File Type: %s is not supported.";
+        public static final String EMPTY_FILE_TYPE = "File Type cannot be empty.";
+
+        public static final String INVALID_CORRELATION_ID = "No record exist for the given correlation ID.";
+        public static final String EMPTY_CORRELATION_ID = "Correlation ID is empty in the payload.";
+        public static final String FILE_NAME_MISMATCH = "Acknowledgement is being done for a different file concerned with correlation ID.";
+        public static final String STATUS_MISMATCH = "The request is already acknowledged.";
+        public static final String FILE_IN_PROGRESS_ERROR = "A file is already in progress. Please retry after some time.";
+
 
     }
 
