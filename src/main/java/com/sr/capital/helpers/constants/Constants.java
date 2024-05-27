@@ -83,6 +83,18 @@ public final class Constants {
         public static final String ACCOUNT_TYPE =  "account_type";
 
     }
+
+    public static final class Headers {
+        private Headers() {
+            throw new AssertionError(UTILITY_INSTANTIATION_ERROR);
+        }
+
+        public static final String CORRELATION_HEADER = "X-Correlation-ID";
+        public static final String TENANT_HEADER = "X-Tenant-ID";
+        public static final String USER_HEADER = "X-User-ID";
+        public static final String REFERER_HEADER = "X-Referer";
+        public static final String SERVICE_SECRET_HEADER = "X-Service-Secret";
+    }
     public static final Map<String, String> FILE_CONTENT_TYPE_MAP = Map.of(CSV_EXTENSION, CSV_CONTENT_TYPE, XLS_EXTENSION, XLS_CONTENT_TYPE,
             XLSX_EXTENSION, XLSX_CONTENT_TYPE);
 }
