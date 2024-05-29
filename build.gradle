@@ -74,6 +74,7 @@ dependencies {
 	implementation 'software.amazon.awssdk:s3'
 	implementation group: 'org.redisson', name: 'redisson', version: '3.23.3'
 	implementation 'org.modelmapper:modelmapper:2.4.4'
+	implementation group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
 
 	//apache
 	implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.10.0'

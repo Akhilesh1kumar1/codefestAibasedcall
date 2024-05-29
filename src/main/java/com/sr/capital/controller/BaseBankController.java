@@ -17,10 +17,10 @@ import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.*;
 
 @RestController
-@RequestMapping("/api/bank")
+@RequestMapping("/api/base/bank")
 @RequiredArgsConstructor
 @Validated
-public class BankController {
+public class BaseBankController {
 
     final BankEntityServiceImpl bankEntityService;
 

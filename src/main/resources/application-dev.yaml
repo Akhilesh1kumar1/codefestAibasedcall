@@ -35,6 +35,20 @@ spring:
 
 app:
   serviceTag: ${SERVICE_TAG:capital}
+  secret: ${APP_JWT_SECRET:testabcd}
+  verification:
+    otp:
+      request-limit: 4
+      failure-limit: 3
+  cache:
+    password-expiry-in-minutes: 30
+    sr-token-expiry-in-hours: 120
+  crypto:
+    encryption:
+      rsa:
+        enabled: false
+      aes:
+        key: 'secret-key-12345'
   external:
     sinfini:
       enabled: true
