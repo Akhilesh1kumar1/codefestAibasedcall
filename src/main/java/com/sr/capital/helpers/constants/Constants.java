@@ -41,6 +41,7 @@ public final class Constants {
         public static final String INVALID_FILE_DIRECTORY = "Invalid file directory : %s";
 
        public static final String BANK_IMAGE_FOLDER_NAME = "bank";
+       public static final String ADHAR_IMAGE_FOLDER_NAME = "adhar";
 
     }
 
@@ -87,6 +88,11 @@ public final class Constants {
         public static final String REQUEST_FAILED = "Given request failed.";
 
         public static final String REQUEST_SUCCESS= "Given request successes.";
+
+        public static final String ADHAR_NOT_FOUND = "Adhar Details not found";
+
+        public static final String PAN_NOT_FOUND = "Pan not found";
+
 
     }
 

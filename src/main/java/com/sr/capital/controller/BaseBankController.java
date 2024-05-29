@@ -36,7 +36,7 @@ public class BaseBankController {
                 "", HttpStatus.SC_OK);
     }
 
-    @GetMapping()
+    @GetMapping("/sync")
     public GenericResponse<Boolean> syncAllBaseBankToCache() {
         return ResponseBuilderUtil.getResponse(bankEntityService.syncAllBaseBankToCache(),SUCCESS,
                 "", HttpStatus.SC_OK);

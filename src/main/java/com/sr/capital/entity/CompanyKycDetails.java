@@ -1,7 +1,10 @@
 package com.sr.capital.entity;
 
+import com.sr.capital.config.AttributeEncryptor;
 import com.sr.capital.helpers.enums.CompanyType;
+import com.sr.capital.helpers.enums.ProofOfIdentity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -28,6 +31,16 @@ public class CompanyKycDetails extends UUIDBaseEntity{
     @Column(name = "company_type")
     CompanyType companyType;
 
+    @Column(name = "proof_of_identity")
+    ProofOfIdentity proofOfIdentity;
 
+    @Column(name = "adhar_id")
+    Long adharId;
 
+    @Column(name = "pan_id")
+    Long panId;
+
+    @Convert(converter = AttributeEncryptor.class)
+    @Column(name = "proof_image_link")
+    String proofImageLink;
 }

@@ -15,7 +15,6 @@ import java.util.Base64;
 
 
 @Component
-@AllArgsConstructor
 public class AttributeEncryptor implements AttributeConverter<String, String> {
 
     private AppProperties appProperties;

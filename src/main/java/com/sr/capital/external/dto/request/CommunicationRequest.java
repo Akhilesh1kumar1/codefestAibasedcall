@@ -1,6 +1,6 @@
 package com.sr.capital.external.dto.request;
 
-import com.omunify.authmaster.core.helpers.enums.CommunicationChannels;
+import com.sr.capital.helpers.enums.CommunicationChannels;
 import lombok.Builder;
 import lombok.Data;
 

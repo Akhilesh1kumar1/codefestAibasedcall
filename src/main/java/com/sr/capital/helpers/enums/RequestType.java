@@ -6,7 +6,9 @@ public enum RequestType {
     MOBILE("mobile"),
     GST("gst"),
     BANK_DETAILS("bank-details"),
-    VERIFY_BANK_DETAILS("verify-bank-details");
+    VERIFY_BANK_DETAILS("verify-bank-details"),
+
+    ADHAR("adhar");
 
     final String type;
 

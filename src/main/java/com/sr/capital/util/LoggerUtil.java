@@ -3,9 +3,12 @@ package com.sr.capital.util;
 import com.omunify.logger.enums.LogLevel;
 import com.omunify.logger.service.CustomLogManager;
 import com.omunify.logger.service.CustomLogger;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 
 public class LoggerUtil {
 

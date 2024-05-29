@@ -10,7 +10,9 @@ import com.sr.capital.util.LoggerUtil;
 import com.sr.capital.util.RedisUtil;
 import com.sr.capital.validation.FileValidator;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ import static com.sr.capital.helpers.constants.Constants.Separators.QUERY_PARAM_
 import static com.sr.capital.helpers.enums.FileProcessingStatus.ACKNOWLEDGEMENT_PENDING;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class FileUploadServiceImpl implements FileUploadService {
 
     final FileUploadDataRepository fileUploadDataRepository;

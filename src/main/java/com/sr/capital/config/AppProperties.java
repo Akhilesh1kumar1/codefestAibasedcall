@@ -8,28 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class AppProperties {
 
-    //Redis Properties
-    @Value("${spring.redis.host}")
-    private String redisHost;
-
-    @Value("${spring.redis.port}")
-    private Integer redisPort;
-
-    @Value("${spring.redis.database}")
-    private Integer redisDatabase;
-
-    @Value("${spring.redis.username}")
-    private String redisUserName;
-
-    @Value("${spring.redis.password}")
-    private String redisPassword;
-
-    @Value("${spring.redis.timeout}")
-    private String redisTimeout;
-
-    @Value("${spring.redis.useSsl}")
-    private Boolean redisUseSsl;
-
     //aws
     @Value("${aws.region}")
     String awsRegion;

@@ -18,6 +18,7 @@ public class RequestValidationStrategy {
     final GSTValidator gstValidator;
     final TenantBankRequestValidator tenantBankRequestValidator;
     final VerifyBankDetailsRequestValidator verifyBankDetailsRequestValidator;
+    final AdharValidator adharValidator;
 
     public <T,U> T validateRequest(U request, RequestType type) throws Exception {
         RequestValidator requestValidator;
@@ -27,6 +28,7 @@ public class RequestValidationStrategy {
             case GST -> requestValidator = gstValidator;
             case BANK_DETAILS -> requestValidator = tenantBankRequestValidator;
             case VERIFY_BANK_DETAILS -> requestValidator =verifyBankDetailsRequestValidator;
+            case ADHAR -> requestValidator = adharValidator;
             default -> {
                 throw new RequestValidatorNotFoundException();
             }

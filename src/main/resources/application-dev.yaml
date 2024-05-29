@@ -1,11 +1,12 @@
 spring:
   data:
     mongodb:
+      #uri: mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000
       database: ${MONGO_DATABASE}
       host: ${MONGO_HOST}
       port: ${MONGO_PORT}
-      username: ${MONGO_USERNAME}
-      password: ${MONGO_PASSWORD}
+      #username: ${MONGO_USERNAME}
+      #password: ${MONGO_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none
@@ -24,12 +25,13 @@ spring:
     username: ${MYSQL_DATASOURCE_APP_USERNAME}
     password: ${MYSQL_DATASOURCE_APP_PASSWORD}
   flyway:
-    enabled: 'false'
+    enabled: 'true'
     baseline-on-migrate: 'true'
     #    out-of-order: 'true'
     url: ${MYSQL_DATASOURCE_URI}
     user: ${MYSQL_DATASOURCE_FLYWAY_USERNAME}
     password: ${MYSQL_DATASOURCE_FLYWAY_PASSWORD}
+    locations: classpath:db/migration
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
 
