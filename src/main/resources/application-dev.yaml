@@ -1,0 +1,100 @@
+spring:
+  data:
+    mongodb:
+      #uri: mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000
+      database: ${MONGO_DATABASE}
+      host: ${MONGO_HOST}
+      port: ${MONGO_PORT}
+      #username: ${MONGO_USERNAME}
+      #password: ${MONGO_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: UTC
+    show-sql: 'true'
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: '10'
+      minimum-idle: '5'
+    url: ${MYSQL_DATASOURCE_URI}
+    username: ${MYSQL_DATASOURCE_APP_USERNAME}
+    password: ${MYSQL_DATASOURCE_APP_PASSWORD}
+  flyway:
+    enabled: 'true'
+    baseline-on-migrate: 'true'
+    #    out-of-order: 'true'
+    url: ${MYSQL_DATASOURCE_URI}
+    user: ${MYSQL_DATASOURCE_FLYWAY_USERNAME}
+    password: ${MYSQL_DATASOURCE_FLYWAY_PASSWORD}
+    locations: classpath:db/migration
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+
+app:
+  serviceTag: ${SERVICE_TAG:capital}
+  secret: ${APP_JWT_SECRET:testabcd}
+  verification:
+    otp:
+      request-limit: 4
+      failure-limit: 3
+  cache:
+    password-expiry-in-minutes: 30
+    sr-token-expiry-in-hours: 120
+  crypto:
+    encryption:
+      rsa:
+        enabled: false
+      aes:
+        key: 'secret-key-12345'
+  external:
+    sinfini:
+      enabled: true
+      baseUri: ${SINFINI_BASE_URI:http://alerts.sinfini.com/api/v3/index.php}
+      apiKey: ${SINFINI_API_KEY:Afa8f859f3f8af5f9bd92c9e8db94bd39}
+      sms:
+        method: ${SINFING_SMS_METHOD:sms}
+        sender: ${SINFINI_SMS_SENDER:SHPRKT}
+        templateId: ${SINFINI_SMS_TEMPLATE_ID:1107159921248118728}
+    kaleyra:
+      enabled: true
+      baseUri: ${KALEYRA_BASE_URI:https://api.kaleyra.io/v1}
+      senderId: ${KALEYRA_SENDER_ID:HXIN1724808889IN}
+      apiKey: ${KALEYRA_API_KEY:Aca6d903762f7aa22e3b1d392059be7cd}
+      fromNo: ${KALEYRA_FROM_NO:917217894979}
+      endpoints:
+        send-messages: "/messages"
+      whatsapp:
+        otp-template-name: ${KALEYRA_WHATSAPP_OTP_TEMPLATE_NAME:o2_verification}
+        channel: ${KALEYRA_WHATSAPP_CHANNEL:whatsapp}
+        callBackUri: ${KALEYRA_CALL_BACK_URL:https://apiv2.shiprocket.in/v1/webhook/whatsapp}
+    netcore:
+      enabled: true
+      baseUri: ${NETCORE_BASE_URI:https://emailapi.netcorecloud.net}
+      apiKey: ${NETCORE_API_KEY:f8fb86901e186aa15a07e22a3de6b022}
+      fromEmail: "info@mail.shiprocket.in"
+      fromName: "Shiprocket"
+      endpoints:
+        send-mail: "/v5.1/mail/send"
+    authmaster:
+      baseUri: ${AUTHMASTER_BASE_URI:https://authmaster-staging.kartrocket.in}
+      secret: ${AUTHMASTER_SERVICE_SECRET:1bae94ab67ad47dec2d3f8b965137c37}
+      populate-resources:
+        endpoint: ${AUTHMASTER_POPULATE_RESOURCES_ENDPOINT:/permission/populate}
+        enabled: false
+aws:
+  region: ${AWS_REGION:test}
+  s3:
+    bucketName: ${CAPITAL_BUCKET_NAME:test}
+  cdn:
+    url: ${CDN_URL:https://o2stage-capital-cdn.kartrocket.in}
+
+redis:
+  config: redisson.yaml
+fileUpload:
+  coolOffWindowInMinutes: ${FILE_UPLOAD_COOLOFF_WINDOW:60}
+
