@@ -24,5 +24,5 @@ public class BaseCreditPartnerResponseDto {
 
     String displayName;
 
-    Boolean enabled;
+    Boolean isEnabled;
 }

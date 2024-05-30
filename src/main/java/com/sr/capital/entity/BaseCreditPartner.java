@@ -31,7 +31,7 @@ public class BaseCreditPartner extends LongBaseEntity{
 
 
     public static BaseCreditPartner mapBaseCreditPartnerFromDto(CreateBaseCreditPartnerDto createBaseCreditPartnerDto){
-        BaseCreditPartner baseCreditPartner =  BaseCreditPartner.builder().creditPartnerName(createBaseCreditPartnerDto.getCreditPartnerName()).displayName(createBaseCreditPartnerDto.getDisplayName()).description(createBaseCreditPartnerDto.getImageLink()).build();
+        BaseCreditPartner baseCreditPartner =  BaseCreditPartner.builder().creditPartnerName(createBaseCreditPartnerDto.getCreditPartnerName()).displayName(createBaseCreditPartnerDto.getDisplayName()).description(createBaseCreditPartnerDto.getImageLink()).imageLink(createBaseCreditPartnerDto.getImageLink()).build();
         baseCreditPartner.setIsEnabled(createBaseCreditPartnerDto.getEnabled());
         return baseCreditPartner;
     }
