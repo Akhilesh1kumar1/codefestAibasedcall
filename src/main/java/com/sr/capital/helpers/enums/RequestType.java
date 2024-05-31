@@ -8,7 +8,9 @@ public enum RequestType {
     BANK_DETAILS("bank-details"),
     VERIFY_BANK_DETAILS("verify-bank-details"),
 
-    ADHAR("adhar");
+    ADHAR("adhar"),
+    COMPANY_KYC("comapny_kyc"),
+    ENACH_LINKING("enach_linking");
 
     final String type;
 

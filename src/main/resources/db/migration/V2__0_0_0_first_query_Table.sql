@@ -86,24 +86,6 @@ ALTER TABLE `bank` ADD CONSTRAINT bank_name_constraint UNIQUE (bank_name);
 ) ENGINE=InnoDB;
 ALTER TABLE `base_credit_partners` ADD CONSTRAINT credit_partner_name_constraint UNIQUE (credit_partner_name);
 
-CREATE TABLE if not exists `company_details` (
-  `id` binary(16) NOT NULL,
-   `tenant_capital_id` bigint DEFAULT NULL,
-    `user_id` bigint DEFAULT NULL,
-  `adhar_id` bigint DEFAULT NULL,
-  `company_type` smallint DEFAULT NULL,
-  `pan_id` bigint DEFAULT NULL,
-  `proof_image_link` varchar(255) DEFAULT NULL,
-  `proof_of_identity` smallint DEFAULT NULL,
-   `created_at` datetime(6) DEFAULT NULL,
-    `created_by` varchar(255) DEFAULT NULL,
-    `updated_at` datetime(6) DEFAULT NULL,
-    `updated_by` varchar(255) DEFAULT NULL,
-    `is_enabled` bit(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
-ALTER TABLE company_details ADD CONSTRAINT tenant_capital_id_user_id_constraint UNIQUE (tenant_capital_id, user_id);
 
 
  CREATE TABLE if not exists `rsa_keys` (

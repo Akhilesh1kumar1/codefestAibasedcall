@@ -6,6 +6,10 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import com.sr.capital.entity.FileUploadData;
+import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.service.FileProcessor;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -18,8 +22,7 @@ import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.opencsv.ICSVWriter.DEFAULT_SEPARATOR;
 import static com.sr.capital.helpers.constants.Constants.Separators.SLASH_SEPARATOR;
@@ -27,7 +30,7 @@ import static com.sr.capital.helpers.constants.Constants.ServiceConstants.INVALI
 
 @Component
 @Slf4j
-public class CsvUtils {
+public class CsvUtils  {
 
     public <T> byte[] createCSV(List<T> t, String headers) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -109,4 +112,73 @@ public class CsvUtils {
     public static String addCdnBeforeS3Path(String s3CdnUrl, String s3Path) {
         return StringUtils.isNotEmpty(s3Path) ? s3CdnUrl + SLASH_SEPARATOR + s3Path : s3Path;
     }
+
+    public List<Map<String,String>> getCsvContent(String filePath,@Nullable Boolean missingBodyValues) throws CustomException {
+
+        try {
+            missingBodyValues = Optional.ofNullable(missingBodyValues).orElse(false);
+            return readFile(filePath,missingBodyValues);
+        } catch(IOException e) {
+            throw new CustomException("Invalid file : file parsing exception",HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private List<Map<String,String>> readFile(String filePath, Boolean missingBodyValues) throws CustomException,IOException {
+
+        List<Map<String, String>> csvData = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader(new File(filePath)));
+        try {
+            String firstLine = br.readLine();
+            String bodyLine;
+            String[] header = readFirstLine(firstLine);
+            while ((bodyLine = br.readLine()) != null) {
+                String[] bodyArr = readBody(bodyLine);
+                if (header.length != bodyArr.length) {
+                    if(missingBodyValues && bodyArr.length < header.length){
+                        bodyArr = setRemainingEmpty(header.length,bodyArr);
+                    }else
+                        throw new CustomException("Invalid Csv",HttpStatus.BAD_REQUEST);
+                }
+                csvData.add(createBodyMap(header, bodyArr));
+            }
+        }
+        finally {
+            br.close();
+        }
+        return csvData;
+    }
+
+    private String[] readFirstLine(String firstLine) throws CustomException {
+        if(firstLine == null) {
+            throw new CustomException("Empty Csv File",HttpStatus.BAD_REQUEST);
+        }
+        return firstLine.split(",");
+    }
+
+    private String[] readBody(String bodyLines) {
+        return bodyLines.split(",");
+    }
+
+    private Map<String,String> createBodyMap(String[] header, String[] body) {
+        Map<String,String> bodyMap = new HashMap<>();
+        for(int i = 0; i<header.length;i++) {
+            bodyMap.put(header[i].replaceAll("\"",""), (body[i] == null ?  "":body[i]));
+        }
+        return bodyMap;
+    }
+
+    private  String[] setRemainingEmpty(int headerLength, String[] bodyArr){
+        int startIndex = bodyArr.length;
+        String[] newArr = new String[headerLength];
+        for(int i = 0; i<startIndex;i++){
+            newArr[i] = bodyArr[i];
+        }
+
+        for(int i = startIndex; i<headerLength;i++){
+            newArr[i] = "";
+        }
+        return newArr;
+
+    }
+
 }

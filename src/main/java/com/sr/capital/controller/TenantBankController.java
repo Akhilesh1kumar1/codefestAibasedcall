@@ -3,7 +3,9 @@ package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.BankDetailsRequestDto;
+import com.sr.capital.dto.request.EnachLinkingRequestDto;
 import com.sr.capital.dto.request.VerifyBankDetails;
+import com.sr.capital.dto.response.EnachLinkingResponseDto;
 import com.sr.capital.dto.response.TenantBankResponseDto;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.service.TenantBankService;
@@ -45,6 +47,12 @@ public class TenantBankController {
     @GetMapping("/{userId}")
     public GenericResponse<List<TenantBankResponseDto>> getBankDetails(@PathVariable(name = "userId")String userId) throws IOException, CustomException {
         return ResponseBuilderUtil.getResponse(tenantBankService.getBankDetails(userId),SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @PostMapping("/enach/linking")
+    public GenericResponse<EnachLinkingResponseDto> enachLinking(@RequestBody EnachLinkingRequestDto enachLinkingRequestDto) throws Exception {
+        return ResponseBuilderUtil.getResponse(tenantBankService.enachLinking(enachLinkingRequestDto),SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 }

@@ -55,13 +55,10 @@ public class AdharServiceImpl implements AdharService {
         multipartFileList.forEach(multipartFile -> {
             String imageUrl = S3Util.uploadDocument(multipartFile,appProperties.getBucketName(),String.valueOf(adharUpdateRequestDto.getUserId()),ADHAR_IMAGE_FOLDER_NAME,String.valueOf(adharDetails.getId()),imageNumber);
 
-            if(imageNumber.get()==0){
+            if(imageNumber.get()==1){
                 adharDetails.setAdharImageLink1(imageUrl);
             }else
                 adharDetails.setAdharImageLink2(imageUrl);
-
-            imageNumber.incrementAndGet();
-
         });
          adharRepository.save(adharDetails);
         return true;

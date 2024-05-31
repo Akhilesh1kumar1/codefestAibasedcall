@@ -14,13 +14,15 @@ public final class Constants {
 
         public static final String TENANT_BANK_DETAILS = "tenant_bank_details";
 
-        public static final String COMPANY_DETAILS = "company_details";
+        public static final String COMPANY_DETAILS = "company_kyc_details";
 
         public static final String USER = "user";
 
         public static final String ADHAR_DETAILS = "adhar_details";
 
         public static final String PAN_DETAILS = "pan_details";
+
+        public static final String ENACH_LINKING = "enach_linking";
 
     }
 
@@ -42,6 +44,7 @@ public final class Constants {
 
        public static final String BANK_IMAGE_FOLDER_NAME = "bank";
        public static final String ADHAR_IMAGE_FOLDER_NAME = "adhar";
+
 
     }
 
@@ -93,6 +96,8 @@ public final class Constants {
 
         public static final String PAN_NOT_FOUND = "Pan not found";
 
+
+        public static final String COMPANY_KYC_SAVED_SUCCESSFULLY = "Company kyc saved successfully";
 
     }
 

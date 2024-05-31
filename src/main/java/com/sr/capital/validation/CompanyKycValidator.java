@@ -26,6 +26,11 @@ public class CompanyKycValidator implements RequestValidator {
         if(adharDetails==null){
             throw new AdharNotFoundException();
         }
+
+        //Validate PanId
+
+
+
         return null;
     }
 }
