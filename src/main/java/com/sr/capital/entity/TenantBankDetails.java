@@ -1,8 +1,10 @@
 package com.sr.capital.entity;
 
 import com.sr.capital.config.AttributeEncryptor;
+import com.sr.capital.helpers.enums.BankAccountType;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import static com.sr.capital.helpers.constants.Constants.EntityNames.TENANT_BANK_DETAILS;
 
@@ -11,6 +13,7 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.TENANT_BANK
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = TENANT_BANK_DETAILS)
 @Inheritance(
@@ -39,6 +42,10 @@ public class TenantBankDetails extends UUIDBaseEntity{
     @Convert(converter = AttributeEncryptor.class)
     @Column(name = "ifsc_code")
     String ifscCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "bank_account_type")
+    BankAccountType bankAccountType;
 
     @Convert(converter = AttributeEncryptor.class)
     @Column(name = "account_statement_link")

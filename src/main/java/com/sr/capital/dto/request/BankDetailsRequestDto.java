@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.config.AttributeEncryptor;
+import com.sr.capital.helpers.enums.BankAccountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.validation.constraints.NotEmpty;
@@ -17,11 +18,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class BankDetailsRequestDto {
+public class BankDetailsRequestDto extends BaseRequest{
 
-    Long userId;
 
     Long baseBankId;
+
+    BankAccountType bankAccountType;
 
     @NotEmpty(message = "accountNumber cannot be null")
     String accountNumber;
@@ -34,5 +36,5 @@ public class BankDetailsRequestDto {
 
     String statementPassword;
 
-     Boolean isAccountVerified = false;
+    Boolean isAccountVerified = false;
 }

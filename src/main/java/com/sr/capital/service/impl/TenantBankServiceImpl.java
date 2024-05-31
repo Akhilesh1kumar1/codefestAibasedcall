@@ -2,11 +2,15 @@ package com.sr.capital.service.impl;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.BankDetailsRequestDto;
+import com.sr.capital.dto.request.EnachLinkingRequestDto;
 import com.sr.capital.dto.request.VerifyBankDetails;
+import com.sr.capital.dto.response.EnachLinkingResponseDto;
 import com.sr.capital.dto.response.TenantBankResponseDto;
+import com.sr.capital.entity.EnachLinkingEntity;
 import com.sr.capital.entity.TenantBankDetails;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.RequestType;
+import com.sr.capital.repository.EnachLinkingRepository;
 import com.sr.capital.repository.TenantBankDetailsRepository;
 import com.sr.capital.service.TenantBankService;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
@@ -39,6 +43,8 @@ public class TenantBankServiceImpl implements TenantBankService {
     final AppProperties appProperties;
 
     final RequestValidationStrategy requestValidationStrategy;
+
+    final EnachLinkingRepository enachLinkingRepository;
     @Override
     public TenantBankResponseDto addBankDetails(BankDetailsRequestDto bankDetailsRequestDto, MultipartFile document) throws Exception {
 
@@ -77,6 +83,14 @@ public class TenantBankServiceImpl implements TenantBankService {
         tenantBankDetails.setIsAccountVerified(true);
         tenantBankDetailsRepository.save(tenantBankDetails);
         return MapperUtils.convertValue(tenantBankDetails, TenantBankResponseDto.class);
+    }
+
+    @Override
+    public EnachLinkingResponseDto enachLinking(EnachLinkingRequestDto enachLinkingRequestDto) throws Exception {
+        requestValidationStrategy.validateRequest(enachLinkingRequestDto,RequestType.ENACH_LINKING);
+        EnachLinkingEntity enachLinkingEntity = MapperUtils.convertValue(enachLinkingRequestDto,EnachLinkingEntity.class);
+        enachLinkingRepository.save(enachLinkingEntity);
+        return MapperUtils.convertValue(enachLinkingEntity,EnachLinkingResponseDto.class);
     }
 
 
