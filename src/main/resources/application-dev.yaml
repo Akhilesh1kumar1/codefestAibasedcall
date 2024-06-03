@@ -25,7 +25,7 @@ spring:
     username: ${MYSQL_DATASOURCE_APP_USERNAME}
     password: ${MYSQL_DATASOURCE_APP_PASSWORD}
   flyway:
-    enabled: 'true'
+    enabled: 'false'
     baseline-on-migrate: 'true'
     #    out-of-order: 'true'
     url: ${MYSQL_DATASOURCE_URI}
@@ -86,6 +86,12 @@ app:
       populate-resources:
         endpoint: ${AUTHMASTER_POPULATE_RESOURCES_ENDPOINT:/permission/populate}
         enabled: false
+
+    shiprocket:
+      auth:
+        baseUrl: ${SHIPROCKET_AUTH_BASE_URL:https://sr-auth-qa-1.kartrocket.com}
+        endpoints:
+          validate-token: /authorize/user
 aws:
   region: ${AWS_REGION:test}
   s3:
@@ -97,4 +103,5 @@ redis:
   config: redisson.yaml
 fileUpload:
   coolOffWindowInMinutes: ${FILE_UPLOAD_COOLOFF_WINDOW:60}
+
 

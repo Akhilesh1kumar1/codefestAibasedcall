@@ -91,6 +91,12 @@ public class AppProperties {
     private String netCoreSendEmailEndpoint;
 
 
+    //Shiprocket
+    @Value("${app.external.shiprocket.auth.baseUrl}")
+    private String shiprocketAuthBaseUrl;
+
+    @Value("${app.external.shiprocket.auth.endpoints.validate-token}")
+    private String shiprocketValidateTokenEndPoint;
 
 
     //Verification Properties

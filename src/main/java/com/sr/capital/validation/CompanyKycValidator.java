@@ -15,17 +15,17 @@ public class CompanyKycValidator implements RequestValidator {
 
     final CompanyKycRepository companyKycRepository;
 
-    final AdharService adharService;
+   // final AdharService adharService;
 
     @Override
     public <T, U> T validateRequest(U request) throws Exception {
         CompanyKycDetailsRequest companyKycDetailsRequest = (CompanyKycDetailsRequest) request;
 
-        AdharDetails adharDetails = adharService.getAdharDetailsById(companyKycDetailsRequest.getAdharId());
+        /*AdharDetails adharDetails = adharService.getAdharDetailsById(companyKycDetailsRequest.getAdharId());
 
         if(adharDetails==null){
             throw new AdharNotFoundException();
-        }
+        }*/
 
         //Validate PanId
 
