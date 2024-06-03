@@ -44,7 +44,7 @@ public final class Constants {
 
        public static final String BANK_IMAGE_FOLDER_NAME = "bank";
        public static final String ADHAR_IMAGE_FOLDER_NAME = "adhar";
-
+       public static final String PAN_IMAGE_FOLDER_NAME = "pan";
 
     }
 
@@ -96,9 +96,10 @@ public final class Constants {
 
         public static final String PAN_NOT_FOUND = "Pan not found";
 
+        public static final String PAN_SAVE_SUCCESS = "PAN details saved successfully";
 
         public static final String COMPANY_KYC_SAVED_SUCCESSFULLY = "Company kyc saved successfully";
-
+        
     }
 
     public static final class Separators {

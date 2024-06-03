@@ -1,0 +1,120 @@
+services:
+  # api:
+  #   image: eclipse-temurin:17
+  #   restart: always
+  #   container_name: api
+  #   command: bash -c "
+  #       ./gradlew bootRun -Djavax.net.debug=all -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005" &
+  #       ./gradlew build --continuous
+  #     "
+  #   working_dir: /app
+  #   volumes:
+  #     - ./:/app
+  #   environment:
+  #     APP_SECRET=test1234
+  #     MONGO_DATABASE=capital
+  #     MONGO_HOST=localhost
+  #     MONGO_PORT=27017
+  #     MYSQL_DATASOURCE_APP_PASSWORD=root@123
+  #     MYSQL_DATASOURCE_APP_USERNAME=root
+  #     MYSQL_DATASOURCE_FLYWAY_PASSWORD=root@123
+  #     MYSQL_DATASOURCE_FLYWAY_USERNAME=root
+  #     MYSQL_DATASOURCE_URI=jdbc:mysql://localhost:3306/capital
+  #   ports:
+  #     - 8080:8080
+  #     - 35729:35729
+  #     - 5005:5005
+  #   depends_on:
+  #     sql:
+  #       condition: service_healthy
+  #   tty: true
+
+  sql:
+    container_name: sql
+    image: mysql:8.0.19
+    environment:
+      MYSQL_ROOT_PASSWORD: root@123
+      MYSQL_DATABASE: capital
+      MYSQL_USER: api_user
+      MYSQL_PASSWORD: api_pass
+    restart: always
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 3s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      mysql-phpmyadmin:
+        aliases:
+          - mysql
+  
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 9876:80
+    links:
+      - sql
+    environment:
+      PMA_HOST: 'sql'
+      PMA_PORT: 3306
+      PMA_USER: 'root'
+      PMA_PASSWORD: 'root@123'
+    networks:
+      mysql-phpmyadmin:
+        aliases:
+          - phpmyadmin
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-gui
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+
+  redis-stack:
+    container_name: cache
+    image: redis/redis-stack:latest
+    restart: always
+    ports:
+      - 6379:6379
+      - 8001:8001
+    environment:
+      REDIS_PASSWORD: redis
+
+volumes:
+  db_data:
+    driver: local
+  mongo-data:
+    driver: local
+  cache:
+    driver: local
+  redis-insight:
+    driver: local
+
+networks:
+  mysql-phpmyadmin:
+    name: mysql-phpmyadmin
+    driver: bridge
