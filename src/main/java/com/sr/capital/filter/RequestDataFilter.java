@@ -2,12 +2,14 @@ package com.sr.capital.filter;
 
 import com.omunify.interceptor.utils.ThreadContextUtil;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.service.AuthenticatorService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -30,6 +32,8 @@ public class RequestDataFilter implements Filter {
             new AntPathRequestMatcher("/*/file-upload//cool-off-time")
     );
 
+    @Autowired
+    AuthenticatorService authenticatorService;
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
@@ -44,6 +48,7 @@ public class RequestDataFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
+        authenticatorService.authenticateRequest(req);
         if (isPreflightRequest(request)) {
             chain.doFilter(req, res);
             return;

@@ -1,0 +1,53 @@
+package com.sr.capital.external.client;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.sr.capital.config.AppProperties;
+import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.external.dto.request.ValidateTokenRequest;
+import com.sr.capital.external.dto.response.ValidateTokenResponse;
+import com.sr.capital.util.LoggerUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.omunify.restutil.RestUtilProvider.getInstance;
+import static org.apache.http.HttpStatus.SC_OK;
+
+@Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class ShiprocketClient {
+
+    LoggerUtil loggerUtil =LoggerUtil.getLogger(ShiprocketClient.class);
+
+    final AppProperties appProperties;
+
+    public boolean validateToken(String token) throws UnirestException, CustomException {
+
+        Map<String,String> headers = getHeaders(token);
+        String url =appProperties.getShiprocketAuthBaseUrl()+ appProperties.getShiprocketValidateTokenEndPoint();
+
+        ValidateTokenRequest request =ValidateTokenRequest.builder().token(token).validateTokenRequest(1).build();
+
+        HttpResponse<ValidateTokenResponse> validateTokenResponse = getInstance().withHeaders(headers).post(url,request,ValidateTokenResponse.class);
+
+        if ((validateTokenResponse.getStatus() != SC_OK && validateTokenResponse.getBody() == null) || !validateTokenResponse.getBody().getCode().equalsIgnoreCase(String.valueOf(org.apache.http.HttpStatus.SC_OK))) {
+            loggerUtil.error("Received response: "+validateTokenResponse.getBody()+" with status code: "+validateTokenResponse.getStatus()+" while validating token" );
+            throw new CustomException(String.format("Received response: %s with status code: %s while validating token ", validateTokenResponse.getBody(),
+                    validateTokenResponse.getStatus()), HttpStatus.UNAUTHORIZED);
+        }
+
+        return true;
+    }
+
+    private Map<String,String> getHeaders(String token) {
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + token);
+        return headers;
+    }
+
+}

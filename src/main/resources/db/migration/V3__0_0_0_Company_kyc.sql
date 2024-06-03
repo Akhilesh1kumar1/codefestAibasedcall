@@ -16,7 +16,6 @@ CREATE TABLE if not exists `company_kyc_details` (
 ) ENGINE=InnoDB;
 
 
-ALTER TABLE company_kyc_details MODIFY company_type varchar(100);
-ALTER TABLE company_kyc_details MODIFY proof_of_identity varchar(255);
+
 
 
