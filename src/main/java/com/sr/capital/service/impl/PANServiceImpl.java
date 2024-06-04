@@ -1,5 +1,6 @@
 package com.sr.capital.service.impl;
 
+import static com.sr.capital.helpers.constants.Constants.MessageConstants.PAN_NOT_FOUND;
 import static com.sr.capital.helpers.constants.Constants.ServiceConstants.PAN_IMAGE_FOLDER_NAME;
 
 import java.util.List;
@@ -81,7 +82,7 @@ public class PANServiceImpl implements PANService {
                 updateImages(multipartFileList, panUpdateRequestDto, panDetails);
             }
         } else {
-            throw new CustomException("PAN details not found", HttpStatus.BAD_REQUEST);
+            throw new CustomException(PAN_NOT_FOUND, HttpStatus.BAD_REQUEST);
         }
 
         return MapperUtils.mapClass(panDetails, PANUpdateResponse.class);

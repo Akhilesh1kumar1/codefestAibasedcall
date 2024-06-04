@@ -94,7 +94,7 @@ public final class Constants {
 
         public static final String ADHAR_NOT_FOUND = "Adhar Details not found";
 
-        public static final String PAN_NOT_FOUND = "Pan not found";
+        public static final String PAN_NOT_FOUND = "Pan details not found";
 
         public static final String PAN_SAVE_SUCCESS = "PAN details saved successfully";
 
