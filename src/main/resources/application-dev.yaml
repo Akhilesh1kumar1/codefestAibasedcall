@@ -34,6 +34,8 @@ spring:
     locations: classpath:db/migration
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+  config:
+    import: optional:file:.env[.properties]
 
 app:
   serviceTag: ${SERVICE_TAG:capital}
