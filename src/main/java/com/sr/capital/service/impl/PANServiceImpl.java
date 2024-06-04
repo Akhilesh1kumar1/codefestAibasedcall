@@ -13,12 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
-import com.sr.capital.dto.request.PanUpdateRequestDto;
-import com.sr.capital.dto.response.PanUpdateResponse;
+import com.sr.capital.dto.request.PANUpdateRequestDto;
+import com.sr.capital.dto.response.PANUpdateResponse;
 import com.sr.capital.entity.PANDetails;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.RequestType;
-import com.sr.capital.repository.PanRepository;
+import com.sr.capital.repository.PANRepository;
 import com.sr.capital.service.PANService;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
 import com.sr.capital.util.LoggerUtil;
@@ -32,12 +32,12 @@ import lombok.AllArgsConstructor;
 public class PANServiceImpl implements PANService {
 
     final RequestValidationStrategy requestValidationStrategy;
-    final PanRepository panRepository;
+    final PANRepository panRepository;
     final AppProperties appProperties;
     final LoggerUtil loggerUtil = LoggerUtil.getLogger(PANServiceImpl.class);
 
     @Override
-    public PanUpdateResponse createPanDetails(PanUpdateRequestDto panUpdateRequestDto,
+    public PANUpdateResponse createPanDetails(PANUpdateRequestDto panUpdateRequestDto,
             List<MultipartFile> multipartFileList) throws Exception {
 
         Long userId = RequestData.getUserId();
@@ -53,7 +53,7 @@ public class PANServiceImpl implements PANService {
         if (CollectionUtils.isNotEmpty(multipartFileList)) {
             updateImages(multipartFileList, panUpdateRequestDto, panDetails);
         }
-        return MapperUtils.convertValue(panDetails, PanUpdateResponse.class);
+        return MapperUtils.convertValue(panDetails, PANUpdateResponse.class);
     }
 
     @Override
@@ -67,15 +67,15 @@ public class PANServiceImpl implements PANService {
     }
 
     @Override
-    public PanUpdateResponse updatePanDetails(PanUpdateRequestDto panUpdateRequestDto,
+    public PANUpdateResponse updatePanDetails(PANUpdateRequestDto panUpdateRequestDto,
             List<MultipartFile> multipartFileList) throws Exception {
 
         Optional<PANDetails> pOptional = panRepository.findById(panUpdateRequestDto.getId());
         PANDetails panDetails = null;
 
         if (pOptional.isPresent()) {
-            panDetails = MapperUtils.mapClass(panUpdateRequestDto, pOptional.get());
-            panDetails.setAuditData(null);
+            panDetails = pOptional.get();
+            MapperUtils.mapClass(panUpdateRequestDto, panDetails);
             panDetails = panRepository.save(panDetails);
             if (CollectionUtils.isNotEmpty(multipartFileList)) {
                 updateImages(multipartFileList, panUpdateRequestDto, panDetails);
@@ -84,10 +84,10 @@ public class PANServiceImpl implements PANService {
             throw new CustomException("PAN details not found", HttpStatus.BAD_REQUEST);
         }
 
-        return MapperUtils.convertValue(panDetails, PanUpdateResponse.class);
+        return MapperUtils.mapClass(panDetails, PANUpdateResponse.class);
     }
 
-    private boolean updateImages(List<MultipartFile> multipartFileList, PanUpdateRequestDto panUpdateRequestDto,
+    private boolean updateImages(List<MultipartFile> multipartFileList, PANUpdateRequestDto panUpdateRequestDto,
             PANDetails panDetails) {
 
         AtomicInteger imageNumber = new AtomicInteger();

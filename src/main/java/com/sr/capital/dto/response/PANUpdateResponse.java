@@ -8,8 +8,8 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PanUpdateResponse {
+public class PANUpdateResponse {
 
-    Long panId;
+    Long id;
 
 }

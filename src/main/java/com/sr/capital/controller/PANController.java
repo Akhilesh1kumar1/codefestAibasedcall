@@ -15,8 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.RequestData;
-import com.sr.capital.dto.request.PanUpdateRequestDto;
-import com.sr.capital.dto.response.PanUpdateResponse;
+import com.sr.capital.dto.request.PANUpdateRequestDto;
+import com.sr.capital.dto.response.PANUpdateResponse;
 import com.sr.capital.entity.PANDetails;
 import com.sr.capital.service.PANService;
 import com.sr.capital.util.ResponseBuilderUtil;
@@ -40,8 +40,8 @@ public class PANController {
     }
 
     @PostMapping("")
-    public GenericResponse<PanUpdateResponse> addPanDetails(
-            @RequestPart("data") PanUpdateRequestDto panUpdateRequestDto,
+    public GenericResponse<PANUpdateResponse> addPanDetails(
+            @RequestPart("data") PANUpdateRequestDto panUpdateRequestDto,
             @RequestParam("image") List<MultipartFile> image) throws Exception {
 
         return ResponseBuilderUtil.getResponse(panService.createPanDetails(panUpdateRequestDto, image), SUCCESS,
@@ -49,8 +49,8 @@ public class PANController {
     }
 
     @PutMapping("")
-    public GenericResponse<PanUpdateResponse> updatePanDetails(
-            @RequestPart("data") PanUpdateRequestDto panUpdateRequestDto,
+    public GenericResponse<PANUpdateResponse> updatePanDetails(
+            @RequestPart("data") PANUpdateRequestDto panUpdateRequestDto,
             @RequestParam(name = "image", required = false) List<MultipartFile> image) throws Exception {
 
         return ResponseBuilderUtil.getResponse(panService.updatePanDetails(panUpdateRequestDto, image), SUCCESS,
