@@ -1,4 +1,4 @@
-package com.sr.capital.service.strategy;
+package com.sr.capital.helpers.strategy;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 

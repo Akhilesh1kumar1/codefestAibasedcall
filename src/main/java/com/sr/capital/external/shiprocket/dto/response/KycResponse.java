@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.external.shiprocket.dto.kyc.KycSavedDetails;
 import com.sr.capital.external.shiprocket.dto.kyc.KycVerificationDoc;
-import com.sr.capital.service.strategy.CustomSnakeCaseStrategy;
+import com.sr.capital.helpers.strategy.CustomSnakeCaseStrategy;
 
 import lombok.AccessLevel;
 import lombok.Data;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.external.shiprocket.enums.KycStatus;
 import com.sr.capital.external.shiprocket.enums.KycType;
-import com.sr.capital.service.strategy.CustomSnakeCaseStrategy;
+import com.sr.capital.helpers.strategy.CustomSnakeCaseStrategy;
 
 import lombok.AccessLevel;
 import lombok.Data;
