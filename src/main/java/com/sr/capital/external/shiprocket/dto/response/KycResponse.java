@@ -1,10 +1,12 @@
 package com.sr.capital.external.shiprocket.dto.response;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.external.shiprocket.dto.kyc.KycSavedDetails;
-import com.sr.capital.external.shiprocket.dto.kyc.Step1Verification;
+import com.sr.capital.external.shiprocket.dto.kyc.KycVerificationDoc;
+import com.sr.capital.service.strategy.CustomSnakeCaseStrategy;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -13,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonNaming(CustomSnakeCaseStrategy.class)
 public class KycResponse {
     
 	Boolean selfieEnable;
@@ -21,6 +23,7 @@ public class KycResponse {
 	Boolean isManual;
 	Boolean aadhaarEnable;
 	Boolean gstEnable;
-	Step1Verification step1Verification;
-	KycSavedDetails kycSavedDetails;
+	Map<String, KycVerificationDoc> step1Verification;
+	Map<String, KycSavedDetails> kycSavedDetails;
+
 }

@@ -1,5 +1,13 @@
 package com.sr.capital.external.shiprocket.enums;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
+
+@Getter
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public enum KycStatus {
 
     DEFAULT(0),
@@ -12,10 +20,15 @@ public enum KycStatus {
     AUTO_VERIFIED(7),
     NAMEREJECT(8);
 
-    final int type;
+    final int value;
 
-    KycStatus(int type) {
-        this.type = type;
+    public static KycStatus fromValue(Integer value) {
+        for (KycStatus status : values()) {
+            if (status.getValue() == value) {
+                return status;
+            }
+        }
+        return null;
     }
 
 }
