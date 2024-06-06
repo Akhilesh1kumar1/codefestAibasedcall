@@ -1,5 +1,8 @@
 package com.sr.capital.external.shiprocket.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,14 +34,16 @@ public enum KycType {
 
     final int value;
     final KycDocumentType[] acceptedDocumentTypes;
+    static final Map<Integer, KycType> VALUE_MAP = new HashMap<Integer, KycType>();
+
+    static {
+        for (KycType type : values()) {
+            VALUE_MAP.put(type.getValue(), type);
+        }
+    }
 
     public static KycType fromValue(int value) {
-        for (KycType type : values()) {
-            if (type.getValue() == value) {
-                return type;
-            }
-        }
-        return null;
+        return VALUE_MAP.get(value);
     }
 
 }

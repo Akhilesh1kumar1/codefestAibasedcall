@@ -1,5 +1,8 @@
 package com.sr.capital.external.shiprocket.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,14 +24,16 @@ public enum KycStatus {
     NAMEREJECT(8);
 
     final int value;
+    static final Map<Integer, KycStatus> VALUE_MAP = new HashMap<Integer, KycStatus>();
+
+    static {
+        for (KycStatus status : values()) {
+            VALUE_MAP.put(status.getValue(), status);
+        }
+    }
 
     public static KycStatus fromValue(Integer value) {
-        for (KycStatus status : values()) {
-            if (status.getValue() == value) {
-                return status;
-            }
-        }
-        return null;
+        return VALUE_MAP.get(value);
     }
 
 }

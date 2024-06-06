@@ -1,5 +1,8 @@
 package com.sr.capital.external.shiprocket.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,14 +24,16 @@ public enum KycDocumentType {
 
     final String name;
     final String value;
+    static final Map<String, KycDocumentType> NAME_MAP = new HashMap<String, KycDocumentType>();
 
-    public static KycDocumentType fromValue(String docType) {
+    static {
         for (KycDocumentType kycDocumentType : values()) {
-            if (kycDocumentType.getName().equals(docType)) {
-                return kycDocumentType;
-            }
+            NAME_MAP.put(kycDocumentType.getName(), kycDocumentType);
         }
-        return null;
+    }
+
+    public static KycDocumentType fromName(String docType) {
+        return NAME_MAP.get(docType);
     }
 
 }

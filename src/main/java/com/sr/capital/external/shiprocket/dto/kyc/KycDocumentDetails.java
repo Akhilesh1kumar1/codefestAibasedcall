@@ -24,7 +24,7 @@ public class KycDocumentDetails {
 	public void setDocumentType(String docType) {
 		KycDocumentType type = null;
 		if (docType != "") {
-			type = KycDocumentType.fromValue(docType);
+			type = KycDocumentType.fromName(docType);
 		}
 		this.documentType = type;
 	}

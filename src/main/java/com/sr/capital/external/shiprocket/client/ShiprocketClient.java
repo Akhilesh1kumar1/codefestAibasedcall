@@ -1,4 +1,4 @@
-package com.sr.capital.external.shiprocket;
+package com.sr.capital.external.shiprocket.client;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;

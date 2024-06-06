@@ -4,7 +4,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
 import com.sr.capital.exception.custom.CustomException;
-import com.sr.capital.external.shiprocket.ShiprocketClient;
+import com.sr.capital.external.shiprocket.client.ShiprocketClient;
 import com.sr.capital.external.shiprocket.dto.response.KycResponse;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
