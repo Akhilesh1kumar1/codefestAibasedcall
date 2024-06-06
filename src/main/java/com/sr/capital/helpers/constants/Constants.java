@@ -26,6 +26,8 @@ public final class Constants {
 
         public static final String DIRECTOR_KYC = "directo_kyc";
 
+        public static final String USER_MAPPING = "user_mapping";
+
     }
 
     public static class ServiceConstants{

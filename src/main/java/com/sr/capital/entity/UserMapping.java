@@ -3,7 +3,7 @@ package com.sr.capital.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static com.sr.capital.helpers.constants.Constants.EntityNames.USER;
+import static com.sr.capital.helpers.constants.Constants.EntityNames.USER_MAPPING;
 
 @Data
 @Builder
@@ -11,7 +11,7 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.USER;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = USER)
+@Table(name = USER_MAPPING)
 @Inheritance(
         strategy = InheritanceType.JOINED
 )
