@@ -19,8 +19,7 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.USER;
 public class User extends LongBaseEntity{
 
 
-    @Column(name = "sr_user_id")
-    private String srUserId;
+
 
     @Convert(converter = AttributeEncryptor.class)
     @Column(name = "first_name")
