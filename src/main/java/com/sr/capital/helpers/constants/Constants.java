@@ -24,6 +24,8 @@ public final class Constants {
 
         public static final String ENACH_LINKING = "enach_linking";
 
+        public static final String DIRECTOR_KYC = "directo_kyc";
+
     }
 
     public static class ServiceConstants{
