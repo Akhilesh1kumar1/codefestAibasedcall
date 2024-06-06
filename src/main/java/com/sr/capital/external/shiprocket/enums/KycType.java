@@ -10,11 +10,27 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum KycType {
 
-    COMPANY(1),
-    INDIVIDUAL(2),
-    PROPRIETORSHIP(3);
+    COMPANY(1, new KycDocumentType[] {
+            KycDocumentType.PAN_UPLOAD,
+            KycDocumentType.GST_UPLOAD,
+            KycDocumentType.CIN_UPLOAD
+    }),
+    INDIVIDUAL(2, new KycDocumentType[] {
+            KycDocumentType.PAN_UPLOAD,
+            KycDocumentType.LICENSE_UPLOAD,
+            KycDocumentType.PASSPORT_UPLOAD
+    }),
+    PROPRIETORSHIP(3, new KycDocumentType[] {
+            KycDocumentType.PAN_UPLOAD,
+            KycDocumentType.LICENSE_UPLOAD,
+            KycDocumentType.PASSPORT_UPLOAD,
+            KycDocumentType.CIN_UPLOAD,
+            KycDocumentType.GST_UPLOAD,
+            KycDocumentType.UDYOG_AADHAR
+    });
 
     final int value;
+    final KycDocumentType[] acceptedDocumentTypes;
 
     public static KycType fromValue(int value) {
         for (KycType type : values()) {
