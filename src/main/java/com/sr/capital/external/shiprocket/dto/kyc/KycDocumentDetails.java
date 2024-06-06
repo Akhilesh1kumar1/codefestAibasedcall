@@ -22,11 +22,7 @@ public class KycDocumentDetails {
 	String number;
 
 	public void setDocumentType(String docType) {
-		KycDocumentType type = null;
-		if (docType != "") {
-			type = KycDocumentType.fromName(docType);
-		}
-		this.documentType = type;
+		this.documentType = KycDocumentType.fromName(docType);
 	}
 
 }
