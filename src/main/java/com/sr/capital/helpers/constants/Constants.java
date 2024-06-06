@@ -24,7 +24,7 @@ public final class Constants {
 
         public static final String ENACH_LINKING = "enach_linking";
 
-        public static final String DIRECTOR_KYC = "directo_kyc";
+        public static final String DIRECTOR_KYC = "director_kyc";
 
         public static final String USER_MAPPING = "user_mapping";
 
