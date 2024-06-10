@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class KlubPartnerService implements CreditPartnerService {
+public class KlubPartnerService  implements CreditPartnerService {
     @Override
     public AccessTokenResponseDto getAccessToken(AccessTokenRequestDto accessTokenRequestDto) {
         return null;

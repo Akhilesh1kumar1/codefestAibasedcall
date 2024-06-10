@@ -119,4 +119,22 @@ public class MapperUtils {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, failOnUnknownProperties);
         return objectMapper.readValue(orderDetails, objectClass);
     }
+
+    public static String convertToString(Object obj) {
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (IOException e) {
+
+        }
+        return null;
+    }
+
+    public static JsonNode convertToJsonNode(String obj){
+        try {
+            return objectMapper.readTree(obj);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

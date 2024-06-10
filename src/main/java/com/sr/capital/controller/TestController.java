@@ -5,14 +5,15 @@ import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.client.ShiprocketClient;
+import com.sr.capital.service.impl.TestServiceImpl;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URISyntaxException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/test")
@@ -20,11 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     final ShiprocketClient shiprocketClient;
-
+    final TestServiceImpl testService;
 
     @GetMapping()
     public GenericResponse testValidateTokenApi(@RequestParam("token") String token) throws UnirestException, CustomException {
 
         return ResponseBuilderUtil.getResponse(shiprocketClient.validateToken(token), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
+    }
+
+    @PostMapping("/jsonpath/{partnerId}")
+    public GenericResponse testValidateTokenApi(@PathVariable(name = "partnerId") Long partnerId, @RequestParam Map<String,String> requestParam,@RequestBody Map<String,Object> requestBody) throws UnirestException, CustomException, URISyntaxException {
+
+        return ResponseBuilderUtil.getResponse(testService.testJsonPath(partnerId,requestParam,requestBody), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
     }
 }
