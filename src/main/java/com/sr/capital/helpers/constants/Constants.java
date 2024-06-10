@@ -28,6 +28,10 @@ public final class Constants {
 
         public static final String USER_MAPPING = "user_mapping";
 
+        public static final String PROVIDER_CONFIG_TEMPLATE = "provider_template";
+
+        public static final String PROVIDER_URL_CONFIG= "provider_url_config";
+
     }
 
     public static class ServiceConstants{
