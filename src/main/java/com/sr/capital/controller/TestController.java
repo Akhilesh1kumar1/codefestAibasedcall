@@ -12,6 +12,7 @@ import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class TestController {
     }
 
     @PostMapping("/jsonpath/{partnerId}")
-    public GenericResponse testValidateTokenApi(@PathVariable(name = "partnerId") Long partnerId, @RequestParam Map<String,String> requestParam,@RequestBody Map<String,Object> requestBody) throws UnirestException, CustomException, URISyntaxException {
+    public GenericResponse testValidateTokenApi(@PathVariable(name = "partnerId") Long partnerId, @RequestParam Map<String,String> requestParam,@RequestBody Map<String,Object> requestBody) throws UnirestException, CustomException, URISyntaxException, IOException {
 
         return ResponseBuilderUtil.getResponse(testService.testJsonPath(partnerId,requestParam,requestBody), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
     }

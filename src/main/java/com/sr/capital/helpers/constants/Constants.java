@@ -32,6 +32,8 @@ public final class Constants {
 
         public static final String PROVIDER_URL_CONFIG= "provider_url_config";
 
+        public static final String BASE_CREDIT_PARTNER_META_DATA = "base_credit_partner_cred";
+
     }
 
     public static class ServiceConstants{
