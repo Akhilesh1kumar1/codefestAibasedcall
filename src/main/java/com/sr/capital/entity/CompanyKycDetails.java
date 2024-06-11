@@ -18,8 +18,8 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.COMPANY_DET
 @Table(name = COMPANY_DETAILS)
 public class CompanyKycDetails extends UUIDBaseEntity{
 
-    @Column(name = "tenant_capital_id")
-    Long tenantCapitalId;
+    @Column(name = "sr_company_id")
+    Long srCompanyId;
 
     @Column(name = "user_id")
     Long userId;

@@ -10,7 +10,9 @@ public enum RequestType {
 
     ADHAR("adhar"),
     COMPANY_KYC("comapny_kyc"),
-    ENACH_LINKING("enach_linking");
+    ENACH_LINKING("enach_linking"),
+
+    LOAN_APPLICATION("loan_application");
 
     final String type;
 

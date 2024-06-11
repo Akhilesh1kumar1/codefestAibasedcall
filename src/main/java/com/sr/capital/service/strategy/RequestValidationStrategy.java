@@ -21,6 +21,7 @@ public class RequestValidationStrategy {
     final AdharValidator adharValidator;
     final CompanyKycValidator companyKycValidator;
     final EnachLinkingValidator enachLinkingValidator;
+    final LoanApplicationRequestValidator loanApplicationRequestValidator;
     public <T,U> T validateRequest(U request, RequestType type) throws Exception {
         RequestValidator requestValidator;
         switch (type) {
@@ -32,6 +33,7 @@ public class RequestValidationStrategy {
             case ADHAR -> requestValidator = adharValidator;
             case COMPANY_KYC -> requestValidator = companyKycValidator;
             case ENACH_LINKING -> requestValidator = enachLinkingValidator;
+            case LOAN_APPLICATION -> requestValidator = loanApplicationRequestValidator;
             default -> {
                 throw new RequestValidatorNotFoundException();
             }

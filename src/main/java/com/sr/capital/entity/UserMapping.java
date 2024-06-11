@@ -17,7 +17,6 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.USER_MAPPIN
 )
 public class UserMapping extends LongBaseEntity{
 
-
     @Column(name = "capital_user_id")
     private Long capitalUserId;
 

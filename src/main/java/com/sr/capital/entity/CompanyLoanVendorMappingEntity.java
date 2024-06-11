@@ -4,7 +4,7 @@ import com.sr.capital.config.AttributeEncryptor;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static com.sr.capital.helpers.constants.Constants.EntityNames.BASE_CREDIT_PARTNER_META_DATA;
+import static com.sr.capital.helpers.constants.Constants.EntityNames.COMPANY_LOAN_VENDOR;
 
 @Data
 @Builder
@@ -12,10 +12,12 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.BASE_CREDIT
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = BASE_CREDIT_PARTNER_META_DATA)
-public class BaseCreditPartnerCredEntity extends LongBaseEntity{
+@Table(name = COMPANY_LOAN_VENDOR)
+public class CompanyLoanVendorMappingEntity extends LongBaseEntity{
 
 
+    @Column(name = "sr_company_id")
+    Long srCompanyId;
 
     @Column(name = "partner_id")
     Long partnerId;
