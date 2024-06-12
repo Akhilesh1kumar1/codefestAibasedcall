@@ -98,6 +98,11 @@ public class AppProperties {
     @Value("${app.external.shiprocket.auth.endpoints.validate-token}")
     private String shiprocketValidateTokenEndPoint;
 
+    @Value("${app.external.shiprocket.api.baseUrl}")
+    private String shiprocketApiBaseUrl;
+
+    @Value("${app.external.shiprocket.api.endpoints.kyc-details}")
+    private String shiprocketKycEndPoint;
 
     //Verification Properties
 

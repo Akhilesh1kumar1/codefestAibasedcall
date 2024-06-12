@@ -5,7 +5,7 @@ import com.omunify.restutil.RestUtil;
 import com.omunify.restutil.RestUtilProvider;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.exception.custom.CustomException;
-import com.sr.capital.external.client.ShiprocketClient;
+import com.sr.capital.external.shiprocket.client.ShiprocketClient;
 import com.sr.capital.util.LoggerUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
