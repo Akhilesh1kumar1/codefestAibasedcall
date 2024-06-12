@@ -20,8 +20,8 @@ public class DirectorKycEntity extends LongBaseEntity{
     @Column(name = "user_id")
     Long capitalUserId;
 
-    @Column(name = "tenant_capital_id")
-    Long tenantCapitalId;
+    @Column(name = "sr_company_id")
+    Long srCompanyId;
 
     @Enumerated(EnumType.STRING)
     DirectorDesignation designation;

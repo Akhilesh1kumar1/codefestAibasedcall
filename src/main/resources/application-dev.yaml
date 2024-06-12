@@ -90,6 +90,10 @@ app:
         enabled: false
 
     shiprocket:
+      api:
+        baseUrl: ${SHIPROCKET_API_BASE_URL:https://qa-api-1.kartrocket.com}
+        endpoints:
+          kyc-details: /v1/settings/kyc/is-selfie-enable
       auth:
         baseUrl: ${SHIPROCKET_AUTH_BASE_URL:https://sr-auth-qa-1.kartrocket.com}
         endpoints:

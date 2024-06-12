@@ -4,8 +4,13 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
 import com.sr.capital.exception.custom.CustomException;
+<<<<<<< HEAD
 import com.sr.capital.external.client.ShiprocketClient;
 import com.sr.capital.service.impl.TestServiceImpl;
+=======
+import com.sr.capital.external.shiprocket.client.ShiprocketClient;
+import com.sr.capital.external.shiprocket.dto.response.KycResponse;
+>>>>>>> 0c900aea845b0e162dfba1e5ac8f744a55492e23
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
@@ -33,6 +38,11 @@ public class TestController {
     @PostMapping("/jsonpath/{partnerId}")
     public GenericResponse testValidateTokenApi(@PathVariable(name = "partnerId") Long partnerId, @RequestParam Map<String,String> requestParam,@RequestBody Map<String,Object> requestBody) throws UnirestException, CustomException, URISyntaxException, IOException {
 
-        return ResponseBuilderUtil.getResponse(testService.testJsonPath(partnerId,requestParam,requestBody), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
+        return ResponseBuilderUtil.getResponse(testService.testJsonPath(partnerId, requestParam, requestBody), Constants.StatusEnum.SUCCESS, "", HttpStatus.SC_OK);
+    }
+    @GetMapping("/kyc")
+    public GenericResponse<KycResponse> kycDetails(@RequestParam("token") String token) throws UnirestException, CustomException {
+
+        return ResponseBuilderUtil.getResponse(shiprocketClient.getKycDetails(token), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
     }
 }

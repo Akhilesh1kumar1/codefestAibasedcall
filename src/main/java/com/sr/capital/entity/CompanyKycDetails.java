@@ -79,7 +79,6 @@ public class CompanyKycDetails extends UUIDBaseEntity{
     ProofOfCurrentAddress proofOfCurrentAddress;
 
 
-
     @Convert(converter = AttributeEncryptor.class)
     @Column(name = "proof_of_current_address_link")
     String proofOfCurrentAddressLink;
