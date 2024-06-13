@@ -133,4 +133,100 @@ public class AppProperties {
     private String activeProfile;
 
 
+
+    //kyc
+
+    // Expiry
+
+    @Value("${kyc.aadhaar.verified.details.expiry.min:120}")
+    private Long aadhaarVerifiedDetailsExpiry;
+
+    @Value("${kyc.bank.verified.details.expiry.min:120}")
+    private Long bankVerifiedDetailsExpiry;
+
+    @Value("${kyc.gst.verified.details.expiry.min:120}")
+    private Long gstVerifiedDetailsExpiry;
+
+    @Value("${kyc.pan.aadhaar.cross.verified.details.expiry.min:120}")
+    private Long panAadhaarCrossVerifiedDetailsExpiry;
+
+    @Value("${kyc.pan.gst.cross.verified.details.expiry.min:120}")
+    private Long panGstCrossVerifiedDetailsExpiry;
+
+    @Value("${kyc.pan.verified.details.expiry.min:120}")
+    private Long panVerifiedDetailsExpiry;
+
+    /*
+        IDfy Credential
+     */
+
+    @Value("${external.idfy.account.id}")
+    private String idfyAccountId;
+
+    @Value("${external.idfy.api.key}")
+    private String idfyApiKey;
+
+    /*
+        IDfy EXTERNAL API
+     */
+
+    @Value("${external.idfy.base.uri}")
+    private String idfyBaseUri;
+
+    @Value("${external.idfy.async.api.endpoint.tasks}")
+    private String idfyAsyncTaskEndpoint;
+
+    @Value("${external.idfy.api.endpoint.extract.gst.url}")
+    private String idfyExtractGSTDetailsEndpoint;
+
+    @Value("${external.idfy.api.endpoint.verify.gst.url}")
+    private String idfyVerifyGSTDetailsEndpoint;
+
+    @Value(("${external.idfy.api.endpoint.extract.pancard.url}"))
+    private String idfyExtractPancardDetailsEndpoint;
+
+    @Value("${external.idfy.api.endpoint.verify.pancard.url}")
+    private String idfyVerifyPancardDetailsEndpoint;
+
+    @Value("${external.idfy.api.endpoint.extract.aadhaar.url}")
+    private String idfyExtractAadhaarDetailsEndpoint;
+
+    @Value("${external.idfy.api.endpoint.extract.bank.proof.url}")
+    private String idfyExtractBankDetailsEndpoint;
+
+    @Value("${external.idfy.api.endpoint.verify.bank.proof.url}")
+    private String idfyVerifyBankDetailsEndpoint;
+
+    @Value("${external.idfy.api.endpoint.cross.verify.pancard.gst.url}")
+    private String idfyCrossVerifyPancardGSTEndpoint;
+
+    @Value("${external.idfy.api.endpoint.cross.verify.pancard.aadhaar.url}")
+    private String idfyCrossVerifyPancardAadhaarEndpoint;
+
+    @Value("${external.idfy.api.endpoint.compare.name.url}")
+    private String idfyNameCompareEndpoint;
+
+    @Value("${allowed.compare.name.score}")
+    private Integer allowedNameScore;
+
+    //@Value("${kafka.doc.verification.seller.onboarding.event.topic}")
+    private String kafkaDocVerificationSellerOnboardingEventTopic;
+
+   // @Value("${kafka.doc.verification.idfy.response.topic}")
+    private String kafkaDocVerificationIdfyResponseTopic;
+
+    @Value("${idfy.async.response.retry.buffer.minutes:0}")
+    private Long asyncResponseRetryBuffer;
+
+    @Value("${idfy.async.response.retry.limit:3}")
+    private Integer asyncResponseRetryLimit;
+
+    @Value("${idfy.async.response.cron.rate.milli.seconds:300000}")
+    private Long asyncResponseCronRate;
+
+    @Value("${external.idfy.api.endpoint.verify.aadhaar.url}")
+    private String idfyVerifyAadhaarDetailsEndpoint;
+
+    @Value("${idfy.async.response.aadhaar.rely.on.pan.aadhaar:true}")
+    private Boolean aadhaarVerificationRelyOnPan;
 }

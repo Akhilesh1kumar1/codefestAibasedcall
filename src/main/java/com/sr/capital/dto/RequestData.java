@@ -1,5 +1,6 @@
 package com.sr.capital.dto;
 
+import com.sr.capital.helpers.enums.RequestType;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
@@ -16,6 +17,8 @@ public class RequestData {
     static ThreadLocal<String> tenantIdLocal = new ThreadLocal<>();
     static ThreadLocal<String> correlationIdLocal = new ThreadLocal<>();
     static ThreadLocal<Long> userIdLocal = new ThreadLocal<>();
+
+    static ThreadLocal<RequestType> requestTypeLocal = new ThreadLocal<>();
 
     public static void setTenantId(String tenantId) {
         tenantIdLocal.set(tenantId);
@@ -39,5 +42,13 @@ public class RequestData {
 
     public static Long getUserId() {
         return userIdLocal.get();
+    }
+
+    public static RequestType getRequestType() {
+        return requestTypeLocal.get();
+    }
+
+    public static void setRequestType(RequestType requestType) {
+        requestTypeLocal.set( requestType);
     }
 }

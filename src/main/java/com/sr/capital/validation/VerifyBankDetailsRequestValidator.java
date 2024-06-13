@@ -38,7 +38,7 @@ public class VerifyBankDetailsRequestValidator implements RequestValidator {
             tenantBankDetails = optionalTenantBankDetails.get();
         }
 
-        TenantBankDetails tenantBankDetailsByAccountNumber = tenantBankDetailsRepository.findByUserIdAndAccountNumber(bankDetailsRequestDto.getUserId(), bankDetailsRequestDto.getAccountNumber());
+        TenantBankDetails tenantBankDetailsByAccountNumber = tenantBankDetailsRepository.findByAccountNumberAndSrCompanyId( bankDetailsRequestDto.getAccountNumber(),bankDetailsRequestDto.getSrCompanyId());
         if(tenantBankDetailsByAccountNumber==null){
             throw new CustomException("Account details not found by account number", HttpStatus.BAD_REQUEST);
         }

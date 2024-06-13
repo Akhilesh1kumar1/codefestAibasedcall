@@ -3,6 +3,7 @@ package com.sr.capital.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.sr.capital.entity.TenantBankDetails;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
@@ -34,4 +35,15 @@ public class TenantBankResponseDto {
     String accountStatementLink;
 
     private Boolean isAccountVerified ;
+
+    public static TenantBankResponseDto mapResponse(TenantBankDetails tenantBankDetails){
+        TenantBankResponseDto responseDto =new TenantBankResponseDto();
+        responseDto.setId(tenantBankDetails.getId());
+        responseDto.setAccountNumber(tenantBankDetails.getAccountNumber());
+        responseDto.setBaseBankId(tenantBankDetails.getBaseBankId());
+        responseDto.setIfscCode(tenantBankDetails.getIfscCode());
+        responseDto.setAccountStatementLink(tenantBankDetails.getAccountStatementLink());
+        responseDto.setIsAccountVerified(tenantBankDetails.getIsAccountVerified());
+        return responseDto;
+    }
 }

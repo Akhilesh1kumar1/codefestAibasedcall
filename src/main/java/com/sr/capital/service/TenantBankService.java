@@ -15,7 +15,7 @@ public interface TenantBankService {
 
     TenantBankResponseDto addBankDetails(BankDetailsRequestDto bankDetailsRequestDto, MultipartFile document) throws Exception;
 
-    List<TenantBankResponseDto> getBankDetails(String userId);
+    List<TenantBankResponseDto> getBankDetails(Long srCompanyId);
 
     TenantBankResponseDto verifyBankDetails(VerifyBankDetails verifyBankDetails) throws Exception;
 

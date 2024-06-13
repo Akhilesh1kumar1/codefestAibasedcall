@@ -1,6 +1,7 @@
 package com.sr.capital.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sr.capital.entity.interfaces.Auditable;
 import com.sr.capital.listner.AuditEntityListener;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Data
 @MappedSuperclass
 @EntityListeners(AuditEntityListener.class)
+@JsonIgnoreProperties({"auditData"})
 public class UUIDBaseEntity implements Serializable, Auditable {
 
     @Id

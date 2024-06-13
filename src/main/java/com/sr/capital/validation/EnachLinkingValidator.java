@@ -20,7 +20,7 @@ public class EnachLinkingValidator implements RequestValidator {
     public <T, U> T validateRequest(U request) throws Exception {
         EnachLinkingRequestDto enachLinkingRequestDto = (EnachLinkingRequestDto) request;
 
-        TenantBankDetails tenantBankDetails = tenantBankDetailsRepository.findByUserIdAndAccountNumber(enachLinkingRequestDto.getUserId(), enachLinkingRequestDto.getAccountNumber());
+        TenantBankDetails tenantBankDetails = tenantBankDetailsRepository.findByAccountNumberAndSrCompanyId( enachLinkingRequestDto.getAccountNumber(),enachLinkingRequestDto.getSrCompanyId());
 
         //TODO throw bank details not found exception
         if(tenantBankDetails==null){

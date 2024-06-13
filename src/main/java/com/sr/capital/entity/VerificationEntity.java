@@ -1,8 +1,6 @@
 package com.sr.capital.entity;
 
-import com.sr.capital.helpers.enums.CallbackType;
-import com.sr.capital.helpers.enums.CommunicationChannels;
-import com.sr.capital.helpers.enums.VerificationType;
+import com.sr.capital.helpers.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,15 +13,15 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "verification")
-public class VerificationEntity extends UUIDBaseEntity {
+public class VerificationEntity extends LongBaseEntity {
 
     @Builder.Default
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private VerificationType type = VerificationType.OTP;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "sr_company_id")
+    private String srCompanyId;
 
     @Column(name = "data")
     private String data;
@@ -48,6 +46,16 @@ public class VerificationEntity extends UUIDBaseEntity {
     @Builder.Default
     @Column(name = "expires_at")
     private LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(15);
+
+
+
+    @Builder.Default
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private VerificationStatus status = VerificationStatus.PROCESSING;
+
+    @Column(name = "remarks")
+    private String remarks;
 
     public boolean hasExpired(LocalDateTime currentTime) {
         return getExpiresAt().isBefore(currentTime);

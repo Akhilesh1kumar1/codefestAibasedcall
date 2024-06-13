@@ -8,10 +8,13 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import com.sr.capital.entity.FileUploadData;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.service.FileProcessor;
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +23,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -181,4 +185,32 @@ public class CsvUtils  {
 
     }
 
+    public static File convertMultiPartToFile(FileDetails fileDetails) throws IOException {
+        File convFile = new File(fileDetails.getFileName());
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(fileDetails.getFile().getBytes());
+        fos.close();
+        return convFile;
+    }
+
+    public static File extractAndSaveSinglePageFromPdf(FileDetails fileDetails, Integer pageNo) throws IOException {
+
+        File temp = convertMultiPartToFile(fileDetails);
+        PDDocument document = PDDocument.load(temp);
+        String docName = fileDetails.getFileName();
+        fileDetails.setFileName("ONE-PAGER-" + docName);
+        PDDocument buffer = new PDDocument();
+
+        try {
+            PDPage pdPage = document.getPage(pageNo);
+            buffer.addPage(pdPage);
+            buffer.save(fileDetails.getFileName());
+        } finally {
+            buffer.close();
+            document.close();
+            Files.deleteIfExists(Path.of(docName));
+        }
+
+        return new File(fileDetails.getFileName());
+    }
 }

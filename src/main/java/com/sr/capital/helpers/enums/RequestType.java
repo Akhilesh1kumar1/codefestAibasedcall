@@ -12,7 +12,14 @@ public enum RequestType {
     COMPANY_KYC("comapny_kyc"),
     ENACH_LINKING("enach_linking"),
 
-    LOAN_APPLICATION("loan_application");
+    LOAN_APPLICATION("loan_application"),
+    UPLOAD_AND_EXTRACT("upload_and_extract"),
+    UPLOAD_EXTRACT_SAVE("upload-extract-save"),
+    VERIFIED_DOC_DETAILS("verified-doc-details"),
+
+    //DOC DETAILS CONTROLLER
+    DOC_DETAILS("fetch-doc-details"),
+    UPDATE_DOC_DETAILS("doc-update");
 
     final String type;
 

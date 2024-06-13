@@ -10,6 +10,7 @@ import com.sr.capital.dto.response.TenantBankResponseDto;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.service.TenantBankService;
 import com.sr.capital.service.impl.TenantBankServiceImpl;
+import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
@@ -33,7 +34,8 @@ public class TenantBankController {
     final TenantBankService tenantBankService;
 
     @PostMapping("/add")
-    public GenericResponse<TenantBankResponseDto> addBankDetails(@RequestParam("document")MultipartFile document, @RequestPart BankDetailsRequestDto bankDetailsRequestDto) throws Exception {
+    public GenericResponse<TenantBankResponseDto> addBankDetails(@RequestParam(value = "document",required = false)MultipartFile document, @RequestPart(name = "details") String details) throws Exception {
+        BankDetailsRequestDto bankDetailsRequestDto = MapperUtils.readValue(details, BankDetailsRequestDto.class);
         return ResponseBuilderUtil.getResponse(tenantBankService.addBankDetails(bankDetailsRequestDto,document),SUCCESS,
                 BASE_BANK_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
@@ -44,9 +46,9 @@ public class TenantBankController {
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
-    @GetMapping("/{userId}")
-    public GenericResponse<List<TenantBankResponseDto>> getBankDetails(@PathVariable(name = "userId")String userId) throws IOException, CustomException {
-        return ResponseBuilderUtil.getResponse(tenantBankService.getBankDetails(userId),SUCCESS,
+    @GetMapping("/{srCompanyId}")
+    public GenericResponse<List<TenantBankResponseDto>> getBankDetails(@PathVariable(name = "srCompanyId")Long srCompanyId) throws IOException, CustomException {
+        return ResponseBuilderUtil.getResponse(tenantBankService.getBankDetails(srCompanyId),SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 

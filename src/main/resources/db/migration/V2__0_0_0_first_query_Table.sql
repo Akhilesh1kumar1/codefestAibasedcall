@@ -106,12 +106,12 @@ CREATE TABLE `tenant_bank_details` (
   `account_holder_name` varchar(255) DEFAULT NULL,
   `account_number` varchar(255) DEFAULT NULL,
   `account_statement_link` varchar(255) DEFAULT NULL,
+  `bank_account_type` varchar(100) DEFAULT null,
   `base_bank_id` bigint DEFAULT NULL,
   `ifsc_code` varchar(255) DEFAULT NULL,
   `is_account_verified` bit(1) DEFAULT NULL,
   `statement_password` varchar(255) DEFAULT NULL,
-  `tenant_capital_id` bigint DEFAULT NULL,
-  `user_id` bigint DEFAULT NULL,
+  `sr_company_id` bigint DEFAULT NULL,
   `created_at` datetime(6) DEFAULT NULL,
     `created_by` varchar(255) DEFAULT NULL,
     `updated_at` datetime(6) DEFAULT NULL,
@@ -120,8 +120,7 @@ CREATE TABLE `tenant_bank_details` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB ;
 
-ALTER TABLE tenant_bank_details ADD CONSTRAINT account_number_constraint UNIQUE (account_number);
-ALTER TABLE tenant_bank_details ADD INDEX idx_tenant_capital_id_user_id_adhar_number (tenant_capital_id, user_id,account_number);
+ALTER TABLE tenant_bank_details ADD CONSTRAINT account_number_constraint UNIQUE (account_number,sr_company_id);
 
 CREATE TABLE if not exists `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,

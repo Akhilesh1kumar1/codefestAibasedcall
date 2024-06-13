@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.*;
 import com.omunify.core.util.ExceptionUtils;
 import com.sr.capital.dto.request.BankDetailsRequestDto;
 import com.sr.capital.exception.custom.CustomServiceException;
+import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -102,7 +104,7 @@ public class S3Util {
 
     public static void uploadFileToS3(String bucketName, String s3Key, File file) {
         try {
-            s3Client.putObject(new PutObjectRequest(bucketName, s3Key, file));
+            s3Client.putObject(new PutObjectRequest(bucketName, s3Key, file).withCannedAcl(CannedAccessControlList.BucketOwnerRead));
         } catch (AmazonS3Exception ex) {
             log.error("Error while uploading the file to S3 : {}, error : {}", file.getName(), ex.getMessage());
             throw ExceptionUtils.customException(HttpStatus.INTERNAL_SERVER_ERROR.name(),
@@ -125,4 +127,26 @@ public class S3Util {
         CsvUtils.deleteFile(imageFolder, file);
         return imageLink;
     }
+
+    public static String generatePreSignedUrl(GeneratePreSignedUrlRequest request) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MINUTE, request.getExpiry());
+
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += request.getExpiry();
+        expiration.setTime(expTimeMillis);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(request.getBucketName(), request.getObjectKey())
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(expiration)
+                        .withContentType(FILE_CONTENT_TYPE_MAP.get(FilenameUtils.getExtension(request.getFileName())));
+
+        URL presignedUrl = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+        return presignedUrl.toString();
+    }
+
+
 }

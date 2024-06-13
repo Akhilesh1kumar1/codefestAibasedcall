@@ -10,7 +10,8 @@ import java.util.UUID;
 @Repository
 public interface TenantBankDetailsRepository extends JpaRepository<TenantBankDetails, UUID> {
 
-    TenantBankDetails findByUserIdAndAccountNumber(Long userId,String accountNumber);
 
-    List<TenantBankDetails> findByUserId(String userId);
+    List<TenantBankDetails> findBySrCompanyId(Long userId);
+
+    TenantBankDetails findByAccountNumberAndSrCompanyId(String accountNumber , Long srCompanyId);
 }

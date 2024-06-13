@@ -20,7 +20,7 @@ public class VerifyBankDetails {
     @NotNull(message = "id cannot be null")
     UUID id;
 
-    Long userId;
+    Long srCompanyId;
 
     Long baseBankId;
 

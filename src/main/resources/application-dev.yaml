@@ -111,3 +111,70 @@ fileUpload:
   coolOffWindowInMinutes: ${FILE_UPLOAD_COOLOFF_WINDOW:60}
 
 
+
+
+####################################### IDFY API #############################################
+external:
+  idfy:
+    api:
+      endpoint:
+        cross:
+          verify:
+            pancard:
+              gst:
+                url: /v3/tasks/async/verify_with_source/pan_gst_link
+              aadhaar:
+                url: /v3/tasks/async/verify_with_source/pan_aadhaar_link
+        verify:
+          gst:
+            url: /v3/tasks/async/verify_with_source/ind_gst_certificate
+          aadhaar:
+            url: /v3/tasks/async/verify_with_source/aadhaar_lite
+          pancard:
+            url: /v3/tasks/async/verify_with_source/ind_pan
+          bank:
+            proof:
+              url: /v3/tasks/async/verify_with_source/validate_bank_account
+        extract:
+          pancard:
+            url: /v3/tasks/sync/extract/ind_pan
+          aadhaar:
+            url: /v3/tasks/sync/extract/ind_aadhaar
+          gst:
+            url: /v3/tasks/sync/extract/ind_gst_certificate
+          bank:
+            proof:
+              url: /v3/tasks/sync/extract/ind_cheque
+        compare:
+          name:
+            url: /v3/tasks/sync/compare/ind_names
+      key: 423714eb-ece1-495b-8760-c2bf9ca3bf08
+    verify:
+      retry:
+        backoff:
+          millis: '300'
+        max:
+          attempts: '3'
+    account:
+      id: 6b00817c0377/2798d29c-763c-4b83-a4a9-3f28ea6f39a5
+    base:
+      uri: https://eve.idfy.com
+    async:
+      api:
+        endpoint:
+          tasks: /v3/tasks
+idfy:
+  async:
+    response:
+      aadhaar:
+        rely:
+          'on':
+            pan:
+              aadhaar: 'true'
+allowed:
+  compare:
+    name:
+      score: '2'
+
+encryption:
+  key: ${ENCRYPTION_KEY:test}

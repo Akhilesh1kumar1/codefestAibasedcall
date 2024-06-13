@@ -29,7 +29,8 @@ public class BankEntityServiceImpl {
 
     public Boolean addBank(CreateBaseBankDto createBaseBankDto) throws CustomException {
         validateBankDetails(createBaseBankDto);
-        bankRepository.save(Bank.mapBankDetailsFromDto(createBaseBankDto));
+        Bank bank =bankRepository.save(Bank.mapBankDetailsFromDto(createBaseBankDto));
+        saveInCache(bank);
         return true;
     }
 

@@ -6,7 +6,6 @@ import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.entity.VerificationEntity;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.service.CommunicationService;
-import com.sr.capital.helpers.enums.CallbackType;
 import com.sr.capital.helpers.enums.VerificationType;
 import com.sr.capital.service.entityimpl.VerificationEntityServiceImpl;
 import com.sr.capital.util.HashUtil;
@@ -35,7 +34,7 @@ public class VerificationUtilService {
         VerificationOrchestratorRequest.RawRequest rawRequest = verificationOrchestratorRequest.getRawRequest();
         VerificationEntity verificationEntity = VerificationEntity.builder()
                 .type(rawRequest.getVerificationType())
-                .userId(rawRequest.getEntityId())
+                .srCompanyId(String.valueOf(rawRequest.getEntityId()))
                 .callback(rawRequest.getCallbackType())
                 .channel(rawRequest.getChannel())
                 .build();

@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
-import static com.sr.capital.helpers.constants.Constants.EntityNames.TENANT_BANK_DETAILS;
+import static com.sr.capital.helpers.constants.Constants.EntityNames.TASK;
+
 
 @Data
 @Builder
@@ -17,7 +18,7 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.TENANT_BANK
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = TENANT_BANK_DETAILS)
+@Table(name = TASK)
 @Inheritance(
         strategy = InheritanceType.JOINED
 )

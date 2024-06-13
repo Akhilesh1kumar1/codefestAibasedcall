@@ -38,6 +38,13 @@ public class WebClientUtil {
     @Autowired
     private WebClient webClient;
 
+
+    public <T> T makeExternalCall(ServiceName serviceName, String baseUri, String endPoint, HttpMethod method,
+                                          HttpHeaders httpHeaders, Map<String, String> parameters, Object body,
+                                          Class<T> responseClass) {
+        Mono<T> responseMono = makeExternalCallNonBlocking(serviceName, baseUri, endPoint, method, "test", httpHeaders, parameters, body, responseClass);
+        return responseMono.block();
+    }
     public <T> T makeExternalCallBlocking(ServiceName serviceName, String baseUri, String endPoint, HttpMethod method, String requestId,
                                           HttpHeaders httpHeaders, Map<String, String> parameters, Object body,
                                           Class<T> responseClass) {

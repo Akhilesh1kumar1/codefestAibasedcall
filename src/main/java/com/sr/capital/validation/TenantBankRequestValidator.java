@@ -31,9 +31,11 @@ public class TenantBankRequestValidator implements RequestValidator {
         }
 
 
-        TenantBankDetails tenantBankDetails = tenantBankDetailsRepository.findByUserIdAndAccountNumber(bankDetailsRequestDto.getUserId(), bankDetailsRequestDto.getAccountNumber());
-        if(tenantBankDetails!=null){
-            throw new CustomException("Account already added", HttpStatus.BAD_REQUEST);
+        if(bankDetailsRequestDto.getAccountNumber()!=null) {
+            TenantBankDetails tenantBankDetails = tenantBankDetailsRepository.findByAccountNumberAndSrCompanyId( bankDetailsRequestDto.getAccountNumber(),bankDetailsRequestDto.getSrCompanyId());
+            if (tenantBankDetails != null) {
+                throw new CustomException("Account already added", HttpStatus.BAD_REQUEST);
+            }
         }
         return (T) bankDetailsRequestDto;
     }

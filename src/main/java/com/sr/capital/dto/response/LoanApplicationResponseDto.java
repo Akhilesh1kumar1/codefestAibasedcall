@@ -13,7 +13,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class LoanApplicationResponseDto extends BaseResponse {
+public class LoanApplicationResponseDto extends BasesResponse {
 
     UUID id;
 }
