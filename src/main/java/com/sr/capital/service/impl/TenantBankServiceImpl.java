@@ -61,9 +61,8 @@ public class TenantBankServiceImpl implements TenantBankService {
         TenantBankDetails tenantBankDetails = mapBankDetailsFromDto(bankDetailsRequestDto);
         tenantBankDetailsRepository.save(tenantBankDetails);
 
-        TenantBankResponseDto responseDto =new TenantBankResponseDto();
-        responseDto.setId(tenantBankDetails.getId());
-        return responseDto;
+
+        return TenantBankResponseDto.mapResponse(tenantBankDetails);
     }
 
     @Override
@@ -87,15 +86,15 @@ public class TenantBankServiceImpl implements TenantBankService {
         TenantBankDetails tenantBankDetails = requestValidationStrategy.validateRequest(verifyBankDetails,RequestType.VERIFY_BANK_DETAILS);
         tenantBankDetails.setIsAccountVerified(true);
         tenantBankDetailsRepository.save(tenantBankDetails);
-        return MapperUtils.convertValue(tenantBankDetails, TenantBankResponseDto.class);
+        return TenantBankResponseDto.mapResponse(tenantBankDetails);
     }
 
     @Override
     public EnachLinkingResponseDto enachLinking(EnachLinkingRequestDto enachLinkingRequestDto) throws Exception {
         requestValidationStrategy.validateRequest(enachLinkingRequestDto,RequestType.ENACH_LINKING);
-        EnachLinkingEntity enachLinkingEntity = MapperUtils.convertValue(enachLinkingRequestDto,EnachLinkingEntity.class);
+        EnachLinkingEntity enachLinkingEntity = EnachLinkingEntity.mapEntity(enachLinkingRequestDto);
         enachLinkingRepository.save(enachLinkingEntity);
-        return MapperUtils.convertValue(enachLinkingEntity,EnachLinkingResponseDto.class);
+        return EnachLinkingResponseDto.mapResponse(enachLinkingEntity);
     }
 
 

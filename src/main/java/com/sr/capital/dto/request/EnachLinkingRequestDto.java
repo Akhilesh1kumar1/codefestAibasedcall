@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -17,7 +18,7 @@ import java.util.UUID;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class EnachLinkingRequestDto extends BankDetailsRequestDto{
 
-    Double debitAmount;
+    BigDecimal debitAmount;
 
     AccountDebitType accountDebitType;
 

@@ -1,10 +1,12 @@
 package com.sr.capital.entity;
 
+import com.sr.capital.dto.request.EnachLinkingRequestDto;
 import com.sr.capital.helpers.enums.AccountDebitType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import static com.sr.capital.helpers.constants.Constants.EntityNames.ENACH_LINKING;
@@ -27,9 +29,17 @@ public class EnachLinkingEntity extends UUIDBaseEntity{
     UUID capitalBankId;
 
     @Column(name = "debit_amount")
-    Double debitAmount;
+    BigDecimal debitAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "account_debit_type")
     AccountDebitType accountDebitType;
+
+
+    public static EnachLinkingEntity mapEntity(EnachLinkingRequestDto enachLinkingRequestDto){
+        EnachLinkingEntity enachLinkingEntity =  EnachLinkingEntity.builder().capitalBankId(enachLinkingRequestDto.getCapitalBankId()).accountDebitType(enachLinkingRequestDto.getAccountDebitType()).debitAmount(enachLinkingRequestDto.getDebitAmount()).build();
+
+        enachLinkingEntity.setIsEnabled(true);
+        return  enachLinkingEntity;
+    }
 }
