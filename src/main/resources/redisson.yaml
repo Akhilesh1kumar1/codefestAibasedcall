@@ -1,6 +1,7 @@
-threads: 10
-nettyThreads: 10
+threads: ${REDIS_MAX_THREADS}
+nettyThreads: ${REDIS_NETTY_THREADS}
 singleServerConfig:
-  address: redis://localhost:6379
-  connectionMinimumIdleSize: 10
-  connectionPoolSize: 10
+  address: ${REDIS_URL}
+  connectionMinimumIdleSize: ${REDIS_MINIMUM_SIZE}
+  connectionPoolSize: ${REDIS_CONNECTION_POOL_SIZE}
+  password: ${REDIS_PASSWORD}
