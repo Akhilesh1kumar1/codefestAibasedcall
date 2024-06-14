@@ -104,6 +104,12 @@ public class AppProperties {
     @Value("${app.external.shiprocket.api.endpoints.kyc-details}")
     private String shiprocketKycEndPoint;
 
+
+    @Value("${app.external.shiprocket.endpoints.user-details-api-token}")
+    private String shiprocketApiTokenUserDetailsEndpoint;
+
+    @Value("${app.external.shiprocket.endpoints.user-details-internal-token}")
+    private String shiprocketInternalTokenUserDetailsEndpoint;
     //Verification Properties
 
     @Value("${app.verification.otp.failure-limit}")

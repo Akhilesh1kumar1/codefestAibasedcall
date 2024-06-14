@@ -6,10 +6,15 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.dto.request.ValidateTokenRequest;
 import com.sr.capital.external.dto.response.ValidateTokenResponse;
+import com.sr.capital.external.shiprocket.dto.response.ApiTokenUserDetailsResponse;
+import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
 import com.sr.capital.external.shiprocket.dto.response.KycResponse;
 import com.sr.capital.util.LoggerUtil;
+import com.sr.capital.util.WebClientUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.omunify.restutil.RestUtilProvider.getInstance;
+import static com.sr.capital.helpers.enums.ServiceName.SHIPROCKET;
 import static org.apache.http.HttpStatus.SC_OK;
 
 @Component
@@ -26,6 +32,8 @@ public class ShiprocketClient {
     LoggerUtil loggerUtil = LoggerUtil.getLogger(ShiprocketClient.class);
 
     final AppProperties appProperties;
+
+    final WebClientUtil webClientUtil;
 
     public boolean validateToken(String token) throws UnirestException, CustomException {
 
@@ -79,4 +87,22 @@ public class ShiprocketClient {
         return kycResponse.getBody();
     }
 
+
+    public ApiTokenUserDetailsResponse getUserDetailsUsingApiToken(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+        return webClientUtil.makeExternalCallBlocking(SHIPROCKET, appProperties.getShiprocketApiBaseUrl(),
+                appProperties.getShiprocketApiTokenUserDetailsEndpoint(), HttpMethod.GET,"test",
+                headers, null, null, ApiTokenUserDetailsResponse.class);
+    }
+
+    public InternalTokenUserDetailsResponse getUserDetailsUsingInternalToken(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("is_web", "1");
+        return webClientUtil.makeExternalCallBlocking(SHIPROCKET, appProperties.getShiprocketApiBaseUrl(),
+                appProperties.getShiprocketInternalTokenUserDetailsEndpoint(), HttpMethod.GET, "test",
+                headers, params, null, InternalTokenUserDetailsResponse.class);
+    }
 }
