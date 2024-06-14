@@ -1,6 +1,6 @@
 threads: ${REDIS_MAX_THREADS}
 nettyThreads: ${REDIS_NETTY_THREADS}
 singleServerConfig:
-  address: ${REDIS_URL}
+  address: redis://sr-common-qa-stage.shiprocket-stage-internal.in:6379
   connectionMinimumIdleSize: ${REDIS_MINIMUM_SIZE}
   connectionPoolSize: ${REDIS_CONNECTION_POOL_SIZE}
