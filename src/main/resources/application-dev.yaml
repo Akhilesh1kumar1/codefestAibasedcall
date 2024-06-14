@@ -106,9 +106,21 @@ aws:
     url: ${CDN_URL:https://o2stage-capital-cdn.kartrocket.in}
 
 redis:
-  config: redisson.yaml
+  config: redisson-dev.yaml
 fileUpload:
   coolOffWindowInMinutes: ${FILE_UPLOAD_COOLOFF_WINDOW:60}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      enabled: true
+  health:
+    redis:
+      enabled: false  
 
 
 
