@@ -22,23 +22,23 @@ public class AdharDetails extends LongBaseEntity{
     @Column(name = "user_id")
     Long userId;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "adhar_number")
     String adharNumber;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "name_on_adhar")
     String nameOnAdhar;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "date_of_birth")
     String dateOfBirth;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "adhar_image_link_1")
     String adharImageLink1;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "adhar_image_link_2")
     String adharImageLink2;
 

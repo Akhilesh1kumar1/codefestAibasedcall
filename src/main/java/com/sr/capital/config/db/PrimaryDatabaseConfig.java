@@ -1,6 +1,12 @@
 package com.sr.capital.config.db;
 
+import com.sr.capital.config.AppProperties;
+import com.sr.capital.config.AttributeEncryptor;
 import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.boot.MetadataBuilder;
+import org.hibernate.boot.spi.MetadataBuilderContributor;
+import org.hibernate.boot.spi.MetadataContributor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -15,6 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Collections;
 
 @Configuration
 @EnableTransactionManagement
@@ -25,6 +32,10 @@ import javax.sql.DataSource;
 )
 public class PrimaryDatabaseConfig {
 
+    @Autowired
+    private AppProperties appProperties;
+
+
     @Bean(name = "primaryDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.primary")
     public DataSource primaryDataSource() {
@@ -33,11 +44,19 @@ public class PrimaryDatabaseConfig {
 
     @Bean(name = "primaryEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(
-            @Qualifier("primaryDataSource") DataSource dataSource) {
+            @Qualifier("primaryDataSource") DataSource dataSource) throws Exception {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
         em.setPackagesToScan(new String[]{"com.sr.capital.entity.primary"});
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+
+        // Register the AttributeEncryptor
+        // Apply AttributeEncryptor using MetadataBuilderContributor
+        // Register AttributeEncryptor as a TypeContributor
+        //em.getJpaPropertyMap().put("hibernate.type_contributors", Collections.singletonList(attributeEncryptor));
+       // em.getJpaPropertyMap().put("hibernate.type_contributors",attributeEncryptor);
+
+
         return em;
     }
 

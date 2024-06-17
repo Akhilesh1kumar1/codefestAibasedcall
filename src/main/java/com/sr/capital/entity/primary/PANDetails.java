@@ -19,15 +19,15 @@ public class PANDetails extends LongBaseEntity{
     @Column(name = "user_id")
     Long userId;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "pan")
     String panNumber;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "pan_image_link_1")
     String panImageLink1;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "pan_image_link_2")
     String panImageLink2;
 

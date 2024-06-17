@@ -27,7 +27,7 @@ import static com.sr.capital.helpers.enums.ServiceName.SHIPROCKET;
 import static org.apache.http.HttpStatus.SC_OK;
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class ShiprocketClient {
 
     LoggerUtil loggerUtil = LoggerUtil.getLogger(ShiprocketClient.class);

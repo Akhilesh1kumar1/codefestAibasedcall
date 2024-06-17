@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor
 public class GenericCreditPartnerService implements CreditPartnerService {
     @Override
     public AccessTokenResponseDto getAccessToken(AccessTokenRequestDto accessTokenRequestDto) {

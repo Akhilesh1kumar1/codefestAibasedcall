@@ -26,7 +26,7 @@ import static com.sr.capital.helpers.constants.Constants.Separators.QUERY_PARAM_
 import static com.sr.capital.helpers.enums.FileProcessingStatus.ACKNOWLEDGEMENT_PENDING;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class FileUploadServiceImpl implements FileUploadService {
 
     final FileUploadDataRepository fileUploadDataRepository;

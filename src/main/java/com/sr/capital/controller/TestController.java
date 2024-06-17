@@ -4,6 +4,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.repository.secondary.TestRepository;
 import com.sr.capital.service.impl.TestServiceImpl;
 import com.sr.capital.external.shiprocket.client.ShiprocketClient;
 import com.sr.capital.external.shiprocket.dto.response.KycResponse;
@@ -19,12 +20,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/test")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class TestController {
 
     final ShiprocketClient shiprocketClient;
     final TestServiceImpl testService;
-
+    final TestRepository testRepository;
     @GetMapping()
     public GenericResponse testValidateTokenApi(@RequestParam("token") String token) throws UnirestException, CustomException {
 
@@ -40,5 +41,11 @@ public class TestController {
     public GenericResponse<KycResponse> kycDetails(@RequestParam("token") String token) throws UnirestException, CustomException {
 
         return ResponseBuilderUtil.getResponse(shiprocketClient.getKycDetails(token), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/db")
+    public GenericResponse testMultiteDb(@RequestParam("token") String token) throws UnirestException, CustomException {
+
+        return ResponseBuilderUtil.getResponse(testRepository.findAll(), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
     }
 }

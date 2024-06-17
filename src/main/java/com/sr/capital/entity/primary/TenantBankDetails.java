@@ -34,15 +34,15 @@ public class TenantBankDetails extends UUIDBaseEntity{
     @Column(name = "base_bank_id")
     Long baseBankId;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "account_number")
     String accountNumber;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "account_holder_name")
     String accountHolderName;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "ifsc_code")
     String ifscCode;
 
@@ -50,11 +50,11 @@ public class TenantBankDetails extends UUIDBaseEntity{
     @Column(name = "bank_account_type")
     BankAccountType bankAccountType;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "account_statement_link")
     String accountStatementLink;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "statement_password")
     String statementPassword;
 

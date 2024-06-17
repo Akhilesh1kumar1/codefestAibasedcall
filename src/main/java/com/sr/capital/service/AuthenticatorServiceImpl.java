@@ -16,7 +16,7 @@ import static com.sr.capital.helpers.constants.Constants.Headers.TENANT_HEADER;
 import static com.sr.capital.helpers.constants.Constants.Headers.TOKEN;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class AuthenticatorServiceImpl implements AuthenticatorService {
 
     final ShiprocketClient shiprocketClient;

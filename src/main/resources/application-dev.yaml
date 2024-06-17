@@ -7,15 +7,6 @@ spring:
       port: ${MONGO_PORT}
       #username: ${MONGO_USERNAME}
       #password: ${MONGO_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        jdbc:
-          time_zone: UTC
-    show-sql: 'true'
   datasource:
     primary:
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -23,11 +14,14 @@ spring:
         maximum-pool-size: '10'
         minimum-idle: '5'
         pool-name: HikariPoolPrimary
-      url: ${MYSQL_DATASOURCE_URI}
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL8Dialect
+      jdbc-url: ${MYSQL_DATASOURCE_URI}
       username: ${MYSQL_DATASOURCE_APP_USERNAME}
       password: ${MYSQL_DATASOURCE_APP_PASSWORD}
     secondary:
-      url: ${REPORT_MYSQL_DATASOURCE_URI}
+      jdbc-url: ${REPORT_MYSQL_DATASOURCE_URI}
       username: ${REPORT_MYSQL_DATASOURCE_APP_USERNAME}
       password: ${REPORT_MYSQL_DATASOURCE_APP_PASSWORD}
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -35,6 +29,9 @@ spring:
         maximum-pool-size: '10'
         minimum-idle: '5'
         pool-name: HikariPoolSecondary
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL8Dialect
     #driver-class-name: com.mysql.cj.jdbc.Driver
     #hikari:
       #maximum-pool-size: '10'

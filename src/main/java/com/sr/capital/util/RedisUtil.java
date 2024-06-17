@@ -16,7 +16,7 @@ import static com.sr.capital.helpers.constants.Constants.ServiceConstants.FILE_U
 import static com.sr.capital.helpers.constants.Constants.ServiceConstants.PROGRESS_PERCENTAGE;
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class RedisUtil {
 
     private final LoggerUtil loggerUtil = LoggerUtil.getLogger(RedisUtil.class);

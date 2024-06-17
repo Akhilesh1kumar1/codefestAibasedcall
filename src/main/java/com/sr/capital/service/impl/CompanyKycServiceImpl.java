@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import static com.sr.capital.helpers.constants.Constants.ServiceConstants.ADHAR_IMAGE_FOLDER_NAME;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class CompanyKycServiceImpl implements CompanyKycService {
 
     final RequestValidationStrategy requestValidationStrategy;

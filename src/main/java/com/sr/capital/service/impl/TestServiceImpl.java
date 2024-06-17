@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 @Slf4j
 public class TestServiceImpl {
 

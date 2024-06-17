@@ -22,49 +22,49 @@ public class CompanyLoanVendorMappingEntity extends LongBaseEntity{
     @Column(name = "partner_id")
     Long partnerId;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "client_id")
     String clientId;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "client_secret")
     String clientSecret;
 
     @Column(name = "app_id")
     String appId;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "app_secret")
     String appSecret;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "username")
     String userName;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "password")
     String password;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "auth_code")
     String authCode;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "refresh_token", length = 1024)
     String refreshToken;
 
     @Column(name = "description", length = 1024)
     String description;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "access_token", length = 1024)
     String accessToken;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "basic_auth")
     String basicAuth;
 
-    @Convert(converter = AttributeEncryptor.class)
+    //@convert(converter = AttributeEncryptor.class)
     @Column(name = "kms_key")
     String kmsKey;
 

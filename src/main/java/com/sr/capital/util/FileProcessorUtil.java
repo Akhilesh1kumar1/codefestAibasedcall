@@ -17,7 +17,7 @@ import static com.sr.capital.helpers.constants.Constants.FileContentTypes.*;
 @Slf4j
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class FileProcessorUtil {
 
     final CsvFileProcessor csvFileProcessor;

@@ -26,7 +26,7 @@ import static com.sr.capital.helpers.constants.ProviderServiceConstants.*;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class ProviderHelperUtil {
 
     final JsonPathEvaluator jsonPathEvaluator;

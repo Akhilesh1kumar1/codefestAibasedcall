@@ -25,7 +25,7 @@ import static com.sr.capital.helpers.constants.Constants.ServiceConstants.REQUES
 
 @Slf4j
 @ControllerAdvice
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     final ExceptionsTranslator exceptionsTranslator;

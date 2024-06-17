@@ -1,7 +1,9 @@
 package com.sr.capital.config;
 
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -14,8 +16,10 @@ import java.security.Key;
 import java.util.Base64;
 
 
-@Component
-public class AttributeEncryptor implements AttributeConverter<String, String> {
+
+//@Component
+//@Converter(autoApply = true)
+public class AttributeEncryptor {//implements AttributeConverter<String, String> {
 
     private AppProperties appProperties;
     private static final String AES = "AES";
@@ -27,7 +31,7 @@ public class AttributeEncryptor implements AttributeConverter<String, String> {
         cipher = Cipher.getInstance(AES);
     }
 
-    @Override
+    //@Override
     public String convertToDatabaseColumn(String attribute) {
         try {
             if(StringUtils.hasText(attribute)) {
@@ -40,7 +44,7 @@ public class AttributeEncryptor implements AttributeConverter<String, String> {
         }
     }
 
-    @Override
+    //@Override
     public String convertToEntityAttribute(String dbData) {
         try {
             if(StringUtils.hasText(dbData)) {

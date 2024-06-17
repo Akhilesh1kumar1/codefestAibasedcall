@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class LoanOfferServiceImpl implements LoanOfferService {
 
     final LoanOfferRepository loanOfferRepository;

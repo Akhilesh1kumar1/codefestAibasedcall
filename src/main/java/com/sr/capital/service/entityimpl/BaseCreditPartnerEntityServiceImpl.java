@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.NO_RECORD_FOUND_WITH_GIVEN_DETAILS;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class BaseCreditPartnerEntityServiceImpl {
 
     final BaseCreditPartnerRepository baseCreditPartnerRepository;

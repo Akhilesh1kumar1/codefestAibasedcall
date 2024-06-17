@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     final RequestValidationStrategy requestValidationStrategy;
