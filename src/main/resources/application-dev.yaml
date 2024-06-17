@@ -112,6 +112,8 @@ app:
         baseUrl: ${SHIPROCKET_API_BASE_URL:https://qa-api-1.kartrocket.com}
         endpoints:
           kyc-details: /v1/settings/kyc/is-selfie-enable
+          user-details-api-token: "/v1/external/omuni2/auth/user-details"
+          user-details-internal-token: "/v1/auth/login/user"
       auth:
         baseUrl: ${SHIPROCKET_AUTH_BASE_URL:https://sr-auth-qa-1.kartrocket.com}
         endpoints:
@@ -208,4 +210,3 @@ allowed:
 
 encryption:
   key: ${ENCRYPTION_KEY:test}
-
