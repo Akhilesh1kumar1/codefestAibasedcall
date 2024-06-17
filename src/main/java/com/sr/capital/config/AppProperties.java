@@ -105,10 +105,10 @@ public class AppProperties {
     private String shiprocketKycEndPoint;
 
 
-    @Value("${app.external.shiprocket.endpoints.user-details-api-token}")
+    @Value("${app.external.shiprocket.api.endpoints.user-details-api-token}")
     private String shiprocketApiTokenUserDetailsEndpoint;
 
-    @Value("${app.external.shiprocket.endpoints.user-details-internal-token}")
+    @Value("${app.external.shiprocket.api.endpoints.user-details-internal-token}")
     private String shiprocketInternalTokenUserDetailsEndpoint;
     //Verification Properties
 
