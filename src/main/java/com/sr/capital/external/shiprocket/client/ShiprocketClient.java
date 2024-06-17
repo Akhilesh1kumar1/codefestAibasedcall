@@ -7,6 +7,7 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.dto.request.ValidateTokenRequest;
 import com.sr.capital.external.dto.response.ValidateTokenResponse;
 import com.sr.capital.external.shiprocket.dto.response.ApiTokenUserDetailsResponse;
+import com.sr.capital.external.shiprocket.dto.response.GetCompanyDetails;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
 import com.sr.capital.external.shiprocket.dto.response.KycResponse;
 import com.sr.capital.util.LoggerUtil;
@@ -104,5 +105,29 @@ public class ShiprocketClient {
         return webClientUtil.makeExternalCallBlocking(SHIPROCKET, appProperties.getShiprocketApiBaseUrl(),
                 appProperties.getShiprocketInternalTokenUserDetailsEndpoint(), HttpMethod.GET, "test",
                 headers, params, null, InternalTokenUserDetailsResponse.class);
+    }
+
+
+    public GetCompanyDetails getCompanyDetails(String token) throws UnirestException, CustomException {
+
+        Map<String, String> headers = getHeaders(token);
+        String url = appProperties.getShiprocketApiBaseUrl() + appProperties.getShiprocketValidateTokenEndPoint();
+
+
+        HttpResponse<GetCompanyDetails> validateTokenResponse = getInstance().withHeaders(headers).get(url, GetCompanyDetails.class);
+
+     /*   if ((validateTokenResponse.getStatus() != SC_OK && validateTokenResponse.getBody() == null)
+                || !validateTokenResponse.getBody().getCode()
+                .equalsIgnoreCase(String.valueOf(org.apache.http.HttpStatus.SC_OK))) {
+            loggerUtil.error("Received response: " + validateTokenResponse.getBody() + " with status code: "
+                    + validateTokenResponse.getStatus() + " while validating token");
+            throw new CustomException(
+                    String.format("Received response: %s with status code: %s while validating token ",
+                            validateTokenResponse.getBody(),
+                            validateTokenResponse.getStatus()),
+                    HttpStatus.UNAUTHORIZED);
+        }*/
+
+        return validateTokenResponse.getBody();
     }
 }

@@ -29,7 +29,8 @@ public class RequestDataFilter implements Filter {
     static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher("/*/health/**"),
             new AntPathRequestMatcher("/*/cache/**"),
-            new AntPathRequestMatcher("/*/file-upload//cool-off-time")
+            new AntPathRequestMatcher("/*/file-upload//cool-off-time"),
+            new AntPathRequestMatcher("/*/external/**")
     );
 
     @Autowired

@@ -3,7 +3,9 @@ package com.sr.capital.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.sr.capital.entity.LoanOffer;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
@@ -15,6 +17,7 @@ import java.util.UUID;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class LoanOfferDetails extends BasesResponse {
 
     UUID id;
@@ -38,4 +41,15 @@ public class LoanOfferDetails extends BasesResponse {
     LocalDate startDate;
 
     LocalDate endDate;
+
+
+    public static LoanOfferDetails mapLoanOffer(LoanOffer loanOffer){
+        LoanOfferDetails loanOfferDetails = LoanOfferDetails.builder().id(loanOffer.getId())
+                .loanDuration(loanOffer.getLoanDuration()).loanType(loanOffer.getLoanType())
+                .endDate(loanOffer.getEndDate()).interestRate(loanOffer.getInterestRate())
+                .preApproved(loanOffer.getPreApproved()).loanVendorId(loanOffer.getLoanVendorId()).srCompanyId(loanOffer.getSrCompanyId())
+                .preApprovedLoanAmount(loanOffer.getPreApprovedLoanAmount()).startDate(loanOffer.getStartDate()).status(loanOffer.getStatus())
+                .build();
+        return loanOfferDetails;
+    }
 }

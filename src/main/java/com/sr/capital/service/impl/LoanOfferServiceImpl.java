@@ -31,7 +31,9 @@ public class LoanOfferServiceImpl implements LoanOfferService {
             loanOffers =loanOfferRepository.findBySrCompanyIdAndStatusAndIsEnabled(srCompanyId,status,enabled);
         }
 
+        List<LoanOfferDetails> offerDetails =new ArrayList<>();
 
-        return MapperUtils.convertValue(loanOffers,TYPE_REF);
+        loanOffers.forEach(loanOffer -> {offerDetails.add(LoanOfferDetails.mapLoanOffer(loanOffer));});
+        return offerDetails;
     }
 }
