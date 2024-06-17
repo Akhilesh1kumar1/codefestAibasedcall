@@ -3,8 +3,8 @@ package com.sr.capital.listner;
 
 
 
-import com.sr.capital.entity.AuditData;
-import com.sr.capital.entity.interfaces.Auditable;
+import com.sr.capital.entity.primary.AuditData;
+import com.sr.capital.entity.primary.interfaces.Auditable;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import org.slf4j.MDC;

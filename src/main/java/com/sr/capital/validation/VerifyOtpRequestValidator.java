@@ -3,7 +3,7 @@ package com.sr.capital.validation;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.VerifyOtpRequest;
-import com.sr.capital.entity.VerificationEntity;
+import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.exception.verification.ExpiredOtpException;
 import com.sr.capital.exception.verification.IncorrectOtpException;
 import com.sr.capital.exception.verification.InvalidVerificationTokenException;

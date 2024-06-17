@@ -3,7 +3,7 @@ package com.sr.capital.service.impl;
 import com.omunify.core.util.ExceptionUtils;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
-import com.sr.capital.entity.FileUploadData;
+import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.repository.mongo.FileUploadDataRepository;
 import com.sr.capital.service.FileUploadService;
 import com.sr.capital.util.LoggerUtil;

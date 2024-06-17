@@ -3,7 +3,7 @@ package com.sr.capital.validation;
 import com.omunify.core.util.ExceptionUtils;
 
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
-import com.sr.capital.entity.FileUploadData;
+import com.sr.capital.entity.primary.FileUploadData;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;

@@ -4,8 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.sr.capital.config.AppProperties;
-import com.sr.capital.entity.Task;
-import com.sr.capital.entity.VerificationEntity;
+
+import com.sr.capital.entity.primary.Task;
+import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.exception.custom.IncompatibleDetailsException;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
 import com.sr.capital.exception.custom.TaskProcessingException;

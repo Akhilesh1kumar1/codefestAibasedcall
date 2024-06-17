@@ -1,7 +1,7 @@
 package com.sr.capital.kyc.service.strategy;
 
 
-import com.sr.capital.entity.Task;
+import com.sr.capital.entity.primary.Task;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
 import com.sr.capital.exception.custom.TaskProcessingException;
 import com.sr.capital.exception.custom.VerifierNotFound;

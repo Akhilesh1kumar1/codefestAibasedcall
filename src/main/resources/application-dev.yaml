@@ -17,13 +17,31 @@ spring:
           time_zone: UTC
     show-sql: 'true'
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      maximum-pool-size: '10'
-      minimum-idle: '5'
-    url: ${MYSQL_DATASOURCE_URI}
-    username: ${MYSQL_DATASOURCE_APP_USERNAME}
-    password: ${MYSQL_DATASOURCE_APP_PASSWORD}
+    primary:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: '10'
+        minimum-idle: '5'
+        pool-name: HikariPoolPrimary
+      url: ${MYSQL_DATASOURCE_URI}
+      username: ${MYSQL_DATASOURCE_APP_USERNAME}
+      password: ${MYSQL_DATASOURCE_APP_PASSWORD}
+    secondary:
+      url: ${REPORT_MYSQL_DATASOURCE_URI}
+      username: ${REPORT_MYSQL_DATASOURCE_APP_USERNAME}
+      password: ${REPORT_MYSQL_DATASOURCE_APP_PASSWORD}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: '10'
+        minimum-idle: '5'
+        pool-name: HikariPoolSecondary
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    #hikari:
+      #maximum-pool-size: '10'
+      #minimum-idle: '5'
+    #rl: ${MYSQL_DATASOURCE_URI}
+    #username: ${MYSQL_DATASOURCE_APP_USERNAME}
+    #password: ${MYSQL_DATASOURCE_APP_PASSWORD}
   flyway:
     enabled: 'false'
     baseline-on-migrate: 'true'
@@ -190,3 +208,4 @@ allowed:
 
 encryption:
   key: ${ENCRYPTION_KEY:test}
+

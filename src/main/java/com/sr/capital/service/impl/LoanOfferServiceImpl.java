@@ -2,8 +2,8 @@ package com.sr.capital.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.sr.capital.dto.response.LoanOfferDetails;
-import com.sr.capital.entity.LoanOffer;
-import com.sr.capital.repository.LoanOfferRepository;
+import com.sr.capital.entity.primary.LoanOffer;
+import com.sr.capital.repository.primary.LoanOfferRepository;
 import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;

@@ -36,7 +36,7 @@ public class ShiprocketClient {
 
     final WebClientUtil webClientUtil;
 
-    public boolean validateToken(String token) throws UnirestException, CustomException {
+    public ValidateTokenResponse validateToken(String token) throws UnirestException, CustomException {
 
         Map<String, String> headers = getHeaders(token);
         String url = appProperties.getShiprocketAuthBaseUrl() + appProperties.getShiprocketValidateTokenEndPoint();
@@ -58,7 +58,7 @@ public class ShiprocketClient {
                     HttpStatus.UNAUTHORIZED);
         }
 
-        return true;
+        return validateTokenResponse.getBody();
     }
 
     private Map<String, String> getHeaders(String token) {

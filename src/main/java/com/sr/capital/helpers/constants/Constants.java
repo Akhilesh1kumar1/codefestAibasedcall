@@ -164,6 +164,8 @@ public final class Constants {
         public static final String USER_HEADER = "X-User-ID";
         public static final String REFERER_HEADER = "X-Referer";
         public static final String SERVICE_SECRET_HEADER = "X-Service-Secret";
+
+        public static final String TOKEN = "X-Token";
     }
 
 

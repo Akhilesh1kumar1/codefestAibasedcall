@@ -49,7 +49,7 @@ public class RequestDataFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        authenticatorService.authenticateRequest(req);
+        authenticatorService.authenticateRequest(request);
         if (isPreflightRequest(request)) {
             chain.doFilter(req, res);
             return;
@@ -64,9 +64,9 @@ public class RequestDataFilter implements Filter {
     private void setRequestDataHeaders(HttpServletRequest request) {
         String correlationId = request.getHeader(CORRELATION_HEADER);
         setCorrelationId(correlationId);
-        String userId = request.getHeader(USER_HEADER);
+      /*  String userId = request.getHeader(USER_HEADER);
         setUserId(userId);
-        RequestData.setTenantId(request.getHeader(TENANT_HEADER));
+        RequestData.setTenantId(request.getHeader(TENANT_HEADER));*/
     }
 
     private static void setUserId(String userId) {
@@ -94,13 +94,13 @@ public class RequestDataFilter implements Filter {
 
     private boolean validateRequestHeaders(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        if (StringUtils.isEmpty(request.getHeader(TENANT_HEADER)) && !PUBLIC_URLS.matches(request)) {
+        if (StringUtils.isEmpty(request.getHeader(TENANT_HEADER)) && !PUBLIC_URLS.matches(request) && RequestData.getTenantId()==null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Tenant ID missing from headers");
             return false;
         }
 
         if ((ThreadContextUtil.getUserContext() == null || ThreadContextUtil.getUserContext().getUserId() == null)
-                && StringUtils.isEmpty(request.getHeader(USER_HEADER)) && !PUBLIC_URLS.matches(request)) {
+                && StringUtils.isEmpty(request.getHeader(USER_HEADER)) && !PUBLIC_URLS.matches(request) && RequestData.getUserId()==null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID missing from headers");
             return false;
         }

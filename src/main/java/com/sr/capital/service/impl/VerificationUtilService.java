@@ -3,7 +3,7 @@ package com.sr.capital.service.impl;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
-import com.sr.capital.entity.VerificationEntity;
+import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.helpers.enums.VerificationType;

@@ -1,7 +1,7 @@
 package com.sr.capital.service.impl;
 
 import com.sr.capital.dto.request.VerifyOtpRequest;
-import com.sr.capital.entity.VerificationEntity;
+import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.service.VerificationService;
 import com.sr.capital.service.entityimpl.VerificationEntityServiceImpl;

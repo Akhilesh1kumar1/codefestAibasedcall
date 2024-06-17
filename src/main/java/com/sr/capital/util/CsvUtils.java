@@ -6,7 +6,7 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-import com.sr.capital.entity.FileUploadData;
+import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.service.FileProcessor;

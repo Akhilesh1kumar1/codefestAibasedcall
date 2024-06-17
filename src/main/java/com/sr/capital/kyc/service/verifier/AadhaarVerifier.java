@@ -2,8 +2,8 @@ package com.sr.capital.kyc.service.verifier;
 
 
 import com.sr.capital.config.AppProperties;
-import com.sr.capital.entity.Task;
-import com.sr.capital.entity.VerificationEntity;
+import com.sr.capital.entity.primary.Task;
+import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.entity.mongo.kyc.KycVerifiedDetails;
 import com.sr.capital.entity.mongo.kyc.child.AadhaarVerifiedDetails;
 import com.sr.capital.entity.mongo.kyc.child.ErrorDetails;

@@ -1,6 +1,6 @@
 package com.sr.capital.validation;
 
-import com.sr.capital.repository.LoanApplicationRepository;
+import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.RequestValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

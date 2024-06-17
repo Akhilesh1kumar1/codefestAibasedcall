@@ -2,9 +2,9 @@ package com.sr.capital.service.impl;
 
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
-import com.sr.capital.entity.LoanApplication;
+import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.helpers.enums.RequestType;
-import com.sr.capital.repository.LoanApplicationRepository;
+import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.LoanApplicationService;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
 import com.sr.capital.util.MapperUtils;

@@ -1,6 +1,6 @@
 package com.sr.capital.service.impl;
 
-import com.sr.capital.entity.FileUploadData;
+import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.service.FileProcessor;
 import org.springframework.stereotype.Service;
 

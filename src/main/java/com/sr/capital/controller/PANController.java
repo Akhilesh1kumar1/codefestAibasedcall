@@ -17,7 +17,7 @@ import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.PANUpdateRequestDto;
 import com.sr.capital.dto.response.PANUpdateResponse;
-import com.sr.capital.entity.PANDetails;
+import com.sr.capital.entity.primary.PANDetails;
 import com.sr.capital.service.PANService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;

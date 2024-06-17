@@ -1,7 +1,7 @@
 package com.sr.capital.service;
 
 
-import com.sr.capital.entity.FileUploadData;
+import com.sr.capital.entity.primary.FileUploadData;
 
 import java.io.InputStream;
 

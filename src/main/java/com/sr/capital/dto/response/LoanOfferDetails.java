@@ -3,7 +3,7 @@ package com.sr.capital.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.sr.capital.entity.LoanOffer;
+import com.sr.capital.entity.primary.LoanOffer;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;

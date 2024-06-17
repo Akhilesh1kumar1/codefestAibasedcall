@@ -1,7 +1,7 @@
 package com.sr.capital.dto.request;
 
 
-import com.sr.capital.entity.VerificationEntity;
+import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.helpers.enums.CallbackType;
 import com.sr.capital.helpers.enums.CommunicationChannels;
 import com.sr.capital.helpers.enums.VerificationType;

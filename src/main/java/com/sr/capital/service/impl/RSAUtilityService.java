@@ -1,9 +1,9 @@
 package com.sr.capital.service.impl;
 
 
-import com.sr.capital.entity.RSAKeys;
+import com.sr.capital.entity.primary.RSAKeys;
 import com.sr.capital.exception.custom.RSAKeysNotFoundException;
-import com.sr.capital.repository.RSAKeysRepo;
+import com.sr.capital.repository.primary.RSAKeysRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

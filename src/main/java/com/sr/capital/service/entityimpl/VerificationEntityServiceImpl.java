@@ -1,10 +1,10 @@
 package com.sr.capital.service.entityimpl;
 
 
-import com.sr.capital.entity.VerificationEntity;
+import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.helpers.enums.VerificationStatus;
 import com.sr.capital.helpers.enums.VerificationType;
-import com.sr.capital.repository.VerificationRepository;
+import com.sr.capital.repository.primary.VerificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;

@@ -1,7 +1,7 @@
 package com.sr.capital.service.entityimpl;
 
-import com.sr.capital.entity.ProviderTemplateConfigEntity;
-import com.sr.capital.repository.ProviderTemplateConfigRepository;
+import com.sr.capital.entity.primary.ProviderTemplateConfigEntity;
+import com.sr.capital.repository.primary.ProviderTemplateConfigRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

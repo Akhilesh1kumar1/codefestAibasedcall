@@ -1,8 +1,8 @@
 package com.sr.capital.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.sr.capital.entity.ProviderTemplateConfigEntity;
-import com.sr.capital.entity.ProviderUrlConfigEntity;
+import com.sr.capital.entity.primary.ProviderTemplateConfigEntity;
+import com.sr.capital.entity.primary.ProviderUrlConfigEntity;
 import com.sr.capital.helpers.enums.ProviderUrlConfigTypes;
 import com.sr.capital.service.entityimpl.ProviderTemplateConfigServiceImpl;
 import com.sr.capital.service.entityimpl.ProviderUrlConfigEntityServiceImpl;

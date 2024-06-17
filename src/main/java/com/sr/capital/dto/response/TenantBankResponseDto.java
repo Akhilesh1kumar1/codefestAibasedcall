@@ -3,7 +3,7 @@ package com.sr.capital.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.sr.capital.entity.TenantBankDetails;
+import com.sr.capital.entity.primary.TenantBankDetails;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;

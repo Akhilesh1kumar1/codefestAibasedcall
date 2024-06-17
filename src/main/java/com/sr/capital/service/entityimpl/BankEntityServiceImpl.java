@@ -2,11 +2,11 @@ package com.sr.capital.service.entityimpl;
 
 import com.sr.capital.dto.request.CreateBaseBankDto;
 import com.sr.capital.dto.response.BaseBankResponseDto;
-import com.sr.capital.entity.Bank;
-import com.sr.capital.entity.BaseCreditPartner;
+import com.sr.capital.entity.primary.Bank;
+import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.constants.Constants;
-import com.sr.capital.repository.BankRepository;
+import com.sr.capital.repository.primary.BankRepository;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RMapCache;

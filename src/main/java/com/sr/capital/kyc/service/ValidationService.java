@@ -1,7 +1,7 @@
 package com.sr.capital.kyc.service;
 
 import com.sr.capital.dto.RequestData;
-import com.sr.capital.entity.VerificationEntity;
+import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.exception.custom.UnsupportedMediaType;

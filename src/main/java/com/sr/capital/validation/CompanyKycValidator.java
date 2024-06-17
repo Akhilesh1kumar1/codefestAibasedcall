@@ -1,9 +1,9 @@
 package com.sr.capital.validation;
 
 import com.sr.capital.dto.request.CompanyKycDetailsRequest;
-import com.sr.capital.entity.AdharDetails;
+import com.sr.capital.entity.primary.AdharDetails;
 import com.sr.capital.exception.custom.AdharNotFoundException;
-import com.sr.capital.repository.CompanyKycRepository;
+import com.sr.capital.repository.primary.CompanyKycRepository;
 import com.sr.capital.service.AdharService;
 import com.sr.capital.service.RequestValidator;
 import lombok.AllArgsConstructor;

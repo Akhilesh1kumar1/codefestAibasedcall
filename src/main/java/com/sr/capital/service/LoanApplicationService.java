@@ -2,7 +2,7 @@ package com.sr.capital.service;
 
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
-import com.sr.capital.entity.LoanApplication;
+import com.sr.capital.entity.primary.LoanApplication;
 
 public interface LoanApplicationService {
 

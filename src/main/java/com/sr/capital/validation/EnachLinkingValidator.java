@@ -1,8 +1,8 @@
 package com.sr.capital.validation;
 
 import com.sr.capital.dto.request.EnachLinkingRequestDto;
-import com.sr.capital.entity.TenantBankDetails;
-import com.sr.capital.repository.TenantBankDetailsRepository;
+import com.sr.capital.entity.primary.TenantBankDetails;
+import com.sr.capital.repository.primary.TenantBankDetailsRepository;
 import com.sr.capital.service.RequestValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

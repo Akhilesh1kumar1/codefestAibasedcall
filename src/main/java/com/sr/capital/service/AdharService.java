@@ -2,7 +2,7 @@ package com.sr.capital.service;
 
 import com.sr.capital.dto.request.AdharUpdateRequestDto;
 import com.sr.capital.dto.response.AdharUpdateResponse;
-import com.sr.capital.entity.AdharDetails;
+import com.sr.capital.entity.primary.AdharDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

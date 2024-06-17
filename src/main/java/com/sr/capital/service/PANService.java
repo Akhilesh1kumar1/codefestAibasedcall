@@ -2,7 +2,7 @@ package com.sr.capital.service;
 
 import com.sr.capital.dto.request.PANUpdateRequestDto;
 import com.sr.capital.dto.response.PANUpdateResponse;
-import com.sr.capital.entity.PANDetails;
+import com.sr.capital.entity.primary.PANDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

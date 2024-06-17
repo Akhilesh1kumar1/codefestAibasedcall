@@ -1,9 +1,9 @@
 package com.sr.capital.service.entityimpl;
 
-import com.sr.capital.entity.Task;
+import com.sr.capital.entity.primary.Task;
 import com.sr.capital.helpers.enums.TaskStatus;
 import com.sr.capital.helpers.enums.TaskType;
-import com.sr.capital.repository.TaskRepo;
+import com.sr.capital.repository.primary.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

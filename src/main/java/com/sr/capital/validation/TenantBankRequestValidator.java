@@ -2,9 +2,9 @@ package com.sr.capital.validation;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.BankDetailsRequestDto;
-import com.sr.capital.entity.TenantBankDetails;
+import com.sr.capital.entity.primary.TenantBankDetails;
 import com.sr.capital.exception.custom.CustomException;
-import com.sr.capital.repository.TenantBankDetailsRepository;
+import com.sr.capital.repository.primary.TenantBankDetailsRepository;
 import com.sr.capital.service.RequestValidator;
 import com.sr.capital.service.impl.CryptoService;
 import lombok.AllArgsConstructor;
