@@ -7,10 +7,7 @@ import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,6 +25,12 @@ public class LoanOfferController {
     @GetMapping
     public GenericResponse<List<LoanOfferDetails>> getLoanOfferDetails(@RequestParam("srCompanyId") Long srCompanyId,@RequestParam(value = "status",required = false) String status,@RequestParam("enabled") Boolean enabled){
         return ResponseBuilderUtil.getResponse(loanOfferService.getLoanOfferDetails(srCompanyId,status,enabled), SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @PostMapping("/save")
+    public GenericResponse<LoanOfferDetails> saveLoanOffer(@RequestBody LoanOfferDetails loanOfferDetails){
+        return ResponseBuilderUtil.getResponse(loanOfferService.saveLoanOffer(loanOfferDetails), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 }

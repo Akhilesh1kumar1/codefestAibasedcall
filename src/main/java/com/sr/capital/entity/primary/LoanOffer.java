@@ -1,5 +1,6 @@
 package com.sr.capital.entity.primary;
 
+import com.sr.capital.dto.response.LoanOfferDetails;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -49,4 +50,11 @@ public class LoanOffer extends UUIDBaseEntity{
 
     @Column(name = "end_date")
     LocalDate endDate;
+
+    public static LoanOffer mapLoanOffer(LoanOfferDetails loanOfferDetails){
+        LoanOffer loanOffer =LoanOffer.builder().loanDuration(loanOfferDetails.getLoanDuration()).loanType(loanOfferDetails.getLoanType()).loanVendorId(loanOfferDetails.getLoanVendorId()).loanDuration(loanOfferDetails.getLoanDuration()).preApprovedLoanAmount(loanOfferDetails.getPreApprovedLoanAmount())
+                .endDate(loanOfferDetails.getEndDate()).startDate(loanOfferDetails.getStartDate()).interestRate(loanOfferDetails.getInterestRate()).srCompanyId(loanOfferDetails.getSrCompanyId()).status(loanOfferDetails.getStatus()).preApproved(loanOfferDetails.getPreApproved()).build();
+        loanOffer.setIsEnabled(true);
+        return loanOffer;
+    }
 }

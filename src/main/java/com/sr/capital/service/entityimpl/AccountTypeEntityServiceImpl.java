@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor(onConstructor =@__(@Autowired))
+@AllArgsConstructor
 public class AccountTypeEntityServiceImpl {
 
     final AccountTypeRepository accountTypeRepository;

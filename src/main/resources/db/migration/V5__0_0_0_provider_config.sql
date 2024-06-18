@@ -47,3 +47,26 @@ INSERT INTO `provider_url_config` (`partner_id`,`group`,`type`,`key`,`value`,`pr
 INSERT INTO `provider_template` (`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,'$.code','/code','static','VALIDATE_TOKEN_RESPONSE','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
 INSERT INTO `provider_template` (`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,'$.msg','/msg','static','VALIDATE_TOKEN_RESPONSE','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
 
+
+
+
+CREATE TABLE loan_offer (
+    id binary(16) NOT NULL,
+    sr_company_id BIGINT,
+    loan_vendor_id BIGINT,
+    loan_type VARCHAR(255),
+    pre_approved BOOLEAN,
+    pre_approved_loan_amount DECIMAL(15, 2),
+    interest_rate DOUBLE,
+    loan_duration INT,
+    status VARCHAR(255),
+    start_date DATE,
+    end_date DATE,
+    `created_at` datetime(6) DEFAULT NULL,
+          `created_by` varchar(255) DEFAULT NULL,
+          `updated_at` datetime(6) DEFAULT NULL,
+          `updated_by` varchar(255) DEFAULT NULL,
+          `is_enabled` bit(1) DEFAULT NULL
+);
+
+ALTER TABLE loan_offer ADD INDEX sr_company_id_loan_vendor_id (sr_company_id, loan_vendor_id);

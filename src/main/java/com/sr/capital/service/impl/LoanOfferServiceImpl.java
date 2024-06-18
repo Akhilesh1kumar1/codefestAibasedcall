@@ -36,4 +36,11 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         loanOffers.forEach(loanOffer -> {offerDetails.add(LoanOfferDetails.mapLoanOffer(loanOffer));});
         return offerDetails;
     }
+
+    @Override
+    public LoanOfferDetails saveLoanOffer(LoanOfferDetails loanOfferDetails) {
+        LoanOffer loanOffer =LoanOffer.mapLoanOffer(loanOfferDetails);
+        loanOfferRepository.save(loanOffer);
+        return loanOfferDetails;
+    }
 }
