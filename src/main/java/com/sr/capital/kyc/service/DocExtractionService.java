@@ -146,8 +146,8 @@ public class DocExtractionService {
                 .fileName(fileDetails.getFileName())
                 .build();
         try {
-           /* awsS3Service.uploadFileTos3bucket(s3Request);
-            Files.deleteIfExists(Path.of(fileDetails.getFileName()));*/
+           S3Util.uploadFileToS3(s3Request.getBucketName(),s3Request.getFileName(),s3Request.getFile());
+            Files.deleteIfExists(Path.of(fileDetails.getFileName()));
         } catch (Exception exception) {
             Files.deleteIfExists(Path.of(fileDetails.getFileName()));
             loggerUtil.error("AWS EXCEPTION :: unable to upload document to S3 Bucket. Error: " + exception.getMessage());
