@@ -49,7 +49,8 @@ public class RequestDataFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        authenticatorService.authenticateRequest(request);
+        if(!PUBLIC_URLS.matches(request))
+           authenticatorService.authenticateRequest(request);
         if (isPreflightRequest(request)) {
             chain.doFilter(req, res);
             return;
