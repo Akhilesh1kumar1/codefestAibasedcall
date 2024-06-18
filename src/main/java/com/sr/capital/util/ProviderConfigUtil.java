@@ -18,7 +18,7 @@ import static com.sr.capital.helpers.constants.ProviderServiceConstants.DYNAMIC;
 import static com.sr.capital.helpers.constants.ProviderServiceConstants.STATIC_TYPE;
 
 @Service
-@AllArgsConstructor(onConstructor =@__(@Autowired))
+@AllArgsConstructor
 @Slf4j
 public class ProviderConfigUtil {
 

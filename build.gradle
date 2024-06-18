@@ -23,10 +23,19 @@ repositories {
 
 }
 
+configurations {
+	all {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
 dependencies {
 
 	//Basic Starter dependencies
-	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation('org.springframework.boot:spring-boot-starter')
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -59,8 +68,8 @@ dependencies {
 		exclude group: 'org.springframework.boot'
 	}
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave:1.1.5'
-	implementation (group: 'com.omunify', name: 'common-logger', version: '0.0.1')
-	implementation (group: 'com.omunify', name: 'common-interceptor', version: '1.0.1') {
+	implementation (group: 'com.omunify', name: 'common-logger', version: '0.0.2')
+	implementation (group: 'com.omunify', name: 'common-interceptor', version: '1.0.2') {
 		exclude group: 'org.projectlombok'
 		exclude group: 'org.springframework.boot'
 	}
