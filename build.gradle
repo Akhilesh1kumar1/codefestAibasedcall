@@ -68,8 +68,8 @@ dependencies {
 		exclude group: 'org.springframework.boot'
 	}
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave:1.1.5'
-	implementation (group: 'com.omunify', name: 'common-logger', version: '0.0.2')
-	implementation (group: 'com.omunify', name: 'common-interceptor', version: '1.0.2') {
+	implementation (group: 'com.omunify', name: 'common-logger', version: '0.0.3')
+	implementation (group: 'com.omunify', name: 'common-interceptor', version: '1.0.3') {
 		exclude group: 'org.projectlombok'
 		exclude group: 'org.springframework.boot'
 	}
