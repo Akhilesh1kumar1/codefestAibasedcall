@@ -75,6 +75,9 @@ dependencies {
 	}
 	implementation("com.omunify:restutil:0.0.2-v2")
 	implementation('com.omunify:filters:1.0.1')
+	implementation('com.omunify:encryption:0.0.6-v3') {
+		exclude group: 'org.springframework.boot'
+	}
 
 
 	//adhoc

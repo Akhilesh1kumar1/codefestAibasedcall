@@ -122,25 +122,27 @@ CREATE TABLE `tenant_bank_details` (
 
 ALTER TABLE tenant_bank_details ADD CONSTRAINT account_number_constraint UNIQUE (account_number,sr_company_id);
 
-CREATE TABLE if not exists `user` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) DEFAULT NULL,
-  `first_name` varchar(255) DEFAULT NULL,
-  `is_email_verified` bit(1) DEFAULT NULL,
-  `is_mobile_verified` bit(1) DEFAULT NULL,
-  `last_name` varchar(255) DEFAULT NULL,
-  `mobile` varchar(255) DEFAULT NULL,
-  `sr_user_id` bigint  DEFAULT NULL,
-  `sr_company_id` bigint DEFAULT NULL,
-  `comments` varchar(255) DEFAULT NULL,
-  `country_code` varchar(255) DEFAULT NULL,
-  `created_at` datetime(6) DEFAULT NULL,
-    `created_by` varchar(255) DEFAULT NULL,
-    `updated_at` datetime(6) DEFAULT NULL,
-    `updated_by` varchar(255) DEFAULT NULL,
-    `is_enabled` bit(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB ;
+CREATE TABLE user (
+    id bigint NOT NULL AUTO_INCREMENT,
+    sr_user_id BIGINT NOT NULL,
+    first_name VARCHAR(255),
+    middle_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email VARCHAR(255),
+    is_email_verified TINYINT(1) DEFAULT 0,
+    country_code VARCHAR(10) DEFAULT '+91',
+    mobile VARCHAR(20),
+    comments TEXT,
+    sr_company_id BIGINT,
+    is_accepted TINYINT(1) DEFAULT 0,
+     `created_at` datetime(6) DEFAULT NULL,
+              `created_by` varchar(255) DEFAULT NULL,
+              `updated_at` datetime(6) DEFAULT NULL,
+              `updated_by` varchar(255) DEFAULT NULL,
+              `is_enabled` bit(1) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+     KEY `sr_user_id`(`sr_user_id`)
+)ENGINE=InnoDB AUTO_INCREMENT=0;
 
 ALTER TABLE user ADD CONSTRAINT sr_user_id_constraint UNIQUE (sr_user_id);
 ALTER TABLE user ADD CONSTRAINT email_constraint UNIQUE (email);

@@ -70,3 +70,26 @@ CREATE TABLE loan_offer (
 );
 
 ALTER TABLE loan_offer ADD INDEX sr_company_id_loan_vendor_id (sr_company_id, loan_vendor_id);
+
+
+CREATE TABLE user (
+    id bigint NOT NULL AUTO_INCREMENT,
+    sr_user_id BIGINT NOT NULL,
+    first_name VARCHAR(255),
+    middle_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email VARCHAR(255),
+    is_email_verified TINYINT(1) DEFAULT 0,
+    country_code VARCHAR(10) DEFAULT '+91',
+    mobile VARCHAR(20),
+    comments TEXT,
+    sr_company_id BIGINT,
+    is_accepted TINYINT(1) DEFAULT 0,
+     `created_at` datetime(6) DEFAULT NULL,
+              `created_by` varchar(255) DEFAULT NULL,
+              `updated_at` datetime(6) DEFAULT NULL,
+              `updated_by` varchar(255) DEFAULT NULL,
+              `is_enabled` bit(1) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+     KEY `sr_user_id`(`sr_user_id`)
+)ENGINE=InnoDB AUTO_INCREMENT=0;

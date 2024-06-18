@@ -5,8 +5,8 @@ spring:
       database: ${MONGO_DATABASE}
       host: ${MONGO_HOST}
       port: ${MONGO_PORT}
-      #username: ${MONGO_USERNAME}
-      #password: ${MONGO_PASSWORD}
+      username: ${MONGO_USERNAME}
+      password: ${MONGO_PASSWORD}
   datasource:
     primary:
       driver-class-name: com.mysql.cj.jdbc.Driver

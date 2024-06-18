@@ -48,7 +48,6 @@ public class UserDetails {
 
     private String comments;
 
-    @Column(name = "is_accepted")
     private Boolean isAccepted = false;
 
     public static UserDetails mapUser(User user){

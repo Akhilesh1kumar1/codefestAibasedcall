@@ -31,4 +31,13 @@ public class InternalTokenUserDetailsResponse implements Serializable {
     @JsonProperty("company_name")
     private String companyName;
 
+
+    @JsonProperty("middle_name")
+    private String middleName;
+
+    private String comments;
+
+    @JsonProperty("is_accepted")
+    private Boolean isAccepted = false;
+
 }

@@ -56,7 +56,7 @@ public class User extends LongBaseEntity{
     @Column(name = "comments")
     private String comments;
 
-    @JsonProperty("sr_company_id")
+    @Column(name = "sr_company_id")
     private Long srCompanyId;
 
     @Builder.Default
@@ -67,7 +67,7 @@ public class User extends LongBaseEntity{
         User user =User.builder().srUserId(Long.valueOf(userDetails.getUserId())).
         comments(userDetails.getComments())
                 .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).build();
-
+        user.setIsEnabled(true);
         return user;
     }
 
