@@ -4,6 +4,7 @@ import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.util.S3Util;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -31,6 +32,6 @@ public class AwsS3Client {
                     .withRegion(appConfig.getAwsRegion())
                     .build();
         }
-        //S3Util.setS3Client(client);
+        S3Util.setS3Client(client);
     }
 }
