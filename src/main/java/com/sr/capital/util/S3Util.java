@@ -137,7 +137,7 @@ public class S3Util {
 
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += request.getExpiry();
+        expTimeMillis += (request.getExpiry()*1000);
         expiration.setTime(expTimeMillis);
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(request.getBucketName(), request.getFilePath())
