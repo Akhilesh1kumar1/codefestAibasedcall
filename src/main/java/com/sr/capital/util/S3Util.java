@@ -130,6 +130,7 @@ public class S3Util {
 
     public static String generatePreSignedUrl(GeneratePreSignedUrlRequest request) {
 
+        log.info("[generatePreSignedUrl]for request {} ",request);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.MINUTE, request.getExpiry());
@@ -140,11 +141,12 @@ public class S3Util {
         expiration.setTime(expTimeMillis);
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(request.getBucketName(), request.getFilePath())
-                        .withMethod(HttpMethod.PUT)
-                        .withExpiration(expiration)
-                        .withContentType(FILE_CONTENT_TYPE_MAP.get(FilenameUtils.getExtension(request.getFileName())));
+                        .withMethod(request.getHttpMethod())
+                        .withExpiration(expiration);
+                        //.withContentType(FILE_CONTENT_TYPE_MAP.get(FilenameUtils.getExtension(request.getFileName())));
 
         URL presignedUrl = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+        log.info("[generatePreSignedUrl] url {}",presignedUrl.toString());
         return presignedUrl.toString();
     }
 
