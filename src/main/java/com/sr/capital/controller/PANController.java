@@ -1,16 +1,12 @@
 package com.sr.capital.controller;
 
+import com.sr.capital.dto.request.CibilScoreCheckRequestDto;
+import com.sr.capital.dto.response.CibilScoreCheckResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import org.apache.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.omunify.core.model.GenericResponse;
@@ -56,5 +52,14 @@ public class PANController {
         return ResponseBuilderUtil.getResponse(panService.updatePanDetails(panUpdateRequestDto, image), SUCCESS,
                 PAN_SAVE_SUCCESS, HttpStatus.SC_OK);
     }
+
+
+    @PostMapping("/cibil")
+    public GenericResponse<CibilScoreCheckResponseDto> getCibilDetails(@RequestBody CibilScoreCheckRequestDto cibilScoreCheckRequestDto) throws Exception {
+
+        return ResponseBuilderUtil.getResponse(panService.getCibilDetailsUsingPan(cibilScoreCheckRequestDto), SUCCESS,
+                PAN_SAVE_SUCCESS, HttpStatus.SC_OK);
+    }
+
 
 }

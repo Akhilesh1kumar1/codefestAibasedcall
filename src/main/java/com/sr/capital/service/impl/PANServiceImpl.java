@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.sr.capital.dto.request.CibilScoreCheckRequestDto;
+import com.sr.capital.dto.response.CibilScoreCheckResponseDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -88,6 +90,19 @@ public class PANServiceImpl implements PANService {
         return MapperUtils.mapClass(panDetails, PANUpdateResponse.class);
     }
 
+    @Override
+    public CibilScoreCheckResponseDto getCibilDetailsUsingPan(CibilScoreCheckRequestDto cibilScoreCheckRequestDto) throws Exception {
+
+        requestValidationStrategy.validateRequest(cibilScoreCheckRequestDto.getPanNumber(),RequestType.PAN);
+        CibilScoreCheckResponseDto responseDto ;
+        if(cibilScoreCheckRequestDto.getUserId()!=null){
+            responseDto= CibilScoreCheckResponseDto.builder().cibilScore(Double.valueOf(400)).build();
+        }else{
+            responseDto = CibilScoreCheckResponseDto.builder().cibilScore(Double.valueOf(800)).build();
+        }
+        return responseDto;
+    }
+
     private boolean updateImages(List<MultipartFile> multipartFileList, PANUpdateRequestDto panUpdateRequestDto,
             PANDetails panDetails) {
 
@@ -106,5 +121,7 @@ public class PANServiceImpl implements PANService {
         panRepository.save(panDetails);
         return true;
     }
+
+
 
 }

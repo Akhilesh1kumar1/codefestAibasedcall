@@ -1,6 +1,8 @@
 package com.sr.capital.service;
 
+import com.sr.capital.dto.request.CibilScoreCheckRequestDto;
 import com.sr.capital.dto.request.PANUpdateRequestDto;
+import com.sr.capital.dto.response.CibilScoreCheckResponseDto;
 import com.sr.capital.dto.response.PANUpdateResponse;
 import com.sr.capital.entity.primary.PANDetails;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,5 +16,7 @@ public interface PANService {
     public PANDetails readPanDetails(Long userId);
 
     public PANUpdateResponse updatePanDetails(PANUpdateRequestDto adharUpdateRequestDto, List<MultipartFile> multipartFileList) throws Exception;
+
+    public CibilScoreCheckResponseDto getCibilDetailsUsingPan(CibilScoreCheckRequestDto cibilScoreCheckRequestDto) throws Exception;
 
 }
