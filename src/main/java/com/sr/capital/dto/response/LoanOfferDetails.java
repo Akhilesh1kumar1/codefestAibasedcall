@@ -50,6 +50,8 @@ public class LoanOfferDetails extends BasesResponse {
                 .preApproved(loanOffer.getPreApproved()).loanVendorId(loanOffer.getLoanVendorId()).srCompanyId(loanOffer.getSrCompanyId())
                 .preApprovedLoanAmount(loanOffer.getPreApprovedLoanAmount()).startDate(loanOffer.getStartDate()).status(loanOffer.getStatus())
                 .build();
+        loanOfferDetails.setCreatedAt(loanOffer.getAuditData().getCreatedAt());
+        loanOfferDetails.setCreatedBy(loanOffer.getAuditData().getCreatedBy());
         return loanOfferDetails;
     }
 }

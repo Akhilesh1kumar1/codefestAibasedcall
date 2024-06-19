@@ -1,5 +1,6 @@
 package com.sr.capital.service.entityimpl;
 
+import com.omunify.core.util.ExceptionUtils;
 import com.sr.capital.dto.request.CreateBaseCreditPartnerDto;
 import com.sr.capital.dto.request.UpdateBaseCreditPartnerDto;
 import com.sr.capital.dto.response.BaseCreditPartnerResponseDto;
@@ -10,6 +11,7 @@ import com.sr.capital.repository.primary.BaseCreditPartnerRepository;
 import com.sr.capital.util.LoggerUtil;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -85,6 +88,20 @@ public class BaseCreditPartnerEntityServiceImpl {
 
     private List<BaseCreditPartnerResponseDto> creditPartnerDtoFromBaseCreditPartnerList(List<BaseCreditPartner> baseCreditPartnerList) {
         return MapperUtils.mapList(baseCreditPartnerList, BaseCreditPartnerResponseDto.class);
+    }
+
+
+    public BaseCreditPartnerResponseDto getCreditPartnerByName(String name) {
+        RMapCache<String, BaseCreditPartnerResponseDto> channelList = redissonClient.getMapCache(Constants.RedisKeys.BASE_CREDIT_PARTNER);
+        if (ObjectUtils.isEmpty(channelList.get(name))) {
+            ExceptionUtils.throwCustomException("C0001", "Given vendor doesn't exists", HttpStatus.BAD_REQUEST);
+        }
+        return MapperUtils.mapClass(Objects.nonNull(channelList.get(name)) ? channelList.get(name) : new BaseCreditPartnerResponseDto(), BaseCreditPartnerResponseDto.class);
+
+    }
+
+    public boolean isVendorExist(Long loanVendorId){
+        return baseCreditPartnerRepository.existsById(loanVendorId);
     }
 
 }

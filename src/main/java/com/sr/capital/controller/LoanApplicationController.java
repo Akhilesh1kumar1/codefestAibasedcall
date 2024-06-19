@@ -11,6 +11,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
+import java.util.UUID;
+
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
 
@@ -25,6 +28,13 @@ public class LoanApplicationController {
     public GenericResponse<LoanApplicationResponseDto> submitLoanApplication(@RequestBody LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
 
         return ResponseBuilderUtil.getResponse(loanApplicationService.submitLoanApplication(loanApplicationRequestDto), SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/details")
+    public GenericResponse<List<LoanApplicationResponseDto>> getLoanApplications(@RequestParam(name = "loan_application_id",required = false)UUID loanApplicationId) throws Exception {
+
+        return ResponseBuilderUtil.getResponse(loanApplicationService.getLoanApplication(loanApplicationId), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 }

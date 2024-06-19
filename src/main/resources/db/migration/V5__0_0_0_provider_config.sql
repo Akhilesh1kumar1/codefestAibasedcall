@@ -93,3 +93,19 @@ CREATE TABLE user (
     PRIMARY KEY (`id`),
      KEY `sr_user_id`(`sr_user_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=0;
+
+
+CREATE TABLE loan_application (
+    id binary(16) NOT NULL,
+    sr_company_id BIGINT NOT NULL,
+    loan_vendor_id BIGINT NOT NULL,
+    loan_amount_requested DECIMAL(15, 2) NOT NULL,
+    loan_status VARCHAR(20) NOT NULL,
+    loan_offer_id binary(36) default NULL,
+     `created_at` datetime(6) DEFAULT NULL,
+                  `created_by` varchar(255) DEFAULT NULL,
+                  `updated_at` datetime(6) DEFAULT NULL,
+                  `updated_by` varchar(255) DEFAULT NULL,
+                  `is_enabled` bit(1) DEFAULT NULL,
+                  INDEX idx_sr_company_id (sr_company_id)
+);

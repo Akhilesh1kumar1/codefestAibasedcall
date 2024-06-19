@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -26,8 +27,12 @@ public class LoanApplicationRequestDto extends BaseRequest {
 
     Long loanVendorId;
 
+    String loanVendorName;
+
     @NotNull(message = "loanAmountRequested cannot be null")
     BigDecimal loanAmountRequested;
 
     LoanStatus loanStatus;
+
+    UUID loanOfferId;
 }

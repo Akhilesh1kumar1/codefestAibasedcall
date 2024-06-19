@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -42,5 +43,10 @@ public class LoanOfferServiceImpl implements LoanOfferService {
         LoanOffer loanOffer =LoanOffer.mapLoanOffer(loanOfferDetails);
         loanOfferRepository.save(loanOffer);
         return loanOfferDetails;
+    }
+
+    @Override
+    public LoanOffer getLoanOfferById(UUID loanOfferId) {
+        return loanOfferRepository.findById(loanOfferId).orElse(null);
     }
 }
