@@ -160,6 +160,7 @@ public class DocExtractionService {
                 .httpMethod(HttpMethod.GET)
                 .build();
 
+        loggerUtil.info("generate presignged url ");
         String preSignedUri = S3Util.generatePreSignedUrl(preSignedUrlRequest);
 
         fileDetails.setPreSignedUri(preSignedUri);

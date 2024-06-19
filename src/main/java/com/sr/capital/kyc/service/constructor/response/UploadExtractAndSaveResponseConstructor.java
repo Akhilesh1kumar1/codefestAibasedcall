@@ -12,6 +12,7 @@ import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.response.*;
 import com.sr.capital.kyc.service.interfaces.ResponseConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
 import static com.sr.capital.helpers.enums.DocType.BANK_CHEQUE;
 
 @Service
+@Slf4j
 public class UploadExtractAndSaveResponseConstructor implements ResponseConstructor {
 
     @Override
@@ -30,6 +32,8 @@ public class UploadExtractAndSaveResponseConstructor implements ResponseConstruc
     public <T, U> ResponseEntity<GenericResponse<T>> constructResponse(U input) {
 
         DocOrchestratorRequest orchestratorRequest = (DocOrchestratorRequest) input;
+        log.info("[constructResponse] request {} ",orchestratorRequest);
+
         KycDocDetails<?> kycDocDetails = orchestratorRequest.getKycDocDetails();
         List<DocActionType> actionTypes = orchestratorRequest.getActions();
 
