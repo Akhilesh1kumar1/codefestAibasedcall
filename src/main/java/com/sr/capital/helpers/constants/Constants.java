@@ -41,6 +41,10 @@ public final class Constants {
         public static final String LOAN_APPLICATION_STATUS = "loan_application_status";
 
         public static final String TASK = "task";
+
+        public static final String CAPITAL_REPORT = "report_capital_data_report";
+
+        public static final String COMPANY_WISE_REPORT = "reports_company_wise_report";
     }
 
     public static class ServiceConstants{

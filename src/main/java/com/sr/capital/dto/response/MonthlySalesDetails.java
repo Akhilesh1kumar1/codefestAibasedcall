@@ -1,29 +1,16 @@
 package com.sr.capital.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.sr.capital.entity.mongo.kyc.BaseDoc;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Map;
 
 @Data
-@Builder
+//@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CompanySalesDetails  {
-
-    Long srCompanyId;
-
-    Integer ageInSr;
-
-    Integer platformAgeSignupInMonth;
-
-    Integer platformAgeFtrInMonth;
-
-    String orgKyc;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class MonthlySalesDetails {
 
     Long monthCodGmv;
 
@@ -36,7 +23,4 @@ public class CompanySalesDetails  {
     Long monthRemitAwbCount;
 
     Long shipmentGmv;
-
-    Map<String,MonthlySalesDetails> detailsInfo;
-
 }

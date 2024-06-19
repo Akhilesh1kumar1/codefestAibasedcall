@@ -9,9 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 @Builder
-@EqualsAndHashCode(callSuper = true)
-@Document("sales_data")
-public class SalesData extends BaseDoc {
+public class SalesData {
 
 
 }
