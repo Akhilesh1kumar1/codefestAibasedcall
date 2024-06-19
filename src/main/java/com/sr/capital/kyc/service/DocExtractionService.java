@@ -196,14 +196,14 @@ public class DocExtractionService {
         String extension = dotSplit.get(dotSplit.size()-1);
 
         file1.setFileId(UUID.randomUUID());
-        file1.setFileName(orchestratorRequest.getDocType() + "-" + file1.getFileId() + "." + extension);
+        file1.setFileName(orchestratorRequest.getSrCompanyId()+"/"+orchestratorRequest.getDocType() + "-" + file1.getFileId() + "." + extension);
 
         if(orchestratorRequest.hasFile2()) {
             dotSplit = List.of(file2.getFile().getOriginalFilename().split("\\."));
             extension = dotSplit.get(dotSplit.size()-1);
 
             file2.setFileId(UUID.randomUUID());
-            file2.setFileName(orchestratorRequest.getDocType() + "-" + file2.getFileId() + "." + extension);
+            file2.setFileName(orchestratorRequest.getSrCompanyId()+"/"+orchestratorRequest.getDocType() + "-" + file2.getFileId() + "." + extension);
         }
     }
 

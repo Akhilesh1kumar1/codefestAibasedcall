@@ -139,7 +139,7 @@ public class S3Util {
         expTimeMillis += request.getExpiry();
         expiration.setTime(expTimeMillis);
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest(request.getBucketName(), request.getObjectKey())
+                new GeneratePresignedUrlRequest(request.getBucketName(), request.getFilePath())
                         .withMethod(HttpMethod.PUT)
                         .withExpiration(expiration)
                         .withContentType(FILE_CONTENT_TYPE_MAP.get(FilenameUtils.getExtension(request.getFileName())));
