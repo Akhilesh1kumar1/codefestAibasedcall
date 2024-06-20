@@ -26,6 +26,8 @@ public class LoanOfferDetails extends BasesResponse {
 
     Long loanVendorId;
 
+    String loanVendorName;
+
     String loanType;
 
     Boolean preApproved;

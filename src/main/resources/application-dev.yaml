@@ -115,6 +115,10 @@ app:
         baseUrl: ${SHIPROCKET_AUTH_BASE_URL:https://sr-auth-qa-1.kartrocket.com}
         endpoints:
           validate-token: /authorize/user
+    klub:
+      vendor-token: ${KLUB_VENDOR_TOKEN:test}
+      vendor-code: ${KLUB_VENDOR_CODE:test}
+
 aws:
   region: ${AWS_REGION:test}
   s3:

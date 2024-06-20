@@ -14,4 +14,9 @@ public class IncredPartnerService implements CreditPartnerService {
     public AccessTokenResponseDto getAccessToken(AccessTokenRequestDto accessTokenRequestDto) {
         return null;
     }
+
+    @Override
+    public Boolean validateExternalRequest(String vendorToken, String vendorCode) {
+        return null;
+    }
 }

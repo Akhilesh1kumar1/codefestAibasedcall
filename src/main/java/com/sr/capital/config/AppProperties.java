@@ -235,4 +235,13 @@ public class AppProperties {
 
     @Value("${idfy.async.response.aadhaar.rely.on.pan.aadhaar:true}")
     private Boolean aadhaarVerificationRelyOnPan;
+
+
+
+    //klub
+    @Value("${app.external.klub.vendor-token}")
+    private String klubVendorToken;
+
+    @Value("${app.external.klub.vendor-code}")
+    private String klubVendorCode;
 }
