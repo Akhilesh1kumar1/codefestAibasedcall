@@ -7,6 +7,7 @@ import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.LoanApplicationService;
+import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,15 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     final RequestValidationStrategy requestValidationStrategy;
     final LoanApplicationRepository loanApplicationRepository;
+    final LoanOfferService loanOfferService;
     @Override
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
 
         loanApplicationRequestDto = requestValidationStrategy.validateRequest(loanApplicationRequestDto, RequestType.LOAN_APPLICATION);
         LoanApplication loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
         loanApplication = loanApplicationRepository.save(loanApplication);
+        if(loanApplicationRequestDto.getLoanOfferId()!=null)
+           loanOfferService.updateLoanOffer(loanApplicationRequestDto.getLoanOfferId(),true);
         return LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
     }
 

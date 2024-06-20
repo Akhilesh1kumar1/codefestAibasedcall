@@ -44,6 +44,7 @@ public class LoanOfferDetails extends BasesResponse {
 
     LocalDate endDate;
 
+    Boolean isLoanApplied;
 
     public static LoanOfferDetails mapLoanOffer(LoanOffer loanOffer){
         LoanOfferDetails loanOfferDetails = LoanOfferDetails.builder().id(loanOffer.getId())
@@ -51,7 +52,7 @@ public class LoanOfferDetails extends BasesResponse {
                 .endDate(loanOffer.getEndDate()).interestRate(loanOffer.getInterestRate())
                 .preApproved(loanOffer.getPreApproved()).loanVendorId(loanOffer.getLoanVendorId()).srCompanyId(loanOffer.getSrCompanyId())
                 .preApprovedLoanAmount(loanOffer.getPreApprovedLoanAmount()).startDate(loanOffer.getStartDate()).status(loanOffer.getStatus())
-                .build();
+                .isLoanApplied(loanOffer.getIsLoanApplied()).build();
         loanOfferDetails.setCreatedAt(loanOffer.getAuditData().getCreatedAt());
         loanOfferDetails.setCreatedBy(loanOffer.getAuditData().getCreatedBy());
         return loanOfferDetails;

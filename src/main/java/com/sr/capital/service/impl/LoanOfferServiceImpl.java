@@ -49,4 +49,15 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     public LoanOffer getLoanOfferById(UUID loanOfferId) {
         return loanOfferRepository.findById(loanOfferId).orElse(null);
     }
+
+    @Override
+    public LoanOffer updateLoanOffer(UUID loanOfferId, Boolean loanApplied) {
+        LoanOffer loanOffer  =getLoanOfferById(loanOfferId);
+        if(loanOffer!=null){
+            loanOffer.setIsLoanApplied(loanApplied);
+            loanOfferRepository.save(loanOffer);
+        }
+        return loanOffer;
+    }
+
 }

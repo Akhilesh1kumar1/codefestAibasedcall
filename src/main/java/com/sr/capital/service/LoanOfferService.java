@@ -14,4 +14,6 @@ public interface LoanOfferService {
 
     LoanOffer getLoanOfferById(UUID loanOfferId);
 
+    LoanOffer updateLoanOffer(UUID loanOfferId,Boolean loanApplied);
+
 }

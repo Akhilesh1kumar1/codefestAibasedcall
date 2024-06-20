@@ -51,6 +51,8 @@ public class LoanOffer extends UUIDBaseEntity{
     @Column(name = "end_date")
     LocalDate endDate;
 
+    @Column(name = "is_loan_applied")
+    Boolean isLoanApplied;
     public static LoanOffer mapLoanOffer(LoanOfferDetails loanOfferDetails){
         LoanOffer loanOffer =LoanOffer.builder().loanDuration(loanOfferDetails.getLoanDuration()).loanType(loanOfferDetails.getLoanType()).loanVendorId(loanOfferDetails.getLoanVendorId()).loanDuration(loanOfferDetails.getLoanDuration()).preApprovedLoanAmount(loanOfferDetails.getPreApprovedLoanAmount())
                 .endDate(loanOfferDetails.getEndDate()).startDate(loanOfferDetails.getStartDate()).interestRate(loanOfferDetails.getInterestRate()).srCompanyId(loanOfferDetails.getSrCompanyId()).status(loanOfferDetails.getStatus()).preApproved(loanOfferDetails.getPreApproved()).build();

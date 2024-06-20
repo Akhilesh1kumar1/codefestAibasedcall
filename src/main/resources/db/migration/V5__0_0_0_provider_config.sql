@@ -62,6 +62,7 @@ CREATE TABLE loan_offer (
     status VARCHAR(255),
     start_date DATE,
     end_date DATE,
+    is_loan_applied  bit(1) DEFAULT 0,
     `created_at` datetime(6) DEFAULT NULL,
           `created_by` varchar(255) DEFAULT NULL,
           `updated_at` datetime(6) DEFAULT NULL,
