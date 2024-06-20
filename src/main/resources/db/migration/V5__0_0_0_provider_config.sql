@@ -102,6 +102,7 @@ CREATE TABLE loan_application (
     loan_amount_requested DECIMAL(15, 2) NOT NULL,
     loan_status VARCHAR(20) NOT NULL,
     loan_offer_id binary(36) default NULL,
+    loan_duration int not null default 0,
      `created_at` datetime(6) DEFAULT NULL,
                   `created_by` varchar(255) DEFAULT NULL,
                   `updated_at` datetime(6) DEFAULT NULL,

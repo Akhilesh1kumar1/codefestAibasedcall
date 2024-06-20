@@ -35,4 +35,6 @@ public class LoanApplicationRequestDto extends BaseRequest {
     LoanStatus loanStatus;
 
     UUID loanOfferId;
+
+    Integer loanDuration;
 }
