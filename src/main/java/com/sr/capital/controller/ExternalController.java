@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
@@ -29,7 +28,7 @@ public class ExternalController {
 
     final ExternalService externalService;
     @GetMapping("/sales/details/{partnerName}")
-    public GenericResponse<List<CompanySalesDetails>> getSalesData(@RequestParam(name = "company_id",required = false) Long companyId, @RequestHeader(name = "x-vendor-token") String vendorToken,@RequestHeader(name = "x-vendor-code") String vendorCode,@PathVariable("partnerName") String partnerName) throws Exception {
+    public GenericResponse<List<CompanySalesDetails>> getSalesData(@RequestParam(name = "company_id") Long companyId, @RequestHeader(name = "x-vendor-token") String vendorToken,@RequestHeader(name = "x-vendor-code") String vendorCode,@PathVariable("partnerName") String partnerName) throws Exception {
 
         return ResponseBuilderUtil.getResponse(externalService.getCompanySalesDetails(companyId,vendorToken,vendorCode,partnerName), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
@@ -41,5 +40,11 @@ public class ExternalController {
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
+    @GetMapping("/sales/details/all/{partnerName}")
+    public GenericResponse<String> getAllCompanySalesData( @RequestHeader(name = "x-vendor-token") String vendorToken,@RequestHeader(name = "x-vendor-code") String vendorCode,@PathVariable("partnerName") String partnerName) throws Exception {
+
+        return ResponseBuilderUtil.getResponse(externalService.getCompanyWiseSalesDetails(vendorToken,vendorCode,partnerName), SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
 
 }

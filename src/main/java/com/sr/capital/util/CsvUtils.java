@@ -2,10 +2,14 @@ package com.sr.capital.util;
 
 import com.omunify.core.util.Constants;
 import com.omunify.core.util.ExceptionUtils;
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import com.sr.capital.dto.response.CompanySalesDetails;
+import com.sr.capital.dto.response.MonthlySalesDetails;
+import com.sr.capital.dto.response.SalesData;
 import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.kyc.dto.request.FileDetails;
@@ -27,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.opencsv.ICSVWriter.DEFAULT_SEPARATOR;
 import static com.sr.capital.helpers.constants.Constants.Separators.SLASH_SEPARATOR;
@@ -35,6 +40,26 @@ import static com.sr.capital.helpers.constants.Constants.ServiceConstants.INVALI
 @Component
 @Slf4j
 public class CsvUtils  {
+
+
+    public void writeCsvWithCustomHeader(List<CompanySalesDetails> companySalesDetailsList , String[] header, String filePath) throws IOException {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
+            // Write the custom header
+            writer.writeNext(header);
+
+            // Write user data rows
+            for (CompanySalesDetails companySalesDetails : companySalesDetailsList) {
+                String[] data = {String.valueOf(companySalesDetails.getSrCompanyId()), String.valueOf(companySalesDetails.getAgeInSr()),companySalesDetails.getOrgKyc(),"" };
+                AtomicInteger index =new AtomicInteger(3);
+               companySalesDetails.getDetailsInfo().forEach((s, monthlySalesDetails) -> {
+                   data[index.incrementAndGet()]= String.valueOf(companySalesDetails.getMonthCodGmv());
+                   data[index.incrementAndGet()]= String.valueOf(companySalesDetails.getMonthShipments());
+                   data[index.incrementAndGet()]= String.valueOf(companySalesDetails.getMonthRemittedValue());
+                });
+                writer.writeNext(data);
+            }
+        }
+    }
 
     public <T> byte[] createCSV(List<T> t, String headers) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -213,4 +238,5 @@ public class CsvUtils  {
 
         return new File(fileDetails.getFileName());
     }
+
 }

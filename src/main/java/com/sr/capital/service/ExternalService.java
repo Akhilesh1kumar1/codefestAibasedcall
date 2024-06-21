@@ -16,5 +16,7 @@ public interface ExternalService {
 
     List<CompanySalesDetails> getCompanySalesDetails(Long srCompanyId,String vendorToken,String vendorCode,String loanVendorName) throws IOException, InvalidVendorTokenException, InvalidVendorCodeException;
 
+    String getCompanyWiseSalesDetails(String vendorToken,String vendorCode,String loanVendorName) throws Exception;
+
 
 }

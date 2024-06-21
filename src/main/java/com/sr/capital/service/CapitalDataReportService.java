@@ -9,4 +9,7 @@ public interface CapitalDataReportService {
 
 
     List<CompanySalesDetails> getCompanySalesDetails(Long srCompanyId) throws IOException;
+
+
+    List<CompanySalesDetails> getAllCompanySalesDetails();
 }
