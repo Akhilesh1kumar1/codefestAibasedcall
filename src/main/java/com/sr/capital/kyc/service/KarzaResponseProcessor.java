@@ -14,7 +14,7 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.TaskType;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
-import com.sr.capital.kyc.external.response.IdfyBaseResponse;
+import com.sr.capital.kyc.external.response.KarzaBaseResponse;
 import com.sr.capital.kyc.external.response.verification.*;
 import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.manager.KycVerifiedDetailsManager;
@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class IdfyResponseProcessor {
+public class KarzaResponseProcessor {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -54,11 +54,11 @@ public class IdfyResponseProcessor {
     private DetailsComparator detailsComparator;
 
 
-    public void processIdfyResponse(String message) throws IOException, CustomException {
+    public void processKarzaResponse(String message) throws IOException, CustomException {
 
-        List<IdfyBaseResponse<?>> idfyGenericResponseList = Arrays.asList(objectMapper.readValue(message, IdfyBaseResponse[].class));
+        List<KarzaBaseResponse<?>> idfyGenericResponseList = Arrays.asList(objectMapper.readValue(message, KarzaBaseResponse[].class));
 
-        IdfyBaseResponse<?> idfyGenericResponse = idfyGenericResponseList.get(0);
+        KarzaBaseResponse<?> idfyGenericResponse = idfyGenericResponseList.get(0);
 
         VerificationEntity verification = verificationManager.findByVerificationId(Long.valueOf(idfyGenericResponse.getGroupId()));
 
@@ -66,7 +66,7 @@ public class IdfyResponseProcessor {
 
         Task task = taskManager.findTaskByTaskId(Long.valueOf(idfyGenericResponse.getTaskId()));
 
-        IdfyBaseResponse<?> typedIdfyGenericResponse = getTypedIdfyGenericResponse(message, task.getType());
+        KarzaBaseResponse<?> typedIdfyGenericResponse = getTypedKarzaGenericResponse(message, task.getType());
 
         KycDocDetails<?> kycDocDetails = kycDocDetailsManager
                 .findKycDocDetailsByTenantIdAndDocType(verification.getSrCompanyId(), getDocTypeBasisOfTaskType(task.getType()));
@@ -75,7 +75,7 @@ public class IdfyResponseProcessor {
                 .verification(verification)
                 .srCompanyId(verification.getSrCompanyId())
                 .task(task)
-                .idfyBaseResponse(typedIdfyGenericResponse)
+                .karzaBaseResponse(typedIdfyGenericResponse)
                 .kycDocDetails(kycDocDetails)
                 .build();
 
@@ -130,7 +130,7 @@ public class IdfyResponseProcessor {
         }
     }
 
-    private IdfyBaseResponse<?> getTypedIdfyGenericResponse(String message, TaskType taskType) throws JsonProcessingException {
+    private KarzaBaseResponse<?> getTypedKarzaGenericResponse(String message, TaskType taskType) throws JsonProcessingException {
 
         switch (taskType) {
             case PAN:
@@ -146,6 +146,6 @@ public class IdfyResponseProcessor {
             case AADHAAR:
                 return Arrays.asList(objectMapper.readValue(message, AadhaarVerificationResponse[].class)).get(0);
         }
-        return objectMapper.readValue(message, IdfyBaseResponse.class);
+        return objectMapper.readValue(message, KarzaBaseResponse.class);
     }
 }

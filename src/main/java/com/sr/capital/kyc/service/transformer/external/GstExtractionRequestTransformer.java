@@ -4,7 +4,7 @@ package com.sr.capital.kyc.service.transformer.external;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.kyc.external.request.GstExtractionRequest;
-import com.sr.capital.kyc.external.request.IdfyBaseRequest;
+import com.sr.capital.kyc.external.request.KarzaBaseRequest;
 import com.sr.capital.kyc.external.request.extraction.data.DocumentExtractionData;
 import com.sr.capital.kyc.service.interfaces.ExternalRequestTransformer;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class GstExtractionRequestTransformer implements ExternalRequestTransform
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IdfyBaseRequest<?>> T transformRequest(DocOrchestratorRequest request) {
+    public <T extends KarzaBaseRequest<?>> T transformRequest(DocOrchestratorRequest request) {
 
         FileDetails file1 = request.getFile1();
 

@@ -10,7 +10,7 @@ import com.sr.capital.entity.mongo.kyc.child.GstVerifiedDetails;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.response.VerifierResponse;
-import com.sr.capital.kyc.external.adaptor.IdfyVerificationAdapter;
+import com.sr.capital.kyc.external.adaptor.KarzaVerificationAdapter;
 import com.sr.capital.kyc.external.response.verification.NameComparisonResponse;
 import com.sr.capital.kyc.service.interfaces.DetailsVerifier;
 import com.sr.capital.kyc.service.transformer.external.NameComparisonRequestTransformer;
@@ -27,7 +27,7 @@ public class GstVerifier implements DetailsVerifier {
     private NameComparisonRequestTransformer nameComparisonRequestTransformer;
 
     @Autowired
-    private IdfyVerificationAdapter idfyVerificationAdapter;
+    private KarzaVerificationAdapter karzaVerificationAdapter;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -49,7 +49,7 @@ public class GstVerifier implements DetailsVerifier {
         if (isVerified) {
             isVerified = gstVerifiedDetails.getTradeName().equalsIgnoreCase(gstDocDetails.getTradeName());
             if (!isVerified) {
-                NameComparisonResponse response = idfyVerificationAdapter.getNameComparisonScore(
+                NameComparisonResponse response = karzaVerificationAdapter.getNameComparisonScore(
                         nameComparisonRequestTransformer.transformRequest(gstDocDetails.getTradeName(), gstVerifiedDetails.getTradeName())
                 );
                 if (kycAppProperties.getAllowedNameScore() <= response.getResult().getMatchOutput().getNameMatch()) {
@@ -61,7 +61,7 @@ public class GstVerifier implements DetailsVerifier {
         if (isVerified) {
             isVerified = gstVerifiedDetails.getLegalName().equalsIgnoreCase(gstDocDetails.getLegalName());
             if (!isVerified) {
-                NameComparisonResponse response = idfyVerificationAdapter.getNameComparisonScore(
+                NameComparisonResponse response = karzaVerificationAdapter.getNameComparisonScore(
                         nameComparisonRequestTransformer.transformRequest(gstDocDetails.getLegalName(), gstVerifiedDetails.getLegalName())
                 );
                 if (kycAppProperties.getAllowedNameScore() <= response.getResult().getMatchOutput().getNameMatch()) {

@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class IdfyBaseResponse<T> implements Serializable {
+public class KarzaBaseResponse<T> implements Serializable {
 
     private String action;
 

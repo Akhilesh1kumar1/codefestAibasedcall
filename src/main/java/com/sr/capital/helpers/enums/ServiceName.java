@@ -13,8 +13,7 @@ public enum ServiceName {
     STRPVENURES("stripvenures"),
     VELOCITY("velocity"),
     GETVENTAGE("getventage"),
-    KARZA("karza"),
-    IDfy("IDfy");
+    KARZA("karza");
 
     final String name;
     ServiceName(String name) {

@@ -11,7 +11,6 @@ import com.sr.capital.exception.custom.IncompatibleDetailsException;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
 import com.sr.capital.exception.custom.TaskProcessingException;
 import com.sr.capital.exception.custom.VerifierNotFound;
-import com.sr.capital.external.client.SinfiniClient;
 import com.sr.capital.helpers.constants.ErrorConstants;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.TaskStatus;
@@ -20,7 +19,7 @@ import com.sr.capital.helpers.enums.VerificationStatus;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.request.ErrorMessageRequest;
 import com.sr.capital.kyc.dto.response.VerifierResponse;
-import com.sr.capital.kyc.external.exception.IDfyNameComparisonException;
+import com.sr.capital.kyc.external.exception.KarzaNameComparisonException;
 import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.service.strategy.VerifierStrategy;
 import com.sr.capital.service.entityimpl.TaskManager;
@@ -31,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -61,7 +59,7 @@ public class DetailsComparator {
     @Transactional
     public void verifyDetailsAndUpdateTasks(DocOrchestratorRequest docOrchestratorRequest)
         throws VerifierNotFound, IncompatibleDetailsException, JsonProcessingException,
-            IDfyNameComparisonException, ServiceEndpointNotFoundException {
+            KarzaNameComparisonException, ServiceEndpointNotFoundException {
 
         VerifierResponse verifierResponse;
         try {

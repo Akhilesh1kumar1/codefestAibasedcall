@@ -8,8 +8,8 @@ import com.sr.capital.entity.mongo.kyc.KycVerifiedDetails;
 import com.sr.capital.external.shiprocket.enums.KycType;
 import com.sr.capital.helpers.enums.DocActionType;
 import com.sr.capital.helpers.enums.DocType;
-import com.sr.capital.kyc.external.request.IdfyBaseRequest;
-import com.sr.capital.kyc.external.response.IdfyBaseResponse;
+import com.sr.capital.kyc.external.request.KarzaBaseRequest;
+import com.sr.capital.kyc.external.response.KarzaBaseResponse;
 import lombok.Builder;
 import lombok.Data;
 
@@ -33,9 +33,9 @@ public class DocOrchestratorRequest {
 
     private FileDetails file2;
 
-    private IdfyBaseRequest<?> idfyBaseRequest;
+    private KarzaBaseRequest<?> karzaBaseRequest;
 
-    private IdfyBaseResponse<?> idfyBaseResponse;
+    private KarzaBaseResponse<?> karzaBaseResponse;
 
     public Boolean hasFile2() {
         return (this.getFile2() != null && this.getFile2().getFile() != null && this.getFile2().getFile().getSize() != 0);

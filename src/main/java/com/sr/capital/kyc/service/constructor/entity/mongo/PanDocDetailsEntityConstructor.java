@@ -24,7 +24,7 @@ public class PanDocDetailsEntityConstructor implements EntityConstructor {
     @SuppressWarnings("unchecked")
     public <T> T constructEntity(DocOrchestratorRequest request, T entity) throws IOException {
 
-        PanCardExtractionResponse response = (PanCardExtractionResponse) request.getIdfyBaseResponse();
+        PanCardExtractionResponse response = (PanCardExtractionResponse) request.getKarzaBaseResponse();
         PanCardExtractionResponseData result =null;
         PanDocDetails panDocDetails =null;
 

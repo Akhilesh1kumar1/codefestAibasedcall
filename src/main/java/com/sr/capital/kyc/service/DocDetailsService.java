@@ -12,6 +12,7 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.constants.DocExtractionConstants;
 import com.sr.capital.helpers.constants.ErrorConstants;
 import com.sr.capital.helpers.enums.DocType;
+import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.helpers.enums.TaskType;
 import com.sr.capital.kyc.dto.request.BankDetailsRequest;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
@@ -63,7 +64,7 @@ public class DocDetailsService {
     public ResponseEntity<?> fetchDocDetailsByTenantId(final DocDetailsRequest docDetailsRequest)
         throws CustomException {
         List<String> tenantIdList = docDetailsRequest.getSrCompanyId();
-
+         RequestData.setRequestType(RequestType.DOC_DETAILS);
         if (ObjectUtils.isEmpty(tenantIdList) || tenantIdList.size() > DocExtractionConstants.LIST_SIZE) {
             throw new CustomException(ErrorConstants.FETCH_DOC_DETAILS_ERROR,
                 HttpStatus.BAD_REQUEST);

@@ -8,6 +8,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class GstExtractionRequest extends IdfyBaseRequest<DocumentExtractionData> {
+public class GstExtractionRequest extends KarzaBaseRequest<DocumentExtractionData> {
 
 }

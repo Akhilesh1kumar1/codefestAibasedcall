@@ -5,9 +5,9 @@ import com.sr.capital.exception.custom.CustomRuntimeException;
 import com.sr.capital.helpers.enums.TaskType;
 import org.springframework.http.HttpStatus;
 
-public class IDfyNameComparisonException extends CustomRuntimeException {
+public class KarzaNameComparisonException extends CustomRuntimeException {
 
-    public IDfyNameComparisonException(TaskType taskType) {
+    public KarzaNameComparisonException(TaskType taskType) {
         super("Not able to compare names in :: " + taskType, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

@@ -8,7 +8,7 @@ import com.sr.capital.exception.custom.VerifierNotFound;
 import com.sr.capital.helpers.enums.DocStatus;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.response.VerifierResponse;
-import com.sr.capital.kyc.external.exception.IDfyNameComparisonException;
+import com.sr.capital.kyc.external.exception.KarzaNameComparisonException;
 import com.sr.capital.kyc.service.interfaces.DetailsVerifier;
 import com.sr.capital.kyc.service.verifier.*;
 import com.sr.capital.util.LoggerUtil;
@@ -42,7 +42,7 @@ public class VerifierStrategy {
     public LoggerUtil loggerUtil  =LoggerUtil.getLogger(VerifierStrategy.class);
 
     public VerifierResponse verifyDetails(DocOrchestratorRequest docOrchestratorRequest)
-            throws VerifierNotFound, IDfyNameComparisonException, ServiceEndpointNotFoundException, TaskProcessingException {
+            throws VerifierNotFound, KarzaNameComparisonException, ServiceEndpointNotFoundException, TaskProcessingException {
         Task task = docOrchestratorRequest.getTask();
         DetailsVerifier detailsVerifier;
         switch (task.getType()) {

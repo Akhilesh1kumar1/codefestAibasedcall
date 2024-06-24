@@ -13,11 +13,11 @@ import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.dto.request.UploadFileToS3Request;
-import com.sr.capital.kyc.external.adaptor.IdfyExtractionAdapter;
-import com.sr.capital.kyc.external.request.IdfyBaseRequest;
+import com.sr.capital.kyc.external.adaptor.KarzaExtractionAdapter;
+import com.sr.capital.kyc.external.request.KarzaBaseRequest;
 import com.sr.capital.kyc.external.request.extraction.data.AadhaarExtractionData;
 import com.sr.capital.kyc.external.request.extraction.data.DocumentExtractionData;
-import com.sr.capital.kyc.external.response.IdfyBaseResponse;
+import com.sr.capital.kyc.external.response.KarzaBaseResponse;
 import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.service.strategy.EntityConstructorStrategy;
 import com.sr.capital.kyc.service.strategy.ExternalRequestTransformerStrategy;
@@ -47,7 +47,7 @@ public class DocExtractionService {
     private ExternalRequestTransformerStrategy externalRequestTransformerStrategy;
 
     @Autowired
-    private IdfyExtractionAdapter idfyExtractionAdapter;
+    private KarzaExtractionAdapter karzaExtractionAdapter;
 
     @Autowired
     private EntityConstructorStrategy entityConstructorStrategy;
@@ -72,13 +72,13 @@ public class DocExtractionService {
             uploadToS3AndGetPreSignedUri(file2, Boolean.FALSE);
         }
 
-        IdfyBaseRequest<?> idfyBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
-        orchestratorRequest.setIdfyBaseRequest(idfyBaseRequest);
+        KarzaBaseRequest<?> karzaBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
+        orchestratorRequest.setKarzaBaseRequest(karzaBaseRequest);
 
         transformPdfRequest(orchestratorRequest);
 
-        IdfyBaseResponse<?> extractionResponse = idfyExtractionAdapter.extractDocumentDetails(idfyBaseRequest);
-        orchestratorRequest.setIdfyBaseResponse(extractionResponse);
+        KarzaBaseResponse<?> extractionResponse = karzaExtractionAdapter.extractDocumentDetails(karzaBaseRequest);
+        orchestratorRequest.setKarzaBaseResponse(extractionResponse);
 
 
         KycDocDetails<?> kycDocDetails = entityConstructorStrategy.constructEntity(orchestratorRequest, orchestratorRequest.getKycDocDetails(),
@@ -113,13 +113,13 @@ public class DocExtractionService {
 
         if(docActionTypes.contains(DocActionType.EXTRACT)){
 
-            IdfyBaseRequest<?> idfyBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
-            orchestratorRequest.setIdfyBaseRequest(idfyBaseRequest);
+            KarzaBaseRequest<?> karzaBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
+            orchestratorRequest.setKarzaBaseRequest(karzaBaseRequest);
 
             transformPdfRequest(orchestratorRequest);
 
-            IdfyBaseResponse<?> extractionResponse = idfyExtractionAdapter.extractDocumentDetails(idfyBaseRequest);
-            orchestratorRequest.setIdfyBaseResponse(extractionResponse);
+            KarzaBaseResponse<?> extractionResponse = karzaExtractionAdapter.extractDocumentDetails(karzaBaseRequest);
+            orchestratorRequest.setKarzaBaseResponse(extractionResponse);
 
             KycDocDetails<?> kycDocDetails = entityConstructorStrategy.constructEntity(orchestratorRequest, orchestratorRequest.getKycDocDetails(),
                     getResponseClass(orchestratorRequest.getDocType()));
@@ -210,7 +210,7 @@ public class DocExtractionService {
 
     private void transformPdfRequest(DocOrchestratorRequest orchestratorRequest) throws Exception {
 
-        IdfyBaseRequest<?> idfyBaseRequest = orchestratorRequest.getIdfyBaseRequest();
+        KarzaBaseRequest<?> karzaBaseRequest = orchestratorRequest.getKarzaBaseRequest();
         FileDetails file1 = orchestratorRequest.getFile1();
         FileDetails file2 = orchestratorRequest.getFile2();
 
@@ -224,12 +224,12 @@ public class DocExtractionService {
 
             uploadToS3AndGetPreSignedUri(fileDetails, Boolean.TRUE);
 
-            if (idfyBaseRequest.getData() instanceof AadhaarExtractionData) {
-                AadhaarExtractionData aadhaarExtractionData = (AadhaarExtractionData) idfyBaseRequest.getData();
+            if (karzaBaseRequest.getData() instanceof AadhaarExtractionData) {
+                AadhaarExtractionData aadhaarExtractionData = (AadhaarExtractionData) karzaBaseRequest.getData();
                 aadhaarExtractionData.setDocument1(fileDetails.getPreSignedUri());
 
             } else {
-                DocumentExtractionData documentExtractionData = (DocumentExtractionData) idfyBaseRequest.getData();
+                DocumentExtractionData documentExtractionData = (DocumentExtractionData) karzaBaseRequest.getData();
                 documentExtractionData.setDocument1(fileDetails.getPreSignedUri());
             }
         }
@@ -244,8 +244,8 @@ public class DocExtractionService {
 
             uploadToS3AndGetPreSignedUri(fileDetails, Boolean.TRUE);
 
-            if (idfyBaseRequest.getData() instanceof AadhaarExtractionData) {
-                AadhaarExtractionData aadhaarExtractionData = (AadhaarExtractionData) idfyBaseRequest.getData();
+            if (karzaBaseRequest.getData() instanceof AadhaarExtractionData) {
+                AadhaarExtractionData aadhaarExtractionData = (AadhaarExtractionData) karzaBaseRequest.getData();
                 aadhaarExtractionData.setDocument1(fileDetails.getPreSignedUri());
 
             }

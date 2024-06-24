@@ -9,6 +9,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class PanCardExtractionRequest extends IdfyBaseRequest<DocumentExtractionData> {
+public class PanCardExtractionRequest extends KarzaBaseRequest<DocumentExtractionData> {
 
 }

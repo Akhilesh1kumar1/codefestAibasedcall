@@ -163,54 +163,54 @@ public class AppProperties {
     private Long panVerifiedDetailsExpiry;
 
     /*
-        IDfy Credential
+        karza Credential
      */
 
-    @Value("${external.idfy.account.id}")
-    private String idfyAccountId;
+    @Value("${external.karza.account.id}")
+    private String karzaAccountId;
 
-    @Value("${external.idfy.api.key}")
-    private String idfyApiKey;
+    @Value("${external.karza.api.key}")
+    private String karzaApiKey;
 
     /*
-        IDfy EXTERNAL API
+        karza EXTERNAL API
      */
 
-    @Value("${external.idfy.base.uri}")
-    private String idfyBaseUri;
+    @Value("${external.karza.base.uri}")
+    private String karzaBaseUri;
 
-    @Value("${external.idfy.async.api.endpoint.tasks}")
-    private String idfyAsyncTaskEndpoint;
+    @Value("${external.karza.async.api.endpoint.tasks}")
+    private String karzaAsyncTaskEndpoint;
 
-    @Value("${external.idfy.api.endpoint.extract.gst.url}")
-    private String idfyExtractGSTDetailsEndpoint;
+    @Value("${external.karza.api.endpoint.extract.gst.url}")
+    private String karzaExtractGSTDetailsEndpoint;
 
-    @Value("${external.idfy.api.endpoint.verify.gst.url}")
-    private String idfyVerifyGSTDetailsEndpoint;
+    @Value("${external.karza.api.endpoint.verify.gst.url}")
+    private String karzaVerifyGSTDetailsEndpoint;
 
-    @Value(("${external.idfy.api.endpoint.extract.pancard.url}"))
-    private String idfyExtractPancardDetailsEndpoint;
+    @Value(("${external.karza.api.endpoint.extract.pancard.url}"))
+    private String karzaExtractPancardDetailsEndpoint;
 
-    @Value("${external.idfy.api.endpoint.verify.pancard.url}")
-    private String idfyVerifyPancardDetailsEndpoint;
+    @Value("${external.karza.api.endpoint.verify.pancard.url}")
+    private String karzaVerifyPancardDetailsEndpoint;
 
-    @Value("${external.idfy.api.endpoint.extract.aadhaar.url}")
-    private String idfyExtractAadhaarDetailsEndpoint;
+    @Value("${external.karza.api.endpoint.extract.aadhaar.url}")
+    private String karzaExtractAadhaarDetailsEndpoint;
 
-    @Value("${external.idfy.api.endpoint.extract.bank.proof.url}")
-    private String idfyExtractBankDetailsEndpoint;
+    @Value("${external.karza.api.endpoint.extract.bank.proof.url}")
+    private String karzaExtractBankDetailsEndpoint;
 
-    @Value("${external.idfy.api.endpoint.verify.bank.proof.url}")
-    private String idfyVerifyBankDetailsEndpoint;
+    @Value("${external.karza.api.endpoint.verify.bank.proof.url}")
+    private String karzaVerifyBankDetailsEndpoint;
 
-    @Value("${external.idfy.api.endpoint.cross.verify.pancard.gst.url}")
-    private String idfyCrossVerifyPancardGSTEndpoint;
+    @Value("${external.karza.api.endpoint.cross.verify.pancard.gst.url}")
+    private String karzaCrossVerifyPancardGSTEndpoint;
 
-    @Value("${external.idfy.api.endpoint.cross.verify.pancard.aadhaar.url}")
-    private String idfyCrossVerifyPancardAadhaarEndpoint;
+    @Value("${external.karza.api.endpoint.cross.verify.pancard.aadhaar.url}")
+    private String karzaCrossVerifyPancardAadhaarEndpoint;
 
-    @Value("${external.idfy.api.endpoint.compare.name.url}")
-    private String idfyNameCompareEndpoint;
+    @Value("${external.karza.api.endpoint.compare.name.url}")
+    private String karzaNameCompareEndpoint;
 
     @Value("${allowed.compare.name.score}")
     private Integer allowedNameScore;
@@ -218,22 +218,22 @@ public class AppProperties {
     //@Value("${kafka.doc.verification.seller.onboarding.event.topic}")
     private String kafkaDocVerificationSellerOnboardingEventTopic;
 
-   // @Value("${kafka.doc.verification.idfy.response.topic}")
-    private String kafkaDocVerificationIdfyResponseTopic;
+   // @Value("${kafka.doc.verification.karza.response.topic}")
+    private String kafkaDocVerificationkarzaResponseTopic;
 
-    @Value("${idfy.async.response.retry.buffer.minutes:0}")
+    @Value("${karza.async.response.retry.buffer.minutes:0}")
     private Long asyncResponseRetryBuffer;
 
-    @Value("${idfy.async.response.retry.limit:3}")
+    @Value("${karza.async.response.retry.limit:3}")
     private Integer asyncResponseRetryLimit;
 
-    @Value("${idfy.async.response.cron.rate.milli.seconds:300000}")
+    @Value("${karza.async.response.cron.rate.milli.seconds:300000}")
     private Long asyncResponseCronRate;
 
-    @Value("${external.idfy.api.endpoint.verify.aadhaar.url}")
-    private String idfyVerifyAadhaarDetailsEndpoint;
+    @Value("${external.karza.api.endpoint.verify.aadhaar.url}")
+    private String karzaVerifyAadhaarDetailsEndpoint;
 
-    @Value("${idfy.async.response.aadhaar.rely.on.pan.aadhaar:true}")
+    @Value("${karza.async.response.aadhaar.rely.on.pan.aadhaar:true}")
     private Boolean aadhaarVerificationRelyOnPan;
 
 

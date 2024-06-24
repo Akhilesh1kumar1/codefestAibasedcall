@@ -146,9 +146,9 @@ management:
 
 
 
-####################################### IDFY API #############################################
+####################################### KARZA API #############################################
 external:
-  idfy:
+  karza:
     api:
       endpoint:
         cross:
@@ -191,12 +191,12 @@ external:
     account:
       id: 6b00817c0377/2798d29c-763c-4b83-a4a9-3f28ea6f39a5
     base:
-      uri: https://eve.idfy.com
+      uri: https://eve.karza.com
     async:
       api:
         endpoint:
           tasks: /v3/tasks
-idfy:
+karza:
   async:
     response:
       aadhaar:

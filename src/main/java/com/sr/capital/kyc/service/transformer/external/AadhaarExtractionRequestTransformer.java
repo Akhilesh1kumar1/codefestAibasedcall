@@ -4,7 +4,7 @@ package com.sr.capital.kyc.service.transformer.external;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.kyc.external.request.AadhaarExtractionRequest;
-import com.sr.capital.kyc.external.request.IdfyBaseRequest;
+import com.sr.capital.kyc.external.request.KarzaBaseRequest;
 import com.sr.capital.kyc.external.request.extraction.data.AadhaarExtractionData;
 import com.sr.capital.kyc.service.interfaces.ExternalRequestTransformer;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class AadhaarExtractionRequestTransformer implements ExternalRequestTrans
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IdfyBaseRequest<?>> T transformRequest(DocOrchestratorRequest request) {
+    public <T extends KarzaBaseRequest<?>> T transformRequest(DocOrchestratorRequest request) {
 
         FileDetails file1 = request.getFile1();
         FileDetails file2 = request.getFile2();

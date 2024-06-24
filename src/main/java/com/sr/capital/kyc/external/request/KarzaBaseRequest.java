@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @SuperBuilder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class IdfyBaseRequest<T> implements Serializable {
+public class KarzaBaseRequest<T> implements Serializable {
 
     private String taskId;
 
