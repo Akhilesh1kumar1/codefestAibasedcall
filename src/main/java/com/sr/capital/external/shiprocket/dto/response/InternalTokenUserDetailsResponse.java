@@ -40,4 +40,7 @@ public class InternalTokenUserDetailsResponse implements Serializable {
     @JsonProperty("is_accepted")
     private Boolean isAccepted = false;
 
+    private String entityType;
+
+    private String panNumber;
 }

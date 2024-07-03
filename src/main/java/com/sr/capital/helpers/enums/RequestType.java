@@ -19,7 +19,8 @@ public enum RequestType {
 
     //DOC DETAILS CONTROLLER
     DOC_DETAILS("fetch-doc-details"),
-    UPDATE_DOC_DETAILS("doc-update");
+    UPDATE_DOC_DETAILS("doc-update"),
+    VERIFY_MOBILE_OTP("verify-otp");
 
     final String type;
 

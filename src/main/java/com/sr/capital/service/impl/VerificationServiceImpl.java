@@ -1,6 +1,7 @@
 package com.sr.capital.service.impl;
 
 import com.sr.capital.dto.request.VerifyOtpRequest;
+import com.sr.capital.entity.primary.User;
 import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.service.VerificationService;
@@ -15,6 +16,7 @@ public class VerificationServiceImpl implements VerificationService {
 
     final RequestValidationStrategy requestValidationStrategy;
     final VerificationEntityServiceImpl verificationEntityService;
+    final UserServiceImpl userService;
 
     @Override
     public Boolean verifyPan(String value, RequestType requestType) throws Exception {
@@ -27,6 +29,7 @@ public class VerificationServiceImpl implements VerificationService {
     public Boolean verifyOtp(VerifyOtpRequest verifyOtpRequest) throws Exception {
         VerificationEntity verificationEntity = requestValidationStrategy.validateRequest(verifyOtpRequest,RequestType.MOBILE);
         verificationEntityService.softDeleteVerificationEntity(verificationEntity);
+        userService.updateVerifyFlag(verificationEntity.getUserId());
         return true;
     }
 

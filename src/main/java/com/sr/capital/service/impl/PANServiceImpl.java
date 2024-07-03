@@ -103,6 +103,12 @@ public class PANServiceImpl implements PANService {
         return responseDto;
     }
 
+    @Override
+    public Boolean validatePanNumber(String panNumber) throws Exception {
+        requestValidationStrategy.validateRequest(panNumber,RequestType.PAN);
+        return true;
+    }
+
     private boolean updateImages(List<MultipartFile> multipartFileList, PANUpdateRequestDto panUpdateRequestDto,
             PANDetails panDetails) {
 
@@ -121,6 +127,7 @@ public class PANServiceImpl implements PANService {
         panRepository.save(panDetails);
         return true;
     }
+
 
 
 

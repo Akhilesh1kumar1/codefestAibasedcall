@@ -149,6 +149,7 @@ management:
 ####################################### KARZA API #############################################
 external:
   karza:
+    enabled: false
     api:
       endpoint:
         cross:
@@ -160,7 +161,7 @@ external:
                 url: /v3/tasks/async/verify_with_source/pan_aadhaar_link
         verify:
           gst:
-            url: /v3/tasks/async/verify_with_source/ind_gst_certificate
+            otp-url: /gst/uat/v2/gst-return-auth-advance
           aadhaar:
             url: /v3/tasks/async/verify_with_source/aadhaar_lite
           pancard:
@@ -174,7 +175,9 @@ external:
           aadhaar:
             url: /v3/tasks/sync/extract/ind_aadhaar
           gst:
-            url: /v3/tasks/sync/extract/ind_gst_certificate
+            url: /gst/uat/v2/gst-return-auth-advance
+            pan:
+              url: /gst/uat/v2/search
           bank:
             proof:
               url: /v3/tasks/sync/extract/ind_cheque
@@ -191,7 +194,7 @@ external:
     account:
       id: 6b00817c0377/2798d29c-763c-4b83-a4a9-3f28ea6f39a5
     base:
-      uri: https://eve.karza.com
+      uri: https://api.karza.in
     async:
       api:
         endpoint:
@@ -211,3 +214,5 @@ allowed:
 
 encryption:
   key: ${ENCRYPTION_KEY:test}
+
+

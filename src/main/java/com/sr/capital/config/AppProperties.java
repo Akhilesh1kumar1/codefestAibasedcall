@@ -172,6 +172,9 @@ public class AppProperties {
     @Value("${external.karza.api.key}")
     private String karzaApiKey;
 
+    @Value("${external.karza.enabled}")
+    private Boolean karzaEnabled;
+
     /*
         karza EXTERNAL API
      */
@@ -179,13 +182,20 @@ public class AppProperties {
     @Value("${external.karza.base.uri}")
     private String karzaBaseUri;
 
+    @Value("${external.karza.api.endpoint.extract.gst.pan.url}")
+    private String karzaExtractGSTDetailsByPanEndpoint;
+
+    @Value("${external.karza.api.endpoint.verify.gst.otp-url}")
+    private String karzaVerifyGSTOtpEndpoint;
+
+
     @Value("${external.karza.async.api.endpoint.tasks}")
     private String karzaAsyncTaskEndpoint;
 
     @Value("${external.karza.api.endpoint.extract.gst.url}")
     private String karzaExtractGSTDetailsEndpoint;
 
-    @Value("${external.karza.api.endpoint.verify.gst.url}")
+   // @Value("${external.karza.api.endpoint.verify.gst.url}")
     private String karzaVerifyGSTDetailsEndpoint;
 
     @Value(("${external.karza.api.endpoint.extract.pancard.url}"))

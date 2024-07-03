@@ -89,7 +89,7 @@ public final class Constants {
         public static final String STATUS_MISMATCH = "The request is already acknowledged.";
         public static final String FILE_IN_PROGRESS_ERROR = "A file is already in progress. Please retry after some time.";
 
-        public static final String VALID_PAN = "Pan Number is in valida format";
+        public static final String VALID_PAN = "Pan Number is in valid format";
 
         public static final String INVALID_EMAIL = "The email address is invalid!";
         public static final String INVALID_MOBILE = "The mobile is invalid!";

@@ -61,5 +61,12 @@ public class PANController {
                 PAN_SAVE_SUCCESS, HttpStatus.SC_OK);
     }
 
+    @PostMapping("/validate")
+    public GenericResponse<Boolean> validatePanDetails(@RequestParam String panNumber) throws Exception {
+
+        return ResponseBuilderUtil.getResponse(panService.validatePanNumber(panNumber), SUCCESS,
+                PAN_SAVE_SUCCESS, HttpStatus.SC_OK);
+    }
+
 
 }

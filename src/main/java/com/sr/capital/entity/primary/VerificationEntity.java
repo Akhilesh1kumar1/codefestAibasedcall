@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "verification")
-public class VerificationEntity extends LongBaseEntity {
+public class VerificationEntity extends UUIDBaseEntity {
 
     @Builder.Default
     @Column(name = "type")
@@ -22,6 +22,9 @@ public class VerificationEntity extends LongBaseEntity {
 
     @Column(name = "sr_company_id")
     private String srCompanyId;
+
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "data")
     private String data;

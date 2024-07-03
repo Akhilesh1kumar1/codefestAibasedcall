@@ -11,4 +11,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class PanCardExtractionRequest extends KarzaBaseRequest<DocumentExtractionData> {
 
+    String panNumber;
+
 }

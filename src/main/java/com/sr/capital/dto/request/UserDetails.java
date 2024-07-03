@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -50,6 +51,13 @@ public class UserDetails {
 
     private Boolean isAccepted = false;
 
+    private String entityType;
+
+    private String panNumber;
+
+    private Boolean isMobileNumberVerified;
+
+    private UUID verificationToken;
     public static UserDetails mapUser(User user){
         UserDetails userDetails =new UserDetails();
         userDetails.setId(user.getId());

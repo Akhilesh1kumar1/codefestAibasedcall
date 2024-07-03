@@ -12,6 +12,8 @@ public class MongoEntityUtil {
     public static Boolean validateKycDocDetails(KycDocDetails<?> kycDocDetails) {
         DocType docType = kycDocDetails.getDocType();
         switch (docType){
+            case GST_BY_PAN:
+                return kycDocDetails.getDetails() instanceof GstByPanDocDetails;
             case GST:
                 return kycDocDetails.getDetails() instanceof GstDocDetails;
             case PAN:

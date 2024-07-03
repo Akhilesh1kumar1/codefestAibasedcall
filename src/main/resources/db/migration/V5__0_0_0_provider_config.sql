@@ -111,3 +111,44 @@ CREATE TABLE loan_application (
                   `is_enabled` bit(1) DEFAULT NULL,
                   INDEX idx_sr_company_id (sr_company_id)
 );
+
+
+CREATE TABLE `verification` (
+  `id` binary(16) NOT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `callback` varchar(255) DEFAULT NULL,
+  `channel` varchar(255) DEFAULT NULL,
+  `data` varchar(255) DEFAULT NULL,
+  `expires_at` datetime(6) DEFAULT NULL,
+  `failed_counter` int DEFAULT NULL,
+  `request_counter` int DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `is_enabled` bit(1) DEFAULT NULL,
+  `status` varchar(100) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `sr_company_id` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+CREATE TABLE `task` (
+  `id` bigint(16) BIGINT NOT NULL AUTO_INCREMENT,
+  `request_id` varchar(255) DEFAULT NULL,
+  `group_id` bigint(16) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `retries` int DEFAULT NULL,
+  `last_try_at` datetime(6) DEFAULT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_request_id` (`request_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

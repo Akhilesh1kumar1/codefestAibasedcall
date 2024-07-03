@@ -34,7 +34,7 @@ public class GstVerifier implements DetailsVerifier {
     public VerifierResponse verify(DocOrchestratorRequest orchestratorRequest) throws ServiceEndpointNotFoundException {
 
         VerifierResponse verifierResponse = VerifierResponse.builder().build();
-        GstDocDetails gstDocDetails = ((KycDocDetails<GstDocDetails>) orchestratorRequest.getKycDocDetails()).getDetails();
+       /* GstDocDetails gstDocDetails = ((KycDocDetails<GstDocDetails>) orchestratorRequest.getKycDocDetails()).getDetails();
         GstVerifiedDetails gstVerifiedDetails = ((KycVerifiedDetails<GstVerifiedDetails>) orchestratorRequest.getKycVerifiedDetails()).getDetails();
         ErrorDetails error = orchestratorRequest.getKycVerifiedDetails().getError();
 
@@ -68,7 +68,7 @@ public class GstVerifier implements DetailsVerifier {
                     isVerified = Boolean.TRUE;
                 }
             }
-        }
-        return VerifierResponse.builder().isVerified(isVerified).build();
+        }*/
+        return VerifierResponse.builder().isVerified(false).build();
     }
 }

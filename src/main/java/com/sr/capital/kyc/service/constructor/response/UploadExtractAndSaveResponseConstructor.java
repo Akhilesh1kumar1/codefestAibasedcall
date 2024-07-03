@@ -2,6 +2,7 @@ package com.sr.capital.kyc.service.constructor.response;
 
 
 import com.omunify.core.model.GenericResponse;
+import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.AadhaarDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
@@ -12,6 +13,7 @@ import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.response.*;
 import com.sr.capital.kyc.service.interfaces.ResponseConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +27,10 @@ import static com.sr.capital.helpers.enums.DocType.BANK_CHEQUE;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UploadExtractAndSaveResponseConstructor implements ResponseConstructor {
 
+    final AES256 aes256;
     @Override
     @SuppressWarnings("unchecked")
     public <T, U> ResponseEntity<GenericResponse<T>> constructResponse(U input) {
@@ -83,19 +87,14 @@ public class UploadExtractAndSaveResponseConstructor implements ResponseConstruc
                         .bankAddress(bankDocDetails.getBankAddress())
                         .build();
             case GST:
-                GstDocDetails gstDocDetails  = ((KycDocDetails<GstDocDetails>) orchestratorRequest.getKycDocDetails()).getDetails();
-                return (T) ExtractedGstResponse.builder()
-                        .name(gstDocDetails.getLegalName())
-                        .tradeName(gstDocDetails.getTradeName())
-                        .address(gstDocDetails.getAddress())
-                        .gstin(gstDocDetails.getGstin())
-                        .constitutionOfBusiness(gstDocDetails.getConstitutionOfBusiness())
-                        .typeOfRegistration(gstDocDetails.getTypeOfRegistration())
-                        .panNumber(gstDocDetails.getPanNumber())
-                        .dateOfLiability(gstDocDetails.getDateOfLiability())
-                        .validUpTo(gstDocDetails.getValidUpTo())
-                        .isProvisional(gstDocDetails.isProvisional())
-                        .build();
+                GstDocDetails gstDocDetails = ((KycDocDetails<GstDocDetails>)  orchestratorRequest.getKycDocDetails()).getDetails();
+                ExtractedGstResponse gstResponse = ExtractedGstResponse.builder().build();
+                gstResponse.setGstUserDetails(new ArrayList<>());
+                gstDocDetails.getGstDetails().forEach(gstUserDetails -> {
+                    gstResponse.getGstUserDetails().add(ExtractedGstResponse.GstUserDetails.builder().gstin(aes256.decrypt(gstUserDetails.getGstin())).username(aes256.decrypt(gstUserDetails.getUsername())).refId(gstUserDetails.getRefId()).build());
+                });
+
+                return (T) gstResponse;
             case PAN:
                 PanDocDetails panDocDetails = ((KycDocDetails<PanDocDetails>) orchestratorRequest.getKycDocDetails()).getDetails();
                 return (T) ExtractedPanResponse.builder()

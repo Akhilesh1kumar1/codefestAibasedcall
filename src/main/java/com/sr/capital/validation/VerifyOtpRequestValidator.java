@@ -32,7 +32,7 @@ public class VerifyOtpRequestValidator implements RequestValidator {
     @SuppressWarnings("unchecked")
     public <T, U> T validateRequest(U request) throws Exception {
         VerifyOtpRequest otpRequest = (VerifyOtpRequest) request;
-        VerificationEntity verificationEntity = null;//verificationManager.findByVerificationToken(otpRequest.getVerificationToken());
+        VerificationEntity verificationEntity = verificationManager.findByVerificationId(otpRequest.getVerificationToken());
         if(ObjectUtils.isEmpty(verificationEntity) || !VerificationType.OTP.equals(verificationEntity.getType())
                 || Boolean.FALSE.equals(verificationEntity.getIsEnabled())) {
             throw new InvalidVerificationTokenException();

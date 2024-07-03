@@ -35,7 +35,7 @@ public class AadhaarVerifier implements DetailsVerifier {
         if(1==2){//kycAppProperties.getAadhaarVerificationRelyOnPan()
 
             VerificationEntity verification = orchestratorRequest.getVerification();
-            Task task = taskManager.findTaskByVerificationIdAndTaskType(verification.getId(), TaskType.PAN_AADHAAR);
+            Task task = null;//taskManager.findTaskByVerificationIdAndTaskType(verification.getId(), TaskType.PAN_AADHAAR);
             if(task == null){
                 throw new TaskProcessingException();
             }

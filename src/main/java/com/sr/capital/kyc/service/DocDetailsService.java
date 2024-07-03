@@ -6,7 +6,6 @@ import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.AadhaarDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
-import com.sr.capital.entity.mongo.kyc.child.GstDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.PanDocDetails;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.constants.DocExtractionConstants;
@@ -17,6 +16,7 @@ import com.sr.capital.helpers.enums.TaskType;
 import com.sr.capital.kyc.dto.request.BankDetailsRequest;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import com.sr.capital.kyc.dto.request.UpdateDocsDetailsRequest;
+import com.sr.capital.kyc.dto.request.VerifyGstOtpRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateAadhaarDocDetailsRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateBankDocDetailsRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateGstDocDetailsRequest;
@@ -81,6 +81,7 @@ public class DocDetailsService {
 
         return responseConstructorStrategy.constructResponse(kycDocDetailsList);
     }
+
 
     public ResponseEntity<?> insertBankDetails(final BankDetailsRequest bankDetailsRequest)
         throws CustomException {
@@ -286,7 +287,7 @@ public class DocDetailsService {
                         break;
                     case GST:
                         UpdateGstDocDetailsRequest ug = objectMapper.readValue(objectMapper.writeValueAsString(entry.getDetails()), UpdateGstDocDetailsRequest.class);
-                        if(ug == null){
+                       /* if(ug == null){
                             if(!CollectionUtils.isEmpty(entry.getImageIds())) {
                                 kycDocDetails.setImages(entry.getImageIds());
                                 kycDocDetailsList.add(kycDocDetails);
@@ -314,7 +315,7 @@ public class DocDetailsService {
                                     .images(CollectionUtils.isEmpty(entry.getImageIds()) ? null : entry.getImageIds())
                                     .build();
                             kycDocDetailsList.add(newDoc);
-                        }
+                        }*/
                         break;
                     case PAN:
                         UpdatePanDocDetailsRequest up = objectMapper.readValue(objectMapper.writeValueAsString(entry.getDetails()), UpdatePanDocDetailsRequest.class);

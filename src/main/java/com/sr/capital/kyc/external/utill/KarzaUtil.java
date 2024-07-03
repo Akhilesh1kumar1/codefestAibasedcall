@@ -18,8 +18,8 @@ public class KarzaUtil {
     public HttpHeaders getKarzaHeader() {
         HttpHeaders header = new HttpHeaders();
 
-        header.add(KarzaConstant.KARZA_ACCOUNT_ID, "");//kycAppProperties.getIdfyAccountId()
-        header.add(KarzaConstant.KARZA_API_KEY,"" );//kycAppProperties.getIdfyApiKey()
+        //header.add(KarzaConstant.KARZA_ACCOUNT_ID, "");//kycAppProperties.getIdfyAccountId()
+        header.add(KarzaConstant.KARZA_API_KEY,kycAppProperties.getKarzaApiKey() );
         header.add(KarzaConstant.CONTENT_TYPE, KarzaConstant.APPLICATION_JSON);
 
         return header;

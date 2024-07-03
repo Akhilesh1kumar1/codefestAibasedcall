@@ -40,19 +40,22 @@ public class ValidationService {
         if(verification != null) {
             throw new VerificationInProgressException();
         }
+        FileDetails file1 =null;
+        FileDetails file2 =null;
+        if(orchestratorRequest.getIsFileRequired()) {
+             file1 = orchestratorRequest.getFile1();
+             file2 = orchestratorRequest.getFile2();
 
-        FileDetails file1 = orchestratorRequest.getFile1();
-        FileDetails file2 = orchestratorRequest.getFile2();
+            // EMPTY FILE VALIDATION
+            if (file1.getFile().getSize() == 0) {
+                throw new FileNotFoundException();
+            }
 
-        // EMPTY FILE VALIDATION
-        if(file1.getFile().getSize() == 0) {
-            throw new FileNotFoundException();
-        }
-
-        // SUPPORTED FILE TYPES VALIDATION
-        String file1Type = file1.getFile().getContentType();
-        if(StringUtils.hasLength(file1Type) && !DocExtractionConstants.FileTypes.supportedFileTypes.contains(file1Type.toLowerCase())) {
-            throw new UnsupportedMediaType();
+            // SUPPORTED FILE TYPES VALIDATION
+            String file1Type = file1.getFile().getContentType();
+            if (StringUtils.hasLength(file1Type) && !DocExtractionConstants.FileTypes.supportedFileTypes.contains(file1Type.toLowerCase())) {
+                throw new UnsupportedMediaType();
+            }
         }
 
         // AADHAAR SECOND FILE VALIDATION

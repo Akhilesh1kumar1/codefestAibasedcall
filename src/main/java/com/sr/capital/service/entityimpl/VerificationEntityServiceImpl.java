@@ -30,7 +30,7 @@ public class VerificationEntityServiceImpl {
 
 
 
-    public VerificationEntity findByVerificationId(Long verificationToken) {
+    public VerificationEntity findByVerificationId(UUID verificationToken) {
         return verificationRepository.findById(verificationToken).orElse(null);
     }
 

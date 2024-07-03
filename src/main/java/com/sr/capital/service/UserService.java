@@ -12,4 +12,6 @@ public interface UserService {
     UserDetails saveUserDetails(UserDetails userDetails) throws CustomException;
 
     InternalTokenUserDetailsResponse getUserDetailsUsingInternalToken(String token);
+
+    boolean updateVerifyFlag(Long userId);
 }

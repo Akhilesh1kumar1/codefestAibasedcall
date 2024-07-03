@@ -2,12 +2,17 @@ package com.sr.capital.service.impl;
 
 import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.dto.request.TenantDetails;
 import com.sr.capital.dto.request.UserDetails;
+import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.shiprocket.client.ShiprocketClient;
 import com.sr.capital.external.shiprocket.dto.response.ApiTokenUserDetailsResponse;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
+import com.sr.capital.helpers.enums.CallbackType;
+import com.sr.capital.helpers.enums.CommunicationChannels;
+import com.sr.capital.helpers.enums.VerificationType;
 import com.sr.capital.repository.primary.UserRepository;
 import com.sr.capital.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,7 @@ public class UserServiceImpl implements UserService {
    final UserRepository userRepository;
 
     final AES256 aes256;
+    final VerificationUtilService verificationUtilService;
 
     @Override
     public ApiTokenUserDetailsResponse getUserDetails(String token) {
@@ -42,7 +48,32 @@ public class UserServiceImpl implements UserService {
        }
 
         userRepository.save(user);
-        return UserDetails.mapUser(user);
+        userDetails.setId(user.getId());
+        if(!userDetails.getIsMobileNumberVerified()){
+            VerificationOrchestratorRequest verificationOrchestratorRequest = sendOtp(user);
+             userDetails.setVerificationToken(verificationOrchestratorRequest.getVerificationEntity().getId());
+        }
+
+
+        return userDetails;
+    }
+
+    private VerificationOrchestratorRequest sendOtp(User userDetails) throws CustomException {
+        TenantDetails tenantDetails =TenantDetails.builder().mobileNumber(aes256.decrypt(userDetails.getMobile())).srUserId(userDetails.getSrUserId()).emailId(aes256.decrypt(userDetails.getEmail())).build();
+
+        VerificationOrchestratorRequest verificationOrchestratorRequest = VerificationOrchestratorRequest.builder()
+                .rawRequest(
+                        VerificationOrchestratorRequest.RawRequest.builder()
+                                .callbackType(CallbackType.USER_SIGN_UP)
+                                .verificationType(VerificationType.OTP)
+                                .entityId(userDetails.getId())
+                                .channel(CommunicationChannels.SMS_WHATSAPP)
+                                .build()
+                ).tenantDetails(tenantDetails)
+                .build();
+
+        verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest);
+        return verificationOrchestratorRequest;
     }
 
     private void encryptData(UserDetails userDetails) {
@@ -51,6 +82,7 @@ public class UserServiceImpl implements UserService {
         userDetails.setFirstName(aes256.encrypt(userDetails.getFirstName()));
         userDetails.setLastName(aes256.encrypt(userDetails.getLastName()));
         userDetails.setMiddleName(aes256.encrypt(userDetails.getMiddleName()));
+        userDetails.setPanNumber(aes256.encrypt(userDetails.getPanNumber()));
     }
 
     @Override
@@ -60,7 +92,10 @@ public class UserServiceImpl implements UserService {
         if(response.getUserId()!=null){
             User user = userRepository.findBySrUserId(Long.valueOf(response.getUserId()));
             if(user!=null){
+                response.setMobile(aes256.decrypt(user.getMobile()));
                 response.setIsAccepted(user.getIsAccepted());
+                response.setEntityType(user.getEntityType());
+                response.setPanNumber(aes256.decrypt(user.getPanNumber()));
             }
         }
         return response;
@@ -75,5 +110,15 @@ public class UserServiceImpl implements UserService {
         if(!RequestData.getTenantId().equalsIgnoreCase(String.valueOf(userDetails.getCompanyId()))){
             throw new CustomException("Invalid CompanyId ", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public boolean updateVerifyFlag(Long userId){
+        User user = userRepository.findById(userId).orElse(null);
+        if(user!=null){
+            user.setIsMobileVerified(true);
+            userRepository.save(user);
+        }
+        return true;
     }
 }

@@ -63,11 +63,22 @@ public class User extends LongBaseEntity{
     @Column(name = "is_accepted")
     private Boolean isAccepted = false;
 
+    @Column(name = "entity_type")
+    private String entityType;
+
+    @Column(name = "pan_number")
+    private String panNumber;
+
+    @Builder.Default
+    @Column(name = "is_mobile_verified")
+    private Boolean isMobileVerified = false;
+
     public static User mapUser(UserDetails userDetails){
         User user =User.builder().srUserId(Long.valueOf(userDetails.getUserId())).
         comments(userDetails.getComments())
-                .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).build();
+                .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).panNumber(userDetails.getPanNumber()).build();
         user.setIsEnabled(true);
+        user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         return user;
     }
 

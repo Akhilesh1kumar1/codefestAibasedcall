@@ -60,7 +60,7 @@ public class KarzaResponseProcessor {
 
         KarzaBaseResponse<?> idfyGenericResponse = idfyGenericResponseList.get(0);
 
-        VerificationEntity verification = verificationManager.findByVerificationId(Long.valueOf(idfyGenericResponse.getGroupId()));
+        VerificationEntity verification = null;//verificationManager.findByVerificationId(Long.valueOf(idfyGenericResponse.getGroupId()));
 
         RequestData.setTenantId(verification.getSrCompanyId());
 

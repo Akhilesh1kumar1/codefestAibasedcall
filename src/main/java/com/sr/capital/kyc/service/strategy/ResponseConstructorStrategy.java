@@ -35,6 +35,9 @@ public class ResponseConstructorStrategy {
     @Autowired
     private DefaultResponseConstructor defaultResponseConstructor;
 
+    @Autowired
+    private ExtractedGstByPanResponseConstructor extractedGstByPanResponseConstructor;
+
 
     public <T,U> ResponseEntity<GenericResponse<T>> constructResponse(U input) throws ResponseConstructorNotFoundException {
 
@@ -55,6 +58,9 @@ public class ResponseConstructorStrategy {
                         break;
                     case PAN:
                         responseConstructor = extractedPanCardResponseConstructor;
+                        break;
+                    case GST_BY_PAN:
+                        responseConstructor = extractedGstByPanResponseConstructor;
                         break;
                     default:
                         throw new ResponseConstructorNotFoundException();

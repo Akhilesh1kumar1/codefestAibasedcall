@@ -18,7 +18,7 @@ public class BaseDoc implements Serializable {
 
     @CreatedBy
     @Field("created_by")
-    private String createdBy;
+    private String createdBy ="SYSTEM";;
 
     @CreatedDate
     @Field("created_at")
@@ -26,10 +26,10 @@ public class BaseDoc implements Serializable {
 
     @LastModifiedDate
     @Field("last_modified_at")
-    private LocalDateTime lastModifiedAt;
+    private LocalDateTime lastModifiedAt =LocalDateTime.now();
 
     @LastModifiedBy
     @Field("last_modified_by")
-    private String lastModifiedBy;
+    private String lastModifiedBy="SYSTEM";
 
 }

@@ -4,7 +4,7 @@ public class KarzaConstant {
 
     private KarzaConstant() {}
 
-    public static final String DEFAULT_CONSENT = "yes";
+    public static final String DEFAULT_CONSENT = "Y";
 
     // IDfy headers
     public static final String KARZA_ACCOUNT_ID = "account-id";

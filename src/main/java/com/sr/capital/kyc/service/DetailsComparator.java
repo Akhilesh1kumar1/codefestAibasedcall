@@ -100,7 +100,8 @@ public class DetailsComparator {
                     remarks);
             verificationManager.saveVerificationEntity(verification);
 
-            List<Task> taskList = taskManager.findTasksByGroupId(verification.getId());
+            //TODO
+            //List<Task> taskList = taskManager.findTasksByGroupId(verification.getId());
 
            // sendKafkaEvent(docOrchestratorRequest, taskList);
         }
@@ -112,7 +113,7 @@ public class DetailsComparator {
         VerificationEntity verification = docOrchestratorRequest.getVerification();
         Task currentTask = docOrchestratorRequest.getTask();
 
-        List<Task> taskList = taskManager.findTasksByGroupId(verification.getId());
+        List<Task> taskList =null; //taskManager.findTasksByGroupId(verification.getId());
 
         Boolean allTaskSuccess = Boolean.TRUE;
 
