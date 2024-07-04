@@ -134,6 +134,9 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                 GstByPanDocDetails gstByPanDocDetails = (GstByPanDocDetails) kycDocDetails.getDetails();
                 return (T) gstByPanDocDetails;
             case MSME:
+            case LOAN_TRACKER:
+            case PROVISIONAL:
+                return (T) kycDocDetails;
             case AGREEMENT:
             case CIN:
             case VOTER_ID:
