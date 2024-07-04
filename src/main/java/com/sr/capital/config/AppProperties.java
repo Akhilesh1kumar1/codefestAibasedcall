@@ -175,6 +175,12 @@ public class AppProperties {
     @Value("${external.karza.enabled}")
     private Boolean karzaEnabled;
 
+    @Value("${external.karza.vendor-token}")
+    private String karzaVendorToken;
+
+    @Value("${external.karza.vendor-code}")
+    private String karzaVendorCode;
+
     /*
         karza EXTERNAL API
      */

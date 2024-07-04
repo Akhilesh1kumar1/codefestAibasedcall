@@ -150,6 +150,8 @@ management:
 external:
   karza:
     enabled: false
+    vendor-token: ${KARZA_VENDOR_TOKEN:test}
+    vendor-code: ${KARZA_VENDOR_CODE:test}
     api:
       endpoint:
         cross:

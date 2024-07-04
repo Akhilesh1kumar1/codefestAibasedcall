@@ -67,11 +67,11 @@ public class KarzaWebhookServiceImpl implements KarzaWebhookService {
 
 
     private Boolean validateRequestToken(String vendorCode,String vendorToken) throws InvalidVendorTokenException, InvalidVendorCodeException {
-        if(!appProperties.getKlubVendorCode().equalsIgnoreCase(vendorCode)){
+        if(!appProperties.getKarzaVendorCode().equalsIgnoreCase(vendorCode)){
             throw new InvalidVendorCodeException();
         }
 
-        if(!appProperties.getKlubVendorToken().equalsIgnoreCase(vendorToken)){
+        if(!appProperties.getKarzaVendorToken().equalsIgnoreCase(vendorToken)){
             throw new InvalidVendorTokenException();
         }
         return true;
