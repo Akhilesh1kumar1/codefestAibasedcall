@@ -198,8 +198,10 @@ public class DocExtractionService {
                 return SelfiDocDetails.class;
             case GST_BY_PAN:
                 return GstByPanDocDetails.class;
-
-
+            case MSME:
+            case PROVISIONAL:
+            case LOAN_TRACKER:
+                return ReportMetaData.class;
             default:
                 throw new CustomException("Invalid Doc Type!", HttpStatus.INTERNAL_SERVER_ERROR);
         }

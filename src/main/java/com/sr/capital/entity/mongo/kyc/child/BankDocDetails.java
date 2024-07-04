@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
@@ -39,6 +40,19 @@ public class BankDocDetails implements Serializable {
     private String bankAddress;
 
     @Field("is_scanned")
-    private boolean isScanned;
+    private Boolean isScanned;
+
+    @Field("images")
+    private List<String> images;
+
+
+    String statementPassword;
+
+    Boolean isAccountVerified = false;
+
+    String bankAccountUserName;
+
+    String bankAccountPassword;
+
 
 }

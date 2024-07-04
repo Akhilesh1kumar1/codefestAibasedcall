@@ -128,17 +128,8 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
 
                 return (T) gstResponse;
             case BANK_CHEQUE:
-                BankDocDetails bankDocDetails = (BankDocDetails) kycDocDetails.getDetails();
-                return (T) ExtractedBankResponse.builder()
-                        .name(bankDocDetails.getAccountName())
-                        .accountNo(bankDocDetails.getAccountNo())
-                        .micrCode(bankDocDetails.getMicrCode())
-                        .micrChequeNumber(bankDocDetails.getMicrChequeNumber())
-                        .dateOfIssue(bankDocDetails.getDateOfIssue())
-                        .bankName(bankDocDetails.getBankName())
-                        .ifscCode(bankDocDetails.getIfscCode())
-                        .bankAddress(bankDocDetails.getBankAddress())
-                        .build();
+                List<ExtractedBankResponse> extractedBankResponses = getExtractedBankResponses(kycDocDetails);
+                return (T) extractedBankResponses;
             case GST_BY_PAN:
                 GstByPanDocDetails gstByPanDocDetails = (GstByPanDocDetails) kycDocDetails.getDetails();
                 return (T) gstByPanDocDetails;
@@ -158,5 +149,23 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             default:
                 return null;
         }
+    }
+
+    private List<ExtractedBankResponse> getExtractedBankResponses(KycDocDetails<?> kycDocDetails) {
+        List<BankDocDetails> bankDocDetailsList = (List<BankDocDetails>) kycDocDetails.getDetails();
+        List<ExtractedBankResponse> extractedBankResponses =new ArrayList<>();
+        bankDocDetailsList.forEach(bankDocDetails -> {
+            extractedBankResponses.add( ExtractedBankResponse.builder()
+                    .name(aes256.decrypt(bankDocDetails.getAccountName()))
+                    .accountNo(aes256.decrypt(bankDocDetails.getAccountNo()))
+                    .micrCode(bankDocDetails.getMicrCode())
+                    .micrChequeNumber(bankDocDetails.getMicrChequeNumber())
+                    .dateOfIssue(bankDocDetails.getDateOfIssue())
+                    .bankName(bankDocDetails.getBankName())
+                    .ifscCode(bankDocDetails.getIfscCode())
+                    .bankAddress(aes256.decrypt(bankDocDetails.getBankAddress()))
+                    .build());
+        });
+        return extractedBankResponses;
     }
 }

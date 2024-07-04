@@ -140,7 +140,7 @@ public class DocDetailsService {
     private BankDocDetails getBankExtractionResponse(final BankDetailsRequest bankDetailsRequest) {
         return BankDocDetails.builder()
             .accountName(bankDetailsRequest.getName())
-            .accountNo(bankDetailsRequest.getAccountNo())
+            .accountNo(bankDetailsRequest.getAccountNumber())
             .bankName(bankDetailsRequest.getBankName())
             .ifscCode(bankDetailsRequest.getIfscCode())
             .build();

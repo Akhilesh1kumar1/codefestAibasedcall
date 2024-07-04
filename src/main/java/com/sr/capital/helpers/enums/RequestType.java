@@ -11,6 +11,7 @@ public enum RequestType {
     ADHAR("adhar"),
     COMPANY_KYC("comapny_kyc"),
     ENACH_LINKING("enach_linking"),
+    RESEND_OTP("resend-otp"),
 
     LOAN_APPLICATION("loan_application"),
     UPLOAD_AND_EXTRACT("upload_and_extract"),

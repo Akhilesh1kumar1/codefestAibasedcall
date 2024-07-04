@@ -8,6 +8,8 @@ public enum DocType {
     GST("gst"),
     BANK_CHEQUE("bank_cheque"),
     MSME("msme"),
+    PROVISIONAL("provisional"),
+    LOAN_TRACKER("loan_tracker"),
     AGREEMENT("agreement"),
     VERIFY_OTP("verify-otp"),
 

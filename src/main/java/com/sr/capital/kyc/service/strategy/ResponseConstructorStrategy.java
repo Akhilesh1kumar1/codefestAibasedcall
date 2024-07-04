@@ -62,6 +62,11 @@ public class ResponseConstructorStrategy {
                     case GST_BY_PAN:
                         responseConstructor = extractedGstByPanResponseConstructor;
                         break;
+                    case MSME:
+                    case PROVISIONAL:
+                    case LOAN_TRACKER:
+                         responseConstructor = defaultResponseConstructor;
+                         break;
                     default:
                         throw new ResponseConstructorNotFoundException();
                 }

@@ -1,5 +1,6 @@
 package com.sr.capital.util;
 
+import com.sr.capital.exception.custom.InvalidMobileException;
 import org.springframework.data.util.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -8,7 +9,10 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.sr.capital.helpers.constants.Constants.MOBILE_REGEX;
 
 public class CoreUtil {
 
@@ -100,7 +104,12 @@ public class CoreUtil {
         return sb.toString();
     }
 
-
+    public static void validateMobile(String mobile) throws InvalidMobileException {
+        Matcher mobileMatcher = Pattern.compile(MOBILE_REGEX).matcher(mobile);
+        if(!mobileMatcher.matches()){
+            throw new InvalidMobileException();
+        }
+    }
 
 
 }

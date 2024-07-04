@@ -39,6 +39,9 @@ public class EntityConstructorStrategy {
     @Autowired
     private PanDocDetailsEntityConstructor panDocDetailsEntityConstructor;
 
+
+    @Autowired
+    private ReportMetaDataConstructor reportMetaDataConstructor;
     @Autowired
     private PanGstCrossVerifiedDetailsEntityConstructor panGstCrossVerifiedDetailsEntityConstructor;
 
@@ -78,7 +81,9 @@ public class EntityConstructorStrategy {
             entityConstructor = panVerifiedDetailsEntityConstructor;
         }else if(responseClass.equals(SelfiDocDetails.class)){
             entityConstructor = selfiDocDetailsConstructor;
-        }else {
+        }else if(responseClass.equals(ReportMetaData.class)){
+           entityConstructor = reportMetaDataConstructor;
+       }else {
             throw new EntityConstructorNotFoundException();
         }
 

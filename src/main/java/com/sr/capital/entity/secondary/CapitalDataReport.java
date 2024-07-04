@@ -26,6 +26,7 @@ public class CapitalDataReport {
     @Column(name = "COMPANY_ID")
     private Integer companyId;
 
+    @Builder.Default
     @Column(name = "PLATFORM_AGE_SIGNUP", nullable = false, columnDefinition = "int default 0")
     private Integer platformAgeSignup = 0;
 
@@ -42,9 +43,11 @@ public class CapitalDataReport {
     @Column(name = "UPDATED_ON")
     private Timestamp updatedOn;
 
+    @Builder.Default
     @Column(name = "PLATFORM_AGE_SIGNUP_MONTH", nullable = false, columnDefinition = "int default 0")
     private Integer platformAgeSignupMonth = 0;
 
+    @Builder.Default
     @Column(name = "PLATFORM_AGE_FTS_MONTH", nullable = false, columnDefinition = "int default 0")
     private Integer platformAgeFtsMonth = 0;
 
