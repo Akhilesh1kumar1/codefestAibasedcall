@@ -9,10 +9,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GstCompleteHistoryManager {
 
-    GstCompeteDocHistoryRepository gstCompeteDocHistoryRepository;
+    final GstCompeteDocHistoryRepository gstCompeteDocHistoryRepository;
 
     public boolean saveGstHistory(GstDocDetailsHistory gstDocDetailsHistory){
         gstCompeteDocHistoryRepository.save(gstDocDetailsHistory);
         return true;
     }
+
+
+
 }

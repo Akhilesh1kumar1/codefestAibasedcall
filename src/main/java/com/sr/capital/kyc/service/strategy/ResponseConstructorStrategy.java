@@ -73,6 +73,7 @@ public class ResponseConstructorStrategy {
                 responseConstructor = uploadExtractAndSaveResponseConstructor;
                 break;
             case BANK_DETAILS:
+            case GST:
                 responseConstructor = defaultResponseConstructor;
                 break;
             default:

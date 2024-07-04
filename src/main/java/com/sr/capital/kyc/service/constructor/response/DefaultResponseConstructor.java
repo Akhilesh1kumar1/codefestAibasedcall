@@ -13,15 +13,15 @@ public class DefaultResponseConstructor implements ResponseConstructor {
     @Override
     @SuppressWarnings("unchecked")
     public <T, U> ResponseEntity<GenericResponse<T>> constructResponse(U input) {
-        String message;
+       /* String message;
         if(input != null){
             message = (String) input;
         } else {
             message = "OK!";
-        }
+        }*/
         GenericResponse<T> response = new GenericResponse<>();
         response.setStatusCode(HttpStatusCode.OK);
-        response.setData((T)message);
+        response.setData((T)input);
 
         return new ResponseEntity<>(
             response,

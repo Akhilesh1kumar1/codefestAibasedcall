@@ -35,6 +35,13 @@ public class DocDetailsController {
         return docDetailsService.insertBankDetails(bankDetailsRequest);
     }
 
+    @PostMapping(value = "/fetch-gst-details", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> fetchCompleteGstDetails(
+            @RequestBody DocDetailsRequest docDetailsRequest)
+            throws CustomException {
+        return docDetailsService.fetchGstDocByTenantId(docDetailsRequest);
+    }
+
 
    /* @PostMapping(value = "/update", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> updateDetails(@RequestBody UpdateDocsDetailsRequest updateDocsDetailsRequest) throws Exception {

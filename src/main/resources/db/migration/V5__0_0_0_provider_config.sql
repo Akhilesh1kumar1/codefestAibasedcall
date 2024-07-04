@@ -136,7 +136,7 @@ CREATE TABLE `verification` (
 
 
 CREATE TABLE `task` (
-  `id` bigint(16) BIGINT NOT NULL AUTO_INCREMENT,
+  `id` bigint(16)  NOT NULL AUTO_INCREMENT,
   `request_id` varchar(255) DEFAULT NULL,
   `group_id` bigint(16) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,

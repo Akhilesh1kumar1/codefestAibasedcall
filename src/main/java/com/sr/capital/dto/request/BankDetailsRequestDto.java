@@ -37,4 +37,8 @@ public class BankDetailsRequestDto extends BaseRequest{
     String statementPassword;
 
     Boolean isAccountVerified = false;
+
+    String bankAccountUserName;
+
+    String bankAccountPassword;
 }

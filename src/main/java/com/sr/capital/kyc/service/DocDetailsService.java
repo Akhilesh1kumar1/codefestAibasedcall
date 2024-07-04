@@ -3,6 +3,7 @@ package com.sr.capital.kyc.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.entity.mongo.kyc.GstCompleteDocDetails;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.AadhaarDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
@@ -24,6 +25,7 @@ import com.sr.capital.kyc.dto.request.child.UpdatePanDocDetailsRequest;
 import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.service.constructor.response.VerifiedDocResponseConstructor;
 import com.sr.capital.kyc.service.strategy.ResponseConstructorStrategy;
+import com.sr.capital.service.entityimpl.GstCompleteDetailsManager;
 import com.sr.capital.service.entityimpl.TaskManager;
 import com.sr.capital.service.entityimpl.VerificationEntityServiceImpl;
 import com.sr.capital.util.LoggerUtil;
@@ -61,6 +63,9 @@ public class DocDetailsService {
     @Autowired
     private VerifiedDocResponseConstructor verifiedDocResponseConstructor;
 
+    @Autowired
+    private GstCompleteDetailsManager gstCompleteDetailsManager;
+
     public ResponseEntity<?> fetchDocDetailsByTenantId(final DocDetailsRequest docDetailsRequest)
         throws CustomException {
         List<String> tenantIdList = docDetailsRequest.getSrCompanyId();
@@ -80,6 +85,32 @@ public class DocDetailsService {
             tenantIdList);
 
         return responseConstructorStrategy.constructResponse(kycDocDetailsList);
+    }
+
+
+    public ResponseEntity<?> fetchGstDocByTenantId(final DocDetailsRequest docDetailsRequest)
+            throws CustomException {
+        RequestData.setRequestType(RequestType.GST);
+        List<String> tenantIdList = docDetailsRequest.getSrCompanyId();
+        if (ObjectUtils.isEmpty(tenantIdList) || tenantIdList.size() > DocExtractionConstants.LIST_SIZE) {
+            throw new CustomException(ErrorConstants.FETCH_DOC_DETAILS_ERROR,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        boolean isInvalid = tenantIdList.stream().anyMatch(tId -> tId.trim().isBlank());
+        if (isInvalid) {
+            throw new CustomException(ErrorConstants.FETCH_DOC_DETAILS_ERROR,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        List<GstCompleteDocDetails> gstCompleteDocDetails =new ArrayList<>();
+
+        for(String tenantId:tenantIdList) {
+            List<GstCompleteDocDetails> kycDocDetailsList = gstCompleteDetailsManager.getGstDetailsByTenantId(Long.valueOf(tenantId));
+            gstCompleteDocDetails.addAll(kycDocDetailsList);
+        }
+
+        return responseConstructorStrategy.constructResponse(gstCompleteDocDetails);
     }
 
 

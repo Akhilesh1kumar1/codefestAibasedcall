@@ -85,13 +85,14 @@ public class DocExtractionService {
             transformPdfRequest(orchestratorRequest);
 
         }
+        if(orchestratorRequest.getActions().contains(DocActionType.EXTRACT)){
+            KarzaBaseRequest<?> karzaBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
+            orchestratorRequest.setKarzaBaseRequest(karzaBaseRequest);
 
-        KarzaBaseRequest<?> karzaBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
-        orchestratorRequest.setKarzaBaseRequest(karzaBaseRequest);
 
-
-        KarzaBaseResponse<?> extractionResponse = karzaExtractionAdapter.extractDocumentDetails(karzaBaseRequest);
-        orchestratorRequest.setKarzaBaseResponse(extractionResponse);
+            KarzaBaseResponse<?> extractionResponse = karzaExtractionAdapter.extractDocumentDetails(karzaBaseRequest);
+            orchestratorRequest.setKarzaBaseResponse(extractionResponse);
+        }
 
 
         KycDocDetails<?> kycDocDetails = entityConstructorStrategy.constructEntity(orchestratorRequest, orchestratorRequest.getKycDocDetails(),
@@ -230,6 +231,9 @@ public class DocExtractionService {
     private void transformPdfRequest(DocOrchestratorRequest orchestratorRequest) throws Exception {
 
         KarzaBaseRequest<?> karzaBaseRequest = orchestratorRequest.getKarzaBaseRequest();
+        if(karzaBaseRequest==null){
+            return;
+        }
         FileDetails file1 = orchestratorRequest.getFile1();
         FileDetails file2 = orchestratorRequest.getFile2();
 
