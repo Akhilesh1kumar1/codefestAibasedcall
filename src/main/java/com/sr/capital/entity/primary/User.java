@@ -2,6 +2,7 @@ package com.sr.capital.entity.primary;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sr.capital.config.AttributeEncryptor;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.UserDetails;
 import jakarta.persistence.*;
 import lombok.*;
@@ -75,7 +76,7 @@ public class User extends LongBaseEntity{
 
     public static User mapUser(UserDetails userDetails){
         User user =User.builder().srUserId(Long.valueOf(userDetails.getUserId())).
-        comments(userDetails.getComments())
+        comments(userDetails.getComments()).srCompanyId(Long.valueOf(RequestData.getTenantId()))
                 .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).panNumber(userDetails.getPanNumber()).build();
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
