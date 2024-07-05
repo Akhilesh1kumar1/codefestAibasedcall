@@ -134,15 +134,11 @@ public class S3Util {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.MINUTE, request.getExpiry());
-
-        Date expiration = new Date();
-        long expTimeMillis = expiration.getTime();
-        expTimeMillis += (request.getExpiry()*1000);
-        expiration.setTime(expTimeMillis);
+        
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(request.getBucketName(), request.getFilePath())
                         .withMethod(request.getHttpMethod())
-                        .withExpiration(expiration);
+                        .withExpiration(calendar.getTime());
                         //.withContentType(FILE_CONTENT_TYPE_MAP.get(FilenameUtils.getExtension(request.getFileName())));
 
         URL presignedUrl = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
