@@ -2,8 +2,10 @@ package com.sr.capital.service.impl;
 
 import com.amazonaws.HttpMethod;
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.response.BaseCreditPartnerResponseDto;
 import com.sr.capital.dto.response.CompanySalesDetails;
 import com.sr.capital.dto.response.LoanOfferDetails;
+import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
@@ -15,6 +17,7 @@ import com.sr.capital.service.CapitalDataReportService;
 import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.ExternalService;
 import com.sr.capital.service.LoanOfferService;
+import com.sr.capital.service.entityimpl.BaseCreditPartnerEntityServiceImpl;
 import com.sr.capital.util.CsvUtils;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +45,8 @@ public class ExternalServiceImpl implements ExternalService {
     final AppProperties appProperties;
 
     final DocDetailsService docDetailsService;
+
+    final BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
     @Override
     public Boolean validateRequest(String vendorToken, String vendorCode,String loanVendorName) throws InvalidVendorTokenException, InvalidVendorCodeException {
 
@@ -51,6 +56,10 @@ public class ExternalServiceImpl implements ExternalService {
     @Override
     public LoanOfferDetails createLoanOffer(LoanOfferDetails loanOfferDetails, String vendorToken, String vendorCode) throws InvalidVendorTokenException, InvalidVendorCodeException {
         validateRequest(vendorToken,vendorCode,loanOfferDetails.getLoanVendorName());
+        BaseCreditPartner baseCreditPartnerResponseDto =baseCreditPartnerEntityService.getCreditPartnerByName(loanOfferDetails.getLoanVendorName());
+        if(baseCreditPartnerResponseDto!=null){
+            loanOfferDetails.setLoanVendorId(baseCreditPartnerResponseDto.getId());
+        }
         return loanOfferService.saveLoanOffer(loanOfferDetails);
     }
 
