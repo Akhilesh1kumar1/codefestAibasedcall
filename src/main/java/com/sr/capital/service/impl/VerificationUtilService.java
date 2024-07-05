@@ -35,7 +35,7 @@ public class VerificationUtilService {
         VerificationOrchestratorRequest.RawRequest rawRequest = verificationOrchestratorRequest.getRawRequest();
         VerificationEntity verificationEntity = VerificationEntity.builder()
                 .type(rawRequest.getVerificationType())
-                .srCompanyId(String.valueOf(rawRequest.getEntityId())).userId(RequestData.getUserId())
+                .srCompanyId(String.valueOf(rawRequest.getEntityId())).userId(verificationOrchestratorRequest.getTenantDetails().getCapitalUserId())
                 .callback(rawRequest.getCallbackType())
                 .channel(rawRequest.getChannel())
                 .build();

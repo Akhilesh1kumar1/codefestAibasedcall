@@ -16,6 +16,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class TenantDetails {
 
+    Long capitalUserId;
+
     Long srUserId;
 
     String name;

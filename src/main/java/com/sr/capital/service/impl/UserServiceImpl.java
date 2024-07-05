@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private VerificationOrchestratorRequest sendOtp(User userDetails) throws CustomException {
-        TenantDetails tenantDetails =TenantDetails.builder().mobileNumber(aes256.decrypt(userDetails.getMobile())).srUserId(userDetails.getSrUserId()).emailId(aes256.decrypt(userDetails.getEmail())).build();
+        TenantDetails tenantDetails =TenantDetails.builder().capitalUserId(userDetails.getId()).mobileNumber(aes256.decrypt(userDetails.getMobile())).srUserId(userDetails.getSrUserId()).emailId(aes256.decrypt(userDetails.getEmail())).build();
 
         VerificationOrchestratorRequest verificationOrchestratorRequest = VerificationOrchestratorRequest.builder()
                 .rawRequest(
