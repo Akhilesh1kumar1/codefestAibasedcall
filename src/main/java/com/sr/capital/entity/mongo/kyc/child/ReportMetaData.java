@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
-import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -14,5 +13,5 @@ import java.util.Objects;
 @Builder
 public class ReportMetaData {
 
-    Map<String, Objects> metaData;
+    Map<String, Object> metaData;
 }

@@ -25,19 +25,19 @@ public class ReportMetaDataConstructor implements EntityConstructor {
             images.add(request.getFile2().getFileName());
         }
 
-        ReportMetaData reportMetaData = null;
-        try {
-            reportMetaData = MapperUtils.convertValue(request.getDocDetails(), ReportMetaData.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return (T) KycDocDetails.<ReportMetaData>builder()
-                .srCompanyId(RequestData.getTenantId())
-                .docType(request.getDocType())
-                .images(images)
-                .details(reportMetaData)
-                .build();
+        ReportMetaData reportMetaData =ReportMetaData.builder().metaData(request.getDocDetails()).build();
+       if(request.getKycDocDetails()==null) {
+           return (T) KycDocDetails.<ReportMetaData>builder()
+                   .srCompanyId(RequestData.getTenantId())
+                   .docType(request.getDocType())
+                   .images(images)
+                   .details(reportMetaData)
+                   .build();
+       }else{
+           KycDocDetails<ReportMetaData> kyc = (KycDocDetails<ReportMetaData>) request.getKycDocDetails();
+           kyc.setDetails(reportMetaData);
+           return (T) kyc;
+       }
 
     }
 }

@@ -28,7 +28,9 @@ public class MongoEntityUtil {
             case CIN:
             case AGREEMENT:
             case MSME:
-                return kycDocDetails.getDetails() instanceof OldDocDetails;
+            case PROVISIONAL:
+            case LOAN_TRACKER:
+                return kycDocDetails.getDetails() instanceof ReportMetaData;
             default:
                 return false;
         }

@@ -1,6 +1,7 @@
 package com.sr.capital.kyc.service.constructor.response;
 
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.service.interfaces.ResponseConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,10 @@ public class DefaultResponseConstructor implements ResponseConstructor {
         } else {
             message = "OK!";
         }*/
+        DocOrchestratorRequest orchestratorRequest = (DocOrchestratorRequest) input;
         GenericResponse<T> response = new GenericResponse<>();
         response.setStatusCode(HttpStatusCode.OK);
-        response.setData((T)input);
+        response.setData((T) orchestratorRequest.getKycDocDetails());
 
         return new ResponseEntity<>(
             response,
