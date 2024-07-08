@@ -11,4 +11,7 @@ public interface LeadGenerationService {
     GenerateLeadResponseDto saveLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException;
 
     List<GenerateLeadResponseDto> getAllLeads(Long srCompanyId);
+
+    GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException;
+
 }

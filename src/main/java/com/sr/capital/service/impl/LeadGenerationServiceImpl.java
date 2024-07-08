@@ -41,4 +41,28 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         });
         return responseDtos;
     }
+
+    @Override
+    public GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
+        if(generateLeadRequestDto.getLeadId()==null){
+            throw new CustomException("Lead_id cannot be null", HttpStatus.BAD_REQUEST);
+
+        }
+
+        Lead lead =leadGenerationRepository.findById(generateLeadRequestDto.getLeadId()).orElse(null);
+        if(lead==null){
+            throw new CustomException("lead details not found", HttpStatus.BAD_REQUEST);
+
+        }
+
+        if(lead.getSrCompanyId().longValue()!=Long.valueOf(RequestData.getTenantId()).longValue()){
+            throw new CustomException("Invalid Lead Id", HttpStatus.BAD_REQUEST);
+
+        }
+
+        lead.setStatus(generateLeadRequestDto.getStatus());
+        leadGenerationRepository.save(lead);
+
+        return GenerateLeadResponseDto.builder().status(lead.getStatus()).id(lead.getId()).build();
+    }
 }
