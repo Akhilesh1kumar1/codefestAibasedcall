@@ -13,37 +13,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-public class CORSConfiguration {
+public class CORSConfiguration  implements WebMvcConfigurer {
 
-    @Value("${app.cors-allowed-origins}")
-    private List<String> allowedOrigins;
-
-    @Bean
-    public CorsWebFilter corsWebFilter() {
-
-        final CustomCorsConfiguration corsConfig = new CustomCorsConfiguration();
-        corsConfig.setAllowedOrigins(allowedOrigins);
-        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        corsConfig.addAllowedHeader("*");
-       // corsConfig.setExposedHeaders(HeaderConstants.exposedResponseHeaders);
-
-        /*final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);*/
-
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);
-
-        return new CorsWebFilter(source) ;
-    }
-
-    public static class CustomCorsConfiguration extends CorsConfiguration {
-
-        @Override
-        public String checkOrigin(String requestOrigin) {
-            if (requestOrigin != null && requestOrigin.startsWith("chrome-extension:")) {
-                return requestOrigin;
-            }
-            return super.checkOrigin(requestOrigin);
-        }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
     }
 }
