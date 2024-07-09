@@ -41,7 +41,7 @@ public class CustomCorsConfig {
         return new CorsFilter(source) {
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-                logger.info("CORS request from origin: " + request.getHeader("Origin"));
+                //logger.info("CORS request from origin: " + request.getHeader("Origin"));
                 super.doFilterInternal(request, response, filterChain);
             }
 
@@ -53,7 +53,7 @@ public class CustomCorsConfig {
 
             @Override
             public void destroy() {
-                logger.info("Destroying custom CORS filter");
+               // logger.info("Destroying custom CORS filter");
                 super.destroy();
             }
         };
