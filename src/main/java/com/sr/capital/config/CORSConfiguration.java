@@ -12,8 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
-public class CORSConfiguration  implements WebMvcConfigurer {
+//@Configuration
+public class CORSConfiguration {} /*implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -23,4 +23,4 @@ public class CORSConfiguration  implements WebMvcConfigurer {
                         .allowedHeaders("*")
                         .allowCredentials(true);
     }
-}
+}*/
