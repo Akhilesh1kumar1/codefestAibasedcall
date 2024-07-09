@@ -53,6 +53,7 @@ spring:
     import: optional:file:.env[.properties]
 
 app:
+  cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
   verification:
