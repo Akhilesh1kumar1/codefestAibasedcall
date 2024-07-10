@@ -2,6 +2,8 @@ package com.sr.capital.config.db;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.config.AttributeEncryptor;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.spi.MetadataBuilderContributor;
@@ -37,9 +39,17 @@ public class PrimaryDatabaseConfig {
 
 
     @Bean(name = "primaryDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.primary")
-    public DataSource primaryDataSource() {
-        return DataSourceBuilder.create().build();
+    //@ConfigurationProperties(prefix = "spring.datasource.primary")
+    public HikariDataSource primaryDataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(appProperties.getJdbcUrlPrimary());
+        config.setUsername(appProperties.getUsernamePrimary());
+        config.setPassword(appProperties.getPasswordPrimary());
+        config.setMaximumPoolSize(appProperties.getMaxPoolSize());
+        config.setMinimumIdle(appProperties.getMinIdle());
+        config.setPoolName(appProperties.getPoolName());
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        return new HikariDataSource(config);
     }
 
     @Bean(name = "primaryEntityManagerFactory")
