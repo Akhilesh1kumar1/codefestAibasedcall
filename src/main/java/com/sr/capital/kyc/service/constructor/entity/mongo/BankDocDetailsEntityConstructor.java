@@ -38,6 +38,7 @@ public class BankDocDetailsEntityConstructor implements EntityConstructor {
         try {
              bankDocDetails = MapperUtils.convertValue(request.getDocDetails(),BankDocDetails.class);
             encryptData(bankDocDetails);
+            bankDocDetailsList.add(bankDocDetails);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
