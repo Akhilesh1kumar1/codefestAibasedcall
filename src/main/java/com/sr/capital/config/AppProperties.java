@@ -260,4 +260,36 @@ public class AppProperties {
 
     @Value("${app.external.klub.vendor-code}")
     private String klubVendorCode;
+
+
+    //database
+
+    @Value("${spring.datasource.primary.hikari.maximum-pool-size}")
+    private int maxPoolSize;
+
+    @Value("${spring.datasource.primary.hikari.minimum-idle}")
+    private int minIdle;
+
+    @Value("${spring.datasource.primary.hikari.pool-name}")
+    private String poolName;
+
+    @Value("${spring.datasource.primary.jdbc-url}")
+    private String jdbcUrlPrimary;
+
+    @Value("${spring.datasource.primary.username}")
+    private String usernamePrimary;
+
+    @Value("${spring.datasource.primary.password}")
+    private String passwordPrimary;
+
+
+    @Value("${spring.datasource.secondary.jdbc-url}")
+    private String jdbcUrlSecondary;
+
+    @Value("${spring.datasource.secondary.username}")
+    private String usernameSecondary;
+
+    @Value("${spring.datasource.secondary.password}")
+    private String passwordSecondary;
+
 }

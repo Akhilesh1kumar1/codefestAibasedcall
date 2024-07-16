@@ -1,6 +1,10 @@
 package com.sr.capital.config.db;
 
+import com.sr.capital.config.AppProperties;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -27,10 +31,20 @@ import java.util.Map;
 )
 public class SecondaryDatabaseConfig {
 
+    @Autowired
+    private AppProperties appProperties;
     @Bean(name = "secondaryDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.secondary")
+    //@ConfigurationProperties(prefix = "spring.datasource.secondary")
     public DataSource secondaryDataSource() {
-        return DataSourceBuilder.create().build();
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(appProperties.getJdbcUrlSecondary());
+        config.setUsername(appProperties.getUsernameSecondary());
+        config.setPassword(appProperties.getPasswordSecondary());
+        config.setMaximumPoolSize(appProperties.getMaxPoolSize());
+        config.setMinimumIdle(appProperties.getMinIdle());
+        config.setPoolName(appProperties.getPoolName());
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        return new HikariDataSource(config);
     }
 
     @Bean(name = "secondaryEntityManagerFactory")
