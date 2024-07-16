@@ -74,6 +74,9 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
 
         List<String> images = new ArrayList<>();
         for (String imageName : imageNames) {
+            if(kycAppProperties.getActiveProfile().equalsIgnoreCase("local")){
+                return images;
+            }
             GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
                     .filePath(imageName)
                     .bucketName(kycAppProperties.getBucketName())

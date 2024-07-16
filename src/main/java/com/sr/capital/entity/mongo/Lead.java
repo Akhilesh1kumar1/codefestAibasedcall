@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -23,4 +24,8 @@ public class Lead extends BaseDoc {
     Integer duration;
 
     String status;
+
+    UUID loanApplicationId;
+
+
 }

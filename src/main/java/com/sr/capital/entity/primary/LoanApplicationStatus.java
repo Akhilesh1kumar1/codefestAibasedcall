@@ -26,6 +26,9 @@ public class LoanApplicationStatus extends LongBaseEntity{
     @Column(name = "loan_id")
     UUID loanId;
 
+    @Column(name = "vendor_loan_id")
+    String vendorLoanId;
+
     @Column(name = "loan_amount_approved")
     BigDecimal loanAmountApproved;
 
