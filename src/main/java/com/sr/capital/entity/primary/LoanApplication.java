@@ -40,8 +40,11 @@ public class LoanApplication extends UUIDBaseEntity{
 
     @Column(name = "loan_duration")
     Integer loanDuration;
+
+    @Column(name = "loan_type")
+    String loanType;
     public static LoanApplication mapLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto){
-        LoanApplication loanApplication =LoanApplication.builder().srCompanyId(loanApplicationRequestDto.getSrCompanyId()).loanAmountRequested(loanApplicationRequestDto.getLoanAmountRequested()).loanOfferId(loanApplicationRequestDto.getLoanOfferId()).loanVendorId(loanApplicationRequestDto.getLoanVendorId()).loanDuration(loanApplicationRequestDto.getLoanDuration()).loanStatus(loanApplicationRequestDto.getLoanStatus())
+        LoanApplication loanApplication =LoanApplication.builder().srCompanyId(loanApplicationRequestDto.getSrCompanyId()).loanAmountRequested(loanApplicationRequestDto.getLoanAmountRequested()).loanOfferId(loanApplicationRequestDto.getLoanOfferId()).loanVendorId(loanApplicationRequestDto.getLoanVendorId()).loanDuration(loanApplicationRequestDto.getLoanDuration()).loanType(loanApplicationRequestDto.getLoanType()).loanStatus(loanApplicationRequestDto.getLoanStatus())
                 .build();
         return loanApplication;
     }

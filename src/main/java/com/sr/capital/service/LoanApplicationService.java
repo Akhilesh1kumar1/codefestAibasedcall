@@ -17,5 +17,7 @@ public interface LoanApplicationService {
 
     public List<Object[]> getLoanApplicationStatusByCompanyId(Long srCompanyId);
 
+   public LoanApplication getLoanApplicationById(UUID loanApplicationId);
+
 
 }

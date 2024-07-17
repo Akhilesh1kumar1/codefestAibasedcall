@@ -28,10 +28,17 @@ public class IcrmController {
 
     final IcrmLeadService icrmLeadService;
 
-    @PostMapping()
-    public GenericResponse<IcrmLeadRsponseDto> getLeadDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+    @PostMapping("/loan/details")
+    public GenericResponse<IcrmLeadRsponseDto> getLoanDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
 
         return ResponseBuilderUtil.getResponse(icrmLeadService.getLeadDetails(icrmLeadRequestDto),SUCCESS,
+                CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
+    }
+
+    @PostMapping("/loan/complete/details")
+    public GenericResponse<IcrmLeadRsponseDto> getCompleteDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+
+        return ResponseBuilderUtil.getResponse(icrmLeadService.getCompleteLoanDetails(icrmLeadRequestDto),SUCCESS,
                 CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 }

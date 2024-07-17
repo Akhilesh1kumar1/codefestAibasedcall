@@ -104,6 +104,7 @@ CREATE TABLE loan_application (
     loan_status VARCHAR(20) NOT NULL,
     loan_offer_id binary(36) default NULL,
     loan_duration int not null default 0,
+    loan_type varchar(200) default null,
      `created_at` DATETIME DEFAULT NULL,
                   `created_by` varchar(255) DEFAULT NULL,
                   `updated_at` DATETIME DEFAULT NULL,
@@ -122,7 +123,10 @@ CREATE TABLE loan_application_status (
     loan_duration INT,
     loan_id BINARY(16),
     vendor_loan_id VARCHAR(255),
+    total_disbursed_amount decimal(15,2) NOT NULL,
+    vendor_status varchar(255) default null,
     loan_amount_approved DECIMAL(19,2),
+    interest_amount_at_sanction DECIMAL(19,2),
     interest_rate DOUBLE,
     start_date DATE,
     end_date DATE,
@@ -177,3 +181,21 @@ CREATE TABLE `task` (
 
 
 insert into loan_application_status(sr_company_id, loan_vendor_id, loan_amount_requested, loan_status, loan_offer_id, loan_duration, loan_id, vendor_loan_id, loan_amount_approved, interest_rate, start_date, end_date, comment, created_at, created_by, updated_at, updated_by, is_enabled)   select sr_company_id,loan_vendor_id,loan_amount_requested,loan_status,loan_offer_id,60,id,'3965982',loan_amount_requested,14,'2024-07-01','2028-07-01','uyefuwt',created_at,created_by,updated_at,updated_by,is_enabled from loan_application;
+
+
+CREATE TABLE loan_disbursed (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    loan_application_status_id BIGINT,
+    loan_amount_disbursed DECIMAL(19,2),
+    interest_rate_at_disbursal DOUBLE,
+    interest_amount_at_disbursal DECIMAL(19,2),
+    duration_at_disbursal INT,
+    vendor_disbursed_id VARCHAR(255),
+    `created_at` DATETIME DEFAULT NULL,
+      `created_by` varchar(255) DEFAULT NULL,
+      `updated_at` DATETIME DEFAULT NULL,
+      `updated_by` varchar(255) DEFAULT NULL,
+      `is_enabled` bit(1) DEFAULT NULL,
+    PRIMARY KEY (id),
+    INDEX idx_loan_application_status_id (loan_application_status_id)
+);

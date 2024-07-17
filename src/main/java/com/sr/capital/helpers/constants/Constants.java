@@ -44,6 +44,8 @@ public final class Constants {
 
         public static final String LOAN_APPLICATION_STATUS = "loan_application_status";
 
+        public static final String LOAN_DISBURSED = "loan_disbursed";
+
         public static final String TASK = "task";
 
         public static final String CAPITAL_REPORT = "report_capital_data_report";

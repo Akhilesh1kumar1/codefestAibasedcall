@@ -87,6 +87,9 @@ public class DocDetailsService {
         return responseConstructorStrategy.constructResponse(kycDocDetailsList);
     }
 
+    public List<KycDocDetails<?>> fetchDocDetailsByTenantId(String tenantId){
+        return kycDocDetailsManager.findKycDocDetailsByTenantId(tenantId);
+    }
 
     public ResponseEntity<?> fetchGstDocByTenantId(final DocDetailsRequest docDetailsRequest)
             throws CustomException {

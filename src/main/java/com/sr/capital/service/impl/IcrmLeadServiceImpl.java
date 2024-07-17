@@ -5,12 +5,18 @@ import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.IcrmLeadCompleteDetails;
 import com.sr.capital.dto.response.IcrmLeadRsponseDto;
 import com.sr.capital.dto.response.LoanApplicationStatusDto;
+import com.sr.capital.entity.mongo.kyc.KycDocDetails;
+import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
+import com.sr.capital.entity.primary.LoanDisbursed;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.LoanStatus;
+import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.service.IcrmLeadService;
 import com.sr.capital.service.LoanApplicationService;
-import com.sr.capital.util.MapperUtils;
+import com.sr.capital.service.entityimpl.LoanApplicationStatusEntityServiceImpl;
+import com.sr.capital.service.entityimpl.LoanDistributionEntityServiceImpl;
+import com.sr.capital.util.CoreUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.HttpStatus;
@@ -32,25 +38,98 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     final CommonJdbcUtill commonJdbcUtill;
 
-    String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_offer_id,la.loan_duration, las.id, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt";
+    final LoanDistributionEntityServiceImpl loanDistributionEntityService;
+
+    final LoanApplicationStatusEntityServiceImpl loanApplicationStatusEntityService;
+
+    final DocDetailsService docDetailsService;
+
+    String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_type,la.loan_offer_id,la.loan_duration, las.id as loanApplicationStatusId, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt,las.total_disbursed_amount";
 
     @Override
     public IcrmLeadRsponseDto getLeadDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
         List<LoanApplicationStatusDto> loanApplicationStatuses =new ArrayList<>();
 
         IcrmLeadRsponseDto responseDto = IcrmLeadRsponseDto.builder().build();
-        List<Map<String, Object>> listRecords =getLoanApplicationByCreteria(icrmLeadRequestDto,responseDto);
+        List<Map<String, Object>> listRecords = getLoanApplicationByCriteria(icrmLeadRequestDto,responseDto);
         if(CollectionUtils.isNotEmpty(listRecords)){
            return buildLeadResponse(loanApplicationStatuses,listRecords);
         }
        return null;
     }
 
-    private LoanApplicationStatusDto buildLoanApplicationStatusDto(Map<String, Object> orderMap) throws IOException {
-        LoanApplicationStatusDto statusDto = MapperUtils.convertValueWithTime(orderMap, LoanApplicationStatusDto.class);
-        statusDto.setLoanId((UUID) orderMap.get("id"));
-        return statusDto;
+    @Override
+    public IcrmLeadRsponseDto getCompleteLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException {
+
+        if(icrmLeadRequestDto.getLoanId()==null){
+            throw new CustomException("Invalid Request. loan id is required",HttpStatus.BAD_REQUEST);
+        }
+
+        if(icrmLeadRequestDto.getLoanApplicationStatusId()==null){
+            throw new CustomException("Invalid Request. loan application status id is required",HttpStatus.BAD_REQUEST);
+        }
+        IcrmLeadRsponseDto icrmLeadRsponseDto = IcrmLeadRsponseDto.builder().completeDetails(new ArrayList<>()).build();
+        getLoanDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
+        getLoanApplicationStatusDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
+        getDisbursedAmount(icrmLeadRsponseDto,icrmLeadRequestDto);
+        getDocDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
+
+        return icrmLeadRsponseDto;
     }
+
+    private void getDocDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) {
+
+        List<KycDocDetails<?>> kycDocDetails = docDetailsService.fetchDocDetailsByTenantId(String.valueOf(icrmLeadRequestDto.getSrCompanyId()));
+        if(CollectionUtils.isNotEmpty(kycDocDetails)){
+
+        }
+    }
+
+    private void getLoanApplicationStatusDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) {
+        LoanApplicationStatus loanApplicationStatus =loanApplicationStatusEntityService.getLoanApplicationStatusById(icrmLeadRequestDto.getLoanApplicationStatusId());
+        if(loanApplicationStatus!=null){
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setLoanApplicationStatusId(loanApplicationStatus.getId());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setExternalLoanStatus(loanApplicationStatus.getVendorStatus());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setExternalLoanId(loanApplicationStatus.getVendorLoanId());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setLoanDurationAtSanction(loanApplicationStatus.getLoanDuration());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setSanctionAmount(loanApplicationStatus.getLoanAmountApproved());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setInternalLoanId(loanApplicationStatus.getLoanId());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setInterestRate(loanApplicationStatus.getInterestRate());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setInterestAmountAtSanction(loanApplicationStatus.getInterestAmountAtSanction());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setDisbursedAmount(loanApplicationStatus.getTotalDisbursedAmount());
+        }
+    }
+
+    private void getLoanDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) {
+
+        LoanApplication loanApplication = loanApplicationService.getLoanApplicationById(icrmLeadRequestDto.getLoanId());
+
+        if(loanApplication!=null){
+            setLoanApplicationDetails(loanApplication,icrmLeadRsponseDto);
+        }
+
+    }
+
+    private void setLoanApplicationDetails(LoanApplication loanApplication, IcrmLeadRsponseDto icrmLeadRsponseDto) {
+       IcrmLeadCompleteDetails icrmLeadCompleteDetails =IcrmLeadCompleteDetails.builder().internalLoanId(loanApplication.getId()).loanVendorId(loanApplication.getLoanVendorId())
+               .updatedAt(loanApplication.getAuditData().getUpdatedAt()).loanType(loanApplication.getLoanType()).loanStatus(loanApplication.getLoanStatus()).createdAt(loanApplication.getAuditData().getCreatedAt()).dateOfInitiation(loanApplication.getAuditData().getCreatedAt()).build();
+       icrmLeadRsponseDto.getCompleteDetails().add(icrmLeadCompleteDetails);
+    }
+
+    private void getDisbursedAmount(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) {
+        List<LoanDisbursed> loanDisbursedList = loanDistributionEntityService.getLoanDisbursedDetailsByStatusId(icrmLeadRequestDto.getLoanApplicationStatusId());
+        icrmLeadRsponseDto.getCompleteDetails().get(0).setDisburseDetails(new ArrayList<>());
+        if(CollectionUtils.isNotEmpty(loanDisbursedList)){
+            loanDisbursedList.forEach(loanDisbursed -> {
+               IcrmLeadCompleteDetails.DisburseDetails disburseDetails = IcrmLeadCompleteDetails.DisburseDetails.builder()
+                       .disbursedAmount(loanDisbursed.getLoanAmountDisbursed()).interestAmountAtDisbursal(loanDisbursed.getInterestAmountAtDisbursal())
+                       .createdAt(loanDisbursed.getAuditData().getCreatedAt()).interestRate(loanDisbursed.getInterestRateAtDisbursal()).tenure(loanDisbursed.getDurationAtDisbursal()).updatedAt(loanDisbursed.getAuditData().getUpdatedAt()).build();
+
+                icrmLeadRsponseDto.getCompleteDetails().get(0).getDisburseDetails().add(disburseDetails);
+            });
+        }
+    }
+
 
     private IcrmLeadRsponseDto buildLeadResponse(List<LoanApplicationStatusDto> loanApplicationStatuses,List<Map<String, Object>> listRecords) {
         IcrmLeadRsponseDto icrmLeadRsponseDto = IcrmLeadRsponseDto.builder().completeDetails(new ArrayList<>()).build();
@@ -64,24 +143,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         return icrmLeadRsponseDto;
     }
 
-    /*void build(){
-        List<LoanApplicationStatusDto> dtoList = new ArrayList<>();
 
-        for (Object[] result : loanApplicationStatus) {
-            UUID loanApplicationId = (UUID) result[0];
-            Long companyId = (Long) result[1];
-            Long loanVendorId = (Long) result[2];
-            BigDecimal loanAmountRequested = (BigDecimal) result[3];
-            LoanApplicationStatusDto dto = new LoanApplicationStatusDto(loanApplicationId, companyId, loanVendorId,loanAmountRequested);
-            dtoList.add(dto);
-        }
-
-        return dtoList;
-    }*/
-
-
-
-    private  List<Map<String, Object>>  getLoanApplicationByCreteria(IcrmLeadRequestDto icrmLeadRequestDto,IcrmLeadRsponseDto responseDto) throws CustomException, ParseException {
+    private  List<Map<String, Object>> getLoanApplicationByCriteria(IcrmLeadRequestDto icrmLeadRequestDto, IcrmLeadRsponseDto responseDto) throws CustomException, ParseException {
         HashMap<String,Object> pageInfo = new HashMap<>();
         Map<String,Integer> mapPagination = new HashMap<>();
         String[] arrSort = new String[1];
@@ -89,10 +152,9 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         List<String> arrSelectFields = new ArrayList<>( Arrays.asList(FIELDS));
         List<String> arrCountField = new ArrayList<>( Arrays.asList("count(*)"));
         Map<String,Object> mapJoinConditions = new HashMap<>();
-        String []tables=null;
         HashMap<String, Object> whereClauseValues = new HashMap<>();
         boolean groupBy=false;
-        tables = new String[]{"loan_application la ", "loan_application_status las"};
+        String []tables = new String[]{"loan_application la ", "loan_application_status las"};
 
         String loanApplicationPrefix = "la.";
         String loanApplicationStattusPrefix = "las.";
@@ -135,6 +197,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             throw new CustomException("Invalid Page Size",HttpStatus.BAD_REQUEST);
         }
         arrSort[0] = loanApplicationPrefix+"created_at desc";
+
         if(icrmLeadRequestDto.getNoOfRecord()==null){
             pageInfo.put(loanApplicationPrefix+"created_to",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format( new Date(System.currentTimeMillis()- TimeUnit.MINUTES.toMillis(5))));
             whereClauseValues.put(loanApplicationPrefix+"created_at-<=", pageInfo.get(loanApplicationPrefix+"created_to"));
@@ -190,15 +253,17 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     private IcrmLeadCompleteDetails buildCompleteDetails(Map<String,Object> map){
         IcrmLeadCompleteDetails dto =IcrmLeadCompleteDetails.builder().build();
 
-        dto.setInternalLoanId( getUUIDID(map.get("id")));
+        dto.setInternalLoanId(CoreUtil.getUUIDID(map.get("id")));
         dto.setSrCompanyId(Long.valueOf(map.get("sr_company_id").toString()));
         dto.setLoanVendorId(Long.valueOf(map.get("loan_vendor_id").toString()));
         //dto.seta(new BigDecimal(map.get("la.loan_amount_requested").toString()));
         dto.setLoanStatus(LoanStatus.valueOf(map.get("loan_status").toString()));
       //  dto.setLoanOfferId(UUID.fromString(map.get("la.loan_offer_id").toString()));
-        dto.setLoanDuration(Integer.valueOf(map.get("loan_duration").toString()));
+        dto.setLoanDurationAtSanction(Integer.valueOf(map.get("loan_duration").toString()));
         dto.setExternalLoanId(map.get("vendor_loan_id").toString());
         dto.setSanctionAmount(new BigDecimal(map.get("loan_amount_approved").toString()));
+        dto.setLoanType((String) map.get("loan_type"));
+        dto.setLoanApplicationStatusId(Long.valueOf(map.get("loanApplicationStatusId").toString()));
        // dto.se(Double.valueOf(map.get("las.interest_rate").toString()));
         /*dto.(LocalDate.parse(map.get("las.start_date").toString()));
         dto.setEndDate(LocalDate.parse(map.get("las.end_date").toString()));*/
@@ -206,36 +271,11 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         //dto.setLoanCreatedBy(map.get("loanCreatedBy").toString());
         dto.setCreditLineApprovalDate(LocalDateTime.parse(map.get("loanApplicationStatusCreatedAt").toString()));
         dto.setApprovedBy(map.get("loanApplicationStatusCreatedBy").toString());
+        dto.setDisbursedAmount(new BigDecimal(map.get("total_disbursed_amount").toString()));
         //dto.setLoanApplicationStatusUpdatedAt(LocalDateTime.parse(map.get("loanApplicationStatusUpdatedAt").toString()));
 
         return dto;
     }
 
-    private UUID getUUIDID(Object id) {
 
-        UUID loanId = null;
-        if (id instanceof byte[]) {
-            byte[] loanIdBytes = (byte[]) id;
-            loanId = uuidFromBytes(loanIdBytes);
-        } else if (id instanceof UUID) {
-            loanId = (UUID) id;
-        } else if (id instanceof String) {
-            loanId = UUID.fromString((String) id);
-        } else {
-            // Handle other cases or throw an error if necessary
-            throw new IllegalArgumentException("Unsupported loanId type: " + id.getClass());
-        }
-        return loanId;
-    }
-
-    private UUID uuidFromBytes(byte[] bytes) {
-        long msb = 0;
-        long lsb = 0;
-        assert bytes.length == 16;
-        for (int i = 0; i < 8; i++)
-            msb = (msb << 8) | (bytes[i] & 0xff);
-        for (int i = 8; i < 16; i++)
-            lsb = (lsb << 8) | (bytes[i] & 0xff);
-        return new UUID(msb, lsb);
-    }
 }

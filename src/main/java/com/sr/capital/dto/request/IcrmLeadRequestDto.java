@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,6 +19,8 @@ import java.util.List;
 public class IcrmLeadRequestDto {
 
     Long srCompanyId;
+
+    Long loanApplicationStatusId;
 
     String externalLoanIdOfVendor;
 
@@ -42,5 +45,7 @@ public class IcrmLeadRequestDto {
     Integer pageSize =20;
 
    Integer noOfRecord ;
+
+   UUID loanId;
 
 }

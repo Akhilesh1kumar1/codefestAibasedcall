@@ -10,4 +10,6 @@ import java.text.ParseException;
 public interface IcrmLeadService {
 
     public IcrmLeadRsponseDto getLeadDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
+
+    public IcrmLeadRsponseDto getCompleteLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException;
 }

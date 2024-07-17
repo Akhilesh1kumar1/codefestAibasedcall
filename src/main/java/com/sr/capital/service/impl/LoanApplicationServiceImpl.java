@@ -65,4 +65,9 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         return loanApplicationRepository.findLoanApplicationsWithStatusBySrCompanyId(srCompanyId);
 
     }
+
+    @Override
+    public LoanApplication getLoanApplicationById(UUID loanApplicationId) {
+        return loanApplicationRepository.findById(loanApplicationId).orElse(null);
+    }
 }

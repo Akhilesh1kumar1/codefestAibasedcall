@@ -2,6 +2,7 @@ package com.sr.capital.util;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.*;
 import com.omunify.core.util.ExceptionUtils;
 import com.sr.capital.dto.request.BankDetailsRequestDto;
@@ -12,8 +13,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.*;
+import org.apache.commons.io.IOUtils;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -147,4 +148,31 @@ public class S3Util {
     }
 
 
+    public static InputStream downloadObjectToFile(String bucketName,String entityKey) {
+        S3Object s3Object = null;
+        S3ObjectInputStream s3ObjectInputStream;
+        InputStream is;
+        try {
+            s3Object = s3Client.getObject(bucketName, entityKey);
+            s3ObjectInputStream = s3Object.getObjectContent();
+            ByteArrayOutputStream temp = new ByteArrayOutputStream();
+            IOUtils.copy(s3ObjectInputStream, temp);
+            is = new ByteArrayInputStream(temp.toByteArray());
+        } catch (AmazonS3Exception e) {
+            log.error("AWS S3 exception:" + e.getMessage());
+            throw new CustomServiceException("Something went wrong while downloading file.Please try later.");
+        } catch (Exception e) {
+            log.error("Excpetion while downloading file:" + e.getMessage());
+            throw new CustomServiceException("Something went wrong while downloading file.Please try later.");
+        } finally {
+            try {
+                if (s3Object != null) {
+                    s3Object.close();
+                }
+            } catch (IOException e) {
+                log.error("Error while closing s3Object : {}", e.getMessage());
+            }
+        }
+        return is;
+    }
 }

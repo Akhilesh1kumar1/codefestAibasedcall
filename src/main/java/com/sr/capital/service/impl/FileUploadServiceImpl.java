@@ -16,8 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.omunify.core.util.Constants.GlobalErrorEnum.BAD_REQUEST;
 import static com.omunify.core.util.Constants.GlobalErrorEnum.INTERNAL_SERVER_ERROR;
@@ -72,4 +75,23 @@ public class FileUploadServiceImpl implements FileUploadService {
                 .build();
         fileUploadDataRepository.save(fileUploadData);
     }
+
+
+
+    private void addFileToZip(ZipOutputStream zipOutputStream, String filePath, String entryName) throws IOException {
+        try (FileInputStream fileInputStream = new FileInputStream(filePath)) {
+            ZipEntry zipEntry = new ZipEntry(entryName);
+            zipOutputStream.putNextEntry(zipEntry);
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = fileInputStream.read(buffer)) > 0) {
+                zipOutputStream.write(buffer, 0, bytesRead);
+            }
+
+            zipOutputStream.closeEntry();
+        }
+    }
+
 }

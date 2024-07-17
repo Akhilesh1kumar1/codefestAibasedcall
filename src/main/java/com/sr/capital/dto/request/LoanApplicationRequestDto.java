@@ -37,4 +37,6 @@ public class LoanApplicationRequestDto extends BaseRequest {
     UUID loanOfferId;
 
     Integer loanDuration;
+
+    String loanType;
 }
