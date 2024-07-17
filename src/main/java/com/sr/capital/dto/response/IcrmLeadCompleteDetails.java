@@ -45,6 +45,7 @@ public class IcrmLeadCompleteDetails {
 
     String approvedBy;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime creditLineApprovalDate;
 
    UUID internalLoanId;
@@ -53,7 +54,8 @@ public class IcrmLeadCompleteDetails {
 
    String loanType;
 
-   LocalDateTime dateOfInitiation;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime dateOfInitiation;
 
    Long loanVendorId;
 
@@ -71,11 +73,15 @@ public class IcrmLeadCompleteDetails {
 
    List<DisburseDetails> disburseDetails;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime documentCompletedAt;
 
     Double interestRate;
 
     BigDecimal interestAmountAtSanction;
+
+
+    String vendorStatus;
 
     String zipLink;
     @Data

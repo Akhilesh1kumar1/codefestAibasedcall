@@ -97,6 +97,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             icrmLeadRsponseDto.getCompleteDetails().get(0).setInterestRate(loanApplicationStatus.getInterestRate());
             icrmLeadRsponseDto.getCompleteDetails().get(0).setInterestAmountAtSanction(loanApplicationStatus.getInterestAmountAtSanction());
             icrmLeadRsponseDto.getCompleteDetails().get(0).setDisbursedAmount(loanApplicationStatus.getTotalDisbursedAmount());
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setVendorStatus(loanApplicationStatus.getVendorStatus());
         }
     }
 
