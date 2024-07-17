@@ -12,6 +12,7 @@ import com.sr.capital.entity.primary.LoanDisbursed;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.kyc.service.DocDetailsService;
+import com.sr.capital.service.FileUploadService;
 import com.sr.capital.service.IcrmLeadService;
 import com.sr.capital.service.LoanApplicationService;
 import com.sr.capital.service.entityimpl.LoanApplicationStatusEntityServiceImpl;
@@ -44,6 +45,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     final LoanApplicationStatusEntityServiceImpl loanApplicationStatusEntityService;
 
     final DocDetailsService docDetailsService;
+    final FileUploadService fileUploadService;
 
     String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_type,la.loan_offer_id,la.loan_duration, las.id as loanApplicationStatusId, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt,las.total_disbursed_amount";
 
@@ -73,7 +75,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         getLoanDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
         getLoanApplicationStatusDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
         getDisbursedAmount(icrmLeadRsponseDto,icrmLeadRequestDto);
-        getDocDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
+        if(icrmLeadRequestDto.getIsTesting())
+            getDocDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
 
         return icrmLeadRsponseDto;
     }
@@ -82,7 +85,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
         List<KycDocDetails<?>> kycDocDetails = docDetailsService.fetchDocDetailsByTenantId(String.valueOf(icrmLeadRequestDto.getSrCompanyId()));
         if(CollectionUtils.isNotEmpty(kycDocDetails)){
-
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setZipLink(fileUploadService.downloadAndAddFileToZip(kycDocDetails));
         }
     }
 

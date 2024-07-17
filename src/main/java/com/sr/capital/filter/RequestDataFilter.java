@@ -30,7 +30,9 @@ public class RequestDataFilter implements Filter {
             new AntPathRequestMatcher("/*/health/**"),
             new AntPathRequestMatcher("/*/cache/**"),
             new AntPathRequestMatcher("/**/karza/**"),
-            new AntPathRequestMatcher("/**/external/**")
+            new AntPathRequestMatcher("/**/external/**"),
+                        new AntPathRequestMatcher("/**/icrm/**")
+
     );
 
     @Autowired

@@ -48,4 +48,6 @@ public class IcrmLeadRequestDto {
 
    UUID loanId;
 
+   Boolean isTesting=false;
+
 }
