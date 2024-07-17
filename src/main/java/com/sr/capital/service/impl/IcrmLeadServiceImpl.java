@@ -22,6 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.xa.XAException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -85,7 +86,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         }
     }
 
-    private void getLoanApplicationStatusDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) {
+    private void getLoanApplicationStatusDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException {
         LoanApplicationStatus loanApplicationStatus =loanApplicationStatusEntityService.getLoanApplicationStatusById(icrmLeadRequestDto.getLoanApplicationStatusId());
         if(loanApplicationStatus!=null){
             icrmLeadRsponseDto.getCompleteDetails().get(0).setLoanApplicationStatusId(loanApplicationStatus.getId());
@@ -98,15 +99,19 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             icrmLeadRsponseDto.getCompleteDetails().get(0).setInterestAmountAtSanction(loanApplicationStatus.getInterestAmountAtSanction());
             icrmLeadRsponseDto.getCompleteDetails().get(0).setDisbursedAmount(loanApplicationStatus.getTotalDisbursedAmount());
             icrmLeadRsponseDto.getCompleteDetails().get(0).setVendorStatus(loanApplicationStatus.getVendorStatus());
+        }else{
+            throw new CustomException("Invalid loan application status id",HttpStatus.BAD_REQUEST);
         }
     }
 
-    private void getLoanDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) {
+    private void getLoanDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException {
 
         LoanApplication loanApplication = loanApplicationService.getLoanApplicationById(icrmLeadRequestDto.getLoanId());
 
         if(loanApplication!=null){
             setLoanApplicationDetails(loanApplication,icrmLeadRsponseDto);
+        }else{
+            throw new CustomException("Invalid Loan Id ",HttpStatus.BAD_REQUEST);
         }
 
     }
