@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -108,7 +109,8 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
             if(isAllFileAddedToZip){
                 loggerUtil.info("uploading zip file to s3 ");
-                S3Util.uploadFileToS3(appProperties.getBucketName(),zipFilePath,new File(zipFilePath));
+                String key = docDetails.get(0).getSrCompanyId()+"_"+ UUID.randomUUID()+"_doc.zip";
+                S3Util.uploadFileToS3(appProperties.getBucketName(),key,new File(zipFilePath));
             }
         } catch (IOException e) {
             return zipFilePath;

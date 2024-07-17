@@ -32,6 +32,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.sr.capital.helpers.constants.Constants.REQUIRED_DOCUMENTS;
+
 @Service
 @RequiredArgsConstructor
 public class IcrmLeadServiceImpl implements IcrmLeadService {
@@ -86,7 +88,15 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         List<KycDocDetails<?>> kycDocDetails = docDetailsService.fetchDocDetailsByTenantId(String.valueOf(icrmLeadRequestDto.getSrCompanyId()));
         if(CollectionUtils.isNotEmpty(kycDocDetails)){
             icrmLeadRsponseDto.getCompleteDetails().get(0).setZipLink(fileUploadService.downloadAndAddFileToZip(kycDocDetails));
+            Set<String> setOfDocs =new HashSet<>();
+            kycDocDetails.forEach(kycDocDetails1 -> {
+                setOfDocs.add(kycDocDetails1.getDocType().name());
+            });
+            if(REQUIRED_DOCUMENTS.stream().allMatch(setOfDocs::contains)){
+                icrmLeadRsponseDto.getCompleteDetails().get(0).setDocumentCompletedAt(kycDocDetails.get(kycDocDetails.size()-1).getCreatedAt());
+            }
         }
+
     }
 
     private void getLoanApplicationStatusDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException {

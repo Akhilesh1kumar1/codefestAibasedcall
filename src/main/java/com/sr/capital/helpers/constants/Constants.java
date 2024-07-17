@@ -1,6 +1,9 @@
 package com.sr.capital.helpers.constants;
 
+import com.sr.capital.helpers.enums.DocType;
+
 import java.util.Map;
+import java.util.Set;
 
 import static com.sr.capital.helpers.constants.Constants.FileContentTypes.*;
 import static com.sr.capital.helpers.constants.Constants.ServiceConstants.UTILITY_INSTANTIATION_ERROR;
@@ -189,4 +192,7 @@ public final class Constants {
     }
     public static final Map<String, String> FILE_CONTENT_TYPE_MAP = Map.of(CSV_EXTENSION, CSV_CONTENT_TYPE, XLS_EXTENSION, XLS_CONTENT_TYPE,
             XLSX_EXTENSION, XLSX_CONTENT_TYPE);
+
+    public static final Set<String> REQUIRED_DOCUMENTS = Set.of(DocType.MSME.name(), DocType.GST.name(), DocType.BANK_CHEQUE.name(), DocType.PROPRIETORSHIP.name(),
+            DocType.GST_BASIC.name(),DocType.GST_BY_PAN.name());
 }
