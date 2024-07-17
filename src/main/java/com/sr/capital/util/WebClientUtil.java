@@ -8,6 +8,7 @@ import com.sr.capital.exception.custom.UnsupportedHttpMethodException;
 import com.sr.capital.helpers.enums.ServiceName;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 @Component
 public class WebClientUtil {
 
@@ -191,4 +195,18 @@ public class WebClientUtil {
         return uriBuilder.toString();
     }
 
+    public void downloadFileUsingUrl(String fileUrl, String destinationPath) throws IOException {
+        Mono<Resource> resourceMono = webClient.get()
+                .uri(fileUrl)
+                .retrieve()
+                .bodyToMono(Resource.class);
+
+        Resource resource = resourceMono.block();
+        if (resource != null) {
+            Path path = Paths.get(destinationPath);
+            Files.copy(resource.getInputStream(), path);
+        } else {
+            throw new IOException("Failed to download file");
+        }
+    }
 }
