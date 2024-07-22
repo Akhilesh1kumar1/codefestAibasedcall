@@ -23,5 +23,7 @@ public interface IcrmLeadService {
     public LeadDetailsResponseDto getAllLeads(LocalDateTime dateTime,String type, Pageable pageable);
 
 
-    public Boolean downloadLoanReport(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
+    public void downloadLoanReport(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
+
+    public void downloadLeadDetails(LocalDateTime dateTime,String type,String emailId);
 }

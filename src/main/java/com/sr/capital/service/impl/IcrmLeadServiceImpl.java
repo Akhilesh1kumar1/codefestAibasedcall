@@ -141,8 +141,13 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     @Override
     @Async
-    public Boolean downloadLoanReport(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
-        return null;
+    public void downloadLoanReport(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+    }
+
+    @Override
+    @Async
+    public void downloadLeadDetails(LocalDateTime dateTime, String type,String emailId) {
+
     }
 
 

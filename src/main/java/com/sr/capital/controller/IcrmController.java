@@ -67,4 +67,12 @@ public class IcrmController {
         return ResponseBuilderUtil.getResponse(icrmLeadService.getAllLeads(startDate,type,pageable),SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
+
+    @GetMapping("/lead/details/download")
+    public GenericResponse<Boolean> dowloadLeadDetails(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate, @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size, @RequestParam(value = "type",required = false) String type,@RequestParam() String emailId) throws CustomException {
+        icrmLeadService.downloadLeadDetails(startDate,type,emailId);
+        return ResponseBuilderUtil.getResponse(true,SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
 }
