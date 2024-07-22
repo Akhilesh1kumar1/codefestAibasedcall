@@ -144,6 +144,7 @@ CREATE TABLE user (
     sr_company_id BIGINT,
     entity_type varchar(255) ,
     pan_number varchar(100),
+    company_name text,
     is_mobile_verified bit(1) DEFAULT 0,
     is_accepted TINYINT(1) DEFAULT 0,
      `created_at` DATETIME DEFAULT NULL,
@@ -152,7 +153,8 @@ CREATE TABLE user (
               `updated_by` varchar(255) DEFAULT NULL,
               `is_enabled` bit(1) DEFAULT NULL,
     PRIMARY KEY (`id`),
-     KEY `sr_user_id`(`sr_user_id`)
+     KEY `sr_user_id`(`sr_user_id`),
+     index sr_company_id(`sr_company_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=0;
 
 ALTER TABLE user ADD CONSTRAINT sr_user_id_constraint UNIQUE (sr_user_id);

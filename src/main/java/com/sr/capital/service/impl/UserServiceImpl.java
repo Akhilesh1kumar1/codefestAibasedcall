@@ -121,4 +121,10 @@ public class UserServiceImpl implements UserService {
         }
         return true;
     }
+
+    @Override
+    public User getCompanyDetails(Long srCompanyId) {
+        return userRepository.findTopBySrCompanyId(srCompanyId);
+    }
+
 }

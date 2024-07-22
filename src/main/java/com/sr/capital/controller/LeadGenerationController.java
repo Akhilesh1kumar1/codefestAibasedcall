@@ -37,9 +37,5 @@ public class LeadGenerationController {
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
-    @PutMapping("/update")
-    public GenericResponse<GenerateLeadResponseDto> updateLead(@RequestBody GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
-        return ResponseBuilderUtil.getResponse(leadGenerationService.updateLead(generateLeadRequestDto),SUCCESS,
-                REQUEST_SUCCESS, HttpStatus.SC_OK);
-    }
+
 }

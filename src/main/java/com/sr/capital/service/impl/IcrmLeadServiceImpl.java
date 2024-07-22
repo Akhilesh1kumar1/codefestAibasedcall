@@ -1,25 +1,32 @@
 package com.sr.capital.service.impl;
 
+import com.amazonaws.HttpMethod;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.config.db.CommonJdbcUtill;
+import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
-import com.sr.capital.dto.response.IcrmLeadCompleteDetails;
-import com.sr.capital.dto.response.IcrmLeadRsponseDto;
-import com.sr.capital.dto.response.LoanApplicationStatusDto;
+import com.sr.capital.dto.response.*;
+import com.sr.capital.entity.mongo.Lead;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.entity.primary.LoanDisbursed;
+import com.sr.capital.entity.primary.User;
+import com.sr.capital.entity.secondary.CompanyWiseReport;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.LoanStatus;
+import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.service.DocDetailsService;
-import com.sr.capital.service.FileUploadService;
-import com.sr.capital.service.IcrmLeadService;
-import com.sr.capital.service.LoanApplicationService;
+import com.sr.capital.service.*;
+import com.sr.capital.service.entityimpl.CompanyWiseReportEntityServiceImpl;
 import com.sr.capital.service.entityimpl.LoanApplicationStatusEntityServiceImpl;
 import com.sr.capital.service.entityimpl.LoanDistributionEntityServiceImpl;
 import com.sr.capital.util.CoreUtil;
+import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +54,15 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     final LoanApplicationStatusEntityServiceImpl loanApplicationStatusEntityService;
 
     final DocDetailsService docDetailsService;
+
     final FileUploadService fileUploadService;
+
+    final LeadGenerationService leadGenerationService;
+
+    final CompanyWiseReportEntityServiceImpl companyWiseReportEntityService;
+
+    final UserService userService;
+    final AppProperties appProperties;
 
     String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_type,la.loan_offer_id,la.loan_duration, las.id as loanApplicationStatusId, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt,las.total_disbursed_amount";
 
@@ -77,17 +92,63 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         getLoanDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
         getLoanApplicationStatusDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
         getDisbursedAmount(icrmLeadRsponseDto,icrmLeadRequestDto);
-        if(icrmLeadRequestDto.getIsTesting())
-            getDocDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
+        getDocDetails(icrmLeadRsponseDto,icrmLeadRequestDto);
 
         return icrmLeadRsponseDto;
     }
+
+    @Override
+    public GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
+        return leadGenerationService.updateLead(generateLeadRequestDto);
+    }
+
+    @Override
+    public LeadDetailsResponseDto getAllLeads(LocalDateTime dateTime, String type, Pageable pageable) {
+        Page<Lead> leads =leadGenerationService.getAllLeads(dateTime,type,pageable);
+        List<LeadDetailsResponseDto.LeadDetails> leadDetails =new ArrayList<>();
+        leads.forEach(lead -> {
+            LeadDetailsResponseDto.LeadDetails leadDto =   LeadDetailsResponseDto.LeadDetails.builder()
+                    .srCompanyId(lead.getSrCompanyId())
+                    .amount(lead.getAmount())
+                    .duration(lead.getDuration())
+                    .status(lead.getStatus())
+                    .loanApplicationId(lead.getLoanApplicationId())
+                    .tier(lead.getTier())
+                    .leadSource(lead.getLeadSource())
+                    .remarks(lead.getRemarks())
+                    .loanVendorPartnerId(lead.getLoanVendorPartnerId())
+                    .build();
+
+            User user = userService.getCompanyDetails(lead.getSrCompanyId());
+            if(user!=null){
+                leadDto.setCompanyName(user.getCompanyName());
+            }
+            //TODO
+            /*CompanyWiseReport companyWiseReport = companyWiseReportEntityService.getReportData(lead.getSrCompanyId());
+            if(companyWiseReport!=null){
+                leadDto.setTier(companyWiseReport.getTier());
+                leadDto.setCompanyName(companyWiseReport.getCompanyTag());
+                //leadDto.setBrandName(companyWiseReport.getBrandNameAmazon()); TODO
+            }*/
+            leadDetails.add(leadDto);
+
+        });
+        return LeadDetailsResponseDto.builder().leadList(leadDetails).pageNumber(leads.getNumber()).totalPages(leads.getTotalPages()).pageSize(leads.getSize()).totalElements(leads.getTotalElements()).build();
+    }
+
 
     private void getDocDetails(IcrmLeadRsponseDto icrmLeadRsponseDto, IcrmLeadRequestDto icrmLeadRequestDto) {
 
         List<KycDocDetails<?>> kycDocDetails = docDetailsService.fetchDocDetailsByTenantId(String.valueOf(icrmLeadRequestDto.getSrCompanyId()));
         if(CollectionUtils.isNotEmpty(kycDocDetails)){
-            icrmLeadRsponseDto.getCompleteDetails().get(0).setZipLink(fileUploadService.downloadAndAddFileToZip(kycDocDetails));
+            String zipFilePath =fileUploadService.downloadAndAddFileToZip(kycDocDetails);
+            GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
+                    .filePath(zipFilePath)
+                    .bucketName(appProperties.getBucketName()).expiry(30)
+                    .httpMethod(HttpMethod.GET)
+                    .build();
+            icrmLeadRsponseDto.getCompleteDetails().get(0).setZipLink(S3Util.generatePreSignedUrl(preSignedUrlRequest));
+
             Set<String> setOfDocs =new HashSet<>();
             kycDocDetails.forEach(kycDocDetails1 -> {
                 setOfDocs.add(kycDocDetails1.getDocType().name());
@@ -295,6 +356,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
         return dto;
     }
+
 
 
 }

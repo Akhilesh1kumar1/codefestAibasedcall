@@ -58,6 +58,7 @@ public class UserDetails {
     private Boolean isMobileNumberVerified;
 
     private UUID verificationToken;
+
     public static UserDetails mapUser(User user){
         UserDetails userDetails =new UserDetails();
         userDetails.setId(user.getId());

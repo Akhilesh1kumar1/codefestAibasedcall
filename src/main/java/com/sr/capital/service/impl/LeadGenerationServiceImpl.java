@@ -4,14 +4,20 @@ import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.response.GenerateLeadResponseDto;
 import com.sr.capital.entity.mongo.Lead;
+import com.sr.capital.entity.mongo.LeadHistory;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.helpers.enums.LeadStatus;
 import com.sr.capital.repository.mongo.LeadGenerationRepository;
 import com.sr.capital.service.LeadGenerationService;
+import com.sr.capital.service.entityimpl.LeadHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,13 +27,14 @@ import java.util.List;
 public class LeadGenerationServiceImpl implements LeadGenerationService {
 
     final LeadGenerationRepository leadGenerationRepository;
+    final LeadHistoryServiceImpl leadHistoryService;
     @Override
     public GenerateLeadResponseDto saveLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
         List<Lead> leadList = leadGenerationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
         if(CollectionUtils.isNotEmpty(leadList)){
             throw new CustomException("Lead is already generated", HttpStatus.BAD_REQUEST);
         }
-        Lead lead =Lead.builder().srCompanyId(Long.valueOf(RequestData.getTenantId())).amount(generateLeadRequestDto.getAmount()).duration(generateLeadRequestDto.getDuration()).status(generateLeadRequestDto.getStatus()).build();
+        Lead lead =Lead.builder().srCompanyId(generateLeadRequestDto.getSrCompanyId()!=null? generateLeadRequestDto.getSrCompanyId() : Long.valueOf(RequestData.getTenantId())).amount(generateLeadRequestDto.getAmount()).duration(generateLeadRequestDto.getDuration()).leadSource(generateLeadRequestDto.getLeadSource()).status(generateLeadRequestDto.getStatus()).build();
         leadGenerationRepository.save(lead);
         return GenerateLeadResponseDto.builder().id(lead.getId()).build();
     }
@@ -37,7 +44,8 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         List<Lead> leadList = leadGenerationRepository.findBySrCompanyId(srCompanyId);
         List<GenerateLeadResponseDto> responseDtos =new ArrayList<>();
         leadList.forEach(lead -> {
-            responseDtos.add(GenerateLeadResponseDto.builder().status(lead.getStatus()).amount(lead.getAmount()).duration(lead.getDuration()).id(lead.getId()).build());
+            responseDtos.add(GenerateLeadResponseDto.builder().status(lead.getStatus()).amount(lead.getAmount()).duration(lead.getDuration()).id(lead.getId()).tier(lead.getTier()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())
+                    .remarks(lead.getRemarks()).loanVendorPartnerId(lead.getLoanVendorPartnerId()).build());
         });
         return responseDtos;
     }
@@ -55,14 +63,42 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
 
         }
 
-        if(lead.getSrCompanyId().longValue()!=Long.valueOf(RequestData.getTenantId()).longValue()){
+       /* if(lead.getSrCompanyId().longValue()!=Long.valueOf(RequestData.getTenantId()).longValue()){
             throw new CustomException("Invalid Lead Id", HttpStatus.BAD_REQUEST);
 
-        }
+        }*/
+        LeadStatus.validateLeadStatus(lead.getStatus());
 
-        lead.setStatus(generateLeadRequestDto.getStatus());
+        LeadHistory leadHistory =LeadHistory.builder().srCompanyId(lead.getSrCompanyId()).amount(lead.getAmount()).duration(lead.getDuration()).status(lead.getStatus()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())
+                .loanVendorPartnerId(lead.getLoanVendorPartnerId()).tier(lead.getTier()).remarks(lead.getRemarks()).build();
+        leadHistory.setCreatedBy(lead.getCreatedBy());
+        leadHistory.setLastModifiedBy(lead.getLastModifiedBy());
+        leadHistoryService.saveLeadHistory(leadHistory);
+        updateLeadDetails(lead,generateLeadRequestDto);
         leadGenerationRepository.save(lead);
 
         return GenerateLeadResponseDto.builder().status(lead.getStatus()).id(lead.getId()).build();
+    }
+
+    @Override
+    public Page<Lead> getAllLeads(LocalDateTime dateTime,String type, Pageable pageable) {
+        if(type==null || type.equalsIgnoreCase("createdAt")){
+            return leadGenerationRepository.findByCreatedAtBetween(dateTime,pageable);
+        }else{
+            return leadGenerationRepository.findByLastModifiedAtBetween(dateTime,pageable);
+        }
+
+    }
+
+    private void updateLeadDetails(Lead lead,GenerateLeadRequestDto generateLeadRequestDto){
+        lead.setLeadSource(generateLeadRequestDto.getLeadSource());
+        lead.setAmount(generateLeadRequestDto.getAmount());
+        lead.setDuration(generateLeadRequestDto.getDuration());
+        lead.setTier(generateLeadRequestDto.getTier());
+        lead.setRemarks(generateLeadRequestDto.getRemarks());
+        lead.setLoanVendorPartnerId(generateLeadRequestDto.getLoanVendorPartnerId());
+        lead.setStatus(generateLeadRequestDto.getStatus());
+        lead.setLastModifiedBy(RequestData.getUserId()==null?generateLeadRequestDto.getUserName(): String.valueOf(RequestData.getUserId()));
+
     }
 }

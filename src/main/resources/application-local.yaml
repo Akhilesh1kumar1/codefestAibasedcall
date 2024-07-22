@@ -217,3 +217,11 @@ allowed:
 
 encryption:
   key: ${ENCRYPTION_KEY:test}
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+   # root: DEBUG

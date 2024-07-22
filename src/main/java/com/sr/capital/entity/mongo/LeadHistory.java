@@ -14,8 +14,8 @@ import java.util.UUID;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-@Document("lead")
-public class Lead extends BaseDoc {
+@Document("lead_history")
+public class LeadHistory extends BaseDoc {
 
     @Indexed(unique = false,name = "srCompanyId")
     Long srCompanyId;
@@ -35,5 +35,4 @@ public class Lead extends BaseDoc {
     String remarks;
 
     Long loanVendorPartnerId;
-
 }
