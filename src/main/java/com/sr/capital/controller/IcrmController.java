@@ -54,7 +54,7 @@ public class IcrmController {
                 CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/lead/update")
     public GenericResponse<GenerateLeadResponseDto> updateLead(@RequestBody GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
         return ResponseBuilderUtil.getResponse(icrmLeadService.updateLead(generateLeadRequestDto),SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);

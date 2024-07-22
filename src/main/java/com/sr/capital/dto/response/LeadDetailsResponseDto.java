@@ -1,5 +1,7 @@
 package com.sr.capital.dto.response;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.entity.mongo.Lead;
 import com.sr.capital.helpers.enums.LeadStatus;
 import lombok.Builder;
@@ -11,6 +13,7 @@ import java.util.UUID;
 
 @Data
 @Builder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class LeadDetailsResponseDto {
 
     List<LeadDetails> leadList;
@@ -21,7 +24,8 @@ public class LeadDetailsResponseDto {
 
     @Data
     @Builder
-   public static class LeadDetails{
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class LeadDetails {
 
         String leadId;
 
