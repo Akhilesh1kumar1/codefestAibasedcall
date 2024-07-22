@@ -1,6 +1,7 @@
 package com.sr.capital.helpers.enums;
 
 public enum LeadStatus {
+    PENDING("pending"),
     NOT_CONNECTED("Not connected"),
     NOT_INTERESTED("Not Interested"),
     INTERESTED_FOLLOW_UP("Interested & Follow Up"),

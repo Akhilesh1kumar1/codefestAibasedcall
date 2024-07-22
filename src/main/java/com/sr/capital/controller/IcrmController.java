@@ -36,7 +36,14 @@ public class IcrmController {
     @PostMapping("/loan/details")
     public GenericResponse<IcrmLeadRsponseDto> getLoanDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
 
-        return ResponseBuilderUtil.getResponse(icrmLeadService.getLeadDetails(icrmLeadRequestDto),SUCCESS,
+        return ResponseBuilderUtil.getResponse(icrmLeadService.getLoanDetails(icrmLeadRequestDto),SUCCESS,
+                CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
+    }
+
+    @PostMapping("/loan/details/download")
+    public GenericResponse<Boolean> downloadLoanReport(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+             icrmLeadService.downloadLoanReport(icrmLeadRequestDto);
+        return ResponseBuilderUtil.getResponse(true,SUCCESS,
                 CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 

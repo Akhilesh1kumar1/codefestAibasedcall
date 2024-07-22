@@ -11,11 +11,10 @@ import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface IcrmLeadService {
 
-    public IcrmLeadRsponseDto getLeadDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
+    public IcrmLeadRsponseDto getLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
 
     public IcrmLeadRsponseDto getCompleteLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException;
 
@@ -24,4 +23,5 @@ public interface IcrmLeadService {
     public LeadDetailsResponseDto getAllLeads(LocalDateTime dateTime,String type, Pageable pageable);
 
 
+    public Boolean downloadLoanReport(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
 }

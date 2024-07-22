@@ -50,4 +50,5 @@ public class IcrmLeadRequestDto {
 
    Boolean isTesting=false;
 
+   String userEmail;
 }

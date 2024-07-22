@@ -28,6 +28,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.xa.XAException;
@@ -67,7 +68,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_type,la.loan_offer_id,la.loan_duration, las.id as loanApplicationStatusId, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt,las.total_disbursed_amount";
 
     @Override
-    public IcrmLeadRsponseDto getLeadDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+    public IcrmLeadRsponseDto getLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
         List<LoanApplicationStatusDto> loanApplicationStatuses =new ArrayList<>();
 
         IcrmLeadRsponseDto responseDto = IcrmLeadRsponseDto.builder().build();
@@ -77,6 +78,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         }
        return null;
     }
+
+
 
     @Override
     public IcrmLeadRsponseDto getCompleteLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException {
@@ -134,6 +137,12 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
         });
         return LeadDetailsResponseDto.builder().leadList(leadDetails).pageNumber(leads.getNumber()).totalPages(leads.getTotalPages()).pageSize(leads.getSize()).totalElements(leads.getTotalElements()).build();
+    }
+
+    @Override
+    @Async
+    public Boolean downloadLoanReport(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+        return null;
     }
 
 
@@ -213,11 +222,21 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     private IcrmLeadRsponseDto buildLeadResponse(List<LoanApplicationStatusDto> loanApplicationStatuses,List<Map<String, Object>> listRecords) {
         IcrmLeadRsponseDto icrmLeadRsponseDto = IcrmLeadRsponseDto.builder().completeDetails(new ArrayList<>()).build();
+        Map<Long,User> userMap =new HashMap<>();
         for(int i=0;i<listRecords.size();i++) {
             Map<String, Object> orderMap = listRecords.get(i);
             IcrmLeadCompleteDetails icrmLeadCompleteDetails = buildCompleteDetails(orderMap);
             ;/*IcrmLeadCompleteDetails.builder().amountApproved(loanApplicationStatusDto.getLoanAmountApproved()).approvedBy(loanApplicationStatusDto.getLoanApprovedBy()).loanStatus(loanApplicationStatusDto.getLoanStatus()).externalLoanId(loanApplicationStatusDto.getVendorLoanId()).createdAt(loanApplicationStatusDto.getLoanCreatedAt()).internalLoanId(loanApplicationStatusDto.getLoanId()).loanStatus(loanApplicationStatusDto.getLoanStatus()).loanVendorId(loanApplicationStatusDto.getLoanVendorId())
                     .dateOfInitiation(loanApplicationStatusDto.getLoanCreatedAt()).sanctionAmount(loanApplicationStatusDto.getLoanAmountApproved()).creditLineApprovalDate(loanApplicationStatusDto.getLoanApprovedAt()).updatedAt(loanApplicationStatusDto.getLoanStatusUpdatedAt()).build();*/
+             if(userMap.containsKey(icrmLeadCompleteDetails.getSrCompanyId())){
+                 icrmLeadCompleteDetails.setCompanyName(userMap.get(icrmLeadCompleteDetails.getSrCompanyId()).getCompanyName());
+             }else{
+                 User user =userService.getCompanyDetails(icrmLeadCompleteDetails.getSrCompanyId());
+                 if(user!=null){
+                     userMap.put(icrmLeadCompleteDetails.getSrCompanyId(),user);
+                     icrmLeadCompleteDetails.setCompanyName(user.getCompanyName());
+                 }
+             }
             icrmLeadRsponseDto.getCompleteDetails().add(icrmLeadCompleteDetails);
         };
         return icrmLeadRsponseDto;
