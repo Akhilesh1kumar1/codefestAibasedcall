@@ -23,6 +23,8 @@ public class LeadDetailsResponseDto {
     @Builder
    public static class LeadDetails{
 
+        String leadId;
+
         Long srCompanyId;
 
         BigDecimal amount;

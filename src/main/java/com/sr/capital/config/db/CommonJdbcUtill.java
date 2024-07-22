@@ -140,8 +140,8 @@ public class CommonJdbcUtill {
                 Date date = dateFormat.parse((String) entry.getValue());
                 Calendar c = Calendar.getInstance();
                 c.setTime(date);
-                c.add(Calendar.MINUTE, -330);
-                sql.append("created_at<=").append(":").append("created_at").append(" and ");
+                c.add(Calendar.MINUTE, -5);
+                sql.append("la.created_at<=").append(":").append("created_at").append(" and ");
                 tempWhereClauseValues.put("created_at",dateFormat.format(c.getTime()));
             }else{
                 sql.append(entry.getKey()).append("=:").append(entry.getKey()).append(" and ");
@@ -164,7 +164,7 @@ public class CommonJdbcUtill {
         }
         result.put("query",sql.toString());
         result.put("tempWhereClauseValues",tempWhereClauseValues);
-        logger.info("executable query "+sql.toString());
+        logger.info("executable query "+sql.toString()+" tempWhereClauseValues"+tempWhereClauseValues);
 
         return result;
     }

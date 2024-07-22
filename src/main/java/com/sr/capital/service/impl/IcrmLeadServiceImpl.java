@@ -119,7 +119,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                     .tier(lead.getTier())
                     .leadSource(lead.getLeadSource())
                     .remarks(lead.getRemarks())
-                    .loanVendorPartnerId(lead.getLoanVendorPartnerId())
+                    .loanVendorPartnerId(lead.getLoanVendorPartnerId()).leadId(lead.getId())
                     .build();
 
             User user = userService.getCompanyDetails(lead.getSrCompanyId());
@@ -301,10 +301,9 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             throw new CustomException("Invalid Page Size",HttpStatus.BAD_REQUEST);
         }
         arrSort[0] = loanApplicationPrefix+"created_at desc";
-
+        pageInfo.put(loanApplicationPrefix+"created_to",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format( new Date(System.currentTimeMillis()- TimeUnit.MINUTES.toMillis(5))));
+        whereClauseValues.put(loanApplicationPrefix+"created_at<=", pageInfo.get(loanApplicationPrefix+"created_to"));
         if(icrmLeadRequestDto.getNoOfRecord()==null){
-            pageInfo.put(loanApplicationPrefix+"created_to",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format( new Date(System.currentTimeMillis()- TimeUnit.MINUTES.toMillis(5))));
-            whereClauseValues.put(loanApplicationPrefix+"created_at-<=", pageInfo.get(loanApplicationPrefix+"created_to"));
             listRecords = commonJdbcUtill.buildAndExecuteQuery(
                     tables
                     , arrCountField
