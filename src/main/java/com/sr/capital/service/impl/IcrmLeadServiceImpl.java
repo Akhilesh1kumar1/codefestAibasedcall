@@ -137,12 +137,12 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                 leadDto.setCompanyName(user.getCompanyName());
             }
             //TODO
-            CompanyWiseReport companyWiseReport = companyWiseReportEntityService.getReportData(lead.getSrCompanyId());
+            /*CompanyWiseReport companyWiseReport = companyWiseReportEntityService.getReportData(lead.getSrCompanyId());
             if(companyWiseReport!=null){
                 leadDto.setTier(companyWiseReport.getTier());
                 leadDto.setCompanyName(companyWiseReport.getCompanyTag());
                 //leadDto.setBrandName(companyWiseReport.getBrandNameAmazon()); TODO
-            }
+            }*/
             leadDetails.add(leadDto);
 
         });
