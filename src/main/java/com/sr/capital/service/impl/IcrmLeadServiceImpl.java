@@ -1,6 +1,7 @@
 package com.sr.capital.service.impl;
 
 import com.amazonaws.HttpMethod;
+import com.opencsv.CSVWriter;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.config.db.CommonJdbcUtill;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
@@ -14,6 +15,7 @@ import com.sr.capital.entity.primary.LoanDisbursed;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.entity.secondary.CompanyWiseReport;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.service.DocDetailsService;
@@ -26,6 +28,7 @@ import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
@@ -33,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.xa.XAException;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,7 +67,10 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     final CompanyWiseReportEntityServiceImpl companyWiseReportEntityService;
 
     final UserService userService;
+
     final AppProperties appProperties;
+
+    final CommunicationService communicationService;
 
     String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_type,la.loan_offer_id,la.loan_duration, las.id as loanApplicationStatusId, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt,las.total_disbursed_amount";
 
@@ -145,11 +152,30 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     @Override
     @Async
     public void downloadLoanReport(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+
+
     }
 
     @Override
     @Async
     public void downloadLeadDetails(LocalDateTime dateTime, String type,String emailId) {
+
+        List<LeadDetailsResponseDto.LeadDetails> leadDetails =new ArrayList<>();
+
+        int page = 0;
+        int size = 50; // Adjust the page size as needed
+        Page<Lead> leadPage;
+        LeadDetailsResponseDto responseDto = getAllLeads(dateTime,type, PageRequest.of(page, size));
+        Integer totalPages = responseDto.getTotalPages();
+        leadDetails.addAll(responseDto.getLeadList());
+        while (page<totalPages){
+            page++;
+            responseDto = getAllLeads(dateTime,type, PageRequest.of(page, size));
+            leadDetails.addAll(responseDto.getLeadList());
+        }
+        String content = convertLeadToCSVAndEncodeBase64(leadDetails);
+        communicationService.sendEmail(communicationService.getCommunicationRequestForReport(emailId, "User", content,"Capital Lead Report "+new Date(),"lead_report.csv",false));
+
 
     }
 
@@ -384,5 +410,45 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     }
 
 
+
+    private String convertLeadToCSVAndEncodeBase64(List<LeadDetailsResponseDto.LeadDetails> leads) {
+        try (StringWriter writer = new StringWriter();
+             CSVWriter csvWriter = new CSVWriter(writer)) {
+
+            // Write CSV header
+            String[] header = {"srCompanyId", "companyName", "brandName", "amount", "duration", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt"};
+            csvWriter.writeNext(header);
+
+            // Write CSV rows
+            for (LeadDetailsResponseDto.LeadDetails lead : leads) {
+                String[] row = {
+                        lead.getSrCompanyId().toString(),
+                        lead.getCompanyName(),
+                        lead.getBrandName(),
+                        lead.getAmount().toString(),
+                        lead.getDuration().toString(),
+                        lead.getStatus().name(),
+                        lead.getLoanApplicationId()!=null?lead.getLoanApplicationId().toString():"",
+                        lead.getTier(),
+                        lead.getLeadSource(),
+                        lead.getRemarks(),
+                        lead.getLoanVendorPartnerId()!=null?lead.getLoanVendorPartnerId().toString():"",
+                        lead.getCreatedAt().toString(),
+                        lead.getUpdatedAt().toString()
+                };
+                csvWriter.writeNext(row);
+            }
+            csvWriter.flush(); // Ensure data is flushed to StringWriter
+
+            // Convert CSV to
+            // Convert CSV to Base64
+            String csvContent = writer.toString();
+
+            return Base64.getEncoder().encodeToString(csvContent.getBytes());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error while converting to CSV and encoding in Base64", e);
+        }
+    }
 
 }

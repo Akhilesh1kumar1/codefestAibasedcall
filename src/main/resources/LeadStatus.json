@@ -79,7 +79,7 @@
             "status": "LOAN_OFFER_GENERATED"
           }
         },
-        "{\"status\":\"DOCUMENT_UNDER_CREDIT_EVALUTION\"}": {
+        "{\"status\":\"DOCUMENT_UNDER_CREDIT_EVALUATION\"}": {
           "state": {
             "status": "LOAN_OFFER_GENERATED"
           }

@@ -55,7 +55,7 @@ public class NetCoreSendEmailRequest implements Serializable {
         @JsonProperty("name")
         private String name ;
 
-        @JsonProperty("value")
+        @JsonProperty("content")
         private String content;
     }
 
@@ -67,5 +67,8 @@ public class NetCoreSendEmailRequest implements Serializable {
 
         @JsonProperty("to")
         private List<AddressInfo> toAddressInfo;
+
+        @JsonProperty("attachments")
+        List<AttachmentInfo> attachments;
     }
 }
