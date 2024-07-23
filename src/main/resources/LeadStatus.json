@@ -1,0 +1,132 @@
+{
+  "events": {
+    "NOT_CONNECTED": {
+      "transition": {
+        "{\"status\":\"LEAD_START\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        }
+      }
+    },
+    "CALL_CONNECTED": {
+      "transition": {
+        "{\"status\":\"LEAD_START\"}": {
+          "state": {
+            "status": "CALL_CONNECTED"
+          }
+        }
+      }
+    },
+    "NOT_INTERESTED": {
+      "transition": {
+        "{\"status\":\"CALL_CONNECTED\"}": {
+          "state": {
+            "status": "NOT_INTERESTED"
+          }
+        }
+      }
+    },
+    "INTERESTED_DOCUMENT_PENDING": {
+      "transition": {
+        "{\"status\":\"CALL_CONNECTED\"}": {
+          "state": {
+            "status": "INTERESTED_DOCUMENT_PENDING"
+          }
+        }
+      }
+    },
+    "INTERESTED_DOCUMENT_SUBMITTED": {
+      "transition": {
+        "{\"status\":\"INTERESTED_DOCUMENT_PENDING\"}": {
+          "state": {
+            "status": "INTERESTED_DOCUMENT_SUBMITTED"
+          }
+        }
+      }
+    },
+    "DOCUMENT_UNDER_CREDIT_EVALUTION": {
+      "transition": {
+        "{\"status\":\"INTERESTED_DOCUMENT_SUBMITTED\"}": {
+          "state": {
+            "status": "DOCUMENT_UNDER_CREDIT_EVALUTION"
+          }
+        }
+      }
+    },
+    "LOAN_OFFER_NOT_GENERATED_BY_LENDER": {
+      "transition": {
+        "{\"status\":\"DOCUMENT_UNDER_CREDIT_EVALUTION\"}": {
+          "state": {
+            "status": "LOAN_OFFER_NOT_GENERATED_BY_LENDER"
+          }
+        }
+      }
+    },
+    "REJECTED_BY_ONE_LP_REFERRED_TO_ANOTHER": {
+      "transition": {
+        "{\"status\":\"LOAN_OFFER_NOT_GENERATED_BY_LENDER\"}": {
+          "state": {
+            "status": "REJECTED_BY_ONE_LP_REFERRED_TO_ANOTHER"
+          }
+        }
+      }
+    },
+    "LOAN_OFFER_GENERATED": {
+      "transition": {
+        "{\"status\":\"REJECTED_BY_ONE_LP_REFERRED_TO_ANOTHER\"}": {
+          "state": {
+            "status": "LOAN_OFFER_GENERATED"
+          }
+        },
+        "{\"status\":\"DOCUMENT_UNDER_CREDIT_EVALUTION\"}": {
+          "state": {
+            "status": "LOAN_OFFER_GENERATED"
+          }
+        }
+      }
+    },
+    "LOAN_OFFER_DECLINED_BY_SELLER": {
+      "transition": {
+        "{\"status\":\"LOAN_OFFER_GENERATED\"}": {
+          "state": {
+            "status": "LOAN_OFFER_DECLINED_BY_SELLER"
+          }
+        }
+      }
+    },
+    "LOAN_OFFER_ACCEPTED": {
+      "transition": {
+        "{\"status\":\"LOAN_OFFER_GENERATED\"}": {
+          "state": {
+            "status": "LOAN_OFFER_ACCEPTED"
+          }
+        }
+      }
+    },
+    "LOAN_OFFER_PARTIALLY_DISBURSED": {
+      "transition": {
+        "{\"status\":\"LOAN_OFFER_ACCEPTED\"}": {
+          "state": {
+            "status": "LOAN_OFFER_PARTIALLY_DISBURSED"
+          }
+        }
+      }
+    },
+    "LOAN_OFFER_FULLY_DISBURSED": {
+      "transition": {
+        "{\"status\":\"LOAN_OFFER_ACCEPTED\"}": {
+          "state": {
+            "status": "LOAN_OFFER_FULLY_DISBURSED"
+          }
+        },
+        "{\"status\":\"LOAN_OFFER_PARTIALLY_DISBURSED\"}": {
+          "state": {
+            "status": "LOAN_OFFER_FULLY_DISBURSED"
+          }
+        }
+      }
+    }
+
+  }
+}

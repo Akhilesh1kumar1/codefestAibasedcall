@@ -9,6 +9,7 @@ import com.sr.capital.external.dto.request.NetCoreSendEmailRequest;
 import com.sr.capital.external.dto.response.KaleyraResponse;
 import com.sr.capital.external.dto.response.NetCoreSendEmailResponse;
 import com.sr.capital.util.LoggerUtil;
+import com.sr.capital.util.WebClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,13 +31,16 @@ public class NetCoreClient {
 
    LoggerUtil loggerUtil =LoggerUtil.getLogger(NetCoreClient.class);
 
+   @Autowired
+   private WebClientUtil webClientUtil;
+
     public NetCoreSendEmailResponse triggerEmail(NetCoreSendEmailRequest emailRequest) throws UnirestException {
-        Map<String,String> headers = new HashMap<>();
-        headers.put("api_key", appProperties.getNetCoreApiKey());
-        /*return webClientUtil.makeExternalCallBlocking(NETCORE, appProperties.getNetCoreBaseUri(),
+        org.springframework.http.HttpHeaders headers = new HttpHeaders();
+        headers.add("api_key", appProperties.getNetCoreApiKey());
+        return webClientUtil.makeExternalCallBlocking(NETCORE, appProperties.getNetCoreBaseUri(),
                 appProperties.getNetCoreSendEmailEndpoint(), HttpMethod.POST, null,
-                headers, null, emailRequest, NetCoreSendEmailResponse.class);*/
-        String url =appProperties.getNetCoreBaseUri()+ appProperties.getNetCoreSendEmailEndpoint();
+                headers, null, emailRequest, NetCoreSendEmailResponse.class);
+        /*String url =appProperties.getNetCoreBaseUri()+ appProperties.getNetCoreSendEmailEndpoint();
         HttpResponse<NetCoreSendEmailResponse> netCoreSendEmailResponseHttpResponse = getInstance().withHeaders(headers).post(url,emailRequest,NetCoreSendEmailResponse.class);
 
         if (netCoreSendEmailResponseHttpResponse.getStatus() != SC_OK && netCoreSendEmailResponseHttpResponse.getBody() == null) {
@@ -45,6 +49,6 @@ public class NetCoreClient {
                             " email", netCoreSendEmailResponseHttpResponse.getBody(),
                     netCoreSendEmailResponseHttpResponse.getStatus()));
         }
-        return netCoreSendEmailResponseHttpResponse.getBody();
+        return netCoreSendEmailResponseHttpResponse.getBody();*/
     }
 }

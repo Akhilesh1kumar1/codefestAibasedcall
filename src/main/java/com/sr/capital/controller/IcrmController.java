@@ -6,7 +6,9 @@ import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.GenerateLeadResponseDto;
 import com.sr.capital.dto.response.IcrmLeadRsponseDto;
 import com.sr.capital.dto.response.LeadDetailsResponseDto;
+import com.sr.capital.dto.response.LeadStatusDTO;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.helpers.enums.LeadStatus;
 import com.sr.capital.service.IcrmLeadService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.CREDIT_PARTNER_CREATED_SUCCESSFULLY;
@@ -74,5 +79,13 @@ public class IcrmController {
         icrmLeadService.downloadLeadDetails(startDate,type,emailId);
         return ResponseBuilderUtil.getResponse(true,SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/lead-statuses")
+    public GenericResponse<List<LeadStatusDTO>> getLeadStatuses() {
+        return ResponseBuilderUtil.getResponse(Stream.of(LeadStatus.values())
+                .map(status -> new LeadStatusDTO(status.name(), status.getDisplayName()))
+                .collect(Collectors.toList()),SUCCESS,
+                        REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 }
