@@ -45,18 +45,18 @@
         }
       }
     },
-    "DOCUMENT_UNDER_CREDIT_EVALUTION": {
+    "DOCUMENT_UNDER_CREDIT_EVALUATION": {
       "transition": {
         "{\"status\":\"INTERESTED_DOCUMENT_SUBMITTED\"}": {
           "state": {
-            "status": "DOCUMENT_UNDER_CREDIT_EVALUTION"
+            "status": "DOCUMENT_UNDER_CREDIT_EVALUATION"
           }
         }
       }
     },
     "LOAN_OFFER_NOT_GENERATED_BY_LENDER": {
       "transition": {
-        "{\"status\":\"DOCUMENT_UNDER_CREDIT_EVALUTION\"}": {
+        "{\"status\":\"DOCUMENT_UNDER_CREDIT_EVALUATION\"}": {
           "state": {
             "status": "LOAN_OFFER_NOT_GENERATED_BY_LENDER"
           }
