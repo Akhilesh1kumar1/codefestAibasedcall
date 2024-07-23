@@ -119,7 +119,10 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                     .tier(lead.getTier())
                     .leadSource(lead.getLeadSource())
                     .remarks(lead.getRemarks())
-                    .loanVendorPartnerId(lead.getLoanVendorPartnerId()).leadId(lead.getId())
+                    .loanVendorPartnerId(lead.getLoanVendorPartnerId())
+                    .leadId(lead.getId())
+                    .createdAt(lead.getCreatedAt())
+                    .updatedAt(lead.getLastModifiedAt())
                     .build();
 
             User user = userService.getCompanyDetails(lead.getSrCompanyId());

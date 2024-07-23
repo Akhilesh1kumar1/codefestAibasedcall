@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,6 +51,10 @@ public class LeadDetailsResponseDto {
         String companyName;
 
         String brandName;
+
+        LocalDateTime createdAt;
+
+        LocalDateTime updatedAt;
 
     }
 }
