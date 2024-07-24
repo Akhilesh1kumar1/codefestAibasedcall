@@ -107,7 +107,7 @@ app:
 
     shiprocket:
       api:
-        baseUrl: ${SHIPROCKET_API_BASE_URL:https://qa-api-1.kartrocket.com}
+        baseUrl: ${SHIPROCKET_API_BASE_URL:https://apiv2.shiprocket.in}
         endpoints:
           kyc-details: /v1/settings/kyc/is-selfie-enable
           user-details-api-token: "/v1/external/omuni2/auth/user-details"
