@@ -4,6 +4,7 @@ package com.sr.capital.kyc.service.strategy;
 import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.exception.EntityConstructorNotFoundException;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
+import com.sr.capital.kyc.external.response.extraction.GstDetailsByPanResponse;
 import com.sr.capital.kyc.service.constructor.entity.mongo.*;
 import com.sr.capital.kyc.service.interfaces.EntityConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class EntityConstructorStrategy {
     @Autowired
     private PanDocDetailsEntityConstructor panDocDetailsEntityConstructor;
 
+
+    @Autowired
+    private ReportMetaDataConstructor reportMetaDataConstructor;
     @Autowired
     private PanGstCrossVerifiedDetailsEntityConstructor panGstCrossVerifiedDetailsEntityConstructor;
 
@@ -47,10 +51,15 @@ public class EntityConstructorStrategy {
     @Autowired
     private SelfiDocDetailsConstructor selfiDocDetailsConstructor;
 
+    @Autowired
+    private GstByPanDocDetailsEntityConstructor gstByPanDocDetailsEntityConstructor;
+
 
     public <T> T constructEntity(DocOrchestratorRequest request, T entity, Class<?> responseClass) throws EntityConstructorNotFoundException, IOException {
         EntityConstructor entityConstructor;
-        if(responseClass.equals(AadhaarDocDetails.class)){
+       if(responseClass.equals(GstByPanDocDetails.class)){
+           entityConstructor =gstByPanDocDetailsEntityConstructor;
+       }else if(responseClass.equals(AadhaarDocDetails.class)){
             entityConstructor = aadhaarDocDetailsEntityConstructor;
         } else if(responseClass.equals(AadhaarVerifiedDetails.class)){
             entityConstructor = aadhaarVerifiedDetailsEntityConstructor;
@@ -72,7 +81,9 @@ public class EntityConstructorStrategy {
             entityConstructor = panVerifiedDetailsEntityConstructor;
         }else if(responseClass.equals(SelfiDocDetails.class)){
             entityConstructor = selfiDocDetailsConstructor;
-        }else {
+        }else if(responseClass.equals(ReportMetaData.class)){
+           entityConstructor = reportMetaDataConstructor;
+       }else {
             throw new EntityConstructorNotFoundException();
         }
 

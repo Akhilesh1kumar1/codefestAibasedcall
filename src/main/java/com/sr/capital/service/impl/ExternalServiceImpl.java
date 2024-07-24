@@ -2,21 +2,27 @@ package com.sr.capital.service.impl;
 
 import com.amazonaws.HttpMethod;
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.response.BaseCreditPartnerResponseDto;
 import com.sr.capital.dto.response.CompanySalesDetails;
 import com.sr.capital.dto.response.LoanOfferDetails;
+import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
+import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.dto.request.UploadFileToS3Request;
+import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.service.CapitalDataReportService;
 import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.ExternalService;
 import com.sr.capital.service.LoanOfferService;
+import com.sr.capital.service.entityimpl.BaseCreditPartnerEntityServiceImpl;
 import com.sr.capital.util.CsvUtils;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -37,6 +43,10 @@ public class ExternalServiceImpl implements ExternalService {
     final CapitalDataReportService capitalDataReportService;
     final CsvUtils csvUtils;
     final AppProperties appProperties;
+
+    final DocDetailsService docDetailsService;
+
+    final BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
     @Override
     public Boolean validateRequest(String vendorToken, String vendorCode,String loanVendorName) throws InvalidVendorTokenException, InvalidVendorCodeException {
 
@@ -46,6 +56,10 @@ public class ExternalServiceImpl implements ExternalService {
     @Override
     public LoanOfferDetails createLoanOffer(LoanOfferDetails loanOfferDetails, String vendorToken, String vendorCode) throws InvalidVendorTokenException, InvalidVendorCodeException {
         validateRequest(vendorToken,vendorCode,loanOfferDetails.getLoanVendorName());
+        BaseCreditPartner baseCreditPartnerResponseDto =baseCreditPartnerEntityService.getCreditPartnerByName(loanOfferDetails.getLoanVendorName());
+        if(baseCreditPartnerResponseDto!=null){
+            loanOfferDetails.setLoanVendorId(baseCreditPartnerResponseDto.getId());
+        }
         return loanOfferService.saveLoanOffer(loanOfferDetails);
     }
 
@@ -65,6 +79,12 @@ public class ExternalServiceImpl implements ExternalService {
         csvUtils.writeCsvWithCustomHeader(companySalesDetailsList,headers,filePath);
         File file =new File(filePath);
         return uploadToS3AndGetPreSignedUri(file,filePath);
+    }
+
+    @Override
+    public ResponseEntity<?> fetchDocDetailsByTenantId(DocDetailsRequest docDetailsRequest,String vendorToken,String vendorCode,String loanVendorName) throws Exception {
+        validateRequest(vendorToken,vendorCode,loanVendorName);
+        return docDetailsService.fetchDocDetailsByTenantId(docDetailsRequest);
     }
 
     private String[] generateHeaders(List<CompanySalesDetails> companySalesDetailsList) {
@@ -110,4 +130,6 @@ public class ExternalServiceImpl implements ExternalService {
         return preSignedUri;
 
     }
+
+
 }

@@ -6,12 +6,14 @@ import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.LoanOfferDetails;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
+import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import com.sr.capital.service.CapitalDataReportService;
 import com.sr.capital.service.ExternalService;
 import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +47,12 @@ public class ExternalController {
 
         return ResponseBuilderUtil.getResponse(externalService.getCompanyWiseSalesDetails(vendorToken,vendorCode,partnerName), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @PostMapping("/doc/details/all/{partnerName}")
+    public ResponseEntity<?>  getDocumentDetails(@RequestHeader(name = "x-vendor-token") String vendorToken, @RequestHeader(name = "x-vendor-code") String vendorCode, @PathVariable("partnerName") String partnerName, @RequestBody DocDetailsRequest docDetailsRequest) throws Exception {
+
+        return externalService.fetchDocDetailsByTenantId(docDetailsRequest,vendorToken,vendorCode,partnerName);
     }
 
 }

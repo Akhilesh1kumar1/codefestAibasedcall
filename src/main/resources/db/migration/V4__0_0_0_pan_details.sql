@@ -7,9 +7,9 @@ CREATE TABLE IF NOT EXISTS `pan_details` (
   `is_pan_verified` bit(1) DEFAULT NULL,
   `pan_image_link_1` varchar(255) DEFAULT NULL,
   `pan_image_link_2` varchar(255) DEFAULT NULL,
-  `created_at` datetime(6) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
   `created_by` varchar(255) DEFAULT NULL,
-  `updated_at` datetime(6) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   `updated_by` varchar(255) DEFAULT NULL,
   `is_enabled` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)

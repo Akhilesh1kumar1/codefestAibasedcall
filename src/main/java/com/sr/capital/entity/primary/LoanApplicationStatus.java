@@ -26,6 +26,9 @@ public class LoanApplicationStatus extends LongBaseEntity{
     @Column(name = "loan_id")
     UUID loanId;
 
+    @Column(name = "vendor_loan_id")
+    String vendorLoanId;
+
     @Column(name = "loan_amount_approved")
     BigDecimal loanAmountApproved;
 
@@ -35,6 +38,9 @@ public class LoanApplicationStatus extends LongBaseEntity{
     @Column(name = "loan_duration")
     Integer loanDuration;
 
+    @Column(name = "interest_amount_at_sanction")
+    BigDecimal interestAmountAtSanction;
+
     @Column(name = "start_date")
     LocalDate startDate;
 
@@ -43,4 +49,10 @@ public class LoanApplicationStatus extends LongBaseEntity{
 
     @Column(name = "comment")
     String comment;
+
+    @Column(name = "total_disbursed_amount")
+    BigDecimal totalDisbursedAmount;
+
+    @Column(name = "vendor_status")
+    String vendorStatus;
 }

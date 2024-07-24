@@ -2,6 +2,7 @@ package com.sr.capital.service.impl;
 
 
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.entity.primary.VerificationEntity;
 import com.sr.capital.exception.custom.CustomException;
@@ -34,7 +35,7 @@ public class VerificationUtilService {
         VerificationOrchestratorRequest.RawRequest rawRequest = verificationOrchestratorRequest.getRawRequest();
         VerificationEntity verificationEntity = VerificationEntity.builder()
                 .type(rawRequest.getVerificationType())
-                .srCompanyId(String.valueOf(rawRequest.getEntityId()))
+                .srCompanyId(String.valueOf(RequestData.getTenantId())).userId(verificationOrchestratorRequest.getTenantDetails().getCapitalUserId())
                 .callback(rawRequest.getCallbackType())
                 .channel(rawRequest.getChannel())
                 .build();

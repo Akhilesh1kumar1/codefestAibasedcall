@@ -4,7 +4,7 @@ package com.sr.capital.kyc.service.transformer.external;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.AadhaarDocDetails;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
-import com.sr.capital.kyc.external.request.IdfyBaseRequest;
+import com.sr.capital.kyc.external.request.KarzaBaseRequest;
 import com.sr.capital.kyc.external.request.verification.AadhaarVerificationRequest;
 import com.sr.capital.kyc.external.request.verification.data.AadhaarVerificationData;
 import com.sr.capital.kyc.service.interfaces.ExternalRequestTransformer;
@@ -15,7 +15,7 @@ public class AadhaarVerificationRequestTransformer implements ExternalRequestTra
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IdfyBaseRequest<?>> T transformRequest(DocOrchestratorRequest request) {
+    public <T extends KarzaBaseRequest<?>> T transformRequest(DocOrchestratorRequest request) {
 
         KycDocDetails<AadhaarDocDetails> kycDocDetails = (KycDocDetails<AadhaarDocDetails>) request.getKycDocDetails();
         AadhaarDocDetails aadhaarDocDetails = kycDocDetails.getDetails();

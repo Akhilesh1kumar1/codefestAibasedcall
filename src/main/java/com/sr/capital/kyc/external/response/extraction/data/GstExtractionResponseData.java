@@ -10,7 +10,8 @@ import java.io.Serializable;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GstExtractionResponseData implements Serializable {
 
-    private ExtractionOutput extractionOutput;
+    String statusCd;
+    /*private ExtractionOutput extractionOutput;
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -36,6 +37,6 @@ public class GstExtractionResponseData implements Serializable {
 
         private String validUpto;
 
-    }
+    }*/
 
 }

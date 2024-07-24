@@ -1,6 +1,7 @@
 package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
 import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.service.VerificationService;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,5 +42,11 @@ public class VerificationController {
     public GenericResponse<Boolean> verifyGst(@RequestParam("gst")String gst) throws Exception {
         return ResponseBuilderUtil.getResponse( verificationService.verifyGst(gst),SUCCESS,
                 VALID_PAN, HttpStatus.SC_OK);
+    }
+
+    @PostMapping(path = "/resend-otp", produces = MediaType.APPLICATION_JSON_VALUE)
+    public GenericResponse<Boolean> resendOtp(@Valid @RequestBody ResendOtpRequest request) throws Exception {
+        return ResponseBuilderUtil.getResponse(verificationService.resendOtp(request),SUCCESS,
+                "", HttpStatus.SC_OK);
     }
 }

@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface VerificationRepository extends JpaRepository<VerificationEntity, Long> {
+public interface VerificationRepository extends JpaRepository<VerificationEntity, UUID> {
 
 
 
-    @Query("SELECT ver from VerificationEntity ver where ver.srCompanyId = :tenantId and ver.type = :verificationType and status IN :statusList order by ver.auditData.createdAt desc")
+    @Query("SELECT ver from VerificationEntity ver where ver.srCompanyId = :tenantId and ver.type = :verificationType and ver.status IN :statusList order by ver.auditData.createdAt desc")
     List<VerificationEntity> findByTenantIdVerificationTypeAndStatusList(String tenantId, VerificationType verificationType, List<VerificationStatus> statusList);
 }

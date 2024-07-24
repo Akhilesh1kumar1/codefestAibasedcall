@@ -19,4 +19,6 @@ public interface PANService {
 
     public CibilScoreCheckResponseDto getCibilDetailsUsingPan(CibilScoreCheckRequestDto cibilScoreCheckRequestDto) throws Exception;
 
+    public Boolean validatePanNumber(String panNumber) throws Exception;
+
 }

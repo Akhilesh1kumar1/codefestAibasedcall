@@ -1,8 +1,10 @@
 package com.sr.capital.entity.mongo.kyc;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,18 +20,22 @@ public class BaseDoc implements Serializable {
 
     @CreatedBy
     @Field("created_by")
-    private String createdBy;
+    private String createdBy ="SYSTEM";;
 
     @CreatedDate
     @Field("created_at")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @LastModifiedDate
     @Field("last_modified_at")
-    private LocalDateTime lastModifiedAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastModifiedAt =LocalDateTime.now();
 
     @LastModifiedBy
     @Field("last_modified_by")
-    private String lastModifiedBy;
+    private String lastModifiedBy="SYSTEM";
 
 }

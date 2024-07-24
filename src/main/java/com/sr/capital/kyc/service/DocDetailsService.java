@@ -3,19 +3,21 @@ package com.sr.capital.kyc.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.entity.mongo.kyc.GstCompleteDocDetails;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.AadhaarDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
-import com.sr.capital.entity.mongo.kyc.child.GstDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.PanDocDetails;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.constants.DocExtractionConstants;
 import com.sr.capital.helpers.constants.ErrorConstants;
 import com.sr.capital.helpers.enums.DocType;
+import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.helpers.enums.TaskType;
 import com.sr.capital.kyc.dto.request.BankDetailsRequest;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import com.sr.capital.kyc.dto.request.UpdateDocsDetailsRequest;
+import com.sr.capital.kyc.dto.request.VerifyGstOtpRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateAadhaarDocDetailsRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateBankDocDetailsRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateGstDocDetailsRequest;
@@ -23,6 +25,7 @@ import com.sr.capital.kyc.dto.request.child.UpdatePanDocDetailsRequest;
 import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.service.constructor.response.VerifiedDocResponseConstructor;
 import com.sr.capital.kyc.service.strategy.ResponseConstructorStrategy;
+import com.sr.capital.service.entityimpl.GstCompleteDetailsManager;
 import com.sr.capital.service.entityimpl.TaskManager;
 import com.sr.capital.service.entityimpl.VerificationEntityServiceImpl;
 import com.sr.capital.util.LoggerUtil;
@@ -60,10 +63,13 @@ public class DocDetailsService {
     @Autowired
     private VerifiedDocResponseConstructor verifiedDocResponseConstructor;
 
+    @Autowired
+    private GstCompleteDetailsManager gstCompleteDetailsManager;
+
     public ResponseEntity<?> fetchDocDetailsByTenantId(final DocDetailsRequest docDetailsRequest)
         throws CustomException {
         List<String> tenantIdList = docDetailsRequest.getSrCompanyId();
-
+         RequestData.setRequestType(RequestType.DOC_DETAILS);
         if (ObjectUtils.isEmpty(tenantIdList) || tenantIdList.size() > DocExtractionConstants.LIST_SIZE) {
             throw new CustomException(ErrorConstants.FETCH_DOC_DETAILS_ERROR,
                 HttpStatus.BAD_REQUEST);
@@ -80,6 +86,36 @@ public class DocDetailsService {
 
         return responseConstructorStrategy.constructResponse(kycDocDetailsList);
     }
+
+    public List<KycDocDetails<?>> fetchDocDetailsByTenantId(String tenantId){
+        return kycDocDetailsManager.findKycDocDetailsByTenantId(tenantId);
+    }
+
+    public ResponseEntity<?> fetchGstDocByTenantId(final DocDetailsRequest docDetailsRequest)
+            throws CustomException {
+        RequestData.setRequestType(RequestType.GST);
+        List<String> tenantIdList = docDetailsRequest.getSrCompanyId();
+        if (ObjectUtils.isEmpty(tenantIdList) || tenantIdList.size() > DocExtractionConstants.LIST_SIZE) {
+            throw new CustomException(ErrorConstants.FETCH_DOC_DETAILS_ERROR,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        boolean isInvalid = tenantIdList.stream().anyMatch(tId -> tId.trim().isBlank());
+        if (isInvalid) {
+            throw new CustomException(ErrorConstants.FETCH_DOC_DETAILS_ERROR,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        List<GstCompleteDocDetails> gstCompleteDocDetails =new ArrayList<>();
+
+        for(String tenantId:tenantIdList) {
+            List<GstCompleteDocDetails> kycDocDetailsList = gstCompleteDetailsManager.getGstDetailsByTenantId(Long.valueOf(tenantId));
+            gstCompleteDocDetails.addAll(kycDocDetailsList);
+        }
+
+        return responseConstructorStrategy.constructResponse(gstCompleteDocDetails);
+    }
+
 
     public ResponseEntity<?> insertBankDetails(final BankDetailsRequest bankDetailsRequest)
         throws CustomException {
@@ -107,7 +143,7 @@ public class DocDetailsService {
     private BankDocDetails getBankExtractionResponse(final BankDetailsRequest bankDetailsRequest) {
         return BankDocDetails.builder()
             .accountName(bankDetailsRequest.getName())
-            .accountNo(bankDetailsRequest.getAccountNo())
+            .accountNo(bankDetailsRequest.getAccountNumber())
             .bankName(bankDetailsRequest.getBankName())
             .ifscCode(bankDetailsRequest.getIfscCode())
             .build();
@@ -285,7 +321,7 @@ public class DocDetailsService {
                         break;
                     case GST:
                         UpdateGstDocDetailsRequest ug = objectMapper.readValue(objectMapper.writeValueAsString(entry.getDetails()), UpdateGstDocDetailsRequest.class);
-                        if(ug == null){
+                       /* if(ug == null){
                             if(!CollectionUtils.isEmpty(entry.getImageIds())) {
                                 kycDocDetails.setImages(entry.getImageIds());
                                 kycDocDetailsList.add(kycDocDetails);
@@ -313,7 +349,7 @@ public class DocDetailsService {
                                     .images(CollectionUtils.isEmpty(entry.getImageIds()) ? null : entry.getImageIds())
                                     .build();
                             kycDocDetailsList.add(newDoc);
-                        }
+                        }*/
                         break;
                     case PAN:
                         UpdatePanDocDetailsRequest up = objectMapper.readValue(objectMapper.writeValueAsString(entry.getDetails()), UpdatePanDocDetailsRequest.class);

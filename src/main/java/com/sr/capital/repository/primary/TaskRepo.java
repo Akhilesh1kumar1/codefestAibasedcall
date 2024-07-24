@@ -22,4 +22,6 @@ public interface TaskRepo extends JpaRepository<Task, Long> {
 
     @Query("SELECT t from Task t where t.status = :status AND t.lastTryAt < :timestamp order by t.lastTryAt asc")
     List<Task> findByStatusAndLastTryAt(TaskStatus status, LocalDateTime timestamp);
+
+    Task findByRequestId(String reqId);
 }

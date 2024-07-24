@@ -2,32 +2,39 @@ package com.sr.capital.kyc.service;
 
 import com.amazonaws.HttpMethod;
 
+import com.omunify.core.model.GenericResponse;
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.exception.custom.RequestTransformerNotFoundException;
+import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
 import com.sr.capital.helpers.constants.DocExtractionConstants;
 import com.sr.capital.helpers.enums.DocActionType;
 import com.sr.capital.helpers.enums.DocType;
-import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
-import com.sr.capital.kyc.dto.request.FileDetails;
-import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
-import com.sr.capital.kyc.dto.request.UploadFileToS3Request;
-import com.sr.capital.kyc.external.adaptor.IdfyExtractionAdapter;
-import com.sr.capital.kyc.external.request.IdfyBaseRequest;
+import com.sr.capital.kyc.dto.request.*;
+import com.sr.capital.kyc.external.adaptor.KarzaExtractionAdapter;
+import com.sr.capital.kyc.external.request.KarzaBaseRequest;
+import com.sr.capital.kyc.external.request.VerifyGstExtractionRequest;
 import com.sr.capital.kyc.external.request.extraction.data.AadhaarExtractionData;
 import com.sr.capital.kyc.external.request.extraction.data.DocumentExtractionData;
-import com.sr.capital.kyc.external.response.IdfyBaseResponse;
+import com.sr.capital.kyc.external.response.KarzaBaseResponse;
 import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.service.strategy.EntityConstructorStrategy;
 import com.sr.capital.kyc.service.strategy.ExternalRequestTransformerStrategy;
+import com.sr.capital.service.entityimpl.TaskManager;
 import com.sr.capital.util.CsvUtils;
 import com.sr.capital.util.LoggerUtil;
+import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.S3Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.http.HttpStatusCode;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -47,7 +54,7 @@ public class DocExtractionService {
     private ExternalRequestTransformerStrategy externalRequestTransformerStrategy;
 
     @Autowired
-    private IdfyExtractionAdapter idfyExtractionAdapter;
+    private KarzaExtractionAdapter karzaExtractionAdapter;
 
     @Autowired
     private EntityConstructorStrategy entityConstructorStrategy;
@@ -55,30 +62,37 @@ public class DocExtractionService {
     @Autowired
     private KycDocDetailsManager kycDocDetailsManager;
 
+    @Autowired
+    private TaskManager taskManager;
+
     private final LoggerUtil loggerUtil = LoggerUtil.getLogger(DocExtractionService.class);
 
     public void uploadAndExtractDetails(DocOrchestratorRequest orchestratorRequest) throws Exception {
 
         validationService.validateUploadAndExtractDocRequest(orchestratorRequest);
+        if(orchestratorRequest.getIsFileRequired()) {
+            generateAndSetFileNames(orchestratorRequest);
 
-        generateAndSetFileNames(orchestratorRequest);
+            FileDetails file1 = orchestratorRequest.getFile1();
+            FileDetails file2 = orchestratorRequest.getFile2();
 
-        FileDetails file1 = orchestratorRequest.getFile1();
-        FileDetails file2 = orchestratorRequest.getFile2();
+            uploadToS3AndGetPreSignedUri(file1, Boolean.FALSE);
 
-        uploadToS3AndGetPreSignedUri(file1, Boolean.FALSE);
+            if (orchestratorRequest.hasFile2()) {
+                uploadToS3AndGetPreSignedUri(file2, Boolean.FALSE);
+            }
 
-        if (orchestratorRequest.hasFile2()){
-            uploadToS3AndGetPreSignedUri(file2, Boolean.FALSE);
+            transformPdfRequest(orchestratorRequest);
+
         }
+        if(orchestratorRequest.getActions().contains(DocActionType.EXTRACT)){
+            KarzaBaseRequest<?> karzaBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
+            orchestratorRequest.setKarzaBaseRequest(karzaBaseRequest);
 
-        IdfyBaseRequest<?> idfyBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
-        orchestratorRequest.setIdfyBaseRequest(idfyBaseRequest);
 
-        transformPdfRequest(orchestratorRequest);
-
-        IdfyBaseResponse<?> extractionResponse = idfyExtractionAdapter.extractDocumentDetails(idfyBaseRequest);
-        orchestratorRequest.setIdfyBaseResponse(extractionResponse);
+            KarzaBaseResponse<?> extractionResponse = karzaExtractionAdapter.extractDocumentDetails(karzaBaseRequest);
+            orchestratorRequest.setKarzaBaseResponse(extractionResponse);
+        }
 
 
         KycDocDetails<?> kycDocDetails = entityConstructorStrategy.constructEntity(orchestratorRequest, orchestratorRequest.getKycDocDetails(),
@@ -86,6 +100,9 @@ public class DocExtractionService {
 
         kycDocDetailsManager.saveKycDocDetails(kycDocDetails);
 
+        if(orchestratorRequest.getTask()!=null){
+            taskManager.saveTask(orchestratorRequest.getTask());
+        }
         orchestratorRequest.setKycDocDetails(kycDocDetails);
 
     }
@@ -113,13 +130,13 @@ public class DocExtractionService {
 
         if(docActionTypes.contains(DocActionType.EXTRACT)){
 
-            IdfyBaseRequest<?> idfyBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
-            orchestratorRequest.setIdfyBaseRequest(idfyBaseRequest);
+            KarzaBaseRequest<?> karzaBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(orchestratorRequest);
+            orchestratorRequest.setKarzaBaseRequest(karzaBaseRequest);
 
             transformPdfRequest(orchestratorRequest);
 
-            IdfyBaseResponse<?> extractionResponse = idfyExtractionAdapter.extractDocumentDetails(idfyBaseRequest);
-            orchestratorRequest.setIdfyBaseResponse(extractionResponse);
+            KarzaBaseResponse<?> extractionResponse = karzaExtractionAdapter.extractDocumentDetails(karzaBaseRequest);
+            orchestratorRequest.setKarzaBaseResponse(extractionResponse);
 
             KycDocDetails<?> kycDocDetails = entityConstructorStrategy.constructEntity(orchestratorRequest, orchestratorRequest.getKycDocDetails(),
                     getResponseClass(orchestratorRequest.getDocType()));
@@ -179,7 +196,12 @@ public class DocExtractionService {
                 return PanDocDetails.class;
             case SELFI:
                 return SelfiDocDetails.class;
-
+            case GST_BY_PAN:
+                return GstByPanDocDetails.class;
+            case MSME:
+            case PROVISIONAL:
+            case LOAN_TRACKER:
+                return ReportMetaData.class;
             default:
                 throw new CustomException("Invalid Doc Type!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -210,7 +232,10 @@ public class DocExtractionService {
 
     private void transformPdfRequest(DocOrchestratorRequest orchestratorRequest) throws Exception {
 
-        IdfyBaseRequest<?> idfyBaseRequest = orchestratorRequest.getIdfyBaseRequest();
+        KarzaBaseRequest<?> karzaBaseRequest = orchestratorRequest.getKarzaBaseRequest();
+        if(karzaBaseRequest==null){
+            return;
+        }
         FileDetails file1 = orchestratorRequest.getFile1();
         FileDetails file2 = orchestratorRequest.getFile2();
 
@@ -224,12 +249,12 @@ public class DocExtractionService {
 
             uploadToS3AndGetPreSignedUri(fileDetails, Boolean.TRUE);
 
-            if (idfyBaseRequest.getData() instanceof AadhaarExtractionData) {
-                AadhaarExtractionData aadhaarExtractionData = (AadhaarExtractionData) idfyBaseRequest.getData();
+            if (karzaBaseRequest.getData() instanceof AadhaarExtractionData) {
+                AadhaarExtractionData aadhaarExtractionData = (AadhaarExtractionData) karzaBaseRequest.getData();
                 aadhaarExtractionData.setDocument1(fileDetails.getPreSignedUri());
 
             } else {
-                DocumentExtractionData documentExtractionData = (DocumentExtractionData) idfyBaseRequest.getData();
+                DocumentExtractionData documentExtractionData = (DocumentExtractionData) karzaBaseRequest.getData();
                 documentExtractionData.setDocument1(fileDetails.getPreSignedUri());
             }
         }
@@ -244,13 +269,33 @@ public class DocExtractionService {
 
             uploadToS3AndGetPreSignedUri(fileDetails, Boolean.TRUE);
 
-            if (idfyBaseRequest.getData() instanceof AadhaarExtractionData) {
-                AadhaarExtractionData aadhaarExtractionData = (AadhaarExtractionData) idfyBaseRequest.getData();
+            if (karzaBaseRequest.getData() instanceof AadhaarExtractionData) {
+                AadhaarExtractionData aadhaarExtractionData = (AadhaarExtractionData) karzaBaseRequest.getData();
                 aadhaarExtractionData.setDocument1(fileDetails.getPreSignedUri());
 
             }
         }
 
+    }
+
+    public GenericResponse verifyGstOtp(DocOrchestratorRequest orchestratorRequest) throws RequestTransformerNotFoundException, ServiceEndpointNotFoundException {
+
+        VerifyGstOtpRequest verifyGstOtpRequest = null;
+        try {
+            verifyGstOtpRequest = MapperUtils.convertValue(orchestratorRequest.getDocDetails(),VerifyGstOtpRequest.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        VerifyGstExtractionRequest karzaBaseRequest = VerifyGstExtractionRequest. builder().data(verifyGstOtpRequest).build();
+        orchestratorRequest.setKarzaBaseRequest(karzaBaseRequest);
+
+
+        KarzaBaseResponse<?> extractionResponse = karzaExtractionAdapter.extractDocumentDetails(karzaBaseRequest);
+        orchestratorRequest.setKarzaBaseResponse(extractionResponse);
+        GenericResponse response = new GenericResponse<>();
+        response.setStatusCode(HttpStatusCode.OK);
+        response.setData(extractionResponse);
+       return response;
     }
 
 

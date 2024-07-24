@@ -65,6 +65,14 @@ public class MapperUtils {
         return objectMapper.convertValue(object, objectClass);
     }
 
+    public static <V, T> T convertValueWithTime(V object, Class<T> objectClass) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper.convertValue(object, objectClass);
+    }
+
+
     public static <V, T> T convertValue(V object, Class<T> objectClass, Module module) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(module);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

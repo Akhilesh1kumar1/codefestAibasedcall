@@ -5,6 +5,7 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.kyc.dto.request.BankDetailsRequest;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import com.sr.capital.kyc.dto.request.UpdateDocsDetailsRequest;
+import com.sr.capital.kyc.dto.request.VerifyGstOtpRequest;
 import com.sr.capital.kyc.service.DocDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,14 @@ public class DocDetailsController {
     public ResponseEntity<?> insertBankDetails(@RequestBody BankDetailsRequest bankDetailsRequest) throws CustomException {
         return docDetailsService.insertBankDetails(bankDetailsRequest);
     }
+
+    @PostMapping(value = "/fetch-gst-details", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> fetchCompleteGstDetails(
+            @RequestBody DocDetailsRequest docDetailsRequest)
+            throws CustomException {
+        return docDetailsService.fetchGstDocByTenantId(docDetailsRequest);
+    }
+
 
    /* @PostMapping(value = "/update", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> updateDetails(@RequestBody UpdateDocsDetailsRequest updateDocsDetailsRequest) throws Exception {

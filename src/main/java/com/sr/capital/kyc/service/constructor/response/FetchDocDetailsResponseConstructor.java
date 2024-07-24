@@ -3,6 +3,7 @@ package com.sr.capital.kyc.service.constructor.response;
 import com.amazonaws.HttpMethod;
 
 import com.omunify.core.model.GenericResponse;
+import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
@@ -17,10 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.http.HttpStatusCode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
@@ -29,6 +28,8 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
     @Autowired
     private AppProperties kycAppProperties;
 
+    @Autowired
+    private AES256 aes256;
 
 
     @Override
@@ -46,7 +47,8 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                     .imageIds(kycDocDetails.getImages())
                     .status(kycDocDetails.getStatus())
                     .details(getExtractedDetails(kycDocDetails))
-                    .lastModifiedAt(kycDocDetails.getLastModifiedAt().toString())
+                    .lastModifiedAt(String.valueOf(Optional.ofNullable(kycDocDetails.getLastModifiedAt())
+                            .orElse(LocalDateTime.parse(kycDocDetails.getLastModifiedAt().toString()))))
                     .srCompanyId(kycDocDetails.getSrCompanyId())
                     .build();
 
@@ -72,6 +74,9 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
 
         List<String> images = new ArrayList<>();
         for (String imageName : imageNames) {
+            if(kycAppProperties.getActiveProfile().equalsIgnoreCase("local")){
+                return images;
+            }
             GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
                     .filePath(imageName)
                     .bucketName(kycAppProperties.getBucketName())
@@ -118,31 +123,23 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                     .build();
             case GST:
                 GstDocDetails gstDocDetails = (GstDocDetails) kycDocDetails.getDetails();
-                return (T) ExtractedGstResponse.builder()
-                    .name(gstDocDetails.getLegalName())
-                    .tradeName(gstDocDetails.getTradeName())
-                    .address(gstDocDetails.getAddress())
-                    .gstin(gstDocDetails.getGstin())
-                    .constitutionOfBusiness(gstDocDetails.getConstitutionOfBusiness())
-                    .typeOfRegistration(gstDocDetails.getTypeOfRegistration())
-                    .panNumber(gstDocDetails.getPanNumber())
-                    .dateOfLiability(gstDocDetails.getDateOfLiability())
-                    .validUpTo(gstDocDetails.getValidUpTo())
-                    .isProvisional(gstDocDetails.isProvisional())
-                    .build();
+                ExtractedGstResponse gstResponse = ExtractedGstResponse.builder().build();
+                gstResponse.setGstUserDetails(new ArrayList<>());
+                gstDocDetails.getGstDetails().forEach(gstUserDetails -> {
+                    gstResponse.getGstUserDetails().add(ExtractedGstResponse.GstUserDetails.builder().gstin(aes256.decrypt(gstUserDetails.getGstin())).username(aes256.decrypt(gstUserDetails.getUsername())).refId(gstUserDetails.getRefId()).build());
+                });
+
+                return (T) gstResponse;
             case BANK_CHEQUE:
-                BankDocDetails bankDocDetails = (BankDocDetails) kycDocDetails.getDetails();
-                return (T) ExtractedBankResponse.builder()
-                        .name(bankDocDetails.getAccountName())
-                        .accountNo(bankDocDetails.getAccountNo())
-                        .micrCode(bankDocDetails.getMicrCode())
-                        .micrChequeNumber(bankDocDetails.getMicrChequeNumber())
-                        .dateOfIssue(bankDocDetails.getDateOfIssue())
-                        .bankName(bankDocDetails.getBankName())
-                        .ifscCode(bankDocDetails.getIfscCode())
-                        .bankAddress(bankDocDetails.getBankAddress())
-                        .build();
+                List<ExtractedBankResponse> extractedBankResponses = getExtractedBankResponses(kycDocDetails);
+                return (T) extractedBankResponses;
+            case GST_BY_PAN:
+                GstByPanDocDetails gstByPanDocDetails = (GstByPanDocDetails) kycDocDetails.getDetails();
+                return (T) gstByPanDocDetails;
             case MSME:
+            case LOAN_TRACKER:
+            case PROVISIONAL:
+                return (T) kycDocDetails;
             case AGREEMENT:
             case CIN:
             case VOTER_ID:
@@ -158,5 +155,23 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             default:
                 return null;
         }
+    }
+
+    private List<ExtractedBankResponse> getExtractedBankResponses(KycDocDetails<?> kycDocDetails) {
+        List<BankDocDetails> bankDocDetailsList = (List<BankDocDetails>) kycDocDetails.getDetails();
+        List<ExtractedBankResponse> extractedBankResponses =new ArrayList<>();
+        bankDocDetailsList.forEach(bankDocDetails -> {
+            extractedBankResponses.add( ExtractedBankResponse.builder()
+                    .name(aes256.decrypt(bankDocDetails.getAccountName()))
+                    .accountNo(aes256.decrypt(bankDocDetails.getAccountNo()))
+                    .micrCode(bankDocDetails.getMicrCode())
+                    .micrChequeNumber(bankDocDetails.getMicrChequeNumber())
+                    .dateOfIssue(bankDocDetails.getDateOfIssue())
+                    .bankName(bankDocDetails.getBankName())
+                    .ifscCode(bankDocDetails.getIfscCode())
+                    .bankAddress(aes256.decrypt(bankDocDetails.getBankAddress()))
+                    .build());
+        });
+        return extractedBankResponses;
     }
 }

@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import static com.sr.capital.helpers.constants.Constants.EntityNames.COMPANY_WISE_REPORT;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

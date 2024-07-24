@@ -2,6 +2,8 @@ package com.sr.capital.config.db;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.config.AttributeEncryptor;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.spi.MetadataBuilderContributor;
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -37,9 +40,17 @@ public class PrimaryDatabaseConfig {
 
 
     @Bean(name = "primaryDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.primary")
-    public DataSource primaryDataSource() {
-        return DataSourceBuilder.create().build();
+    //@ConfigurationProperties(prefix = "spring.datasource.primary")
+    public HikariDataSource primaryDataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(appProperties.getJdbcUrlPrimary());
+        config.setUsername(appProperties.getUsernamePrimary());
+        config.setPassword(appProperties.getPasswordPrimary());
+        config.setMaximumPoolSize(appProperties.getMaxPoolSize());
+        config.setMinimumIdle(appProperties.getMinIdle());
+        config.setPoolName(appProperties.getPoolName());
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        return new HikariDataSource(config);
     }
 
     @Bean(name = "primaryEntityManagerFactory")
@@ -69,5 +80,10 @@ public class PrimaryDatabaseConfig {
     @Bean(name = "primaryJdbcTemplate")
     public JdbcTemplate primaryJdbcTemplate(@Qualifier("primaryDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public NamedParameterJdbcTemplate namedParameterJdbcTemplate(@Qualifier("primaryDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
 }

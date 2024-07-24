@@ -8,6 +8,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class AadhaarExtractionRequest extends IdfyBaseRequest<AadhaarExtractionData> {
+public class AadhaarExtractionRequest extends KarzaBaseRequest<AadhaarExtractionData> {
 
 }

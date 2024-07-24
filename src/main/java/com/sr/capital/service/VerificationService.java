@@ -1,5 +1,6 @@
 package com.sr.capital.service;
 
+import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
 import com.sr.capital.helpers.enums.RequestType;
 
@@ -11,4 +12,5 @@ public interface VerificationService {
 
     Boolean verifyGst(String value ) throws Exception;
 
+    Boolean resendOtp(ResendOtpRequest request) throws Exception;
 }

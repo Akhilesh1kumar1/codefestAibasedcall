@@ -3,7 +3,9 @@ package com.sr.capital.service.impl;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
+import com.sr.capital.dto.response.LoanApplicationStatusDto;
 import com.sr.capital.entity.primary.LoanApplication;
+import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.LoanApplicationService;
@@ -15,6 +17,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -55,5 +58,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                  });
         }
         return loanApplicationResponseDtos;
+    }
+
+    @Override
+    public List<Object[]> getLoanApplicationStatusByCompanyId(Long srCompanyId) {
+        return loanApplicationRepository.findLoanApplicationsWithStatusBySrCompanyId(srCompanyId);
+
+    }
+
+    @Override
+    public LoanApplication getLoanApplicationById(UUID loanApplicationId) {
+        return loanApplicationRepository.findById(loanApplicationId).orElse(null);
     }
 }

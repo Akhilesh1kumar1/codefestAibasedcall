@@ -1,11 +1,18 @@
 package com.sr.capital.helpers.constants;
 
+import com.sr.capital.helpers.enums.DocType;
+
 import java.util.Map;
+import java.util.Set;
 
 import static com.sr.capital.helpers.constants.Constants.FileContentTypes.*;
 import static com.sr.capital.helpers.constants.Constants.ServiceConstants.UTILITY_INSTANTIATION_ERROR;
 
 public final class Constants {
+
+    public static final String EMAIL_REGEX = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+    public static final String MOBILE_REGEX = "^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$";
+
 
     public static class EntityNames{
         public static final String BASE_CREDIT_PARTNER_TABLE_NAME ="base_credit_partners";
@@ -39,6 +46,8 @@ public final class Constants {
         public static final String LOAN_APPLICATION = "loan_application";
 
         public static final String LOAN_APPLICATION_STATUS = "loan_application_status";
+
+        public static final String LOAN_DISBURSED = "loan_disbursed";
 
         public static final String TASK = "task";
 
@@ -89,7 +98,7 @@ public final class Constants {
         public static final String STATUS_MISMATCH = "The request is already acknowledged.";
         public static final String FILE_IN_PROGRESS_ERROR = "A file is already in progress. Please retry after some time.";
 
-        public static final String VALID_PAN = "Pan Number is in valida format";
+        public static final String VALID_PAN = "Pan Number is in valid format";
 
         public static final String INVALID_EMAIL = "The email address is invalid!";
         public static final String INVALID_MOBILE = "The mobile is invalid!";
@@ -183,4 +192,7 @@ public final class Constants {
     }
     public static final Map<String, String> FILE_CONTENT_TYPE_MAP = Map.of(CSV_EXTENSION, CSV_CONTENT_TYPE, XLS_EXTENSION, XLS_CONTENT_TYPE,
             XLSX_EXTENSION, XLSX_CONTENT_TYPE);
+
+    public static final Set<String> REQUIRED_DOCUMENTS = Set.of(DocType.MSME.name(), DocType.GST.name(), DocType.BANK_CHEQUE.name(), DocType.PROPRIETORSHIP.name(),
+            DocType.GST_BASIC.name(),DocType.GST_BY_PAN.name());
 }

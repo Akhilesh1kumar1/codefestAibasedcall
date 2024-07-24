@@ -1,5 +1,6 @@
 package com.sr.capital.util;
 
+import com.sr.capital.exception.custom.InvalidMobileException;
 import org.springframework.data.util.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -8,7 +9,11 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.sr.capital.helpers.constants.Constants.MOBILE_REGEX;
 
 public class CoreUtil {
 
@@ -100,7 +105,39 @@ public class CoreUtil {
         return sb.toString();
     }
 
+    public static void validateMobile(String mobile) throws InvalidMobileException {
+        Matcher mobileMatcher = Pattern.compile(MOBILE_REGEX).matcher(mobile);
+        if(!mobileMatcher.matches()){
+            throw new InvalidMobileException();
+        }
+    }
 
+    public static UUID getUUIDID(Object id) {
 
+        UUID loanId = null;
+        if (id instanceof byte[]) {
+            byte[] loanIdBytes = (byte[]) id;
+            loanId = uuidFromBytes(loanIdBytes);
+        } else if (id instanceof UUID) {
+            loanId = (UUID) id;
+        } else if (id instanceof String) {
+            loanId = UUID.fromString((String) id);
+        } else {
+            // Handle other cases or throw an error if necessary
+            throw new IllegalArgumentException("Unsupported loanId type: " + id.getClass());
+        }
+        return loanId;
+    }
+
+    public static UUID uuidFromBytes(byte[] bytes) {
+        long msb = 0;
+        long lsb = 0;
+        assert bytes.length == 16;
+        for (int i = 0; i < 8; i++)
+            msb = (msb << 8) | (bytes[i] & 0xff);
+        for (int i = 8; i < 16; i++)
+            lsb = (lsb << 8) | (bytes[i] & 0xff);
+        return new UUID(msb, lsb);
+    }
 
 }

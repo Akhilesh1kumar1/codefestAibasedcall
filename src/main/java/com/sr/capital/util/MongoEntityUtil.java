@@ -7,11 +7,15 @@ import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.TaskType;
 
+import java.util.List;
+
 public class MongoEntityUtil {
 
     public static Boolean validateKycDocDetails(KycDocDetails<?> kycDocDetails) {
         DocType docType = kycDocDetails.getDocType();
         switch (docType){
+            case GST_BY_PAN:
+                return kycDocDetails.getDetails() instanceof GstByPanDocDetails;
             case GST:
                 return kycDocDetails.getDetails() instanceof GstDocDetails;
             case PAN:
@@ -19,14 +23,17 @@ public class MongoEntityUtil {
             case AADHAAR:
                 return kycDocDetails.getDetails() instanceof AadhaarDocDetails;
             case BANK_CHEQUE:
-                return kycDocDetails.getDetails() instanceof BankDocDetails;
+                List<BankDocDetails> bankDocDetailsList = (List<BankDocDetails>) kycDocDetails.getDetails();
+                return bankDocDetailsList.get(bankDocDetailsList.size()-1) instanceof BankDocDetails;
             case DRIVING_LICENSE:
             case PROPRIETORSHIP:
             case VOTER_ID:
             case CIN:
             case AGREEMENT:
             case MSME:
-                return kycDocDetails.getDetails() instanceof OldDocDetails;
+            case PROVISIONAL:
+            case LOAN_TRACKER:
+                return kycDocDetails.getDetails() instanceof ReportMetaData;
             default:
                 return false;
         }

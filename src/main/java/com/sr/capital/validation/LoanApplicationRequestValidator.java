@@ -4,6 +4,7 @@ import com.omunify.core.util.ExceptionUtils;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.dto.response.BaseCreditPartnerResponseDto;
+import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanOffer;
 import com.sr.capital.exception.custom.CustomException;
@@ -42,7 +43,7 @@ public class LoanApplicationRequestValidator  implements RequestValidator {
             }
         }
         if(requestDto.getLoanVendorName()!=null) {
-            BaseCreditPartnerResponseDto baseCreditPartner = baseCreditPartnerEntityService.getCreditPartnerByName(requestDto.getLoanVendorName());
+            BaseCreditPartner baseCreditPartner = baseCreditPartnerEntityService.getCreditPartnerByName(requestDto.getLoanVendorName());
             if (baseCreditPartner != null) {
                 if (requestDto.getLoanVendorId() == null) {
                     requestDto.setLoanVendorId(baseCreditPartner.getId());

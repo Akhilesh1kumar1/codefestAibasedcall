@@ -10,7 +10,7 @@ import com.sr.capital.entity.mongo.kyc.child.PanVerifiedDetails;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.dto.response.VerifierResponse;
-import com.sr.capital.kyc.external.adaptor.IdfyVerificationAdapter;
+import com.sr.capital.kyc.external.adaptor.KarzaVerificationAdapter;
 import com.sr.capital.kyc.external.response.verification.NameComparisonResponse;
 import com.sr.capital.kyc.service.interfaces.DetailsVerifier;
 import com.sr.capital.kyc.service.transformer.external.NameComparisonRequestTransformer;
@@ -27,7 +27,7 @@ public class PanVerifier implements DetailsVerifier {
     private NameComparisonRequestTransformer nameComparisonRequestTransformer;
 
     @Autowired
-    private IdfyVerificationAdapter idfyVerificationAdapter;
+    private KarzaVerificationAdapter karzaVerificationAdapter;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -49,7 +49,7 @@ public class PanVerifier implements DetailsVerifier {
         if (isVerified) {
             isVerified = panVerifiedDetails.getNameOnCard().equalsIgnoreCase(panDocDetails.getNameOnCard());
             if (!isVerified) {
-                NameComparisonResponse response = idfyVerificationAdapter.getNameComparisonScore(
+                NameComparisonResponse response = karzaVerificationAdapter.getNameComparisonScore(
                         nameComparisonRequestTransformer.transformRequest(panDocDetails.getNameOnCard(), panVerifiedDetails.getNameOnCard())
                 );
                 if (kycAppProperties.getAllowedNameScore() <= response.getResult().getMatchOutput().getNameMatch()) {

@@ -42,4 +42,7 @@ public class TaskManager {
         return taskRepo.findByStatusAndLastTryAt(TaskStatus.PROCESSING, time);
     }
 
+    public Task findTaskByRequestId(String  reqId) {
+        return taskRepo.findByRequestId(reqId);
+    }
 }

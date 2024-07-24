@@ -1,6 +1,7 @@
 package com.sr.capital.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.entity.primary.LoanOffer;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoanOfferDetails extends BasesResponse {
 
     UUID id;

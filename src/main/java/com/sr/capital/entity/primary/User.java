@@ -2,6 +2,7 @@ package com.sr.capital.entity.primary;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sr.capital.config.AttributeEncryptor;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.UserDetails;
 import jakarta.persistence.*;
 import lombok.*;
@@ -63,11 +64,25 @@ public class User extends LongBaseEntity{
     @Column(name = "is_accepted")
     private Boolean isAccepted = false;
 
+    @Column(name = "entity_type")
+    private String entityType;
+
+    @Column(name = "pan_number")
+    private String panNumber;
+
+    @Builder.Default
+    @Column(name = "is_mobile_verified")
+    private Boolean isMobileVerified = false;
+
+    @Column(name = "company_name")
+    private String companyName;
+
     public static User mapUser(UserDetails userDetails){
         User user =User.builder().srUserId(Long.valueOf(userDetails.getUserId())).
-        comments(userDetails.getComments())
-                .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).build();
+        comments(userDetails.getComments()).srCompanyId(Long.valueOf(RequestData.getTenantId()))
+                .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).companyName(userDetails.getCompanyName()).panNumber(userDetails.getPanNumber()).build();
         user.setIsEnabled(true);
+        user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         return user;
     }
 

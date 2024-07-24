@@ -1,6 +1,6 @@
 package com.sr.capital.kyc.external.request.extraction.data;
 
-import com.sr.capital.kyc.external.constants.IdfyConstant;
+import com.sr.capital.kyc.external.constants.KarzaConstant;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,6 +15,6 @@ public class AadhaarExtractionData implements Serializable {
     private String document2;
 
     @Builder.Default
-    private String consent = IdfyConstant.DEFAULT_CONSENT;
+    private String consent = KarzaConstant.DEFAULT_CONSENT;
 
 }

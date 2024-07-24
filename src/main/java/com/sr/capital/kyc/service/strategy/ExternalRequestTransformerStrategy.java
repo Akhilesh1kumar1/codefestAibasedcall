@@ -5,7 +5,7 @@ import com.sr.capital.exception.custom.RequestTransformerNotFoundException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.TaskType;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
-import com.sr.capital.kyc.external.request.IdfyBaseRequest;
+import com.sr.capital.kyc.external.request.KarzaBaseRequest;
 import com.sr.capital.kyc.service.interfaces.ExternalRequestTransformer;
 import com.sr.capital.kyc.service.transformer.external.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,11 @@ public class ExternalRequestTransformerStrategy {
     @Autowired
     private PanGstCrossVerificationRequestTransformer panGstCrossVerificationRequestTransformer;
 
+    @Autowired
+    private GstDetailsByPanCardRequestTransformer gstDetailsByPanCardRequestTransformer;
 
-    public <T extends IdfyBaseRequest<?>> T transformExtractionRequest(DocOrchestratorRequest request) throws RequestTransformerNotFoundException {
+
+    public <T extends KarzaBaseRequest<?>> T transformExtractionRequest(DocOrchestratorRequest request) throws RequestTransformerNotFoundException {
         ExternalRequestTransformer requestTransformer;
         DocType docType = request.getDocType();
         switch (docType) {
@@ -61,6 +64,9 @@ public class ExternalRequestTransformerStrategy {
             case PAN:
                 requestTransformer = panCardExtractionRequestTransformer;
                 break;
+            case GST_BY_PAN :
+                 requestTransformer = gstDetailsByPanCardRequestTransformer;
+                 break;
             default:
                 throw new RequestTransformerNotFoundException();
         }
@@ -69,7 +75,7 @@ public class ExternalRequestTransformerStrategy {
     }
 
 
-    public <T extends IdfyBaseRequest<?>> T transformVerificationRequest(DocOrchestratorRequest request) throws RequestTransformerNotFoundException {
+    public <T extends KarzaBaseRequest<?>> T transformVerificationRequest(DocOrchestratorRequest request) throws RequestTransformerNotFoundException {
         ExternalRequestTransformer requestTransformer;
         TaskType taskType = request.getTask().getType();
         switch (taskType) {

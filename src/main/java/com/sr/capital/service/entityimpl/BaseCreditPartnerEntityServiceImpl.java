@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -91,12 +92,12 @@ public class BaseCreditPartnerEntityServiceImpl {
     }
 
 
-    public BaseCreditPartnerResponseDto getCreditPartnerByName(String name) {
-        RMapCache<String, BaseCreditPartnerResponseDto> channelList = redissonClient.getMapCache(Constants.RedisKeys.BASE_CREDIT_PARTNER);
+    public BaseCreditPartner getCreditPartnerByName(String name) {
+        RMapCache<String, BaseCreditPartner> channelList = redissonClient.getMapCache(Constants.RedisKeys.BASE_CREDIT_PARTNER);
         if (ObjectUtils.isEmpty(channelList.get(name))) {
             ExceptionUtils.throwCustomException("C0001", "Given vendor doesn't exists", HttpStatus.BAD_REQUEST);
         }
-        return MapperUtils.mapClass(Objects.nonNull(channelList.get(name)) ? channelList.get(name) : new BaseCreditPartnerResponseDto(), BaseCreditPartnerResponseDto.class);
+        return Objects.nonNull(channelList.get(name)) ? channelList.get(name) : new BaseCreditPartner();
 
     }
 

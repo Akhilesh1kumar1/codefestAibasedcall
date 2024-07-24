@@ -24,7 +24,8 @@ public class NetCoreSendEmailRequest implements Serializable {
     @JsonProperty("personalizations")
     private List<Personalization> personalizations;
 
-
+    @JsonProperty("attachments")
+    private List<AttachmentInfo> attachments;
     @Data
     @Builder
     public static class AddressInfo {
@@ -49,11 +50,25 @@ public class NetCoreSendEmailRequest implements Serializable {
 
     @Data
     @Builder
+    public static class AttachmentInfo {
+
+        @JsonProperty("name")
+        private String name ;
+
+        @JsonProperty("content")
+        private String content;
+    }
+
+    @Data
+    @Builder
     public static class Personalization {
         @JsonProperty("attributes")
         private Map<String, String> attributes;
 
         @JsonProperty("to")
         private List<AddressInfo> toAddressInfo;
+
+        @JsonProperty("attachments")
+        List<AttachmentInfo> attachments;
     }
 }
