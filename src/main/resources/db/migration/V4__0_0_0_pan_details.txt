@@ -1,0 +1,32 @@
+-- PAN details
+
+CREATE TABLE IF NOT EXISTS `pan_details` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint DEFAULT NULL,
+  `pan` varchar(50) DEFAULT NULL,
+  `is_pan_verified` bit(1) DEFAULT NULL,
+  `pan_image_link_1` varchar(255) DEFAULT NULL,
+  `pan_image_link_2` varchar(255) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+ALTER TABLE `pan_details` ADD CONSTRAINT pan_unique_constraint UNIQUE (pan);
+ALTER TABLE `pan_details` ADD INDEX idx_pan_user_id (pan, user_id);
+
+
+--insert into loan_application_status(sr_company_id, loan_vendor_id, loan_amount_requested, loan_status, loan_offer_id, loan_duration, loan_id, vendor_loan_id, loan_amount_approved, interest_rate, start_date, end_date, comment, created_at, created_by, updated_at, updated_by, is_enabled)   select sr_company_id,loan_vendor_id,loan_amount_requested,loan_status,loan_offer_id,60,id,'3965982',loan_amount_requested,14,'2024-07-01','2028-07-01','uyefuwt',created_at,created_by,updated_at,updated_by,is_enabled from loan_application;
+
+--INSERT INTO `provider_template` (`id`,`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,1,'$.token','/token','static','VALIDATE_TOKEN','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
+--INSERT INTO `provider_template` (`id`,`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (2,1,'1','/validate_token_request','static','VALIDATE_TOKEN','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
+
+--INSERT INTO `provider_url_config` (`partner_id`,`group`,`type`,`key`,`value`,`priority`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,'VALIDATE_TOKEN','OTHER','method','POST',1,'2022-06-15 13:05:59',-1,'2022-06-15 13:05:59',-1,1);
+
+
+--INSERT INTO `provider_template` (`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,'$.code','/code','static','VALIDATE_TOKEN_RESPONSE','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
+--INSERT INTO `provider_template` (`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,'$.msg','/msg','static','VALIDATE_TOKEN_RESPONSE','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
+

@@ -32,8 +32,8 @@ spring:
       properties:
         hibernate:
           dialect: org.hibernate.dialect.MySQL8Dialect
-    #driver-class-name: com.mysql.cj.jdbc.Driver
-    #hikari:
+      #driver-class-name: com.mysql.cj.jdbc.Driver
+      #hikari:
       #maximum-pool-size: '10'
       #minimum-idle: '5'
     #rl: ${MYSQL_DATASOURCE_URI}
@@ -53,6 +53,7 @@ spring:
     import: optional:file:.env[.properties]
 
 app:
+  cors-allowed-origins: https://qa-web-1.kartrocket.com,https://multichannel-appstore-qa.kartrocket.com,http://localhost:5371,http://app.shiprocket.local,https://app.shiprocket.in
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
   verification:
@@ -141,14 +142,17 @@ management:
       enabled: true
   health:
     redis:
-      enabled: false  
+      enabled: false
 
 
 
 
-####################################### IDFY API #############################################
+####################################### KARZA API #############################################
 external:
-  idfy:
+  karza:
+    enabled: false
+    vendor-token: ${KARZA_VENDOR_TOKEN:test}
+    vendor-code: ${KARZA_VENDOR_CODE:test}
     api:
       endpoint:
         cross:
@@ -160,6 +164,7 @@ external:
                 url: /v3/tasks/async/verify_with_source/pan_aadhaar_link
         verify:
           gst:
+            otp-url: /gst/uat/v2/gst-return-auth-advance
             url: /v3/tasks/async/verify_with_source/ind_gst_certificate
           aadhaar:
             url: /v3/tasks/async/verify_with_source/aadhaar_lite
@@ -174,7 +179,9 @@ external:
           aadhaar:
             url: /v3/tasks/sync/extract/ind_aadhaar
           gst:
-            url: /v3/tasks/sync/extract/ind_gst_certificate
+            url: /gst/uat/v2/gst-return-auth-advance
+            pan:
+              url: /gst/uat/v2/search
           bank:
             proof:
               url: /v3/tasks/sync/extract/ind_cheque
@@ -191,12 +198,12 @@ external:
     account:
       id: 6b00817c0377/2798d29c-763c-4b83-a4a9-3f28ea6f39a5
     base:
-      uri: https://eve.idfy.com
+      uri: https://api.karza.in
     async:
       api:
         endpoint:
           tasks: /v3/tasks
-idfy:
+karza:
   async:
     response:
       aadhaar:

@@ -1,0 +1,56 @@
+CREATE TABLE if not exists `company_kyc_details` (
+  `id` binary(16) NOT NULL,
+   `tenant_capital_id` bigint DEFAULT NULL,
+    `user_id` bigint DEFAULT NULL,
+  `adhar_id` bigint DEFAULT NULL,
+  `company_type` varchar(100) DEFAULT NULL,
+  `pan_id` bigint DEFAULT NULL,
+  `proof_image_link` varchar(255) DEFAULT NULL,
+  `proof_of_identity` varchar(100) DEFAULT NULL,
+   `created_at` datetime(6) DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` datetime(6) DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE  IF NOT EXISTS  `adhar_details` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `adhar_number` varchar(50) DEFAULT NULL,
+  `date_of_birth` varchar(255) DEFAULT NULL,
+  `is_adhar_verified` bit(1) DEFAULT NULL,
+  `name_on_adhar` varchar(255) DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `adhar_image_link_1` varchar(255) DEFAULT NULL,
+   `adhar_image_link_2` varchar(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+CREATE TABLE if not exists `verification` (
+  `id` binary(16) NOT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `callback` varchar(255) DEFAULT NULL,
+    `channel` varchar(255) DEFAULT NULL,
+    `data` varchar(255) DEFAULT NULL,
+    `expires_at` DATETIME DEFAULT NULL,
+    `failed_counter` int DEFAULT NULL,
+    `request_counter` int DEFAULT NULL,
+    `type` varchar(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+
+
+
+

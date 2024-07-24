@@ -40,7 +40,7 @@ spring:
     #username: ${MYSQL_DATASOURCE_APP_USERNAME}
     #password: ${MYSQL_DATASOURCE_APP_PASSWORD}
   flyway:
-    enabled: 'false'
+    enabled: 'true'
     baseline-on-migrate: 'true'
     #    out-of-order: 'true'
     url: ${MYSQL_DATASOURCE_URI}

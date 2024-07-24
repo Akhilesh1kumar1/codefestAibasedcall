@@ -1,6 +1,6 @@
 -- Provider details
 
-CREATE TABLE `provider_url_config` (
+CREATE TABLE IF NOT EXISTS `provider_url_config` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `partner_id` int DEFAULT NULL,
   `group` varchar(255) DEFAULT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE `provider_url_config` (
 
 
 
-CREATE TABLE `provider_template` (
+CREATE TABLE IF NOT EXISTS `provider_template` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `partner_id` bigint DEFAULT NULL,
   `source` varchar(300) DEFAULT NULL,
@@ -38,19 +38,9 @@ CREATE TABLE `provider_template` (
 
 
 
-INSERT INTO `provider_template` (`id`,`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,1,'$.token','/token','static','VALIDATE_TOKEN','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
-INSERT INTO `provider_template` (`id`,`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (2,1,'1','/validate_token_request','static','VALIDATE_TOKEN','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
-
-INSERT INTO `provider_url_config` (`partner_id`,`group`,`type`,`key`,`value`,`priority`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,'VALIDATE_TOKEN','OTHER','method','POST',1,'2022-06-15 13:05:59',-1,'2022-06-15 13:05:59',-1,1);
 
 
-INSERT INTO `provider_template` (`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,'$.code','/code','static','VALIDATE_TOKEN_RESPONSE','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
-INSERT INTO `provider_template` (`partner_id`,`source`,`destination`,`type`,`group`,`created_at`,`created_by`,`updated_at`,`updated_by`,`is_enabled`) VALUES (1,'$.msg','/msg','static','VALIDATE_TOKEN_RESPONSE','2022-04-28 13:18:48',-1,'2022-04-28 13:18:48',-1,1);
-
-
-
-
-CREATE TABLE loan_offer (
+CREATE TABLE IF NOT EXISTS loan_offer (
     id binary(16) NOT NULL,
     sr_company_id BIGINT,
     loan_vendor_id BIGINT,
@@ -67,36 +57,18 @@ CREATE TABLE loan_offer (
           `created_by` varchar(255) DEFAULT NULL,
           `updated_at` DATETIME DEFAULT NULL,
           `updated_by` varchar(255) DEFAULT NULL,
-          `is_enabled` bit(1) DEFAULT NULL
+          `is_enabled` bit(1) DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          INDEX sr_company_id_loan_vendor_id(sr_company_id, loan_vendor_id)
+
 );
 
-ALTER TABLE loan_offer ADD INDEX sr_company_id_loan_vendor_id (sr_company_id, loan_vendor_id);
 
 
-CREATE TABLE user (
-    id bigint NOT NULL AUTO_INCREMENT,
-    sr_user_id BIGINT NOT NULL,
-    first_name VARCHAR(255),
-    middle_name VARCHAR(255),
-    last_name VARCHAR(255),
-    email VARCHAR(255),
-    is_email_verified TINYINT(1) DEFAULT 0,
-    country_code VARCHAR(10) DEFAULT '+91',
-    mobile VARCHAR(20),
-    comments TEXT,
-    sr_company_id BIGINT,
-    is_accepted TINYINT(1) DEFAULT 0,
-     `created_at` DATETIME DEFAULT NULL,
-              `created_by` varchar(255) DEFAULT NULL,
-              `updated_at` DATETIME DEFAULT NULL,
-              `updated_by` varchar(255) DEFAULT NULL,
-              `is_enabled` bit(1) DEFAULT NULL,
-    PRIMARY KEY (`id`),
-     KEY `sr_user_id`(`sr_user_id`)
-)ENGINE=InnoDB AUTO_INCREMENT=0;
 
 
-CREATE TABLE loan_application (
+
+CREATE TABLE IF NOT EXISTS loan_application (
     id binary(16) NOT NULL,
     sr_company_id BIGINT NOT NULL,
     loan_vendor_id BIGINT NOT NULL,
@@ -110,10 +82,11 @@ CREATE TABLE loan_application (
                   `updated_at` DATETIME DEFAULT NULL,
                   `updated_by` varchar(255) DEFAULT NULL,
                   `is_enabled` bit(1) DEFAULT NULL,
+                  PRIMARY KEY (`id`),
                   INDEX idx_sr_company_id (sr_company_id)
 );
 
-CREATE TABLE loan_application_status (
+CREATE TABLE IF NOT EXISTS loan_application_status (
     id bigint(16)  NOT NULL AUTO_INCREMENT,
     sr_company_id BIGINT,
     loan_vendor_id BIGINT,
@@ -136,9 +109,10 @@ CREATE TABLE loan_application_status (
                       `updated_at` DATETIME DEFAULT NULL,
                       `updated_by` varchar(255) DEFAULT NULL,
                       `is_enabled` bit(1) DEFAULT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    index loan_id(loan_id)
 );
-CREATE TABLE `verification` (
+CREATE TABLE  IF NOT EXISTS `verification` (
   `id` binary(16) NOT NULL,
   `user_id` bigint DEFAULT NULL,
   `callback` varchar(255) DEFAULT NULL,
@@ -155,12 +129,12 @@ CREATE TABLE `verification` (
   `is_enabled` bit(1) DEFAULT NULL,
   `status` varchar(100) DEFAULT NULL,
   `remarks` varchar(255) DEFAULT NULL,
-  `sr_company_id` varchar(100) DEFAULT NULL,
+  `sr_company_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-CREATE TABLE `task` (
+CREATE TABLE IF NOT EXISTS `task` (
   `id` bigint(16)  NOT NULL AUTO_INCREMENT,
   `request_id` varchar(255) DEFAULT NULL,
   `group_id` bigint(16) DEFAULT NULL,
@@ -176,14 +150,13 @@ CREATE TABLE `task` (
   `is_enabled` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_request_id` (`request_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 
-insert into loan_application_status(sr_company_id, loan_vendor_id, loan_amount_requested, loan_status, loan_offer_id, loan_duration, loan_id, vendor_loan_id, loan_amount_approved, interest_rate, start_date, end_date, comment, created_at, created_by, updated_at, updated_by, is_enabled)   select sr_company_id,loan_vendor_id,loan_amount_requested,loan_status,loan_offer_id,60,id,'3965982',loan_amount_requested,14,'2024-07-01','2028-07-01','uyefuwt',created_at,created_by,updated_at,updated_by,is_enabled from loan_application;
 
 
-CREATE TABLE loan_disbursed (
+CREATE TABLE IF NOT EXISTS loan_disbursed (
     id BIGINT NOT NULL AUTO_INCREMENT,
     loan_application_status_id BIGINT,
     loan_amount_disbursed DECIMAL(19,2),
@@ -199,3 +172,104 @@ CREATE TABLE loan_disbursed (
     PRIMARY KEY (id),
     INDEX idx_loan_application_status_id (loan_application_status_id)
 );
+
+
+CREATE TABLE IF NOT EXISTS `account_type`
+ (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account_type_name` varchar(255) NOT NULL UNIQUE,
+  `description` varchar(255) DEFAULT NULL,
+  `display_name` varchar(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+   `created_by` varchar(255) DEFAULT NULL,
+   `updated_at` DATETIME DEFAULT NULL,
+   `updated_by` varchar(255) DEFAULT NULL,
+   `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+
+
+CREATE TABLE if not exists `bank` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `bank_name` varchar(255) NOT NULL UNIQUE,
+  `description` varchar(255) DEFAULT NULL,
+  `display_name` varchar(255) DEFAULT NULL,
+  `image_link` varchar(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+ CREATE TABLE if not exists `base_credit_partners` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `credit_partner_name` varchar(255) NOT NULL UNIQUE,
+  `description` varchar(255) DEFAULT NULL,
+  `display_name` varchar(255) DEFAULT NULL,
+  `image_link` varchar(255) DEFAULT NULL,
+  provide_rbf bit(1) default 1,
+  provide_pre_approved_loan bit(1) default 1,
+  provide_term_loan bit(1) default 1,
+    invoice_financing bit(1) default 1,
+  loan_against_property bit(1) default 1,
+  line_of_credit bit(1) default 1,
+  business_credit_card bit(1) default 1,
+  gst bit(1) default 1,
+  `created_at` DATETIME DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+
+ CREATE TABLE if not exists `rsa_keys` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` DATETIME DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `updated_at` DATETIME DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `is_enabled` bit(1) DEFAULT NULL,
+  `private_key` tinytext,
+  `public_key` tinytext,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+
+
+
+CREATE TABLE if not exists `user` (
+    id bigint NOT NULL AUTO_INCREMENT,
+    sr_user_id BIGINT NOT NULL UNIQUE,
+    first_name VARCHAR(255),
+    middle_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email VARCHAR(255) not null UNIQUE,
+    is_email_verified TINYINT(1) DEFAULT 0,
+    country_code VARCHAR(10) DEFAULT '+91',
+    mobile VARCHAR(100),
+    comments TEXT,
+    sr_company_id BIGINT,
+    entity_type varchar(255) ,
+    pan_number varchar(100),
+    company_name text,
+    is_mobile_verified bit(1) DEFAULT 0,
+    is_accepted TINYINT(1) DEFAULT 0,
+     `created_at` DATETIME DEFAULT NULL,
+              `created_by` varchar(255) DEFAULT NULL,
+              `updated_at` DATETIME DEFAULT NULL,
+              `updated_by` varchar(255) DEFAULT NULL,
+              `is_enabled` bit(1) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+     KEY `sr_user_id`(`sr_user_id`),
+     index sr_company_id(`sr_company_id`)
+)ENGINE=InnoDB AUTO_INCREMENT=0;
+
+
+
