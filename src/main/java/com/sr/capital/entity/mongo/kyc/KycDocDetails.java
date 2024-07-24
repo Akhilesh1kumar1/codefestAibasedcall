@@ -7,6 +7,9 @@ import com.sr.capital.helpers.enums.DocType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -16,12 +19,16 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @Document("kyc-doc-details")
+/*@CompoundIndexes({
+        @CompoundIndex(name = "srCompanyId_doc_type", def = "{'srCompanyId' : 1, 'docType': 1}")
+})*/
 public class KycDocDetails<T> extends BaseDoc {
 
 
     @Field("kyc_type")
     private KycType kycType;
 
+   // @Indexed(unique = false,name = "srCompanyId")
     @Field("sr_company_id")
     private String srCompanyId;
 

@@ -20,6 +20,9 @@ public class LeadHistory extends BaseDoc {
     @Indexed(unique = false,name = "srCompanyId")
     Long srCompanyId;
 
+    @Indexed(unique = false,name = "leadId")
+    String leadId;
+
     BigDecimal amount;
 
     Integer duration;
@@ -35,4 +38,6 @@ public class LeadHistory extends BaseDoc {
     String remarks;
 
     Long loanVendorPartnerId;
+
+    String userName;
 }

@@ -36,4 +36,6 @@ public class Lead extends BaseDoc {
 
     Long loanVendorPartnerId;
 
+    String userName;
+
 }

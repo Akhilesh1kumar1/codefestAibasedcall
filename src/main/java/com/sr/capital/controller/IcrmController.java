@@ -3,10 +3,7 @@ package com.sr.capital.controller;
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
-import com.sr.capital.dto.response.GenerateLeadResponseDto;
-import com.sr.capital.dto.response.IcrmLeadRsponseDto;
-import com.sr.capital.dto.response.LeadDetailsResponseDto;
-import com.sr.capital.dto.response.LeadStatusDTO;
+import com.sr.capital.dto.response.*;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.LeadStatus;
 import com.sr.capital.service.IcrmLeadService;
@@ -78,6 +75,13 @@ public class IcrmController {
                                                                   @RequestParam(defaultValue = "10") int size, @RequestParam(value = "type",required = false) String type,@RequestParam() String emailId) throws CustomException {
         icrmLeadService.downloadLeadDetails(startDate,type,emailId);
         return ResponseBuilderUtil.getResponse(true,SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/lead/history/details")
+    public GenericResponse<List<LeadHistoryResponseDto>> getLeadHistory(@RequestParam(name = "lead_id") String leadId) throws CustomException {
+
+        return ResponseBuilderUtil.getResponse( icrmLeadService.getLeadHistory(leadId),SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 

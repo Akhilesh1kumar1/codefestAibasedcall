@@ -8,6 +8,7 @@ import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.*;
 import com.sr.capital.entity.mongo.Lead;
+import com.sr.capital.entity.mongo.LeadHistory;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
@@ -21,6 +22,7 @@ import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.service.*;
 import com.sr.capital.service.entityimpl.CompanyWiseReportEntityServiceImpl;
+import com.sr.capital.service.entityimpl.LeadHistoryServiceImpl;
 import com.sr.capital.service.entityimpl.LoanApplicationStatusEntityServiceImpl;
 import com.sr.capital.service.entityimpl.LoanDistributionEntityServiceImpl;
 import com.sr.capital.util.CoreUtil;
@@ -71,6 +73,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     final AppProperties appProperties;
 
     final CommunicationService communicationService;
+
+    final LeadHistoryServiceImpl leadHistoryService;
 
     String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_type,la.loan_offer_id,la.loan_duration, las.id as loanApplicationStatusId, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt,las.total_disbursed_amount";
 
@@ -129,7 +133,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                     .loanVendorPartnerId(lead.getLoanVendorPartnerId())
                     .leadId(lead.getId())
                     .createdAt(lead.getCreatedAt())
-                    .updatedAt(lead.getLastModifiedAt())
+                    .updatedAt(lead.getLastModifiedAt()).userName(lead.getUserName())
                     .build();
 
             User user = userService.getCompanyDetails(lead.getSrCompanyId());
@@ -177,6 +181,25 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         communicationService.sendEmail(communicationService.getCommunicationRequestForReport(emailId, "User", content,"Capital Lead Report "+new Date(),"lead_report.csv",false));
 
 
+    }
+
+    @Override
+    public List<LeadHistoryResponseDto> getLeadHistory(String leadId) {
+        List<LeadHistory> leadHistories = leadHistoryService.getLeadHistory(leadId);
+        List<LeadHistoryResponseDto> leadHistoryResponseDtos =new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(leadHistories)){
+            leadHistories.stream().forEach(lead -> {
+                LeadHistoryResponseDto responseDto =LeadHistoryResponseDto.builder().srCompanyId(lead.getSrCompanyId()).amount(lead.getAmount()).duration(lead.getDuration()).status(lead.getStatus()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())
+                        .loanVendorPartnerId(lead.getLoanVendorPartnerId()).tier(lead.getTier()).remarks(lead.getRemarks()).leadId(lead.getId()).userName(lead.getUserName()).build();
+                responseDto.setCreatedBy(lead.getCreatedBy());
+                responseDto.setLastModifiedBy(lead.getLastModifiedBy());
+                responseDto.setCreatedAt(lead.getCreatedAt());
+                responseDto.setLastModifiedAt(lead.getLastModifiedAt());
+                leadHistoryResponseDtos.add(responseDto);
+            });
+        }
+
+        return leadHistoryResponseDtos;
     }
 
 
@@ -416,7 +439,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
              CSVWriter csvWriter = new CSVWriter(writer)) {
 
             // Write CSV header
-            String[] header = {"srCompanyId", "companyName", "brandName", "amount", "duration", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt"};
+            String[] header = {"srCompanyId", "companyName", "brandName", "amount", "duration in months", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt"};
             csvWriter.writeNext(header);
 
             // Write CSV rows
@@ -450,5 +473,6 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             throw new RuntimeException("Error while converting to CSV and encoding in Base64", e);
         }
     }
+
 
 }
