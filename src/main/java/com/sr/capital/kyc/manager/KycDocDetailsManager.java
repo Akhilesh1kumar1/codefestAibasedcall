@@ -1,6 +1,7 @@
 package com.sr.capital.kyc.manager;
 
 
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.KycDocDetailsHistory;
 import com.sr.capital.exception.custom.IncompatibleDetailsException;
@@ -31,6 +32,8 @@ public class KycDocDetailsManager {
         if(!MongoEntityUtil.validateKycDocDetails(kycDocDetails)){
             throw new IncompatibleDetailsException();
         }
+       // kycDocDetails.setCreatedBy(String.valueOf(RequestData.getUserId()));
+        kycDocDetails.setLastModifiedBy(String.valueOf(RequestData.getUserId()));
         kycDocDetailsHistoryRepo.save(KycDocDetailsHistory.builder().docDetails(kycDocDetails).build());
         return kycDocDetailsRepo.save(kycDocDetails);
     }

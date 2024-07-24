@@ -56,5 +56,7 @@ public class LeadDetailsResponseDto {
 
         LocalDateTime updatedAt;
 
+        String userName;
+
     }
 }

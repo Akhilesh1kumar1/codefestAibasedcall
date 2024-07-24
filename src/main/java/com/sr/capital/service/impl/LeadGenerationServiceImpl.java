@@ -45,7 +45,9 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         if(CollectionUtils.isNotEmpty(leadList)){
             throw new CustomException("Lead is already generated", HttpStatus.BAD_REQUEST);
         }
-        Lead lead =Lead.builder().srCompanyId(generateLeadRequestDto.getSrCompanyId()!=null? generateLeadRequestDto.getSrCompanyId() : Long.valueOf(RequestData.getTenantId())).amount(generateLeadRequestDto.getAmount()).duration(generateLeadRequestDto.getDuration()).leadSource(generateLeadRequestDto.getLeadSource()).status(LeadStatus.LEAD_START).build();
+        Lead lead =Lead.builder().srCompanyId(generateLeadRequestDto.getSrCompanyId()!=null? generateLeadRequestDto.getSrCompanyId() : Long.valueOf(RequestData.getTenantId())).amount(generateLeadRequestDto.getAmount()).duration(generateLeadRequestDto.getDuration()).leadSource(generateLeadRequestDto.getLeadSource()).status(LeadStatus.LEAD_START).userName(generateLeadRequestDto.getUserName()).build();
+        lead.setLastModifiedBy(String.valueOf(RequestData.getUserId()));
+        lead.setCreatedBy(String.valueOf(RequestData.getUserId()));
         leadGenerationRepository.save(lead);
         return GenerateLeadResponseDto.builder().id(lead.getId()).build();
     }
@@ -82,7 +84,7 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         Transitions tr =new Transitions(lead.getStatus());
         markItemStatusBasedOnEvent(generateLeadRequestDto.getStatus().name(),tr,events,lead);
         LeadHistory leadHistory =LeadHistory.builder().srCompanyId(lead.getSrCompanyId()).amount(lead.getAmount()).duration(lead.getDuration()).status(lead.getStatus()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())
-                .loanVendorPartnerId(lead.getLoanVendorPartnerId()).tier(lead.getTier()).remarks(lead.getRemarks()).build();
+                .loanVendorPartnerId(lead.getLoanVendorPartnerId()).tier(lead.getTier()).remarks(lead.getRemarks()).leadId(lead.getId()).userName(lead.getUserName()).build();
         leadHistory.setCreatedBy(lead.getCreatedBy());
         leadHistory.setLastModifiedBy(lead.getLastModifiedBy());
         leadHistoryService.saveLeadHistory(leadHistory);
@@ -110,7 +112,8 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         lead.setRemarks(generateLeadRequestDto.getRemarks());
         lead.setLoanVendorPartnerId(generateLeadRequestDto.getLoanVendorPartnerId());
        // lead.setStatus(generateLeadRequestDto.getStatus());
-        lead.setLastModifiedBy(RequestData.getUserId()==null?generateLeadRequestDto.getUserName(): String.valueOf(RequestData.getUserId()));
+        lead.setLastModifiedBy(RequestData.getUserId()!=null?String.valueOf(RequestData.getUserId()):"SYSTEM");
+        lead.setUserName(generateLeadRequestDto.getUserName());
         lead.setLastModifiedAt(LocalDateTime.now());
 
     }
