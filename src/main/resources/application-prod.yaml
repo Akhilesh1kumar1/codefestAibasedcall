@@ -40,7 +40,7 @@ spring:
     #username: ${MYSQL_DATASOURCE_APP_USERNAME}
     #password: ${MYSQL_DATASOURCE_APP_PASSWORD}
   flyway:
-    enabled: 'false'
+    enabled: 'true'
     baseline-on-migrate: 'true'
     #    out-of-order: 'true'
     url: ${MYSQL_DATASOURCE_URI}
@@ -113,7 +113,7 @@ app:
           user-details-api-token: "/v1/external/omuni2/auth/user-details"
           user-details-internal-token: "/v1/auth/login/user"
       auth:
-        baseUrl: ${SHIPROCKET_AUTH_BASE_URL:https://sr-auth-qa-1.kartrocket.com}
+        baseUrl: ${SHIPROCKET_AUTH_BASE_URL:https://sr-auth.shiprocket.in}
         endpoints:
           validate-token: /authorize/user
     klub:
@@ -218,3 +218,5 @@ allowed:
 
 encryption:
   key: ${ENCRYPTION_KEY:test}
+
+
