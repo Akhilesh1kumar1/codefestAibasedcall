@@ -46,6 +46,8 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
             throw new CustomException("Lead is already generated", HttpStatus.BAD_REQUEST);
         }
         Lead lead =Lead.builder().srCompanyId(generateLeadRequestDto.getSrCompanyId()!=null? generateLeadRequestDto.getSrCompanyId() : Long.valueOf(RequestData.getTenantId())).amount(generateLeadRequestDto.getAmount()).duration(generateLeadRequestDto.getDuration()).leadSource(generateLeadRequestDto.getLeadSource()).status(LeadStatus.LEAD_START).userName(generateLeadRequestDto.getUserName()).build();
+        lead.setLastModifiedBy(String.valueOf(RequestData.getUserId()));
+        lead.setCreatedBy(String.valueOf(RequestData.getUserId()));
         leadGenerationRepository.save(lead);
         return GenerateLeadResponseDto.builder().id(lead.getId()).build();
     }
