@@ -40,7 +40,7 @@ spring:
     #username: ${MYSQL_DATASOURCE_APP_USERNAME}
     #password: ${MYSQL_DATASOURCE_APP_PASSWORD}
   flyway:
-    enabled: 'true'
+    enabled: 'false'
     baseline-on-migrate: 'true'
     #    out-of-order: 'true'
     url: ${MYSQL_DATASOURCE_URI}
@@ -128,7 +128,7 @@ aws:
     url: ${CDN_URL:https://o2stage-capital-cdn.kartrocket.in}
 
 redis:
-  config: redisson-dev.yaml
+  config: redisson-prod.yaml
 fileUpload:
   coolOffWindowInMinutes: ${FILE_UPLOAD_COOLOFF_WINDOW:60}
 
@@ -165,6 +165,7 @@ external:
         verify:
           gst:
             otp-url: /gst/uat/v2/gst-return-auth-advance
+            url: /v3/tasks/async/verify_with_source/ind_gst_certificate
           aadhaar:
             url: /v3/tasks/async/verify_with_source/aadhaar_lite
           pancard:
