@@ -6,6 +6,7 @@ import com.sr.capital.dto.response.GenerateLeadResponseDto;
 import com.sr.capital.dto.response.IcrmLeadRsponseDto;
 import com.sr.capital.dto.response.LeadDetailsResponseDto;
 import com.sr.capital.dto.response.LeadHistoryResponseDto;
+import com.sr.capital.dto.response.event.Events;
 import com.sr.capital.exception.custom.CustomException;
 import org.springframework.data.domain.Pageable;
 
@@ -30,4 +31,6 @@ public interface IcrmLeadService {
     public void downloadLeadDetails(LocalDateTime dateTime,String type,String emailId);
 
     public List<LeadHistoryResponseDto> getLeadHistory(String leadId);
+
+    public Events getEvent();
 }

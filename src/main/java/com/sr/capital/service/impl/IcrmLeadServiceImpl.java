@@ -7,6 +7,7 @@ import com.sr.capital.config.db.CommonJdbcUtill;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.*;
+import com.sr.capital.dto.response.event.Events;
 import com.sr.capital.entity.mongo.Lead;
 import com.sr.capital.entity.mongo.LeadHistory;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
@@ -29,6 +30,8 @@ import com.sr.capital.util.CoreUtil;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -75,6 +78,10 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     final CommunicationService communicationService;
 
     final LeadHistoryServiceImpl leadHistoryService;
+
+    @Autowired
+    @Qualifier("leadEvents")
+    Events events;
 
     String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_type,la.loan_offer_id,la.loan_duration, las.id as loanApplicationStatusId, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt,las.total_disbursed_amount";
 
@@ -200,6 +207,11 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         }
 
         return leadHistoryResponseDtos;
+    }
+
+    @Override
+    public Events getEvent() {
+        return events;
     }
 
 
@@ -473,6 +485,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             throw new RuntimeException("Error while converting to CSV and encoding in Base64", e);
         }
     }
+
 
 
 }
