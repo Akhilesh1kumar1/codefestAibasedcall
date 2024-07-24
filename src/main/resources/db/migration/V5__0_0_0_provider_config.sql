@@ -267,7 +267,6 @@ CREATE TABLE if not exists `user` (
               `updated_by` varchar(255) DEFAULT NULL,
               `is_enabled` bit(1) DEFAULT NULL,
     PRIMARY KEY (`id`),
-     KEY `sr_user_id`(`sr_user_id`),
      index sr_company_id(`sr_company_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=0;
 
