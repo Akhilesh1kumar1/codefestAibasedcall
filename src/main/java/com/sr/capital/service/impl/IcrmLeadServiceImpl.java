@@ -185,6 +185,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                 }catch (Exception ex){
                     break;
                 }
+                page++;
             }
         }
 
