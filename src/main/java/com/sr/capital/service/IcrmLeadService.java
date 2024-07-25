@@ -6,14 +6,16 @@ import com.sr.capital.dto.response.GenerateLeadResponseDto;
 import com.sr.capital.dto.response.IcrmLoanResponseDto;
 import com.sr.capital.dto.response.LeadDetailsResponseDto;
 import com.sr.capital.dto.response.LeadHistoryResponseDto;
-import com.sr.capital.dto.response.event.Events;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.helpers.enums.LeadStatus;
+
 import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface IcrmLeadService {
 
@@ -32,5 +34,5 @@ public interface IcrmLeadService {
 
     public List<LeadHistoryResponseDto> getLeadHistory(String leadId);
 
-    public Events getEvent();
+    public Map<LeadStatus, List<LeadStatus>> getEvent();
 }
