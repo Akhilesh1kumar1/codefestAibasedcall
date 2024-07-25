@@ -3,7 +3,7 @@ package com.sr.capital.service;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.GenerateLeadResponseDto;
-import com.sr.capital.dto.response.IcrmLeadRsponseDto;
+import com.sr.capital.dto.response.IcrmLoanResponseDto;
 import com.sr.capital.dto.response.LeadDetailsResponseDto;
 import com.sr.capital.dto.response.LeadHistoryResponseDto;
 import com.sr.capital.dto.response.event.Events;
@@ -17,9 +17,9 @@ import java.util.List;
 
 public interface IcrmLeadService {
 
-    public IcrmLeadRsponseDto getLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
+    public IcrmLoanResponseDto getLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
 
-    public IcrmLeadRsponseDto getCompleteLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException;
+    public IcrmLoanResponseDto getCompleteLoanDetails(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException;
 
     public GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException;
 

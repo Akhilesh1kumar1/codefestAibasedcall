@@ -37,7 +37,7 @@ public class IcrmController {
     final IcrmLeadService icrmLeadService;
 
     @PostMapping("/loan/details")
-    public GenericResponse<IcrmLeadRsponseDto> getLoanDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+    public GenericResponse<IcrmLoanResponseDto> getLoanDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
 
         return ResponseBuilderUtil.getResponse(icrmLeadService.getLoanDetails(icrmLeadRequestDto),SUCCESS,
                 CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
@@ -51,7 +51,7 @@ public class IcrmController {
     }
 
     @PostMapping("/loan/complete/details")
-    public GenericResponse<IcrmLeadRsponseDto> getCompleteDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+    public GenericResponse<IcrmLoanResponseDto> getCompleteDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
 
         return ResponseBuilderUtil.getResponse(icrmLeadService.getCompleteLoanDetails(icrmLeadRequestDto),SUCCESS,
                 CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);

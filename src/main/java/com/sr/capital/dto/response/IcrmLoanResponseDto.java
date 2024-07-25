@@ -13,7 +13,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Builder
-public class IcrmLeadRsponseDto {
+public class IcrmLoanResponseDto {
 
     Long totalLeads;
 
@@ -25,7 +25,7 @@ public class IcrmLeadRsponseDto {
 
     Long goneCold;
 
-    List<IcrmLeadCompleteDetails> completeDetails;
+    List<IcrmLoanCompleteDetails> completeDetails;
 
     PaginationInfo paginationInfo;
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)

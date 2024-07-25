@@ -82,11 +82,12 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         }*/
        // LeadStatus.validateLeadStatus(lead.getStatus());
         Transitions tr =new Transitions(lead.getStatus());
-        markItemStatusBasedOnEvent(generateLeadRequestDto.getStatus().name(),tr,events,lead);
         LeadHistory leadHistory =LeadHistory.builder().srCompanyId(lead.getSrCompanyId()).amount(lead.getAmount()).duration(lead.getDuration()).status(lead.getStatus()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())
                 .loanVendorPartnerId(lead.getLoanVendorPartnerId()).tier(lead.getTier()).remarks(lead.getRemarks()).leadId(lead.getId()).userName(lead.getUserName()).build();
+
         leadHistory.setCreatedBy(lead.getCreatedBy());
         leadHistory.setLastModifiedBy(lead.getLastModifiedBy());
+        markItemStatusBasedOnEvent(generateLeadRequestDto.getStatus().name(),tr,events,lead);
         leadHistoryService.saveLeadHistory(leadHistory);
         updateLeadDetails(lead,generateLeadRequestDto);
         leadGenerationRepository.save(lead);
@@ -105,7 +106,7 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
     }
 
     private void updateLeadDetails(Lead lead,GenerateLeadRequestDto generateLeadRequestDto){
-        lead.setLeadSource(generateLeadRequestDto.getLeadSource());
+       // lead.setLeadSource(generateLeadRequestDto.getLeadSource());
         lead.setAmount(generateLeadRequestDto.getAmount());
         lead.setDuration(generateLeadRequestDto.getDuration());
         lead.setTier(generateLeadRequestDto.getTier());
