@@ -34,5 +34,5 @@ public interface IcrmLeadService {
 
     public List<LeadHistoryResponseDto> getLeadHistory(String leadId);
 
-    public Map<LeadStatus, List<LeadStatus>> getEvent();
+    public Map<String, List<Map<String, String>>> getEvent();
 }

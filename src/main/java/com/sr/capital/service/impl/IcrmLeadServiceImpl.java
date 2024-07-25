@@ -88,19 +88,22 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     @Qualifier("leadEvents")
     Events events;
 
-    Map<LeadStatus, List<LeadStatus>> eventsMap = new HashMap<LeadStatus, List<LeadStatus>>();
+    Map<String, List<Map<String, String>>> eventsMap = new HashMap<String, List<Map<String, String>>>();
 
     @PostConstruct
     public void init() {
         for (Entry<String, Event> entry : events.getEvents().entrySet()) {
             for (Map.Entry<Transitions, Action> transition : entry.getValue().getTransition().entrySet()) {
-                LeadStatus currentStatus = transition.getKey().getStatus();
+                String currentStatus = transition.getKey().getStatus().name();
                 if (eventsMap.get(currentStatus) == null) {
                     eventsMap.put(currentStatus, new ArrayList<>());
                 }
+                Map<String, String> statusMap = new HashMap<>();
+                statusMap.put("value", transition.getValue().getState().getStatus().name());
+                statusMap.put("display_value", transition.getValue().getState().getStatus().getDisplayName());
                 eventsMap
                         .get(currentStatus)
-                        .add(transition.getValue().getState().getStatus());
+                        .add(statusMap);
             }
         }
     }
@@ -262,7 +265,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     }
 
     @Override
-    public Map<LeadStatus, List<LeadStatus>> getEvent() {
+    public Map<String, List<Map<String, String>>> getEvent() {
         return eventsMap;
     }
 

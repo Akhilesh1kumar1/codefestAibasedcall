@@ -95,7 +95,7 @@ public class IcrmController {
     }
 
     @GetMapping("/lead-events")
-    public GenericResponse<Map<LeadStatus, List<LeadStatus>>> getLeadEvents() {
+    public GenericResponse<Map<String, List<Map<String, String>>>> getLeadEvents() {
         return ResponseBuilderUtil.getResponse(icrmLeadService.getEvent(),SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
