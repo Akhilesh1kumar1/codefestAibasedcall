@@ -262,7 +262,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         List<LeadHistoryResponseDto> leadHistoryResponseDtos =new ArrayList<>();
         if(CollectionUtils.isNotEmpty(leadHistories)){
             leadHistories.stream().forEach(lead -> {
-                LeadHistoryResponseDto responseDto =LeadHistoryResponseDto.builder().srCompanyId(lead.getSrCompanyId()).amount(lead.getAmount()).duration(lead.getDuration()).status(lead.getStatus()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())
+                LeadHistoryResponseDto responseDto =LeadHistoryResponseDto.builder().srCompanyId(lead.getSrCompanyId()).amount(lead.getAmount()).duration(lead.getDuration()).status(lead.getStatus()).leadSource(lead.getLeadSource()).remarks(lead.getRemarks()).loanApplicationId(lead.getLoanApplicationId())
                         .loanVendorPartnerId(lead.getLoanVendorPartnerId()).tier(lead.getTier()).remarks(lead.getRemarks()).leadId(lead.getId()).userName(lead.getUserName()).build();
                 responseDto.setCreatedBy(lead.getCreatedBy());
                 responseDto.setLastModifiedBy(lead.getLastModifiedBy());
