@@ -55,7 +55,7 @@ spring:
 app:
   cors-allowed-origins: https://qa-web-1.kartrocket.com,https://multichannel-appstore-qa.kartrocket.com,http://localhost:5371,http://app.shiprocket.local,https://app.shiprocket.in
   serviceTag: ${SERVICE_TAG:capital}
-  secret: ${APP_JWT_SECRET:testabcd}
+  secret: ${APP_JWT_SECRET:669dfe82d4490f4cf9f27c10}
   verification:
     otp:
       request-limit: 4
@@ -89,7 +89,9 @@ app:
       whatsapp:
         otp-template-name: ${KALEYRA_WHATSAPP_OTP_TEMPLATE_NAME:o2_verification}
         channel: ${KALEYRA_WHATSAPP_CHANNEL:whatsapp}
-        callBackUri: ${KALEYRA_CALL_BACK_URL:https://apiv2.shiprocket.in/v1/webhook/whatsapp}
+        callBackUri: ${KALEYRA_CALL_BACK_URL:https://capital.shiprocket.in/api/v1/external/wa/webhook?secret-key=669dfe82d4490f4cf9f27c10}
+        lead-not-connected-template-name: seller_notconnected_capital
+        seller-thanks-template-name: thanks_seller_captial
     netcore:
       enabled: true
       baseUri: ${NETCORE_BASE_URI:https://emailapi.netcorecloud.net}

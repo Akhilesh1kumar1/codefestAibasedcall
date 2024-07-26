@@ -40,7 +40,7 @@ spring:
     #username: ${MYSQL_DATASOURCE_APP_USERNAME}
     #password: ${MYSQL_DATASOURCE_APP_PASSWORD}
   flyway:
-    enabled: 'false'
+    enabled: 'true'
     baseline-on-migrate: 'true'
     #    out-of-order: 'true'
     url: ${MYSQL_DATASOURCE_URI}
@@ -90,6 +90,8 @@ app:
         otp-template-name: ${KALEYRA_WHATSAPP_OTP_TEMPLATE_NAME:o2_verification}
         channel: ${KALEYRA_WHATSAPP_CHANNEL:whatsapp}
         callBackUri: ${KALEYRA_CALL_BACK_URL:https://apiv2.shiprocket.in/v1/webhook/whatsapp}
+        lead-not-connected-template-name: seller_notconnected_capital
+        seller-thanks-template-name: thanks_seller_captial
     netcore:
       enabled: true
       baseUri: ${NETCORE_BASE_URI:https://emailapi.netcorecloud.net}

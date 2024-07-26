@@ -11,12 +11,11 @@ import com.sr.capital.dto.response.event.Events;
 import com.sr.capital.entity.mongo.Lead;
 import com.sr.capital.entity.mongo.LeadHistory;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
-import com.sr.capital.entity.primary.LoanApplication;
-import com.sr.capital.entity.primary.LoanApplicationStatus;
-import com.sr.capital.entity.primary.LoanDisbursed;
-import com.sr.capital.entity.primary.User;
+import com.sr.capital.entity.primary.*;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.external.dto.response.KaleyraResponse;
 import com.sr.capital.external.service.CommunicationService;
+import com.sr.capital.helpers.enums.LeadStatus;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.service.DocDetailsService;
@@ -77,6 +76,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     final BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
 
+    final WhatsAppEntityServiceImpl whatsAppEntityService;
+
     @Autowired
     @Qualifier("leadEvents")
     Events events;
@@ -118,6 +119,17 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     @Override
     public GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
+        if(generateLeadRequestDto.getStatus().equals(LeadStatus.NOT_CONNECTED)) {
+           User user = userService.getCompanyDetails(generateLeadRequestDto.getSrCompanyId());
+           KaleyraResponse response = communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobile(), List.of(user.getFirstName()), appProperties.getKaleyraWhatsappSellerNotConnectedTemplateName()));
+           if(response!=null && CollectionUtils.isNotEmpty(response.getData())){
+               response.getData().forEach(data->{
+                   WhatsappApiLog whatsappApiLog= WhatsappApiLog.builder().messageId(data.getId()).remarks(data.getStatus()).internalId(generateLeadRequestDto.getLeadId()).eventType("lead").build();
+                   whatsAppEntityService.saveWhatsAppApiLog(whatsappApiLog);
+               });
+           }
+
+        }
         return leadGenerationService.updateLead(generateLeadRequestDto);
     }
 
@@ -241,6 +253,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     public Events getEvent() {
         return events;
     }
+
+
 
 
     private void getDocDetails(IcrmLoanResponseDto icrmLoanResponseDto, IcrmLeadRequestDto icrmLeadRequestDto) {

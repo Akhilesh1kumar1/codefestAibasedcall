@@ -81,6 +81,49 @@ public class CommunicationService {
 
     }
 
+   // @Async
+    public <T, U> T sendCommunication(CommunicationRequestTemp communicationRequest) {
+        try {
+            switch (communicationRequest.getChannel()) {
+                case SMS -> {
+                    if (ObjectUtils.isEmpty(communicationRequest.getSmsCommunicationDto())) {
+                        throw new CustomException("Communication Error");
+                    }
+                    if (appProperties.getSinfiniCommunicationEnabled()) {
+                        sinfiniClient.sendSmsNotification(communicationRequest.getSmsCommunicationDto());
+                    }
+                }
+                case WHATSAPP -> {
+                    if (ObjectUtils.isEmpty(communicationRequest.getWhatsAppCommunicationDto())) {
+                        throw new CustomException("Communication Error");
+                    }
+                    if (appProperties.getKaleyraCommunicationEnabled()) {
+                       return (T) kaleyraClient.sendWhatsAppNotification(communicationRequest.getWhatsAppCommunicationDto());
+                    }
+                }
+                case SMS_WHATSAPP -> {
+                    if (ObjectUtils.isEmpty(communicationRequest.getSmsCommunicationDto()) || ObjectUtils.isEmpty(communicationRequest.getWhatsAppCommunicationDto())) {
+                        throw new CustomException("Communication Error");
+                    }
+                    if (appProperties.getSinfiniCommunicationEnabled()) {
+                        sinfiniClient.sendSmsNotification(communicationRequest.getSmsCommunicationDto());
+                    }
+                    if (appProperties.getKaleyraCommunicationEnabled()) {
+                        kaleyraClient.sendWhatsAppNotification(communicationRequest.getWhatsAppCommunicationDto());
+                    }
+                }
+                default -> {
+
+                }
+            }
+        } catch (Exception ignored) {
+
+        }
+
+        return null;
+
+    }
+
     @Async
     public void sendEmail(NetCoreSendEmailRequest request) {
         try {
@@ -207,6 +250,21 @@ public class CommunicationService {
                                 )).attachments(List.of(NetCoreSendEmailRequest.AttachmentInfo.builder().name(fileName).content(content).build()))
                                 .build()
                 ))
+                .build();
+    }
+
+
+
+    public CommunicationRequestTemp getCommunicationRequestForSellerNotConnectedViadWhatsApp(String recipientNo, List<String> whatsAppParameters,String templateName) {
+        return CommunicationRequestTemp.builder()
+                .channel(CommunicationChannels.WHATSAPP)
+                .whatsAppCommunicationDto(
+                        CommunicationRequestTemp.WhatsAppCommunicationDTO.builder()
+                                .recipientNo(recipientNo)
+                                .template(templateName)
+                                .params(whatsAppParameters)
+                                .build()
+                )
                 .build();
     }
 

@@ -4,6 +4,7 @@ import com.sr.capital.dto.response.CompanySalesDetails;
 import com.sr.capital.dto.response.LoanOfferDetails;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
+import com.sr.capital.external.dto.request.KaleyraWebhookDto;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import org.springframework.http.ResponseEntity;
 
@@ -21,4 +22,6 @@ public interface ExternalService {
     String getCompanyWiseSalesDetails(String vendorToken,String vendorCode,String loanVendorName) throws Exception;
 
     public ResponseEntity<?> fetchDocDetailsByTenantId(final DocDetailsRequest docDetailsRequest,String vendorToken,String vendorCode,String loanVendorName) throws Exception;
+
+    public ResponseEntity<?> saveWhatsAppCommunication(KaleyraWebhookDto content);
 }

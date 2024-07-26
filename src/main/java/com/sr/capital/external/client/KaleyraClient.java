@@ -54,8 +54,9 @@ public class KaleyraClient {
 //        }
 //    }
 
-    @Async
-    public void sendWhatsAppNotification(CommunicationRequestTemp.WhatsAppCommunicationDTO communicationDTO) {
+    //@Async
+    public KaleyraResponse sendWhatsAppNotification(CommunicationRequestTemp.WhatsAppCommunicationDTO communicationDTO) {
+        KaleyraResponse response =null;
         try {
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
             getMandatoryFormDataForWhatsAppCommunication(formData);
@@ -67,8 +68,8 @@ public class KaleyraClient {
             headers.put("api-key",appProperties.getKaleyraApiKey());
             headers.put(Constants.KaleyraHeaders.CONTENT_TYPE, Constants.ContentType.MULTIPART_FORM_DATA);
              String url =appProperties.getKaleyraBaseurl() + "/" + appProperties.getKaleyraSenderId()+appProperties.getKaleyraSendMessageEndPoint();
-            HttpResponse<KaleyraResponse> locationDetailsResponse = getInstance().withHeaders(headers).post(url,formData, KaleyraResponse.class);
-
+            HttpResponse<KaleyraResponse> kaleyraResponseHttpResponse = getInstance().withHeaders(headers).post(url,formData, KaleyraResponse.class);
+               response =kaleyraResponseHttpResponse.getBody();
 
            /* webClientUtil.makeExternalCallBlocking(ServiceName.KALEYRA, appProperties.getKaleyraBaseurl() + "/" + appProperties.getKaleyraSenderId(),
                     appProperties.getKaleyraSendMessageEndPoint(), HttpMethod.POST,
@@ -77,7 +78,7 @@ public class KaleyraClient {
         } catch (Exception ignored) {
 
         }
-
+         return response;
     }
 
     private void getMandatoryFormDataForWhatsAppCommunication(MultiValueMap<String, String> formData) {
