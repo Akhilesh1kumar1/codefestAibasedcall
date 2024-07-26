@@ -7,7 +7,10 @@ import com.sr.capital.config.db.CommonJdbcUtill;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.*;
+import com.sr.capital.dto.response.event.Action;
+import com.sr.capital.dto.response.event.Event;
 import com.sr.capital.dto.response.event.Events;
+import com.sr.capital.dto.response.event.Transitions;
 import com.sr.capital.entity.mongo.Lead;
 import com.sr.capital.entity.mongo.LeadHistory;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
@@ -23,6 +26,8 @@ import com.sr.capital.service.*;
 import com.sr.capital.service.entityimpl.*;
 import com.sr.capital.util.CoreUtil;
 import com.sr.capital.util.S3Util;
+
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +46,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -81,6 +87,26 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     @Autowired
     @Qualifier("leadEvents")
     Events events;
+
+    Map<String, List<Map<String, String>>> eventsMap = new HashMap<String, List<Map<String, String>>>();
+
+    @PostConstruct
+    public void init() {
+        for (Entry<String, Event> entry : events.getEvents().entrySet()) {
+            for (Map.Entry<Transitions, Action> transition : entry.getValue().getTransition().entrySet()) {
+                String currentStatus = transition.getKey().getStatus().name();
+                if (eventsMap.get(currentStatus) == null) {
+                    eventsMap.put(currentStatus, new ArrayList<>());
+                }
+                Map<String, String> statusMap = new HashMap<>();
+                statusMap.put("value", transition.getValue().getState().getStatus().name());
+                statusMap.put("display_value", transition.getValue().getState().getStatus().getDisplayName());
+                eventsMap
+                        .get(currentStatus)
+                        .add(statusMap);
+            }
+        }
+    }
 
     String FIELDS = "la.id, la.sr_company_id, la.loan_vendor_id,la.loan_amount_requested ,la.loan_amount_requested,la.loan_status,la.loan_type,la.loan_offer_id,la.loan_duration, las.id as loanApplicationStatusId, las.vendor_loan_id,las.loan_amount_approved,las.interest_rate,las.loan_duration,las.start_date,las.end_date,la.created_at as loanCreatedAt,la.created_by as loanCreatedBy,las.created_at as loanApplicationStatusCreatedAt,las.created_by as loanApplicationStatusCreatedBy,las.updated_at as loanApplicationStatusUpdatedAt,las.total_disbursed_amount";
 
@@ -250,8 +276,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     }
 
     @Override
-    public Events getEvent() {
-        return events;
+    public Map<String, List<Map<String, String>>> getEvent() {
+        return eventsMap;
     }
 
 

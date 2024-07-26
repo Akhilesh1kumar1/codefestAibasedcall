@@ -33,7 +33,7 @@ public class AccountTypeEntityServiceImpl {
 
     public boolean createBaseAccountType(CreateBaseAccountTypeDto createBaseAccountTypeDto) throws IOException, CustomException {
        validateAccountTypeDetails(createBaseAccountTypeDto);
-       AccountType accountType= MapperUtils.convertValue(createBaseAccountTypeDto, AccountType.class);
+       AccountType accountType= MapperUtils.mapClass(createBaseAccountTypeDto, AccountType.class);
        accountTypeRepository.save(accountType);
        saveInCache(accountType);
        return true;

@@ -4,7 +4,6 @@ import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.*;
-import com.sr.capital.dto.response.event.Events;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.LeadStatus;
 import com.sr.capital.service.IcrmLeadService;
@@ -21,6 +20,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -95,7 +95,7 @@ public class IcrmController {
     }
 
     @GetMapping("/lead-events")
-    public GenericResponse<Events> getLeadEvents() {
+    public GenericResponse<Map<String, List<Map<String, String>>>> getLeadEvents() {
         return ResponseBuilderUtil.getResponse(icrmLeadService.getEvent(),SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
