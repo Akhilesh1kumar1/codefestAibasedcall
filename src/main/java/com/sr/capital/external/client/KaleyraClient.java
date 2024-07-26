@@ -8,6 +8,7 @@ import com.sr.capital.external.dto.response.KaleyraResponse;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.util.LoggerUtil;
+import com.sr.capital.util.WebClientUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +31,9 @@ public class KaleyraClient {
 
     @Autowired
     private AppProperties appProperties;
+
+    @Autowired
+    private WebClientUtil webClientUtil;
 
 
 
@@ -54,8 +58,31 @@ public class KaleyraClient {
 //        }
 //    }
 
-    //@Async
     public KaleyraResponse sendWhatsAppNotification(CommunicationRequestTemp.WhatsAppCommunicationDTO communicationDTO) {
+        try {
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            getMandatoryFormDataForWhatsAppCommunication(formData);
+            formData.add("to", communicationDTO.getRecipientNo());
+            formData.add("template_name", communicationDTO.getTemplate());
+            formData.add("params", StringUtils.join(communicationDTO.getParams(), ","));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("api-key",appProperties.getKaleyraApiKey());
+            headers.set(Constants.KaleyraHeaders.CONTENT_TYPE,Constants.ContentType.MULTIPART_FORM_DATA);
+
+           return webClientUtil.makeExternalCallBlocking(ServiceName.KALEYRA, appProperties.getKaleyraBaseurl() + "/" + appProperties.getKaleyraSenderId(),
+                    appProperties.getKaleyraSendMessageEndPoint(), HttpMethod.POST,
+                    null, headers, null, formData,
+                    KaleyraResponse.class);
+        } catch (Exception ignored) {
+              loggerUtil.info("Error in sending whatsapp communication : "+ignored.getMessage());
+        }
+        return null;
+    }
+
+
+    //@Async
+    /*public KaleyraResponse sendWhatsAppNotification(CommunicationRequestTemp.WhatsAppCommunicationDTO communicationDTO) {
         KaleyraResponse response =null;
         try {
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -71,15 +98,15 @@ public class KaleyraClient {
             HttpResponse<KaleyraResponse> kaleyraResponseHttpResponse = getInstance().withHeaders(headers).post(url,formData, KaleyraResponse.class);
                response =kaleyraResponseHttpResponse.getBody();
 
-           /* webClientUtil.makeExternalCallBlocking(ServiceName.KALEYRA, appProperties.getKaleyraBaseurl() + "/" + appProperties.getKaleyraSenderId(),
+           *//* webClientUtil.makeExternalCallBlocking(ServiceName.KALEYRA, appProperties.getKaleyraBaseurl() + "/" + appProperties.getKaleyraSenderId(),
                     appProperties.getKaleyraSendMessageEndPoint(), HttpMethod.POST,
                     null, headers, null, formData,
-                    KaleyraResponse.class);*/
+                    KaleyraResponse.class);*//*
         } catch (Exception ignored) {
 
         }
          return response;
-    }
+    }*/
 
     private void getMandatoryFormDataForWhatsAppCommunication(MultiValueMap<String, String> formData) {
         formData.add("from", appProperties.getKaleyraFromNo());

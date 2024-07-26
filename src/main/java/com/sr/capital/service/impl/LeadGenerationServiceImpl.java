@@ -114,7 +114,7 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
             lead.setRemarks(lead.getRemarks()==null?"whatsapp response: "+ remarks: lead.getRemarks().concat(", whatsapp response "+remarks));
 
         }
-
+         leadGenerationRepository.save(lead);
 
         return true;
     }

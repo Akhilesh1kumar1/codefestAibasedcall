@@ -124,7 +124,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
            KaleyraResponse response = communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobile(), List.of(user.getFirstName()), appProperties.getKaleyraWhatsappSellerNotConnectedTemplateName()));
            if(response!=null && CollectionUtils.isNotEmpty(response.getData())){
                response.getData().forEach(data->{
-                   WhatsappApiLog whatsappApiLog= WhatsappApiLog.builder().messageId(data.getId()).remarks(data.getStatus()).internalId(generateLeadRequestDto.getLeadId()).eventType("lead").build();
+                   WhatsappApiLog whatsappApiLog= WhatsappApiLog.builder().messageId(data.getId()).remarks(data.getStatus()).internalId(generateLeadRequestDto.getLeadId()).eventType("lead").srCompanyId(generateLeadRequestDto.getSrCompanyId()).build();
                    whatsAppEntityService.saveWhatsAppApiLog(whatsappApiLog);
                });
            }

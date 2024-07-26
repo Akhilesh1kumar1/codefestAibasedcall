@@ -126,7 +126,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCompanyDetails(Long srCompanyId) {
-        return userRepository.findTopBySrCompanyId(srCompanyId);
+        User user= userRepository.findTopBySrCompanyId(srCompanyId);
+        if(user!=null) {
+            user.setFirstName(aes256.decrypt(user.getFirstName()));
+            user.setMobile(aes256.decrypt(user.getMobile()));
+        }
+        return user;
     }
 
 }

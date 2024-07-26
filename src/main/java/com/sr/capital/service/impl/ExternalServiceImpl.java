@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -113,7 +114,7 @@ public class ExternalServiceImpl implements ExternalService {
             if(whatsappApiLog.getEventType().equalsIgnoreCase("lead")){
                 User user = userService.getCompanyDetails(whatsappApiLog.getSrCompanyId());
                 if(user!=null) {
-                    communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobile(), List.of(user.getFirstName()), appProperties.getKaleyraWhatsappSellerThanksTemplateName()));
+                    communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobile(), new ArrayList<>(), appProperties.getKaleyraWhatsappSellerThanksTemplateName()));
                 }
             }
         }
