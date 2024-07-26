@@ -155,6 +155,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                });
            }
 
+            communicationService.sendEmail(communicationService.getCommunicationRequestForSellerNotConnect(user.getEmail(),user.getFirstName()));
+
         }
         return leadGenerationService.updateLead(generateLeadRequestDto);
     }

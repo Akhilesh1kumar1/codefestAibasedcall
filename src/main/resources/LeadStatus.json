@@ -15,6 +15,11 @@
           "state": {
             "status": "CALL_CONNECTED"
           }
+        },
+        "{\"status\":\"NOT_CONNECTED\"}": {
+          "state": {
+            "status": "CALL_CONNECTED"
+          }
         }
       }
     },

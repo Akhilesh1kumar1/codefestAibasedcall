@@ -130,6 +130,7 @@ public class UserServiceImpl implements UserService {
         if(user!=null) {
             user.setFirstName(aes256.decrypt(user.getFirstName()));
             user.setMobile(aes256.decrypt(user.getMobile()));
+            user.setEmail(aes256.decrypt(user.getEmail()));
         }
         return user;
     }
