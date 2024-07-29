@@ -104,6 +104,8 @@ public class ExternalServiceImpl implements ExternalService {
     @Override
     public ResponseEntity<?> saveWhatsAppCommunication(KaleyraWebhookDto content) {
 
+        log.info("[saveWhatsAppCommunication] webhook content : {} ",content);
+
         if(content!=null && content.getReplyTo()!=null){
             WhatsappApiLog whatsappApiLog = whatsAppEntityService.getApiLog(content.getReplyTo());
 
