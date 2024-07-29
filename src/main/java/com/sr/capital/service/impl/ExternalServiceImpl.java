@@ -6,22 +6,27 @@ import com.sr.capital.dto.response.BaseCreditPartnerResponseDto;
 import com.sr.capital.dto.response.CompanySalesDetails;
 import com.sr.capital.dto.response.LoanOfferDetails;
 import com.sr.capital.entity.primary.BaseCreditPartner;
+import com.sr.capital.entity.primary.User;
+import com.sr.capital.entity.primary.WhatsappApiLog;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
+import com.sr.capital.external.dto.request.KaleyraWebhookDto;
+import com.sr.capital.external.dto.response.KaleyraResponse;
+import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.dto.request.UploadFileToS3Request;
 import com.sr.capital.kyc.service.DocDetailsService;
-import com.sr.capital.service.CapitalDataReportService;
-import com.sr.capital.service.CreditPartnerFactoryService;
-import com.sr.capital.service.ExternalService;
-import com.sr.capital.service.LoanOfferService;
+import com.sr.capital.service.*;
 import com.sr.capital.service.entityimpl.BaseCreditPartnerEntityServiceImpl;
+import com.sr.capital.service.entityimpl.WhatsAppEntityServiceImpl;
 import com.sr.capital.util.CsvUtils;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,6 +53,14 @@ public class ExternalServiceImpl implements ExternalService {
     final DocDetailsService docDetailsService;
 
     final BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
+
+    final WhatsAppEntityServiceImpl whatsAppEntityService;
+
+    final LeadGenerationService leadGenerationService;
+
+    final CommunicationService communicationService;
+
+    final UserService userService;
     @Override
     public Boolean validateRequest(String vendorToken, String vendorCode,String loanVendorName) throws InvalidVendorTokenException, InvalidVendorCodeException {
 
@@ -85,6 +99,30 @@ public class ExternalServiceImpl implements ExternalService {
     public ResponseEntity<?> fetchDocDetailsByTenantId(DocDetailsRequest docDetailsRequest,String vendorToken,String vendorCode,String loanVendorName) throws Exception {
         validateRequest(vendorToken,vendorCode,loanVendorName);
         return docDetailsService.fetchDocDetailsByTenantId(docDetailsRequest);
+    }
+
+    @Override
+    public ResponseEntity<?> saveWhatsAppCommunication(KaleyraWebhookDto content) {
+
+        log.info("[saveWhatsAppCommunication] webhook content : {} ",content);
+
+        if(content!=null && content.getReplyTo()!=null){
+            WhatsappApiLog whatsappApiLog = whatsAppEntityService.getApiLog(content.getReplyTo());
+
+            if(whatsappApiLog!=null){
+                leadGenerationService.updateRemarks(whatsappApiLog.getInternalId(),content.getBody());
+            }
+
+            if(whatsappApiLog.getEventType().equalsIgnoreCase("lead")){
+                User user = userService.getCompanyDetails(whatsappApiLog.getSrCompanyId());
+                if(user!=null) {
+                    communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobile(), new ArrayList<>(), appProperties.getKaleyraWhatsappSellerThanksTemplateName()));
+                }
+            }
+        }
+
+
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     private String[] generateHeaders(List<CompanySalesDetails> companySalesDetailsList) {
@@ -130,6 +168,8 @@ public class ExternalServiceImpl implements ExternalService {
         return preSignedUri;
 
     }
+
+
 
 
 }

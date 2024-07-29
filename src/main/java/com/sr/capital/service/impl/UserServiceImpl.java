@@ -89,9 +89,11 @@ public class UserServiceImpl implements UserService {
     public InternalTokenUserDetailsResponse getUserDetailsUsingInternalToken(String token) {
         InternalTokenUserDetailsResponse response = shiprocketClient.getUserDetailsUsingInternalToken(token);
 
-        if(response.getUserId()!=null){
-            User user = userRepository.findBySrUserId(Long.valueOf(response.getUserId()));
+        if(response.getCompanyId()!=null){
+            User user = userRepository.findTopBySrCompanyId(Long.valueOf(response.getCompanyId()));
             if(user!=null){
+                response.setFirstName(aes256.decrypt(response.getFirstName()));
+                response.setCompanyName(response.getCompanyName());
                 response.setMobile(aes256.decrypt(user.getMobile()));
                 response.setIsAccepted(user.getIsAccepted());
                 response.setEntityType(user.getEntityType());
@@ -103,9 +105,9 @@ public class UserServiceImpl implements UserService {
 
     private void validateUserDetails(UserDetails userDetails) throws CustomException {
 
-        if(RequestData.getUserId().longValue()!=Long.valueOf(userDetails.getUserId())){
+        /*if(RequestData.getUserId().longValue()!=Long.valueOf(userDetails.getUserId())){
             throw new CustomException("Invalid UserId ", HttpStatus.BAD_REQUEST);
-        }
+        }*/
 
         if(!RequestData.getTenantId().equalsIgnoreCase(String.valueOf(userDetails.getCompanyId()))){
             throw new CustomException("Invalid CompanyId ", HttpStatus.BAD_REQUEST);
@@ -124,7 +126,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCompanyDetails(Long srCompanyId) {
-        return userRepository.findTopBySrCompanyId(srCompanyId);
+        User user= userRepository.findTopBySrCompanyId(srCompanyId);
+        if(user!=null) {
+            user.setFirstName(aes256.decrypt(user.getFirstName()));
+            user.setMobile(aes256.decrypt(user.getMobile()));
+            user.setEmail(aes256.decrypt(user.getEmail()));
+        }
+        return user;
     }
 
 }

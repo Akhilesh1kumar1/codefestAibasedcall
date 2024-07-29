@@ -10,6 +10,10 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KaleyraResponse {
+
+    private String id;
+
+
     @JsonProperty("status")
     private String status;
 
@@ -19,7 +23,7 @@ public class KaleyraResponse {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Response implements Serializable {
-        @JsonProperty("id")
+        @JsonProperty("message_id")
         private String id;
 
         @JsonProperty("customid")
@@ -38,6 +42,9 @@ public class KaleyraResponse {
         private String status;
     }
 
-    @JsonProperty("message")
-    private String message;
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+   public static class Error{
+        String msg;
+   }
 }

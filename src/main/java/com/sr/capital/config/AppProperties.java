@@ -65,6 +65,12 @@ public class AppProperties {
     @Value("${app.external.kaleyra.whatsapp.otp-template-name}")
     private String kaleyraWhatsappOtpTemplateName;
 
+    @Value("${app.external.kaleyra.whatsapp.lead-not-connected-template-name}")
+    private String kaleyraWhatsappSellerNotConnectedTemplateName;
+
+    @Value("${app.external.kaleyra.whatsapp.seller-thanks-template-name}")
+    private String kaleyraWhatsappSellerThanksTemplateName;
+
     @Value("${app.external.kaleyra.whatsapp.channel}")
     private String kaleyraWhatsappChannel;
 

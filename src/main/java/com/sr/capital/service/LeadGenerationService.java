@@ -20,4 +20,6 @@ public interface LeadGenerationService {
 
     Page<Lead> getAllLeads(LocalDateTime dateTime,String type ,Pageable pageable);
 
+    Boolean updateRemarks(String leadId,String remarks);
+
 }

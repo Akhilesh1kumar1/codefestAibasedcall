@@ -1,5 +1,6 @@
 package com.sr.capital.service.impl;
 
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.response.GenerateLeadResponseDto;
@@ -8,11 +9,14 @@ import com.sr.capital.dto.response.event.Events;
 import com.sr.capital.dto.response.event.Transitions;
 import com.sr.capital.entity.mongo.Lead;
 import com.sr.capital.entity.mongo.LeadHistory;
+import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.exception.custom.CustomServiceException;
+import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.helpers.enums.LeadStatus;
 import com.sr.capital.repository.mongo.LeadGenerationRepository;
 import com.sr.capital.service.LeadGenerationService;
+import com.sr.capital.service.UserService;
 import com.sr.capital.service.entityimpl.LeadHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
@@ -24,10 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -82,11 +83,12 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         }*/
        // LeadStatus.validateLeadStatus(lead.getStatus());
         Transitions tr =new Transitions(lead.getStatus());
-        markItemStatusBasedOnEvent(generateLeadRequestDto.getStatus().name(),tr,events,lead);
         LeadHistory leadHistory =LeadHistory.builder().srCompanyId(lead.getSrCompanyId()).amount(lead.getAmount()).duration(lead.getDuration()).status(lead.getStatus()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())
                 .loanVendorPartnerId(lead.getLoanVendorPartnerId()).tier(lead.getTier()).remarks(lead.getRemarks()).leadId(lead.getId()).userName(lead.getUserName()).build();
+
         leadHistory.setCreatedBy(lead.getCreatedBy());
         leadHistory.setLastModifiedBy(lead.getLastModifiedBy());
+        markItemStatusBasedOnEvent(generateLeadRequestDto.getStatus().name(),tr,events,lead);
         leadHistoryService.saveLeadHistory(leadHistory);
         updateLeadDetails(lead,generateLeadRequestDto);
         leadGenerationRepository.save(lead);
@@ -104,8 +106,22 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
 
     }
 
+    @Override
+    public Boolean updateRemarks(String leadId, String remarks) {
+        Lead lead =leadGenerationRepository.findById(leadId).orElse(null);
+
+        if(lead!=null){
+            lead.setRemarks(lead.getRemarks()==null?"whatsapp response: "+ remarks: lead.getRemarks().concat(", whatsapp response "+remarks));
+
+        }
+         leadGenerationRepository.save(lead);
+
+        return true;
+    }
+
+
     private void updateLeadDetails(Lead lead,GenerateLeadRequestDto generateLeadRequestDto){
-        lead.setLeadSource(generateLeadRequestDto.getLeadSource());
+       // lead.setLeadSource(generateLeadRequestDto.getLeadSource());
         lead.setAmount(generateLeadRequestDto.getAmount());
         lead.setDuration(generateLeadRequestDto.getDuration());
         lead.setTier(generateLeadRequestDto.getTier());

@@ -19,7 +19,7 @@ import java.util.UUID;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-public class IcrmLeadCompleteDetails {
+public class IcrmLoanCompleteDetails {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt;
@@ -84,6 +84,8 @@ public class IcrmLeadCompleteDetails {
     String vendorStatus;
 
     String zipLink;
+
+    String loanVendorName;
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
