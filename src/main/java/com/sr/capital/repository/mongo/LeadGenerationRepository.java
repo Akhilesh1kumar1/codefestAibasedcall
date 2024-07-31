@@ -17,7 +17,7 @@ public interface LeadGenerationRepository extends MongoRepository<Lead,String> {
     @Query("{ 'createdAt': { $gte: ?0, $lte: ?1  } }")
     Page<Lead> findByCreatedAtBetween(LocalDateTime startDate,LocalDateTime endDate, Pageable pageable);
 
-    @Query("{ 'lastModifiedAt': { $gte: ?0 } }")
+    @Query("{ 'lastModifiedAt': { $gte: ?0, $lte: ?1  } }")
     Page<Lead> findByLastModifiedAtBetween(LocalDateTime startDate,LocalDateTime endDate, Pageable pageable);
 
 }
