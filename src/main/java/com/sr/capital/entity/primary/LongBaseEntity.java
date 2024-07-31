@@ -22,5 +22,5 @@ public class LongBaseEntity implements Serializable, Auditable {
     private AuditData auditData;
 
     @Column(name = "is_enabled")
-    private Boolean isEnabled = false;
+    private Boolean isEnabled = true;
 }
