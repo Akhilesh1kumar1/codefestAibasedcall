@@ -2,6 +2,7 @@ package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
+import com.sr.capital.dto.request.IcrmLeadDetailsRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.*;
 import com.sr.capital.exception.custom.CustomException;
@@ -63,18 +64,16 @@ public class IcrmController {
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
-    @GetMapping("/lead/details")
-    public GenericResponse<LeadDetailsResponseDto> getLeadDetails(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate, @RequestParam(defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "10") int size, @RequestParam(value = "type",required = false) String type) throws CustomException {
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseBuilderUtil.getResponse(icrmLeadService.getAllLeads(startDate,type,pageable),SUCCESS,
+    @PostMapping("/lead/details")
+    public GenericResponse<LeadDetailsResponseDto> getLeadDetails(@RequestBody IcrmLeadDetailsRequestDto icrmLeadDetailsRequestDto) throws CustomException {
+        Pageable pageable = PageRequest.of(icrmLeadDetailsRequestDto.getPage(), icrmLeadDetailsRequestDto.getSize());
+        return ResponseBuilderUtil.getResponse(icrmLeadService.getAllLeads(icrmLeadDetailsRequestDto,pageable),SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
-    @GetMapping("/lead/details/download")
-    public GenericResponse<Boolean> dowloadLeadDetails(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate, @RequestParam(defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "10") int size, @RequestParam(value = "type",required = false) String type,@RequestParam() String emailId) throws CustomException {
-        icrmLeadService.downloadLeadDetails(startDate,type,emailId);
+    @PostMapping("/lead/details/download")
+    public GenericResponse<Boolean> dowloadLeadDetails(@RequestBody IcrmLeadDetailsRequestDto icrmLeadRequestDto) throws CustomException {
+        icrmLeadService.downloadLeadDetails(icrmLeadRequestDto);
         return ResponseBuilderUtil.getResponse(true,SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }

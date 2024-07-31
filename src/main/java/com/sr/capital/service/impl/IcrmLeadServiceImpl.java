@@ -5,6 +5,7 @@ import com.opencsv.CSVWriter;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.config.db.CommonJdbcUtill;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
+import com.sr.capital.dto.request.IcrmLeadDetailsRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.*;
 import com.sr.capital.dto.response.event.Action;
@@ -117,7 +118,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         IcrmLoanResponseDto responseDto = IcrmLoanResponseDto.builder().build();
         List<Map<String, Object>> listRecords = getLoanApplicationByCriteria(icrmLeadRequestDto,responseDto);
         if(CollectionUtils.isNotEmpty(listRecords)){
-           return buildLeadResponse(loanApplicationStatuses,listRecords);
+           return buildLeadResponse(responseDto,listRecords);
         }
        return null;
     }
@@ -162,8 +163,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     }
 
     @Override
-    public LeadDetailsResponseDto getAllLeads(LocalDateTime dateTime, String type, Pageable pageable) {
-        Page<Lead> leads =leadGenerationService.getAllLeads(dateTime,type,pageable);
+    public LeadDetailsResponseDto getAllLeads(IcrmLeadDetailsRequestDto icrmLeadRequestDto, Pageable pageable) {
+        Page<Lead> leads =leadGenerationService.getAllLeads(icrmLeadRequestDto,pageable);
         List<LeadDetailsResponseDto.LeadDetails> leadDetails =new ArrayList<>();
         leads.forEach(lead -> {
             LeadDetailsResponseDto.LeadDetails leadDto =   LeadDetailsResponseDto.LeadDetails.builder()
@@ -237,23 +238,24 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     @Override
     @Async
-    public void downloadLeadDetails(LocalDateTime dateTime, String type,String emailId) {
+    public void downloadLeadDetails(IcrmLeadDetailsRequestDto icrmLeadDetailsRequestDto) {
 
         List<LeadDetailsResponseDto.LeadDetails> leadDetails =new ArrayList<>();
 
         int page = 0;
         int size = 50; // Adjust the page size as needed
         Page<Lead> leadPage;
-        LeadDetailsResponseDto responseDto = getAllLeads(dateTime,type, PageRequest.of(page, size));
+        LeadDetailsResponseDto responseDto = getAllLeads(icrmLeadDetailsRequestDto, PageRequest.of(page, size));
         Integer totalPages = responseDto.getTotalPages();
         leadDetails.addAll(responseDto.getLeadList());
         while (page<totalPages){
             page++;
-            responseDto = getAllLeads(dateTime,type, PageRequest.of(page, size));
+            icrmLeadDetailsRequestDto.setPage(page);
+            responseDto = getAllLeads(icrmLeadDetailsRequestDto, PageRequest.of(page, size));
             leadDetails.addAll(responseDto.getLeadList());
         }
         String content = convertLeadToCSVAndEncodeBase64(leadDetails);
-        communicationService.sendEmail(communicationService.getCommunicationRequestForReport(emailId, "User", content,"Capital Lead Report "+new Date(),"lead_report.csv",false));
+        communicationService.sendEmail(communicationService.getCommunicationRequestForReport(icrmLeadDetailsRequestDto.getEmailId(), "User", content,"Capital Lead Report "+new Date(),"lead_report.csv",false));
 
 
     }
@@ -359,8 +361,9 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     }
 
 
-    private IcrmLoanResponseDto buildLeadResponse(List<LoanApplicationStatusDto> loanApplicationStatuses, List<Map<String, Object>> listRecords) {
-        IcrmLoanResponseDto icrmLoanResponseDto = IcrmLoanResponseDto.builder().completeDetails(new ArrayList<>()).build();
+    private IcrmLoanResponseDto buildLeadResponse(IcrmLoanResponseDto icrmLoanResponseDto, List<Map<String, Object>> listRecords) {
+       // IcrmLoanResponseDto icrmLoanResponseDto = IcrmLoanResponseDto.builder().completeDetails(new ArrayList<>()).build();
+        icrmLoanResponseDto.setCompleteDetails(new ArrayList<>());
         Map<Long,User> userMap =new HashMap<>();
         for(int i=0;i<listRecords.size();i++) {
             Map<String, Object> orderMap = listRecords.get(i);
@@ -421,11 +424,19 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         }
 
         if(icrmLeadRequestDto.getDateOfDisbursal()!=null){
-            whereClauseValues.put(loanApplicationStattusPrefix+"created_at->=" , icrmLeadRequestDto.getDateOfDisbursal()+" 00:00:00");
+            whereClauseValues.put(loanApplicationStattusPrefix+"created_at->=" , icrmLeadRequestDto.getDateOfDisbursal());
+        }
+
+        if(icrmLeadRequestDto.getDateOfDisbursalEnd()!=null){
+            whereClauseValues.put(loanApplicationStattusPrefix+"created_at-<=" , icrmLeadRequestDto.getDateOfDisbursalEnd()+ " 23:59:59");
         }
 
         if(icrmLeadRequestDto.getDateOfSanction()!=null){
             whereClauseValues.put(loanApplicationStattusPrefix+"created_at->=" , icrmLeadRequestDto.getDateOfSanction()+" 00:00:00");
+        }
+
+        if(icrmLeadRequestDto.getDateOfSanctionEnd()!=null){
+            whereClauseValues.put(loanApplicationStattusPrefix+"created_at-<=" , icrmLeadRequestDto.getDateOfSanctionEnd() +" 23:59:59");
         }
 
         int offset = (icrmLeadRequestDto.getPageNumber() - 1) * icrmLeadRequestDto.getPageSize();
@@ -436,7 +447,11 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         }
         arrSort[0] = loanApplicationPrefix+"created_at desc";
         pageInfo.put(loanApplicationPrefix+"created_to",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format( new Date(System.currentTimeMillis()- TimeUnit.MINUTES.toMillis(5))));
-        whereClauseValues.put(loanApplicationPrefix+"created_at<=", pageInfo.get(loanApplicationPrefix+"created_to"));
+        if(icrmLeadRequestDto.getCreatedAtEnd()!=null){
+            whereClauseValues.put(loanApplicationPrefix+"created_at-<=" , icrmLeadRequestDto.getCreatedAtEnd()+ " 23:59:59");
+        } else {
+            whereClauseValues.put(loanApplicationPrefix+"created_at<=", pageInfo.get(loanApplicationPrefix+"created_to"));
+        }
         if(icrmLeadRequestDto.getNoOfRecord()==null){
             listRecords = commonJdbcUtill.buildAndExecuteQuery(
                     tables

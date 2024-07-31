@@ -119,8 +119,16 @@ public class CommonJdbcUtill {
 
             if(entry.getKey().contains( "-" )){
                 String[] splitKeys = entry.getKey().split("-");
-                sql.append(splitKeys[0]).append(" ").append(splitKeys[1]).append(":").append(splitKeys[0]).append(" and ");
-                tempWhereClauseValues.put(splitKeys[0],entry.getValue());
+                sql.append(splitKeys[0]).append(" ").append(splitKeys[1]).append(":");
+
+                if(tempWhereClauseValues.get(splitKeys[0].split(",")[0])!=null){
+                    sql.append(splitKeys[0]+"1").append(" and ");
+                    tempWhereClauseValues.put(splitKeys[0]+"1",entry.getValue());
+                }else{
+                    sql .append(splitKeys[0]).append(" and ");
+                    tempWhereClauseValues.put(splitKeys[0],entry.getValue());
+                }
+
                 //  tempWhereClauseValues.remove( entry.getKey() );
 
             }else if(entry.getKey().contains( "^" )){

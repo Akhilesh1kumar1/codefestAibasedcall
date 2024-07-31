@@ -3,6 +3,8 @@ package com.sr.capital.service.impl;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
+import com.sr.capital.dto.request.IcrmLeadDetailsRequestDto;
+import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.GenerateLeadResponseDto;
 import com.sr.capital.dto.response.event.Action;
 import com.sr.capital.dto.response.event.Events;
@@ -97,11 +99,11 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
     }
 
     @Override
-    public Page<Lead> getAllLeads(LocalDateTime dateTime,String type, Pageable pageable) {
-        if(type==null || type.equalsIgnoreCase("createdAt")){
-            return leadGenerationRepository.findByCreatedAtBetween(dateTime,pageable);
+    public Page<Lead> getAllLeads(IcrmLeadDetailsRequestDto icrmLeadRequestDto, Pageable pageable) {
+        if(icrmLeadRequestDto.getType()==null || icrmLeadRequestDto.getType().equalsIgnoreCase("createdAt")){
+            return leadGenerationRepository.findByCreatedAtBetween(icrmLeadRequestDto.getStartDate(),icrmLeadRequestDto.getEndDate(),pageable);
         }else{
-            return leadGenerationRepository.findByLastModifiedAtBetween(dateTime,pageable);
+            return leadGenerationRepository.findByLastModifiedAtBetween(icrmLeadRequestDto.getStartDate(),icrmLeadRequestDto.getEndDate(),pageable);
         }
 
     }

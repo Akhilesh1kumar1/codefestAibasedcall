@@ -1,5 +1,6 @@
 package com.sr.capital.entity.mongo.kyc.child;
 
+import com.sr.capital.helpers.enums.DocStatus;
 import com.sr.capital.kyc.dto.response.ExtractedGstResponse;
 import com.sr.capital.kyc.external.constants.KarzaConstant;
 import lombok.AllArgsConstructor;
@@ -68,6 +69,7 @@ public class GstDocDetails implements Serializable {
     @Builder
     @Data
     public static class GstUserDetails{
+
         String gstin;
 
         String username;
@@ -82,6 +84,11 @@ public class GstDocDetails implements Serializable {
 
         @Builder.Default
         boolean extendedPeriod=false;
+
+        @Builder.Default
+        @Field("status")
+        private DocStatus status = DocStatus.UNVERIFIED;
+
     }
 
 }
