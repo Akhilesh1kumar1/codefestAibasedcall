@@ -2,11 +2,13 @@ package com.sr.capital.kyc.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sr.capital.entity.mongo.kyc.child.GstDocDetails;
+import com.sr.capital.helpers.enums.DocStatus;
 import com.sr.capital.kyc.external.constants.KarzaConstant;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
@@ -85,5 +87,9 @@ public class ExtractedGstResponse {
 
         @Builder.Default
         boolean extendedPeriod=false;
+
+        @Builder.Default
+        @Field("status")
+        private DocStatus status = DocStatus.UNVERIFIED;
     }
 }

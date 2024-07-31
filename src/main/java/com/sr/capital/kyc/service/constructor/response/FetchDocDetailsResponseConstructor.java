@@ -126,7 +126,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                 ExtractedGstResponse gstResponse = ExtractedGstResponse.builder().build();
                 gstResponse.setGstUserDetails(new ArrayList<>());
                 gstDocDetails.getGstDetails().forEach(gstUserDetails -> {
-                    gstResponse.getGstUserDetails().add(ExtractedGstResponse.GstUserDetails.builder().gstin(aes256.decrypt(gstUserDetails.getGstin())).username(aes256.decrypt(gstUserDetails.getUsername())).refId(gstUserDetails.getRefId()).build());
+                    gstResponse.getGstUserDetails().add(ExtractedGstResponse.GstUserDetails.builder().gstin(aes256.decrypt(gstUserDetails.getGstin())).username(aes256.decrypt(gstUserDetails.getUsername())).refId(gstUserDetails.getRefId()).status(gstUserDetails.getStatus()).build());
                 });
 
                 return (T) gstResponse;

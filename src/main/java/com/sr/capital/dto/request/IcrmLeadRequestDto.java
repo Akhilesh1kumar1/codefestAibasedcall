@@ -44,7 +44,7 @@ public class IcrmLeadRequestDto {
 
     List<Long> loanVendorIds;
 
-    List<LoanStatus> loanStatuses;
+    List<String> loanStatuses;
 
     Integer pageNumber=1;
 
