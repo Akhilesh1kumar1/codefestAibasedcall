@@ -1,6 +1,8 @@
 package com.sr.capital.service;
 
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
+import com.sr.capital.dto.request.IcrmLeadDetailsRequestDto;
+import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.GenerateLeadResponseDto;
 import com.sr.capital.entity.mongo.Lead;
 import com.sr.capital.exception.custom.CustomException;
@@ -18,7 +20,7 @@ public interface LeadGenerationService {
 
     GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException;
 
-    Page<Lead> getAllLeads(LocalDateTime dateTime,String type ,Pageable pageable);
+    Page<Lead> getAllLeads(IcrmLeadDetailsRequestDto icrmLeadRequestDto, Pageable pageable);
 
     Boolean updateRemarks(String leadId,String remarks);
 

@@ -1,6 +1,7 @@
 package com.sr.capital.service;
 
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
+import com.sr.capital.dto.request.IcrmLeadDetailsRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.response.GenerateLeadResponseDto;
 import com.sr.capital.dto.response.IcrmLoanResponseDto;
@@ -25,12 +26,12 @@ public interface IcrmLeadService {
 
     public GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException;
 
-    public LeadDetailsResponseDto getAllLeads(LocalDateTime dateTime,String type, Pageable pageable);
+    public LeadDetailsResponseDto getAllLeads(IcrmLeadDetailsRequestDto leadRequestDto,Pageable pageable);
 
 
     public void downloadLoanReport(IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException;
 
-    public void downloadLeadDetails(LocalDateTime dateTime,String type,String emailId);
+    public void downloadLeadDetails(IcrmLeadDetailsRequestDto icrmLeadDetailsRequestDto);
 
     public List<LeadHistoryResponseDto> getLeadHistory(String leadId);
 

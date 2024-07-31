@@ -14,10 +14,10 @@ import java.util.List;
 public interface LeadGenerationRepository extends MongoRepository<Lead,String> {
     List<Lead> findBySrCompanyId(Long srCompanyId);
 
-    @Query("{ 'createdAt': { $gte: ?0 } }")
-    Page<Lead> findByCreatedAtBetween(LocalDateTime startDate, Pageable pageable);
+    @Query("{ 'createdAt': { $gte: ?0, $lte: ?1  } }")
+    Page<Lead> findByCreatedAtBetween(LocalDateTime startDate,LocalDateTime endDate, Pageable pageable);
 
     @Query("{ 'lastModifiedAt': { $gte: ?0 } }")
-    Page<Lead> findByLastModifiedAtBetween(LocalDateTime startDate, Pageable pageable);
+    Page<Lead> findByLastModifiedAtBetween(LocalDateTime startDate,LocalDateTime endDate, Pageable pageable);
 
 }
