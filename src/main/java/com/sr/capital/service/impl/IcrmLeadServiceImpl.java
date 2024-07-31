@@ -424,8 +424,16 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             whereClauseValues.put(loanApplicationStattusPrefix+"created_at->=" , icrmLeadRequestDto.getDateOfDisbursal()+" 00:00:00");
         }
 
+        if(icrmLeadRequestDto.getDateOfDisbursalEnd()!=null){
+            whereClauseValues.put(loanApplicationStattusPrefix+"created_at-<=" , icrmLeadRequestDto.getDateOfDisbursalEnd()+" 23:59:59");
+        }
+
         if(icrmLeadRequestDto.getDateOfSanction()!=null){
             whereClauseValues.put(loanApplicationStattusPrefix+"created_at->=" , icrmLeadRequestDto.getDateOfSanction()+" 00:00:00");
+        }
+
+        if(icrmLeadRequestDto.getDateOfSanctionEnd()!=null){
+            whereClauseValues.put(loanApplicationStattusPrefix+"created_at-<=" , icrmLeadRequestDto.getDateOfSanctionEnd()+" 23:59:59");
         }
 
         int offset = (icrmLeadRequestDto.getPageNumber() - 1) * icrmLeadRequestDto.getPageSize();
@@ -436,7 +444,11 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         }
         arrSort[0] = loanApplicationPrefix+"created_at desc";
         pageInfo.put(loanApplicationPrefix+"created_to",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format( new Date(System.currentTimeMillis()- TimeUnit.MINUTES.toMillis(5))));
-        whereClauseValues.put(loanApplicationPrefix+"created_at<=", pageInfo.get(loanApplicationPrefix+"created_to"));
+        if(icrmLeadRequestDto.getCreatedAtEnd()!=null){
+            whereClauseValues.put(loanApplicationPrefix+"created_at-<=" , icrmLeadRequestDto.getCreatedAtEnd()+" 23:59:59");
+        } else {
+            whereClauseValues.put(loanApplicationPrefix+"created_at<=", pageInfo.get(loanApplicationPrefix+"created_to"));
+        }
         if(icrmLeadRequestDto.getNoOfRecord()==null){
             listRecords = commonJdbcUtill.buildAndExecuteQuery(
                     tables

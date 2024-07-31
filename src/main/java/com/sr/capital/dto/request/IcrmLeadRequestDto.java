@@ -32,9 +32,15 @@ public class IcrmLeadRequestDto {
 
     String createdAt;
 
+    String createdAtEnd;
+
     String dateOfSanction;
 
+    String dateOfSanctionEnd;
+
     String dateOfDisbursal;
+
+    String dateOfDisbursalEnd;
 
     List<Long> loanVendorIds;
 
