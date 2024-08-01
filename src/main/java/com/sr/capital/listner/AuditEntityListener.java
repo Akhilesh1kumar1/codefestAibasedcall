@@ -3,6 +3,7 @@ package com.sr.capital.listner;
 
 
 
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.primary.AuditData;
 import com.sr.capital.entity.primary.interfaces.Auditable;
 import jakarta.persistence.PrePersist;
@@ -21,9 +22,9 @@ public class AuditEntityListener {
             auditData = new AuditData();
             auditable.setAuditData(auditData);
         }
-        String userId = MDC.get("USER_ID");
+        String userId = RequestData.getUserId()==null? "SYSTEM": String.valueOf(RequestData.getUserId());
         auditData.setCreatedAt(LocalDateTime.now());
-        auditData.setCreatedBy(ObjectUtils.isEmpty(userId) ? "SYSTEM" : userId.toString());
+        auditData.setCreatedBy(userId);
         auditData.setUpdatedAt(auditData.getCreatedAt());
         auditData.setUpdatedBy(auditData.getCreatedBy());
     }
@@ -31,7 +32,7 @@ public class AuditEntityListener {
     @PreUpdate
     public void beforeUpdate(Auditable auditable){
         AuditData auditData = auditable.getAuditData();
-        String userId = MDC.get("USER_ID");
+        String userId = RequestData.getUserId()==null? "SYSTEM": String.valueOf(RequestData.getUserId());
         auditData.setUpdatedAt(LocalDateTime.now());
         auditData.setUpdatedBy(ObjectUtils.isEmpty(userId) ? "SYSTEM" : userId.toString());
     }

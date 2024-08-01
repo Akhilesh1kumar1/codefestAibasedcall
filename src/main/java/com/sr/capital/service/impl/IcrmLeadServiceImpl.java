@@ -178,7 +178,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                     .remarks(lead.getRemarks())
                     .loanVendorPartnerId(lead.getLoanVendorPartnerId())
                     .leadId(lead.getId())
-                    .createdAt(lead.getCreatedAt())
+                    .createdAt(lead.getCreatedAt()).mobileNumber(lead.getMobileNumber())
                     .updatedAt(lead.getLastModifiedAt()).userName(lead.getUserName()).leadSource(lead.getLeadSource())
                     .build();
 
@@ -536,7 +536,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
              CSVWriter csvWriter = new CSVWriter(writer)) {
 
             // Write CSV header
-            String[] header = {"srCompanyId", "companyName", "brandName", "amount", "duration in months", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt"};
+            String[] header = {"srCompanyId", "companyName", "brandName","mobileNumber", "amount", "duration in months", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt"};
             csvWriter.writeNext(header);
 
             // Write CSV rows
@@ -545,6 +545,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                         lead.getSrCompanyId().toString(),
                         lead.getCompanyName(),
                         lead.getBrandName(),
+                        lead.getMobileNumber(),
                         lead.getAmount().toString(),
                         lead.getDuration().toString(),
                         lead.getStatus().name(),

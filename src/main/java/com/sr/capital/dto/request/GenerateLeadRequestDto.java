@@ -36,4 +36,7 @@ public class GenerateLeadRequestDto {
 
     Long srCompanyId;
 
+    String mobileNumber;
+
+
 }
