@@ -58,5 +58,7 @@ public class LeadDetailsResponseDto {
 
         String userName;
 
+        String mobileNumber;
+
     }
 }
