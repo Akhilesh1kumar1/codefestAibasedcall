@@ -1,6 +1,7 @@
 package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.response.LoanOfferDetails;
 import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.util.ResponseBuilderUtil;
@@ -23,8 +24,8 @@ public class LoanOfferController {
     final LoanOfferService loanOfferService;
 
     @GetMapping
-    public GenericResponse<List<LoanOfferDetails>> getLoanOfferDetails(@RequestParam("srCompanyId") Long srCompanyId,@RequestParam(value = "status",required = false) String status,@RequestParam("enabled") Boolean enabled){
-        return ResponseBuilderUtil.getResponse(loanOfferService.getLoanOfferDetails(srCompanyId,status,enabled), SUCCESS,
+    public GenericResponse<List<LoanOfferDetails>> getLoanOfferDetails(@RequestParam(value = "srCompanyId",required = false) Long srCompanyId,@RequestParam(value = "status",required = false) String status,@RequestParam("enabled") Boolean enabled){
+        return ResponseBuilderUtil.getResponse(loanOfferService.getLoanOfferDetails(Long.valueOf(RequestData.getTenantId()),status,enabled), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 

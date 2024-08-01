@@ -39,6 +39,11 @@ public class ShiprocketClient {
     public ValidateTokenResponse validateToken(String token) throws UnirestException, CustomException {
 
         Map<String, String> headers = getHeaders(token);
+
+        if(token==null){
+            throw new CustomException("Invalid Request",HttpStatus.UNAUTHORIZED);
+        }
+
         String url = appProperties.getShiprocketAuthBaseUrl() + appProperties.getShiprocketValidateTokenEndPoint();
 
         ValidateTokenRequest request = ValidateTokenRequest.builder().token(token).validateTokenRequest(1).build();
