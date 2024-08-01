@@ -38,4 +38,6 @@ public class Lead extends BaseDoc {
 
     String userName;
 
+    String mobileNumber;
+
 }
