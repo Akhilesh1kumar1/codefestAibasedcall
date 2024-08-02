@@ -59,6 +59,7 @@ public class BaseCreditPartnerEntityServiceImpl {
             BaseCreditPartner baseCreditPartner =optionalBaseCreditPartner.get();
             baseCreditPartner.setIsEnabled(updateBaseCreditPartnerDto.getEnabled());
             baseCreditPartner.setCreditPartnerName(updateBaseCreditPartnerDto.getCreditPartnerName());
+            baseCreditPartner.setDisplayName(updateBaseCreditPartnerDto.getDisplayName());
             baseCreditPartner.setImageLink(updateBaseCreditPartnerDto.getImageLink());
             baseCreditPartner.setDescription(updateBaseCreditPartnerDto.getDescription());
             baseCreditPartnerRepository.save(baseCreditPartner);
