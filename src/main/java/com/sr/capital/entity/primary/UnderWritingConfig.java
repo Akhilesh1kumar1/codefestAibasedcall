@@ -15,6 +15,9 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.UNDERWRITIN
 @Table(name = UNDERWRITING_CONFIG)
 public class UnderWritingConfig extends LongBaseEntity{
 
+    @Column(name = "group_name")
+    private String groupName;
+
     @Enumerated(EnumType.STRING)
     private ParameterName name;
 
@@ -24,5 +27,5 @@ public class UnderWritingConfig extends LongBaseEntity{
 
     private String condition;
 
-    private Double Weightage;
+    private Double weightage;
 }

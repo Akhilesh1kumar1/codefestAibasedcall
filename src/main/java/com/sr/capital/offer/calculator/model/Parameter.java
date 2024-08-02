@@ -12,5 +12,5 @@ public class Parameter {
     private double value;
     private double score;
     private String condition;
-    private Double Weightage;
+    private Double weightage;
 }
