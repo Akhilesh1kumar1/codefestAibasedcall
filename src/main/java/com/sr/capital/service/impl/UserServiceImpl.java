@@ -92,8 +92,8 @@ public class UserServiceImpl implements UserService {
         if(response.getCompanyId()!=null){
             User user = userRepository.findTopBySrCompanyId(Long.valueOf(response.getCompanyId()));
             if(user!=null){
-                response.setFirstName(aes256.decrypt(response.getFirstName()));
-                response.setCompanyName(response.getCompanyName());
+                response.setFirstName(aes256.decrypt(user.getFirstName()));
+                response.setCompanyName(user.getCompanyName());
                 response.setMobile(aes256.decrypt(user.getMobile()));
                 response.setIsAccepted(user.getIsAccepted());
                 response.setEntityType(user.getEntityType());
