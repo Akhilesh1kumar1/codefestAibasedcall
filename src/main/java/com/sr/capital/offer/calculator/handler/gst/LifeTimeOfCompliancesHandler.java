@@ -17,7 +17,7 @@ public class LifeTimeOfCompliancesHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.LIFE_TIME_OF_COMPLIANCES) {
-            double value = customInputData.getLifeTimeOfCompliances(); // Assuming customInputData has a method to get this
+            double value = customInputData.getLifeTimeOfCompliances(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

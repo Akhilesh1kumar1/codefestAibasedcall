@@ -17,7 +17,7 @@ public class CommercialCibilScoreHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.COMMERCIAL_CIBIL_SCORE) {
-            double value = customInputData.getCommercialCibilScore(); // Assuming customInputData has a method to get this
+            double value = customInputData.getCommercialCibilScore(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

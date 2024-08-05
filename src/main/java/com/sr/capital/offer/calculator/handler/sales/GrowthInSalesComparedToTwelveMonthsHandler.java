@@ -19,7 +19,7 @@ public class GrowthInSalesComparedToTwelveMonthsHandler implements ScopeHandler 
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.GROWTH_IN_SALES_COMPARED_TO_TWELVE_MONTHS) {
-            BigDecimal value = customInputData.getGrowthInSalesComparedToTwelveMonths(); // Assuming customInputData has a method to get this
+            BigDecimal value = customInputData.getGrowthInSalesComparedToTwelveMonths(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

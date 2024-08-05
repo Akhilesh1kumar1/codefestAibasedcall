@@ -17,7 +17,7 @@ public class PresenceOnMultiplePlatformHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.PRESENCE_ON_MULTIPLE_PLATFORM) {
-            boolean value = customInputData.getPresenceOnMultiplePlatform(); // Assuming customInputData has a method to get this
+            boolean value = customInputData.getPresenceOnMultiplePlatform();
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

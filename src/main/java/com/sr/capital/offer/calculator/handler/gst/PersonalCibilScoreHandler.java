@@ -17,7 +17,7 @@ public class PersonalCibilScoreHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.PERSONAL_CIBIL_SCORE) {
-            double value = customInputData.getPersonalCibilScore(); // Assuming customInputData has a method to get this
+            double value = customInputData.getPersonalCibilScore(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

@@ -17,7 +17,7 @@ public class RecurringBusinessHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.RECURRING_BUSINESS) {
-            String value = customInputData.getRecurringBusiness(); // Assuming customInputData has a method to get this
+            String value = customInputData.getRecurringBusiness(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

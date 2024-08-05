@@ -17,7 +17,7 @@ public class GstRiskCheckHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.GST_RISK_CHECK) {
-            String value = customInputData.getGstRiskCheck(); // Assuming customInputData has a method to get this
+            String value = customInputData.getGstRiskCheck(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

@@ -17,7 +17,7 @@ public class ComplianceCheckHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.COMPLIANCE_CHECK) {
-            String value = customInputData.getComplianceCheck(); // Assuming customInputData has a method to get this
+            String value = customInputData.getComplianceCheck(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

@@ -17,7 +17,7 @@ public class ItrFilledOnTimeHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.ITR_FILLED_ON_TIME) {
-            boolean value = customInputData.getItrFilledOnTime(); // Assuming customInputData has a method to get this
+            boolean value = customInputData.getItrFilledOnTime(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

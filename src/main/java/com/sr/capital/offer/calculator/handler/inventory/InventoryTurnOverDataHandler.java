@@ -19,7 +19,7 @@ public class InventoryTurnOverDataHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.INVENTORY_TURN_OVER_DATA) {
-            BigDecimal value = customInputData.getInventoryTurnOverData(); // Assuming customInputData has a method to get this
+            BigDecimal value = customInputData.getInventoryTurnOverData(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

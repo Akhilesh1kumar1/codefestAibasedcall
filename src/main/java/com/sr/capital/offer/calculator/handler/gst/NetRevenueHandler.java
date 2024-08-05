@@ -19,7 +19,7 @@ public class NetRevenueHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.NET_REVENUE) {
-            BigDecimal value = customInputData.getNetRevenue(); // Assuming customInputData has a method to get this
+            BigDecimal value = customInputData.getNetRevenue(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

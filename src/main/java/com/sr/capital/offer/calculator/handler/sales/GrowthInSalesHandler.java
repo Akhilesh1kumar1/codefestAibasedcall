@@ -19,7 +19,7 @@ public class GrowthInSalesHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.GROWTH_IN_SALES) {
-            BigDecimal value = customInputData.getGrowthInSales(); // Assuming customInputData has a method to get this
+            BigDecimal value = customInputData.getGrowthInSales(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);

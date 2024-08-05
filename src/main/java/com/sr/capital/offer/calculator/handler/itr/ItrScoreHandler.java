@@ -19,7 +19,7 @@ public class ItrScoreHandler implements ScopeHandler {
     @Override
     public double handle(OfferCalculatorRequestDto customInputData, Parameter parameter) {
         if (parameter.getName() == ParameterName.ITR_SCORE) {
-            BigDecimal value = customInputData.getItrScore(); // Assuming customInputData has a method to get this
+            BigDecimal value = customInputData.getItrScore(); //
             return ScoringUtils.calculateScoreForParameter(parameter, value);
         } else if (next != null) {
             return next.handle(customInputData, parameter);
