@@ -33,6 +33,7 @@ public class CapitalDataReport {
     @Column(name = "PLATFORM_AGE_FTS")
     private Integer platformAgeFts;
 
+    @Builder.Default
     @Column(name = "ORG_TYPE", nullable = false, columnDefinition = "varchar(100) default ''")
     private String orgType = "";
 

@@ -9,6 +9,7 @@ import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.dto.response.*;
+import com.sr.capital.kyc.external.request.extraction.data.ItrExtractionData;
 import com.sr.capital.kyc.service.interfaces.ResponseConstructor;
 import com.sr.capital.util.S3Util;
 import org.apache.commons.lang3.ObjectUtils;
@@ -136,6 +137,9 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             case GST_BY_PAN:
                 GstByPanDocDetails gstByPanDocDetails = (GstByPanDocDetails) kycDocDetails.getDetails();
                 return (T) gstByPanDocDetails;
+            case ITR:
+                ItrExtractionData itrExtractionData = getItrData(kycDocDetails);
+                return (T) itrExtractionData;
             case MSME:
             case LOAN_TRACKER:
             case PROVISIONAL:
@@ -155,6 +159,12 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             default:
                 return null;
         }
+    }
+
+    private ItrExtractionData getItrData(KycDocDetails<?> kycDocDetails) {
+        ItrDocDetails itrDocDetails = (ItrDocDetails) kycDocDetails.getDetails();
+        ItrExtractionData itrExtractionData =ItrExtractionData.builder().username(aes256.decrypt(itrDocDetails.getUsername())).password(aes256.decrypt(itrDocDetails.getPassword())).build();
+        return itrExtractionData;
     }
 
     private List<ExtractedBankResponse> getExtractedBankResponses(KycDocDetails<?> kycDocDetails) {

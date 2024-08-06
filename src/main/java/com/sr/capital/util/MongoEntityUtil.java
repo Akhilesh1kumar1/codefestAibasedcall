@@ -25,6 +25,8 @@ public class MongoEntityUtil {
             case BANK_CHEQUE:
                 List<BankDocDetails> bankDocDetailsList = (List<BankDocDetails>) kycDocDetails.getDetails();
                 return bankDocDetailsList.get(bankDocDetailsList.size()-1) instanceof BankDocDetails;
+            case ITR:
+                return kycDocDetails.getDetails() instanceof ItrDocDetails;
             case DRIVING_LICENSE:
             case PROPRIETORSHIP:
             case VOTER_ID:

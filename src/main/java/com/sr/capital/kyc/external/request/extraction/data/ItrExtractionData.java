@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ItrExtractionData {
 
-    String userName;
+    String username;
 
     String password;
 

@@ -735,14 +735,14 @@ public class ItrAdditionalResponseData {
     }
 
         @Data
-    public class KeyPersonsInfo {
+    public static class KeyPersonsInfo {
         private List<ShareHolderInfo> shareHolderInfo;
         private List<KeyPerson> keyPersons;
     }
 
     @Data
 
-    public class ShareHolderInfo {
+    public static class ShareHolderInfo {
         private String din;
         private String addressDetailPinCode;
         private String name;
@@ -761,7 +761,7 @@ public class ItrAdditionalResponseData {
     }
 
     @Data
-    public class KeyPerson {
+    public static class KeyPerson {
         private String din;
         private String addressDetailPinCode;
         private String name;
@@ -807,7 +807,7 @@ public class ItrAdditionalResponseData {
     }
 
     @Data
-    public class Primary {
+    public static class Primary {
         private String bankName;
         private String ifscCode;
         private String cashDeposited;
@@ -846,7 +846,7 @@ public class ItrAdditionalResponseData {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class GeneralInformation {
+    public static class GeneralInformation {
         private List<NatOfBusiness> natOfBusiness;
         private String entityPan;
         private String entityName;
@@ -868,7 +868,7 @@ public class ItrAdditionalResponseData {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class NatOfBusiness {
+    public static class NatOfBusiness {
         private String code;
         private String tradeName1;
         private String title;
@@ -879,7 +879,7 @@ public class ItrAdditionalResponseData {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class Address {
+    public static class Address {
         private String roadOrStreet;
         private String countryCode;
         private String cityOrTownOrDistrict;
@@ -894,7 +894,7 @@ public class ItrAdditionalResponseData {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class Phone {
+    public static class Phone {
         private String phoneNo;
         private String stdCode;
 
@@ -903,7 +903,7 @@ public class ItrAdditionalResponseData {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class Contact {
+    public static class Contact {
         private String mobileNumber;
         private String emailAddressSecondary;
         private String mobileNumberSecondary;
@@ -915,14 +915,14 @@ public class ItrAdditionalResponseData {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class TopCustomer{
+    public static class TopCustomer{
 
         String customerName;
     }
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class TopSupplier {
+    public static class TopSupplier {
 
         String supplierName;
     }

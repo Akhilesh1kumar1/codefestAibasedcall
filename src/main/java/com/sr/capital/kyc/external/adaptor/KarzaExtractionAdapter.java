@@ -205,6 +205,7 @@ public class KarzaExtractionAdapter {
         itrExtractionData.setRequestId("dummmafn");
         itrAdditionalResponseData.setFormDetails(formDetails);
         itrExtractionData.setResult(itrAdditionalResponseData);
+      //  itrAdditionalResponseData.setPdfDownloadLink("https://rb.gy/2hlagh");
         return itrExtractionData;
     }
 

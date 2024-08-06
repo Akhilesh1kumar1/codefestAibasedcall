@@ -1,6 +1,7 @@
 package com.sr.capital.entity.mongo.kyc;
 
 import com.sr.capital.kyc.external.response.extraction.ItrExtractionResponseData;
+import com.sr.capital.kyc.external.response.extraction.data.ItrAdditionalResponseData;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

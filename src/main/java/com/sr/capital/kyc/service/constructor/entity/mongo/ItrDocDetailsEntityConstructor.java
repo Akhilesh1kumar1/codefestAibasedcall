@@ -63,10 +63,12 @@ public class ItrDocDetailsEntityConstructor implements EntityConstructor {
        if(kycDocDetails==null){
             kycDocDetails= KycDocDetails.<ItrDocDetails>builder()
                     .srCompanyId(RequestData.getTenantId())
-                    .docType(DocType.GST).images(images)
+                    .docType(DocType.ITR).images(images)
                     .details(itrDocDetails)
                     .build();
-        }
+        }else{
+           kycDocDetails.setDetails(itrDocDetails);
+       }
         return (T) kycDocDetails;
     }
 
