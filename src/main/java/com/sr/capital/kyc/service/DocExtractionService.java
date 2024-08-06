@@ -202,6 +202,8 @@ public class DocExtractionService {
             case PROVISIONAL:
             case LOAN_TRACKER:
                 return ReportMetaData.class;
+            case ITR:
+                 return ItrDocDetails.class;
             default:
                 throw new CustomException("Invalid Doc Type!", HttpStatus.INTERNAL_SERVER_ERROR);
         }

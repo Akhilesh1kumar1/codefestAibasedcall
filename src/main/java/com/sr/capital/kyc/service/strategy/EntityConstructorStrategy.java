@@ -54,6 +54,9 @@ public class EntityConstructorStrategy {
     @Autowired
     private GstByPanDocDetailsEntityConstructor gstByPanDocDetailsEntityConstructor;
 
+    @Autowired
+    private ItrDocDetailsEntityConstructor itrDocDetailsEntityConstructor;
+
 
     public <T> T constructEntity(DocOrchestratorRequest request, T entity, Class<?> responseClass) throws EntityConstructorNotFoundException, IOException {
         EntityConstructor entityConstructor;
@@ -83,7 +86,10 @@ public class EntityConstructorStrategy {
             entityConstructor = selfiDocDetailsConstructor;
         }else if(responseClass.equals(ReportMetaData.class)){
            entityConstructor = reportMetaDataConstructor;
-       }else {
+       }else if(responseClass.equals(ItrDocDetails.class)){
+           entityConstructor = itrDocDetailsEntityConstructor;
+       }
+       else {
             throw new EntityConstructorNotFoundException();
         }
 

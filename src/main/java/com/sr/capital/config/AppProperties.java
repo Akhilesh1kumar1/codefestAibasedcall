@@ -234,6 +234,9 @@ public class AppProperties {
     @Value("${external.karza.api.endpoint.compare.name.url}")
     private String karzaNameCompareEndpoint;
 
+    @Value("${external.karza.api.endpoint.extract.itr.url}")
+    private String karzaExtractItrDetailsEndpoint;
+
     @Value("${allowed.compare.name.score}")
     private Integer allowedNameScore;
 

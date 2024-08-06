@@ -1,6 +1,7 @@
 package com.sr.capital.kyc.external.response.extraction.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class ItrAdditionalResponseData {
 
 
@@ -31,7 +34,7 @@ public class ItrAdditionalResponseData {
     private List<FinancialInfo> financialInformation;
     private String version;
 
-    @JsonNaming("26asData")
+    @JsonProperty("26asData")
     private List<AssessmentYearData> asData;
 
     private FormDetails formDetails;

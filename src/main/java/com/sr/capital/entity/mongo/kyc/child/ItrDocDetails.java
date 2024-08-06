@@ -10,7 +10,7 @@ public class ItrDocDetails {
 
     String username;
 
-    String gstin;
+    String password;
 
     String apiVersion="1.0.2";
 
@@ -21,4 +21,8 @@ public class ItrDocDetails {
 
     @Builder.Default
     Integer numberOfYears=1;
+
+    String requestId;
+
+    String financialYear;
 }

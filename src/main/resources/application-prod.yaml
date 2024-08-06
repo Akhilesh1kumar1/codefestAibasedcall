@@ -184,6 +184,8 @@ external:
             url: /gst/uat/v2/gst-return-auth-advance
             pan:
               url: /gst/uat/v2/search
+          itr:
+            url: /itr/prod/v1/itr-return-forms
           bank:
             proof:
               url: /v3/tasks/sync/extract/ind_cheque

@@ -25,7 +25,8 @@ public enum DocType {
 
     UNKNOWN_TYPE("unknown_type"),
     BANK_STATEMENT("bank_statement"),
-    BANK_NET_BANKING("bank_net_banking");
+    BANK_NET_BANKING("bank_net_banking"),
+    ITR("itr");
 
     final String type;
 
