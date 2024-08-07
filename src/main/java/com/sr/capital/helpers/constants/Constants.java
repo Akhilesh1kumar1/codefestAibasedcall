@@ -168,6 +168,8 @@ public final class Constants {
 
         public static final String ACCOUNT_TYPE =  "account_type";
 
+        public static final String ACCESS_TOKEN =  "partner_access_tokens";
+
     }
 
     public static final class Headers {

@@ -1,29 +1,28 @@
 package com.sr.capital.dto.request;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Map;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AccessTokenRequestDto {
+public class CreditPartnerConfigRequestDto {
 
-    @NotNull
+    @NotNull(message = "Account ID cannot be null")
     String accountId;
-    @NotNull
-    String partner;
-    String authCode;
-    String refreshToken;
-    boolean hardRefresh;
-    Map<String,String> metaData;
 
+    @NotNull(message = "Auth code cannot be null")
+    String authCode;
+
+    String refreshToken;
+
+    Map<String,String> metaData;
 }

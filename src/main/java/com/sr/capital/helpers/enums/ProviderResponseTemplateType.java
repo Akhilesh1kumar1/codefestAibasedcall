@@ -2,5 +2,7 @@ package com.sr.capital.helpers.enums;
 
 public enum ProviderResponseTemplateType {
 
-    VALIDATE_TOKEN_RESPONSE;
+    GET_TOKEN_RESPONSE,
+    VALIDATE_TOKEN_RESPONSE
+
 }

@@ -1,12 +1,18 @@
 package com.sr.capital.service.entityimpl;
 
 import com.omunify.core.util.ExceptionUtils;
+import com.omunify.encryption.algorithm.AES256;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.CreateBaseCreditPartnerDto;
+import com.sr.capital.dto.request.CreditPartnerConfigRequestDto;
 import com.sr.capital.dto.request.UpdateBaseCreditPartnerDto;
 import com.sr.capital.dto.response.BaseCreditPartnerResponseDto;
+import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.exception.custom.UnauthorisedException;
 import com.sr.capital.helpers.constants.Constants;
+import com.sr.capital.repository.mongo.CreditPartnerConfigRepository;
 import com.sr.capital.repository.primary.BaseCreditPartnerRepository;
 import com.sr.capital.util.LoggerUtil;
 import com.sr.capital.util.MapperUtils;
@@ -14,11 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +36,10 @@ import static com.sr.capital.helpers.constants.Constants.MessageConstants.NO_REC
 @RequiredArgsConstructor
 public class BaseCreditPartnerEntityServiceImpl {
 
+    final AppProperties appProperties;
+    final AES256 aes256;
     final BaseCreditPartnerRepository baseCreditPartnerRepository;
+    final CreditPartnerConfigRepository creditPartnerConfigRepository;
     LoggerUtil loggerUtil = LoggerUtil.getLogger(BaseCreditPartnerEntityServiceImpl.class);
 
     final RedissonClient redissonClient;
@@ -104,6 +111,30 @@ public class BaseCreditPartnerEntityServiceImpl {
 
     public boolean isVendorExist(Long loanVendorId){
         return baseCreditPartnerRepository.existsById(loanVendorId);
+    }
+
+    public CreditPartnerConfig upsertPartnerConfig(
+            String header,
+            Long partnerId,
+            CreditPartnerConfigRequestDto requestDto
+    ) throws UnauthorisedException {
+        if (!Objects.equals(header, appProperties.getAppSecret())) {
+            throw new UnauthorisedException();
+        }
+
+        CreditPartnerConfig config = creditPartnerConfigRepository.findByPartnerId(partnerId);
+        if (config == null) {
+            config = CreditPartnerConfig.builder().partnerId(partnerId).build();
+        }
+        MapperUtils.mapClass(requestDto, config);
+        encryptPartnerInfo(config);
+        return creditPartnerConfigRepository.save(config);
+    }
+
+    private void encryptPartnerInfo(CreditPartnerConfig config) {
+        config.setAccountId(aes256.encrypt(config.getAccountId()));
+        config.setAuthCode(aes256.encrypt(config.getAuthCode()));
+        config.setRefreshToken(aes256.encrypt(config.getRefreshToken()));
     }
 
 }

@@ -11,7 +11,6 @@ import com.sr.capital.external.shiprocket.dto.response.KycResponse;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -47,5 +46,10 @@ public class TestController {
     public GenericResponse testMultiteDb(@RequestParam("token") String token) throws UnirestException, CustomException {
 
         return ResponseBuilderUtil.getResponse(testRepository.findAll(), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/template/{partner}")
+    public GenericResponse<Object> testPartnerTemplate(@PathVariable(name = "partner") String partner) {
+        return ResponseBuilderUtil.getResponse(testService.testAccessToken(partner), Constants.StatusEnum.SUCCESS, "", HttpStatus.SC_OK);
     }
 }

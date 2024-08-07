@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
@@ -12,8 +13,9 @@ import java.io.Serializable;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccessTokenResponseDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
-    @NotNull
+//    @NotNull
     String accountId;
     @NotNull
     String accessToken;
