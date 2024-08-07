@@ -14,7 +14,7 @@ public class GstStrategy implements  OfferCalculationStrategy{
 
     private final ScopeHandler handlerChain;
 
-    GstStrategy(){
+    public GstStrategy(){
         ScopeHandler gstRiskCheckHandler = new GstRiskCheckHandler();
         ScopeHandler complianceCheckHandler = new ComplianceCheckHandler();
         ScopeHandler lifeTimeOfCompliancesHandler = new LifeTimeOfCompliancesHandler();

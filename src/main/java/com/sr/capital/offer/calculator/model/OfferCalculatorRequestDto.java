@@ -1,12 +1,14 @@
 package com.sr.capital.offer.calculator.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class OfferCalculatorRequestDto {
 
     Integer avgNumberOfShipmentsMonthly;
