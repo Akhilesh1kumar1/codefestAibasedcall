@@ -27,7 +27,7 @@ public class ServicesHandler {
     public void validateSelfSecret(HttpServletRequest servletRequest) throws InvalidCredentialsException {
         String appSecret = servletRequest.getHeader(X_GlAu_SECRET_KEY);
         if(!appProperties.getAppSecret().equals(appSecret)) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException("Unauthorized access");
         }
     }
 

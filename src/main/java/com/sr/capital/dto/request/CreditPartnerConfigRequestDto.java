@@ -24,5 +24,7 @@ public class CreditPartnerConfigRequestDto {
 
     String refreshToken;
 
+    String expiryDateFormat;
+
     Map<String,String> metaData;
 }

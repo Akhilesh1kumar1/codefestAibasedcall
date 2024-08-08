@@ -24,6 +24,8 @@ public class CreditPartnerConfig extends BaseDoc {
 
     String refreshToken;
 
+    String expiryDateFormat;
+
     Map<String,String> metaData;
 
 }

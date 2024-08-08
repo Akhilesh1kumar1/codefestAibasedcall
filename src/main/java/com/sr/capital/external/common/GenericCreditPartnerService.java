@@ -25,8 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
@@ -106,7 +112,11 @@ public class GenericCreditPartnerService implements CreditPartnerService {
                 throw new RuntimeException(e);
             }
 
-            accessTokenInfo.put(partner, responseDto, 10, TimeUnit.MINUTES);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                    Optional.ofNullable(partnerConfig.getExpiryDateFormat())
+                            .orElse("yyyy-MM-dd'T'HH:mm:ss"));
+
+            accessTokenInfo.put(partner, responseDto, expiryDurationInMs(responseDto.getExpiry(), formatter), TimeUnit.MILLISECONDS);
         }
         return responseDto;
     }
@@ -127,5 +137,16 @@ public class GenericCreditPartnerService implements CreditPartnerService {
         }
 
         return partnerInfo;
+    }
+
+    @Override
+    public long expiryDurationInMs(String futureDate, DateTimeFormatter formatter) {
+        LocalDateTime futureDateTime = LocalDateTime.parse(futureDate, formatter);
+        LocalDateTime current = LocalDateTime.now();
+
+        ZonedDateTime currentZonedDateTime = current.atZone(ZoneId.systemDefault());
+        ZonedDateTime futureZonedDateTime = futureDateTime.atZone(ZoneId.systemDefault());
+
+        return ChronoUnit.MILLIS.between(currentZonedDateTime, futureZonedDateTime);
     }
 }

@@ -7,19 +7,19 @@ import com.sr.capital.dto.request.UpdateBaseCreditPartnerDto;
 import com.sr.capital.dto.response.BaseCreditPartnerResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.exception.custom.CustomException;
-import com.sr.capital.exception.custom.UnauthorisedException;
 import com.sr.capital.service.entityimpl.BaseCreditPartnerEntityServiceImpl;
+import com.sr.capital.service.impl.ServicesHandler;
 import com.sr.capital.util.ResponseBuilderUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
+import org.apache.http.auth.InvalidCredentialsException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
-import static com.sr.capital.helpers.constants.Constants.Headers.SERVICE_SECRET_HEADER;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.CREDIT_PARTNER_CREATED_SUCCESSFULLY;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.CREDIT_PARTNER_UPDATED_SUCCESSFULLY;
 
@@ -30,7 +30,7 @@ import static com.sr.capital.helpers.constants.Constants.MessageConstants.CREDIT
 public class BaseCreditPartnerController {
 
     final BaseCreditPartnerEntityServiceImpl baseCreditPartnerService;
-
+    final ServicesHandler servicesHandler;
 
     @PostMapping("/create")
     public GenericResponse<Boolean> createCreditPartner(@RequestBody CreateBaseCreditPartnerDto createBaseCreditPartnerDto) throws CustomException {
@@ -57,12 +57,13 @@ public class BaseCreditPartnerController {
 
     @PostMapping("/config/{partnerId}")
     public GenericResponse<CreditPartnerConfig> saveConfig(
-            @RequestHeader(name = SERVICE_SECRET_HEADER, required = false) String secretHeader,
+            HttpServletRequest request,
             @PathVariable("partnerId") Long partnerId,
             @RequestBody CreditPartnerConfigRequestDto requestDto
-    ) throws IOException, UnauthorisedException {
+    ) throws InvalidCredentialsException {
+        servicesHandler.validateSelfSecret(request);
         return ResponseBuilderUtil.getResponse(
-                baseCreditPartnerService.upsertPartnerConfig(secretHeader, partnerId, requestDto),
+                baseCreditPartnerService.upsertPartnerConfig(partnerId, requestDto),
                 SUCCESS,
                 CREDIT_PARTNER_UPDATED_SUCCESSFULLY,
                 HttpStatus.SC_OK);

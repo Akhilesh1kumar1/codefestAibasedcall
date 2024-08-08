@@ -3,6 +3,7 @@ package com.sr.capital.service.impl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.external.dto.response.ValidateTokenResponse;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
@@ -53,7 +54,7 @@ public class TestServiceImpl {
         return true;
     }
 
-    public Object testAccessToken(String partner) {
+    public AccessTokenResponseDto testAccessToken(String partner) {
         return creditPartnerFactoryService.getPartnerService(partner).getAccessToken(partner);
     }
 }
