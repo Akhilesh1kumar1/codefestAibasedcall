@@ -1,22 +1,21 @@
 package com.sr.capital.service.impl;
 
-import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadDetailsRequestDto;
-import com.sr.capital.dto.request.IcrmLeadRequestDto;
+import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.dto.response.GenerateLeadResponseDto;
 import com.sr.capital.dto.response.event.Action;
 import com.sr.capital.dto.response.event.Events;
 import com.sr.capital.dto.response.event.Transitions;
 import com.sr.capital.entity.mongo.Lead;
 import com.sr.capital.entity.mongo.LeadHistory;
-import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.exception.custom.CustomServiceException;
-import com.sr.capital.external.service.CommunicationService;
+import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
 import com.sr.capital.helpers.enums.LeadStatus;
 import com.sr.capital.repository.mongo.LeadGenerationRepository;
+import com.sr.capital.repository.primary.UserRepository;
 import com.sr.capital.service.LeadGenerationService;
 import com.sr.capital.service.UserService;
 import com.sr.capital.service.entityimpl.LeadHistoryServiceImpl;
@@ -38,16 +37,20 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
 
     final LeadGenerationRepository leadGenerationRepository;
     final LeadHistoryServiceImpl leadHistoryService;
+    final UserService userService;
+    final UserRepository userRepository;
 
     @Autowired
     @Qualifier("leadEvents")
     Events events;
     @Override
-    public GenerateLeadResponseDto saveLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
+    public GenerateLeadResponseDto saveLead(GenerateLeadRequestDto generateLeadRequestDto, String token)
+            throws CustomException {
         List<Lead> leadList = leadGenerationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
         if(CollectionUtils.isNotEmpty(leadList)){
             throw new CustomException("Lead is already generated", HttpStatus.BAD_REQUEST);
         }
+        addUserIfEmpty(RequestData.getUserId(), token);
         Lead lead =Lead.builder().srCompanyId(generateLeadRequestDto.getSrCompanyId()!=null? generateLeadRequestDto.getSrCompanyId() : Long.valueOf(RequestData.getTenantId())).amount(generateLeadRequestDto.getAmount()).duration(generateLeadRequestDto.getDuration()).leadSource(generateLeadRequestDto.getLeadSource()).status(LeadStatus.LEAD_START).userName(generateLeadRequestDto.getUserName())
                 .mobileNumber(generateLeadRequestDto.getMobileNumber()).build();
         lead.setLastModifiedBy(String.valueOf(RequestData.getUserId()));
@@ -149,4 +152,20 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         lead.setStatus(currentTransition.getStatus());
     }
 
+    private void addUserIfEmpty(Long userId, String token) throws CustomException {
+        if (userRepository.findBySrUserId(userId) == null) {
+            InternalTokenUserDetailsResponse userDetails = userService
+                    .getUserDetailsUsingInternalToken(token);
+            UserDetails userDetailsToSave = new UserDetails();
+            userDetailsToSave.setUserId(userDetails.getUserId());
+            userDetailsToSave.setFirstName(userDetails.getFirstName());
+            userDetailsToSave.setLastName(userDetails.getLastName());
+            userDetailsToSave.setCompanyId(Long.valueOf(userDetails.getCompanyId()));
+            userDetailsToSave.setCompanyName(userDetails.getCompanyName());
+            userDetailsToSave.setEmail(userDetails.getEmail());
+            userDetailsToSave.setMobileNumber(userDetails.getMobile());
+            userDetailsToSave.setIsMobileNumberVerified(true);
+            userService.saveUserDetails(userDetailsToSave);
+        }
+    }
 }

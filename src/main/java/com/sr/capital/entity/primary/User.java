@@ -86,4 +86,18 @@ public class User extends LongBaseEntity{
         return user;
     }
 
+    public static void mapUpdateUser(UserDetails userDetails, User user) {
+        user.setComments(userDetails.getComments());
+        user.setIsAccepted(userDetails.getIsAccepted());
+        user.setFirstName(userDetails.getFirstName());
+        user.setMiddleName(userDetails.getMiddleName());
+        user.setLastName(userDetails.getLastName());
+        user.setEmail(userDetails.getEmail());
+        user.setMobile(userDetails.getMobileNumber());
+        user.setEntityType(userDetails.getEntityType());
+        user.setCompanyName(userDetails.getCompanyName());
+        user.setPanNumber(userDetails.getPanNumber());
+        user.setIsEnabled(true);
+        user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
+    }
 }
