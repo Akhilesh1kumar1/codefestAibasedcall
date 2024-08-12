@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface LeadGenerationService {
 
-    GenerateLeadResponseDto saveLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException;
+    GenerateLeadResponseDto saveLead(GenerateLeadRequestDto generateLeadRequestDto, String token) throws CustomException;
 
     List<GenerateLeadResponseDto> getAllLeads(Long srCompanyId);
 

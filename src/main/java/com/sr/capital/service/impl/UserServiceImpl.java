@@ -43,7 +43,9 @@ public class UserServiceImpl implements UserService {
         User user =userRepository.findBySrUserId(Long.valueOf(userDetails.getUserId()));
        if(user==null){
            user =User.mapUser(userDetails);
-       }else {
+       } else if (user.getPanNumber() == null) {
+           User.mapUpdateUser(userDetails, user);
+       } else {
            throw new CustomException("User already exist",HttpStatus.BAD_REQUEST);
        }
 
