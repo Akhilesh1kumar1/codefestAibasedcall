@@ -42,7 +42,7 @@ public class CapitalDataReport {
     private String detailsInfo;
 
     @Column(name = "UPDATED_ON")
-    private Timestamp updatedOn;
+    private String updatedOn;
 
     @Builder.Default
     @Column(name = "PLATFORM_AGE_SIGNUP_MONTH", nullable = false, columnDefinition = "int default 0")

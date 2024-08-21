@@ -7,13 +7,8 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-import com.sr.capital.dto.response.CompanySalesDetails;
-import com.sr.capital.dto.response.MonthlySalesDetails;
-import com.sr.capital.dto.response.SalesData;
-import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.kyc.dto.request.FileDetails;
-import com.sr.capital.service.FileProcessor;
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,8 +25,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.opencsv.ICSVWriter.DEFAULT_SEPARATOR;
 import static com.sr.capital.helpers.constants.Constants.Separators.SLASH_SEPARATOR;
@@ -39,24 +36,15 @@ import static com.sr.capital.helpers.constants.Constants.ServiceConstants.INVALI
 
 @Component
 @Slf4j
-public class CsvUtils  {
+public class CsvUtils {
 
 
-    public void writeCsvWithCustomHeader(List<CompanySalesDetails> companySalesDetailsList , String[] header, String filePath) throws IOException {
+    public void writeCsvWithCustomHeader(List<String[]> data, String[] header, String filePath) throws IOException {
         try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
-            // Write the custom header
             writer.writeNext(header);
 
-            // Write user data rows
-            for (CompanySalesDetails companySalesDetails : companySalesDetailsList) {
-                String[] data = {String.valueOf(companySalesDetails.getSrCompanyId()), String.valueOf(companySalesDetails.getAgeInSr()),companySalesDetails.getOrgKyc(),"" };
-                AtomicInteger index =new AtomicInteger(3);
-               companySalesDetails.getDetailsInfo().forEach((s, monthlySalesDetails) -> {
-                   data[index.incrementAndGet()]= String.valueOf(companySalesDetails.getMonthCodGmv());
-                   data[index.incrementAndGet()]= String.valueOf(companySalesDetails.getMonthShipments());
-                   data[index.incrementAndGet()]= String.valueOf(companySalesDetails.getMonthRemittedValue());
-                });
-                writer.writeNext(data);
+            for (String[] line : data) {
+                writer.writeNext(line);
             }
         }
     }
@@ -142,17 +130,17 @@ public class CsvUtils  {
         return StringUtils.isNotEmpty(s3Path) ? s3CdnUrl + SLASH_SEPARATOR + s3Path : s3Path;
     }
 
-    public List<Map<String,String>> getCsvContent(String filePath,@Nullable Boolean missingBodyValues) throws CustomException {
+    public List<Map<String, String>> getCsvContent(String filePath, @Nullable Boolean missingBodyValues) throws CustomException {
 
         try {
             missingBodyValues = Optional.ofNullable(missingBodyValues).orElse(false);
-            return readFile(filePath,missingBodyValues);
-        } catch(IOException e) {
-            throw new CustomException("Invalid file : file parsing exception",HttpStatus.BAD_REQUEST);
+            return readFile(filePath, missingBodyValues);
+        } catch (IOException e) {
+            throw new CustomException("Invalid file : file parsing exception", HttpStatus.BAD_REQUEST);
         }
     }
 
-    private List<Map<String,String>> readFile(String filePath, Boolean missingBodyValues) throws CustomException,IOException {
+    private List<Map<String, String>> readFile(String filePath, Boolean missingBodyValues) throws CustomException, IOException {
 
         List<Map<String, String>> csvData = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader(new File(filePath)));
@@ -163,23 +151,22 @@ public class CsvUtils  {
             while ((bodyLine = br.readLine()) != null) {
                 String[] bodyArr = readBody(bodyLine);
                 if (header.length != bodyArr.length) {
-                    if(missingBodyValues && bodyArr.length < header.length){
-                        bodyArr = setRemainingEmpty(header.length,bodyArr);
-                    }else
-                        throw new CustomException("Invalid Csv",HttpStatus.BAD_REQUEST);
+                    if (missingBodyValues && bodyArr.length < header.length) {
+                        bodyArr = setRemainingEmpty(header.length, bodyArr);
+                    } else
+                        throw new CustomException("Invalid Csv", HttpStatus.BAD_REQUEST);
                 }
                 csvData.add(createBodyMap(header, bodyArr));
             }
-        }
-        finally {
+        } finally {
             br.close();
         }
         return csvData;
     }
 
     private String[] readFirstLine(String firstLine) throws CustomException {
-        if(firstLine == null) {
-            throw new CustomException("Empty Csv File",HttpStatus.BAD_REQUEST);
+        if (firstLine == null) {
+            throw new CustomException("Empty Csv File", HttpStatus.BAD_REQUEST);
         }
         return firstLine.split(",");
     }
@@ -188,22 +175,22 @@ public class CsvUtils  {
         return bodyLines.split(",");
     }
 
-    private Map<String,String> createBodyMap(String[] header, String[] body) {
-        Map<String,String> bodyMap = new HashMap<>();
-        for(int i = 0; i<header.length;i++) {
-            bodyMap.put(header[i].replaceAll("\"",""), (body[i] == null ?  "":body[i]));
+    private Map<String, String> createBodyMap(String[] header, String[] body) {
+        Map<String, String> bodyMap = new HashMap<>();
+        for (int i = 0; i < header.length; i++) {
+            bodyMap.put(header[i].replaceAll("\"", ""), (body[i] == null ? "" : body[i]));
         }
         return bodyMap;
     }
 
-    private  String[] setRemainingEmpty(int headerLength, String[] bodyArr){
+    private String[] setRemainingEmpty(int headerLength, String[] bodyArr) {
         int startIndex = bodyArr.length;
         String[] newArr = new String[headerLength];
-        for(int i = 0; i<startIndex;i++){
+        for (int i = 0; i < startIndex; i++) {
             newArr[i] = bodyArr[i];
         }
 
-        for(int i = startIndex; i<headerLength;i++){
+        for (int i = startIndex; i < headerLength; i++) {
             newArr[i] = "";
         }
         return newArr;
@@ -237,6 +224,35 @@ public class CsvUtils  {
         }
 
         return new File(fileDetails.getFileName());
+    }
+
+    public static List<String> generateDateKeys(
+            LocalDateTime dateTime, int duration, String format, ChronoUnit unit,
+            boolean subtract, long amount
+    ) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+
+        List<String> keysList = new ArrayList<>();
+
+        for (int i = 0; i < duration; i++) {
+            keysList.add(dateTime.format(formatter));
+            dateTime = subtract ?
+                    dateTime.minus(amount, unit) :
+                    dateTime.plus(amount, unit);
+        }
+
+        return keysList;
+    }
+
+    /**
+     * Generate Date keys from current DateTime
+     * @param duration in {@code unit}s
+     * @param format compatible with {@code DateTimeFormatter}
+     * @param unit in ChronoUnit
+     * @return List of generated keys
+     */
+    public static List<String> generateDateKeys(int duration, String format, ChronoUnit unit) {
+        return generateDateKeys(LocalDateTime.now(), duration, format, unit, true, 1);
     }
 
 }
