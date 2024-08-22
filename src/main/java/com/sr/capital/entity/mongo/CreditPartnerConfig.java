@@ -1,5 +1,6 @@
 package com.sr.capital.entity.mongo;
 
+import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.entity.mongo.kyc.BaseDoc;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.util.Map;
 @Document("credit_partner")
 public class CreditPartnerConfig extends BaseDoc {
 
-    @Indexed(unique = true,name = "creditPartnerId")
+    @Indexed(unique = true, name = "creditPartnerId")
     Long partnerId;
 
     String accountId;
@@ -26,6 +27,21 @@ public class CreditPartnerConfig extends BaseDoc {
 
     String expiryDateFormat;
 
-    Map<String,String> metaData;
+    @Builder.Default
+    Boolean authCodeHardcoded = false;
+
+    Map<String, String> metaData;
+
+    public static void encryptInfo(CreditPartnerConfig config, AES256 aes256) {
+        config.setAccountId(aes256.encrypt(config.getAccountId()));
+        config.setAuthCode(aes256.encrypt(config.getAuthCode()));
+        config.setRefreshToken(aes256.encrypt(config.getRefreshToken()));
+    }
+
+    public static void decryptInfo(CreditPartnerConfig config, AES256 aes256) {
+        config.setAccountId(aes256.decrypt(config.getAccountId()));
+        config.setAuthCode(aes256.decrypt(config.getAuthCode()));
+        config.setRefreshToken(aes256.decrypt(config.getRefreshToken()));
+    }
 
 }

@@ -26,5 +26,7 @@ public class CreditPartnerConfigRequestDto {
 
     String expiryDateFormat;
 
+    Boolean authCodeHardcoded = false;
+
     Map<String,String> metaData;
 }

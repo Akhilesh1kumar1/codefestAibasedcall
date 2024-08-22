@@ -3,6 +3,7 @@ package com.sr.capital.external.common;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
+import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.request.AccessTokenRequestDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
@@ -61,6 +62,9 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     @Autowired
     private ProviderConfigUtil providerConfigUtil;
 
+    @Autowired
+    private AES256 aes256;
+
     @Override
     public AccessTokenResponseDto getAccessToken(String partner) {
         RMapCache<String, AccessTokenResponseDto> accessTokenInfo = redissonClient
@@ -73,50 +77,17 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
             CreditPartnerConfig partnerConfig = creditPartnerConfigRepository
                     .findByPartnerId(partnerInfo.getId());
+            CreditPartnerConfig.decryptInfo(partnerConfig, aes256);
 
-            AccessTokenRequestDto requestDto = MapperUtils.mapClass(partnerConfig, AccessTokenRequestDto.class);
-            requestDto.setPartner(partner);
-
-            Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
-                    requestDto.getMetaData(),
-                    ProviderRequestTemplateType.GET_TOKEN.name());
-
-            Object requestBody = null;
-
-            Map<String, Object> template = providerConfigUtil.getProviderTemplates(requestDto,
-                    ProviderRequestTemplateType.GET_TOKEN.name(), partnerInfo.getId(), true);
-
-            if (template != null) {
-                requestBody = jsonPathEvaluator.evaluate(template, requestDto);
+            if (Optional.ofNullable(partnerConfig.getAuthCodeHardcoded()).orElse(false)) {
+                responseDto = AccessTokenResponseDto.builder()
+                        .accountId(partnerConfig.getAccountId())
+                        .accessToken(partnerConfig.getAuthCode())
+                        .refreshToken(partnerConfig.getRefreshToken()).build();
+                accessTokenInfo.put(partner, responseDto);
+            } else {
+                responseDto = getAccessTokenResponseDto(partner, partnerConfig, partnerInfo, accessTokenInfo);
             }
-
-            HttpResponse<?> restResponseEntity = null;
-            try {
-                restResponseEntity = providerHelperUtil.makeApiCall(params,
-                        (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
-                        requestBody,
-                        null);
-            } catch (UnirestException | URISyntaxException e) {
-                log.error(partner, e);
-            }
-
-            GenericResponse<?> response = new GenericResponse<>();
-
-            providerHelperUtil.setResponse(response, restResponseEntity,
-                    ProviderResponseTemplateType.GET_TOKEN_RESPONSE.name(), partnerInfo.getId());
-
-            try {
-                responseDto = MapperUtils.convertValue(response.getData(),
-                        AccessTokenResponseDto.class);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-                    Optional.ofNullable(partnerConfig.getExpiryDateFormat())
-                            .orElse("yyyy-MM-dd'T'HH:mm:ss"));
-
-            accessTokenInfo.put(partner, responseDto, expiryDurationInMs(responseDto.getExpiry(), formatter), TimeUnit.MILLISECONDS);
         }
         return responseDto;
     }
@@ -149,4 +120,53 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
         return ChronoUnit.MILLIS.between(currentZonedDateTime, futureZonedDateTime);
     }
+
+    private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
+        AccessTokenResponseDto responseDto;
+        AccessTokenRequestDto requestDto = MapperUtils.mapClass(partnerConfig, AccessTokenRequestDto.class);
+        requestDto.setPartner(partner);
+
+        Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
+                requestDto.getMetaData(),
+                ProviderRequestTemplateType.GET_TOKEN.name());
+
+        Object requestBody = null;
+
+        Map<String, Object> template = providerConfigUtil.getProviderTemplates(requestDto,
+                ProviderRequestTemplateType.GET_TOKEN.name(), partnerInfo.getId(), true);
+
+        if (template != null) {
+            requestBody = jsonPathEvaluator.evaluate(template, requestDto);
+        }
+
+        HttpResponse<?> restResponseEntity = null;
+        try {
+            restResponseEntity = providerHelperUtil.makeApiCall(params,
+                    (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
+                    requestBody,
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(partner, e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.GET_TOKEN_RESPONSE.name(), partnerInfo.getId());
+
+        try {
+            responseDto = MapperUtils.convertValue(response.getData(),
+                    AccessTokenResponseDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                Optional.ofNullable(partnerConfig.getExpiryDateFormat())
+                        .orElse("yyyy-MM-dd'T'HH:mm:ss"));
+
+        accessTokenInfo.put(partner, responseDto, expiryDurationInMs(responseDto.getExpiry(), formatter), TimeUnit.MILLISECONDS);
+        return responseDto;
+    }
+
 }

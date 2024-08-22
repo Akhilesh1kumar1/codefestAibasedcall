@@ -119,14 +119,8 @@ public class BaseCreditPartnerEntityServiceImpl {
             config = CreditPartnerConfig.builder().partnerId(partnerId).build();
         }
         MapperUtils.mapClass(requestDto, config);
-        encryptPartnerInfo(config);
+        CreditPartnerConfig.encryptInfo(config, aes256);
         return creditPartnerConfigRepository.save(config);
-    }
-
-    private void encryptPartnerInfo(CreditPartnerConfig config) {
-        config.setAccountId(aes256.encrypt(config.getAccountId()));
-        config.setAuthCode(aes256.encrypt(config.getAuthCode()));
-        config.setRefreshToken(aes256.encrypt(config.getRefreshToken()));
     }
 
 }
