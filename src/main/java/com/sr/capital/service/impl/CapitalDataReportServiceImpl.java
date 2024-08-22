@@ -63,6 +63,7 @@ public class CapitalDataReportServiceImpl implements CapitalDataReportService {
             pageable =PageRequest.of(++pageNumber, pageSize, Sort.by(Sort.Direction.ASC, "companyId"));
             dataReportList = getAllData(pageable);
         }
+        capitalDataReportList.addAll(dataReportList.getContent());
 
         if(!capitalDataReportList.isEmpty()){
             capitalDataReportList.forEach(capitalDataReport -> {
