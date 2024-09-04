@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
+import static com.sr.capital.helpers.constants.Constants.Headers.TOKEN;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
 
 @RestController
@@ -26,9 +27,13 @@ public class LeadGenerationController {
 
     final LeadGenerationService leadGenerationService;
     @PostMapping("/save")
-    public GenericResponse<GenerateLeadResponseDto> createLead(@RequestBody GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
-        return ResponseBuilderUtil.getResponse(leadGenerationService.saveLead(generateLeadRequestDto),SUCCESS,
-                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    public GenericResponse<GenerateLeadResponseDto> createLead(
+            @RequestBody GenerateLeadRequestDto generateLeadRequestDto,
+            @RequestHeader(name = TOKEN) String token
+    ) throws CustomException {
+        return ResponseBuilderUtil.getResponse(
+                leadGenerationService.saveLead(generateLeadRequestDto, token),
+                SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
     @GetMapping("/details")
