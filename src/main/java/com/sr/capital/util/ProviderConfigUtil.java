@@ -48,7 +48,7 @@ public class ProviderConfigUtil {
                         break;
                     case "PATH_VARIABLE":
                         params.put(ProviderUrlConfigTypes.PATH_VARIABLE.name(),
-                                params.getOrDefault(ProviderUrlConfigTypes.PATH_VARIABLE.name(), "") + providerConfig.getValue());
+                                metaData.getOrDefault(ProviderUrlConfigTypes.PATH_VARIABLE.name(), "") + providerConfig.getValue());
                         break;
                     case "OTHER":
                         params.put(providerConfig.getKey(), providerConfig.getValue());

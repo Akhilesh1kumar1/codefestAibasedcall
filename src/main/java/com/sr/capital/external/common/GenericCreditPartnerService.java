@@ -1,11 +1,14 @@
 package com.sr.capital.external.common;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.request.AccessTokenRequestDto;
+import com.sr.capital.dto.request.CreateLeadRequestDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
+import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
@@ -89,6 +92,51 @@ public class GenericCreditPartnerService implements CreditPartnerService {
                 responseDto = getAccessTokenResponseDto(partner, partnerConfig, partnerInfo, accessTokenInfo);
             }
         }
+        return responseDto;
+    }
+
+    @Override
+    public CreateLeadResponseDto createLead(String partner, CreateLeadRequestDto requestDto) {
+        CreateLeadResponseDto responseDto;
+        Map<String, String> metaData;
+        metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
+        BaseCreditPartner partnerInfo = getPartnerInfo(partner);
+
+        Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
+                metaData,
+                ProviderRequestTemplateType.CREATE_LEAD.name());
+
+        Object requestBody = null;
+
+        Map<String, Object> template = providerConfigUtil.getProviderTemplates(requestDto,
+                ProviderRequestTemplateType.CREATE_LEAD.name(), partnerInfo.getId(), true);
+
+        if (template != null) {
+            requestBody = jsonPathEvaluator.evaluate(template, requestDto);
+        }
+
+        HttpResponse<?> restResponseEntity = null;
+        try {
+            restResponseEntity = providerHelperUtil.makeApiCall(params,
+                    (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
+                    requestBody,
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(partner, e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.CREATE_LEAD_RESPONSE.name(), partnerInfo.getId());
+
+        try {
+            responseDto = MapperUtils.convertValue(response.getData(),
+                    CreateLeadResponseDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return responseDto;
     }
 
