@@ -73,6 +73,8 @@ public class ExternalRequestTransformerStrategy {
             case ITR:
                    requestTransformer = itrExtractionRequestTransformer;
                    break;
+            case BUSINESS_ADDRESS:
+
             default:
                 throw new RequestTransformerNotFoundException();
         }

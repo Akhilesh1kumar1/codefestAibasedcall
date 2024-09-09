@@ -8,6 +8,7 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
+import com.sr.capital.kyc.dto.request.PersonalAddressDetailsRequestDto;
 import com.sr.capital.kyc.dto.response.*;
 import com.sr.capital.kyc.external.request.extraction.data.ItrExtractionData;
 import com.sr.capital.kyc.service.interfaces.ResponseConstructor;
@@ -143,7 +144,24 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             case MSME:
             case LOAN_TRACKER:
             case PROVISIONAL:
-                return (T) kycDocDetails;
+                return (T) kycDocDetails.getDetails();
+            case PERSONAL_ADDRESS:
+                PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) kycDocDetails.getDetails();
+                personalAddressDetails.getAddress().forEach(personalAddress->{
+                    personalAddress.setAddress(aes256.decrypt(personalAddress.getAddress()));
+                    personalAddress.setCity(aes256.decrypt(personalAddress.getCity()));
+                    personalAddress.setState(aes256.decrypt(personalAddress.getState()));
+                    personalAddress.setPincode(aes256.decrypt(personalAddress.getPincode()));
+                });
+                return (T) personalAddressDetails;
+            case BUSINESS_ADDRESS:
+                 BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) kycDocDetails.getDetails();
+                 businessAddressDetails.setBusinessPanNumber(aes256.decrypt(businessAddressDetails.getBusinessPanNumber()));
+                 businessAddressDetails.setAddress(aes256.decrypt(businessAddressDetails.getAddress()));
+                 businessAddressDetails.setCity(aes256.decrypt(businessAddressDetails.getCity()));
+                 businessAddressDetails.setState(aes256.decrypt(businessAddressDetails.getState()));
+                 businessAddressDetails.setPincode(aes256.decrypt(businessAddressDetails.getPincode()));
+                 return (T) businessAddressDetails;
             case AGREEMENT:
             case CIN:
             case VOTER_ID:

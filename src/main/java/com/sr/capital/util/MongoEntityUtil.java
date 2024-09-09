@@ -36,6 +36,11 @@ public class MongoEntityUtil {
             case PROVISIONAL:
             case LOAN_TRACKER:
                 return kycDocDetails.getDetails() instanceof ReportMetaData;
+            case PERSONAL_ADDRESS:
+                return kycDocDetails.getDetails() instanceof PersonalAddressDetails;
+
+            case BUSINESS_ADDRESS:
+                return kycDocDetails.getDetails() instanceof BusinessAddressDetails;
             default:
                 return false;
         }

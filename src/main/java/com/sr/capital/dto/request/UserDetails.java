@@ -59,6 +59,8 @@ public class UserDetails {
 
     private UUID verificationToken;
 
+    private String dateOfBirth;
+
     public static UserDetails mapUser(User user){
         UserDetails userDetails =new UserDetails();
         userDetails.setId(user.getId());

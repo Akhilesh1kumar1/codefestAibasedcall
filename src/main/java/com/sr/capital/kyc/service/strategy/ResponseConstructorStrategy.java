@@ -68,6 +68,8 @@ public class ResponseConstructorStrategy {
                     case MSME:
                     case PROVISIONAL:
                     case LOAN_TRACKER:
+                    case BUSINESS_ADDRESS:
+                    case PERSONAL_ADDRESS:
                          responseConstructor = defaultResponseConstructor;
                          break;
                     case ITR:

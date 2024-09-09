@@ -1,15 +1,26 @@
 package com.sr.capital.service.impl;
 
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.dto.request.CreateLeadRequestDto;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
+import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.LoanApplicationStatusDto;
+import com.sr.capital.entity.mongo.kyc.KycDocDetails;
+import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
+import com.sr.capital.entity.primary.User;
+import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.RequestType;
+import com.sr.capital.kyc.dto.request.DocDetailsRequest;
+import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
+import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
+import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.LoanApplicationService;
 import com.sr.capital.service.LoanOfferService;
+import com.sr.capital.service.UserService;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +40,30 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final RequestValidationStrategy requestValidationStrategy;
     final LoanApplicationRepository loanApplicationRepository;
     final LoanOfferService loanOfferService;
+    final CreditPartnerFactoryService creditPartnerFactoryService;
+    final UserService userService;
+    final DocDetailsService docDetailsService;
+
     @Override
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
 
         loanApplicationRequestDto = requestValidationStrategy.validateRequest(loanApplicationRequestDto, RequestType.LOAN_APPLICATION);
         LoanApplication loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
         loanApplication = loanApplicationRepository.save(loanApplication);
+
+        LoanApplicationResponseDto loanApplicationResponseDto =LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
+        if(loanApplicationRequestDto.getCreateLoanAtVendor()){
+            CreateLeadResponseDto responseDto = creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
+            if(responseDto!=null && responseDto.getStatus()!=null && responseDto.getStatus().equalsIgnoreCase("success")){
+            }
+        }
         if(loanApplicationRequestDto.getLoanOfferId()!=null)
            loanOfferService.updateLoanOffer(loanApplicationRequestDto.getLoanOfferId(),true);
-        return LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
+
+
+        return loanApplicationResponseDto;
     }
+
 
     @Override
     public List<LoanApplicationResponseDto> getLoanApplication(UUID loanApplicationId) {
@@ -69,5 +94,50 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     @Override
     public LoanApplication getLoanApplicationById(UUID loanApplicationId) {
         return loanApplicationRepository.findById(loanApplicationId).orElse(null);
+    }
+
+
+    private CreateLeadRequestDto buildRequestDto(String tenantId,LoanApplicationResponseDto loanApplicationResponseDto) {
+
+        User user = userService.getCompanyDetails(Long.valueOf(tenantId));
+
+        CreateLeadRequestDto createLeadRequestDto = CreateLeadRequestDto.builder().clientLoanId(String.valueOf(loanApplicationResponseDto.getId())).customerCategory("other").applicationId(String.valueOf(loanApplicationResponseDto.getId())).clientCustomerId(tenantId)
+                .build();
+
+        if(user!=null){
+
+            List<KycDocDetails<?>> docDetails =docDetailsService.fetchDocDetailsByTenantId(tenantId);
+
+            if(CollectionUtils.isNotEmpty(docDetails)){
+
+                docDetails.stream().forEach(doc->{
+                    if(doc.getDocType()== DocType.PERSONAL_ADDRESS){
+                       buildPersonalDetails(doc,user,createLeadRequestDto);
+
+                    }else if(doc.getDocType() == DocType.BUSINESS_ADDRESS){
+
+                    }
+                });
+            }
+
+        }
+
+        return createLeadRequestDto;
+    }
+
+    private void buildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto) {
+        createLeadRequestDto.setFirstName(user.getFirstName());
+        createLeadRequestDto.setMobileNumber(user.getMobile());
+        createLeadRequestDto.setEmail(user.getEmail());
+        createLeadRequestDto.setLastName(user.getLastName());
+        createLeadRequestDto.setDateOfBirth(user.getDateOfBirth());
+        PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) doc.getDetails();
+
+        personalAddressDetails.getAddress().forEach(address -> {
+            createLeadRequestDto.setCurrentAddress(address.getAddress());
+            createLeadRequestDto.setCurrentCity(address.getCity());
+            createLeadRequestDto.setCurrentPincode(address.getPincode());
+            createLeadRequestDto.setCurrentState(address.getState());
+        });
     }
 }
