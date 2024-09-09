@@ -144,7 +144,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             case MSME:
             case LOAN_TRACKER:
             case PROVISIONAL:
-                return (T) kycDocDetails.getDetails();
+                return (T) kycDocDetails;
             case PERSONAL_ADDRESS:
                 PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) kycDocDetails.getDetails();
                 personalAddressDetails.getAddress().forEach(personalAddress->{
