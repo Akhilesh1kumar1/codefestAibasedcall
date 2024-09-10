@@ -121,6 +121,9 @@ app:
     klub:
       vendor-token: ${KLUB_VENDOR_TOKEN:test}
       vendor-code: ${KLUB_VENDOR_CODE:test}
+    common:
+      vendor-token: ${KLUB_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
+      vendor-code: ${KLUB_VENDOR_CODE:661f14a7-9fbc-4f07-8f18-2917065d80}
 
 aws:
   region: ${AWS_REGION:test}
@@ -221,5 +224,38 @@ allowed:
 
 encryption:
   key: ${ENCRYPTION_KEY:test}
+
+kafka:
+  basePath: KAFKA_BASE_PATH
+  topics:
+    statusUpdate: capital
+  producer:
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost}:9092
+    numberOfProducers: 1
+    maxBlockTimeMs: 5000
+    retrylock: capital-write-publisher-lock
+    confluentUserName: ${CONFLUENT_USER_NAME:""}
+    confluentPassword: ${CONFLUENT_PASSWORD:""}
+    confluentEnabled: ${CONFLUENT_ENABLED:false}
+  consumer:
+    serviceName: capital
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost}:9092
+    podPreDestroyGraceTimeInMs: ${KAFKA_PRE_POD_DESTROY_GRACE_MS:10000}
+    confluentUserName: ${CONFLUENT_USER_NAME:""}
+    confluentPassword: ${CONFLUENT_PASSWORD:""}
+    confluentEnabled: ${CONFLUENT_ENABLED:false}
+    groups:
+      - topicName: capital
+        consumerCount: 0
+        groupId: status-update
+        topicHandler: status-update-handler
+        commitBlockTimeMs: 5000
+        handlerTimeoutMs: 25000
+        groupingEnabled: true
+        syncRetry:
+          maxRetry: 2
+          retryIntervalMs: 1000
+
+
 
 

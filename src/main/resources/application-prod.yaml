@@ -122,6 +122,10 @@ app:
       vendor-token: ${KLUB_VENDOR_TOKEN:test}
       vendor-code: ${KLUB_VENDOR_CODE:test}
 
+    common:
+      vendor-token: ${COMMON_VENDOR_TOKEN:test}
+      vendor-code: ${COMMON_VENDOR_CODE:test}
+
 aws:
   region: ${AWS_REGION:test}
   s3:
