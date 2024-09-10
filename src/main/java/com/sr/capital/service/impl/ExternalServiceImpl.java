@@ -44,17 +44,11 @@ public class ExternalServiceImpl implements ExternalService {
     final CapitalDataReportService capitalDataReportService;
     final CsvUtils csvUtils;
     final AppProperties appProperties;
-
     final DocDetailsService docDetailsService;
-
     final BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
-
     final WhatsAppEntityServiceImpl whatsAppEntityService;
-
     final LeadGenerationService leadGenerationService;
-
     final CommunicationService communicationService;
-
     final UserService userService;
 
     @Override
@@ -125,6 +119,18 @@ public class ExternalServiceImpl implements ExternalService {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
+    @Override
+    public ResponseEntity<?> saveLoanStatus(String vendorToken,String vendorCode,String loanVendorName,Map<String, Object> loanStatusWebhook) throws InvalidVendorTokenException, InvalidVendorCodeException {
+
+        log.info("[saveLoanStatus] webhook content : {} ", loanStatusWebhook);
+
+
+        creditPartnerFactoryService.getPartnerService(loanVendorName).validateExternalRequest(vendorToken, vendorCode);
+
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+
+    }
+
     private String[] generateSalesDetailsHeaders(List<String> monthKeys) {
 
         List<String> data = new ArrayList<>(
@@ -192,6 +198,7 @@ public class ExternalServiceImpl implements ExternalService {
         return preSignedUri;
 
     }
+
 
 
 }

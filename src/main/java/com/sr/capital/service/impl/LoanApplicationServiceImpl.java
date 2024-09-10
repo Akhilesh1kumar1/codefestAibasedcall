@@ -1,5 +1,6 @@
 package com.sr.capital.service.impl;
 
+import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.CreateLeadRequestDto;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
@@ -7,6 +8,7 @@ import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.LoanApplicationStatusDto;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
+import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.User;
@@ -43,6 +45,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final CreditPartnerFactoryService creditPartnerFactoryService;
     final UserService userService;
     final DocDetailsService docDetailsService;
+    final AES256 aes256;
 
     @Override
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
@@ -52,6 +55,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         loanApplication = loanApplicationRepository.save(loanApplication);
 
         LoanApplicationResponseDto loanApplicationResponseDto =LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
+
         if(loanApplicationRequestDto.getCreateLoanAtVendor()){
             CreateLeadResponseDto responseDto = creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
             if(responseDto!=null && responseDto.getStatus()!=null && responseDto.getStatus().equalsIgnoreCase("success")){
@@ -115,7 +119,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                        buildPersonalDetails(doc,user,createLeadRequestDto);
 
                     }else if(doc.getDocType() == DocType.BUSINESS_ADDRESS){
-
+                          buildBusinessDetails(doc,createLeadRequestDto,user);
                     }
                 });
             }
@@ -125,19 +129,40 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         return createLeadRequestDto;
     }
 
+    private void buildBusinessDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto,User user) {
+        BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) doc.getDetails();
+        CreateLeadRequestDto.Business business = CreateLeadRequestDto.Business.builder()
+                .businessPanNumber(aes256.decrypt(businessAddressDetails.getBusinessPanNumber()))
+                .businessType(businessAddressDetails.getBusinessType()).nameOfBusiness(businessAddressDetails.getBusinessName())
+                .businessRegisteredOfficePincode(Long.valueOf(aes256.decrypt(businessAddressDetails.getPincode())))
+                .businessRegisteredOfficeState(aes256.decrypt(businessAddressDetails.getState()))
+                .sectorType(businessAddressDetails.getSectorType())
+                .businessRegisteredOfficeAddress(aes256.decrypt(businessAddressDetails.getAddress()))
+                .build();
+        createLeadRequestDto.setBusiness(business);
+    }
+
     private void buildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto) {
         createLeadRequestDto.setFirstName(user.getFirstName());
         createLeadRequestDto.setMobileNumber(user.getMobile());
         createLeadRequestDto.setEmail(user.getEmail());
         createLeadRequestDto.setLastName(user.getLastName());
         createLeadRequestDto.setDateOfBirth(user.getDateOfBirth());
+        createLeadRequestDto.setPanNumber(user.getPanNumber());
         PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) doc.getDetails();
 
         personalAddressDetails.getAddress().forEach(address -> {
-            createLeadRequestDto.setCurrentAddress(address.getAddress());
-            createLeadRequestDto.setCurrentCity(address.getCity());
-            createLeadRequestDto.setCurrentPincode(address.getPincode());
-            createLeadRequestDto.setCurrentState(address.getState());
+            if(address.getAddressType()==null || address.getAddressType().equalsIgnoreCase("current")) {
+                createLeadRequestDto.setCurrentAddress(aes256.decrypt(address.getAddress()));
+                createLeadRequestDto.setCurrentCity(aes256.decrypt(address.getCity()));
+                createLeadRequestDto.setCurrentPincode(aes256.decrypt(address.getPincode()));
+                createLeadRequestDto.setCurrentState(aes256.decrypt(address.getState()));
+            }else{
+                createLeadRequestDto.setPermanentAddress(aes256.decrypt(address.getAddress()));
+                createLeadRequestDto.setPermanentCity(aes256.decrypt(address.getCity()));
+                createLeadRequestDto.setPermanentPincode(aes256.decrypt(address.getPincode()));
+                createLeadRequestDto.setPermanentState(aes256.decrypt(address.getState()));
+            }
         });
     }
 }

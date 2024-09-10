@@ -5,6 +5,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.encryption.algorithm.AES256;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.AccessTokenRequestDto;
 import com.sr.capital.dto.request.CreateLeadRequestDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
@@ -67,6 +68,9 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
     @Autowired
     private AES256 aes256;
+
+    @Autowired
+    private AppProperties appProperties;
 
     @Override
     public AccessTokenResponseDto getAccessToken(String partner) {
@@ -143,7 +147,14 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     @Override
     public Boolean validateExternalRequest(String vendorToken, String vendorCode)
             throws InvalidVendorCodeException, InvalidVendorTokenException {
-        return null;
+        if(!appProperties.getKlubVendorCode().equalsIgnoreCase(vendorCode)){
+            throw new InvalidVendorCodeException();
+        }
+
+        if(!appProperties.getKlubVendorToken().equalsIgnoreCase(vendorToken)){
+            throw new InvalidVendorTokenException();
+        }
+        return true;
     }
 
     private BaseCreditPartner getPartnerInfo(String partner) {

@@ -270,6 +270,13 @@ public class AppProperties {
     @Value("${app.external.klub.vendor-code}")
     private String klubVendorCode;
 
+    //klub
+    @Value("${app.external.common.vendor-token}")
+    private String commonVendorToken;
+
+    @Value("${app.external.klub.vendor-code}")
+    private String commonVendorCode;
+
 
     //database
 

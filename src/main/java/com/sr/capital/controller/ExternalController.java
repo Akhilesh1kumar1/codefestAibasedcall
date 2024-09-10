@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
@@ -80,6 +81,13 @@ public class ExternalController {
         return new ResponseEntity<>(org.springframework.http.HttpStatus.ACCEPTED);
 
       //  return externalService.saveWhatsAppCommunication(requestBody);
+    }
+
+    @PostMapping("/loan/status/{partner_name}")
+    public ResponseEntity<?>  saveLoanStatus(@PathVariable("partner_name") String partnerName, @RequestHeader(name = "x-vendor-token") String vendorToken,@RequestHeader(name = "x-vendor-code") String vendorCode, @RequestBody Map<String,Object> requestBody) throws Exception {
+
+
+        return externalService.saveLoanStatus(vendorToken,vendorCode,partnerName,requestBody);
     }
 
 }
