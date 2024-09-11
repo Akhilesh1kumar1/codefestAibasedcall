@@ -8,6 +8,7 @@ import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.LoanApplicationStatusDto;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
+import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
@@ -120,6 +121,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
                     }else if(doc.getDocType() == DocType.BUSINESS_ADDRESS){
                           buildBusinessDetails(doc,createLeadRequestDto,user);
+                    }else if(doc.getDocType() == DocType.BANK_CHEQUE){
+                           buildAccountDetails(doc,createLeadRequestDto);
                     }
                 });
             }
@@ -127,6 +130,23 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         }
 
         return createLeadRequestDto;
+    }
+
+    private void buildAccountDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto) {
+        List<CreateLeadRequestDto.DisbursementAccount> disbursementAccounts = new ArrayList<>();
+
+        List<BankDocDetails> bankDocDetailsList = (List<BankDocDetails>) doc.getDetails();
+
+        bankDocDetailsList.forEach(bankDocDetails -> {
+            CreateLeadRequestDto.DisbursementAccount disbursementAccount = CreateLeadRequestDto.DisbursementAccount.builder()
+                    .accountName(aes256.decrypt(bankDocDetails.getAccountName()))
+                    .accountNo(aes256.decrypt(bankDocDetails.getAccountNo()))
+                    .bankName(bankDocDetails.getBankName()).bankBranchName(aes256.decrypt(bankDocDetails.getBankAddress()))
+                    .ifscCode(aes256.decrypt(bankDocDetails.getIfscCode())).bankAccountType(bankDocDetails.getBankAccountType())
+                    .build();
+            disbursementAccounts.add(disbursementAccount);
+        });
+        createLeadRequestDto.setDisbursementAccounts(disbursementAccounts);
     }
 
     private void buildBusinessDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto,User user) {
@@ -145,6 +165,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private void buildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto) {
         createLeadRequestDto.setFirstName(user.getFirstName());
         createLeadRequestDto.setMobileNumber(user.getMobile());
+        createLeadRequestDto.setCustomerCategory("others");
         createLeadRequestDto.setEmail(user.getEmail());
         createLeadRequestDto.setLastName(user.getLastName());
         createLeadRequestDto.setDateOfBirth(user.getDateOfBirth());
@@ -157,6 +178,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 createLeadRequestDto.setCurrentCity(aes256.decrypt(address.getCity()));
                 createLeadRequestDto.setCurrentPincode(aes256.decrypt(address.getPincode()));
                 createLeadRequestDto.setCurrentState(aes256.decrypt(address.getState()));
+                createLeadRequestDto.setPrimaryBorrowerType(user.getEntityType());
             }else{
                 createLeadRequestDto.setPermanentAddress(aes256.decrypt(address.getAddress()));
                 createLeadRequestDto.setPermanentCity(aes256.decrypt(address.getCity()));

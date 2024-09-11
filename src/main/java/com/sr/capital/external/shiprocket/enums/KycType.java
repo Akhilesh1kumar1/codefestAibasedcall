@@ -30,7 +30,22 @@ public enum KycType {
             KycDocumentType.CIN_UPLOAD,
             KycDocumentType.GST_UPLOAD,
             KycDocumentType.UDYOG_AADHAR
+    }),
+    PARTNERSHIP(4,new KycDocumentType[]{
+
+    }),
+
+    PRIVATE_LIMITED(5,new KycDocumentType[]{
+
+    }),
+    PUBLIC_LIMITED(6,new KycDocumentType[]{
+
+    }),
+    OTHERS(7,new KycDocumentType[]{
+
     });
+
+
 
     final int value;
     final KycDocumentType[] acceptedDocumentTypes;
