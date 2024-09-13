@@ -15,4 +15,8 @@ public class LoanDistributionEntityServiceImpl {
    public List<LoanDisbursed> getLoanDisbursedDetailsByStatusId(Long loanApplicationStatusId){
         return loanDisbursedRepository.findByLoanApplicationStatusId(loanApplicationStatusId);
     }
+
+    public LoanDisbursed saveLoanDisbursed(LoanDisbursed loanDisbursed){
+        return loanDisbursedRepository.save(loanDisbursed);
+    }
 }

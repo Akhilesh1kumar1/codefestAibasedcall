@@ -8,6 +8,7 @@ import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.AccessTokenRequestDto;
 import com.sr.capital.dto.request.CreateLeadRequestDto;
+import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
@@ -102,8 +103,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     @Override
     public CreateLeadResponseDto createLead(String partner, CreateLeadRequestDto requestDto) {
         CreateLeadResponseDto responseDto;
-        Map<String, String> metaData;
-        metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
+        Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
         BaseCreditPartner partnerInfo = getPartnerInfo(partner);
 
         Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
@@ -180,6 +180,51 @@ public class GenericCreditPartnerService implements CreditPartnerService {
         return ChronoUnit.MILLIS.between(currentZonedDateTime, futureZonedDateTime);
     }
 
+    @Override
+    public LoanStatusUpdateWebhookDto getLoanDetails(String partner, String loanId) {
+
+        LoanStatusUpdateWebhookDto responseDto;
+        Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
+        BaseCreditPartner partnerInfo = getPartnerInfo(partner);
+
+        Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
+                metaData,
+                ProviderRequestTemplateType.GET_LOAN.name());
+
+        Object requestBody = null;
+
+        Map<String, Object> template = providerConfigUtil.getProviderTemplates(loanId,
+                ProviderRequestTemplateType.GET_LOAN.name(), partnerInfo.getId(), true);
+
+        if (template != null) {
+            requestBody = jsonPathEvaluator.evaluate(template, loanId);
+        }
+
+        HttpResponse<?> restResponseEntity = null;
+        try {
+            restResponseEntity = providerHelperUtil.makeApiCall(params,
+                    (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
+                    requestBody,
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(partner, e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.GET_LOAN_RESPONSE.name(), partnerInfo.getId());
+
+        try {
+            responseDto = MapperUtils.convertValue(response.getData(),
+                    LoanStatusUpdateWebhookDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return responseDto;
+    }
+
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
         AccessTokenResponseDto responseDto;
         AccessTokenRequestDto requestDto = MapperUtils.mapClass(partnerConfig, AccessTokenRequestDto.class);
@@ -227,5 +272,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
         accessTokenInfo.put(partner, responseDto, expiryDurationInMs(responseDto.getExpiry(), formatter), TimeUnit.MILLISECONDS);
         return responseDto;
     }
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.sr.capital.service;
 
 import com.sr.capital.dto.request.CreateLeadRequestDto;
+import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
@@ -17,5 +18,9 @@ public interface CreditPartnerService {
     Boolean validateExternalRequest(String vendorToken,String vendorCode) throws InvalidVendorCodeException, InvalidVendorTokenException;
 
     long expiryDurationInMs(String futureDate, DateTimeFormatter formatter);
+
+
+    LoanStatusUpdateWebhookDto getLoanDetails(String partner,String loanId);
+
 
 }

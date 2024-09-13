@@ -106,7 +106,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         User user = userService.getCompanyDetails(Long.valueOf(tenantId));
 
-        CreateLeadRequestDto createLeadRequestDto = CreateLeadRequestDto.builder().clientLoanId(String.valueOf(loanApplicationResponseDto.getId())).customerCategory("other").applicationId(String.valueOf(loanApplicationResponseDto.getId())).clientCustomerId(tenantId)
+        CreateLeadRequestDto createLeadRequestDto = CreateLeadRequestDto.builder().clientLoanId(String.valueOf(loanApplicationResponseDto.getId())).customerCategory("other").applicationId(String.valueOf(loanApplicationResponseDto.getId())).clientCustomerId(tenantId).tenure(loanApplicationResponseDto.getLoanDuration()).numberOfRepayments(loanApplicationResponseDto.getLoanDuration()).principalAmount(loanApplicationResponseDto.getLoanAmountRequested())
                 .build();
 
         if(user!=null){
@@ -122,9 +122,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     }else if(doc.getDocType() == DocType.BUSINESS_ADDRESS){
                           buildBusinessDetails(doc,createLeadRequestDto,user);
                     }else if(doc.getDocType() == DocType.BANK_CHEQUE){
-                           buildAccountDetails(doc,createLeadRequestDto);
+                           buildAccountDetails(doc,createLeadRequestDto,false);
                     }
                 });
+
+                if(CollectionUtils.isEmpty(createLeadRequestDto.getDisbursementAccounts())){
+                    buildAccountDetails(null,createLeadRequestDto,true);
+                }
             }
 
         }
@@ -132,20 +136,32 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         return createLeadRequestDto;
     }
 
-    private void buildAccountDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto) {
+    private void buildAccountDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto,Boolean isDummy) {
         List<CreateLeadRequestDto.DisbursementAccount> disbursementAccounts = new ArrayList<>();
 
-        List<BankDocDetails> bankDocDetailsList = (List<BankDocDetails>) doc.getDetails();
+        if(!isDummy) {
 
-        bankDocDetailsList.forEach(bankDocDetails -> {
+           List<BankDocDetails> bankDocDetailsList = (List<BankDocDetails>) doc.getDetails();
+
+           bankDocDetailsList.forEach(bankDocDetails -> {
+               CreateLeadRequestDto.DisbursementAccount disbursementAccount = CreateLeadRequestDto.DisbursementAccount.builder()
+                       .accountName(aes256.decrypt(bankDocDetails.getAccountName()))
+                       .accountNo(aes256.decrypt(bankDocDetails.getAccountNo()))
+                       .bankName(bankDocDetails.getBankName()).bankBranchName(aes256.decrypt(bankDocDetails.getBankAddress()))
+                       .ifscCode(aes256.decrypt(bankDocDetails.getIfscCode())).bankAccountType(bankDocDetails.getBankAccountType())
+                       .build();
+               disbursementAccounts.add(disbursementAccount);
+           });
+       }else{
             CreateLeadRequestDto.DisbursementAccount disbursementAccount = CreateLeadRequestDto.DisbursementAccount.builder()
-                    .accountName(aes256.decrypt(bankDocDetails.getAccountName()))
-                    .accountNo(aes256.decrypt(bankDocDetails.getAccountNo()))
-                    .bankName(bankDocDetails.getBankName()).bankBranchName(aes256.decrypt(bankDocDetails.getBankAddress()))
-                    .ifscCode(aes256.decrypt(bankDocDetails.getIfscCode())).bankAccountType(bankDocDetails.getBankAccountType())
+                    .accountName("DUMMY")
+                    .accountNo("1234567890")
+                    .bankName("DUMMY").bankBranchName("DUMMY")
+                    .ifscCode("ABCD0000123").bankAccountType("saving")
                     .build();
             disbursementAccounts.add(disbursementAccount);
-        });
+
+       }
         createLeadRequestDto.setDisbursementAccounts(disbursementAccounts);
     }
 
@@ -171,7 +187,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         createLeadRequestDto.setDateOfBirth(user.getDateOfBirth());
         createLeadRequestDto.setPanNumber(user.getPanNumber());
         PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) doc.getDetails();
-
+        createLeadRequestDto.setCategory("secured");
+        createLeadRequestDto.setSubCategory("fresh");
         personalAddressDetails.getAddress().forEach(address -> {
             if(address.getAddressType()==null || address.getAddressType().equalsIgnoreCase("current")) {
                 createLeadRequestDto.setCurrentAddress(aes256.decrypt(address.getAddress()));

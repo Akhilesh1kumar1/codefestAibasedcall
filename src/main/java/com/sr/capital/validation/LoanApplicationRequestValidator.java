@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class LoanApplicationRequestValidator  implements RequestValidator {
@@ -37,6 +39,12 @@ public class LoanApplicationRequestValidator  implements RequestValidator {
                 throw new CustomException("Loan offer details not found for loan offerId "+requestDto.getLoanOfferId(), HttpStatus.BAD_REQUEST);
             }
         }
+
+        if(requestDto.getLoanAmountRequested()==null || requestDto.getLoanAmountRequested().equals(BigDecimal.ZERO)){
+            requestDto.setLoanAmountRequested(BigDecimal.valueOf(500000));
+            requestDto.setLoanDuration(3);
+        }
+
         if(requestDto.getLoanVendorId()!=null){
             if(!baseCreditPartnerEntityService.isVendorExist(requestDto.getLoanVendorId())){
                 ExceptionUtils.throwCustomException("C0001", "Given vendor doesn't exists", HttpStatus.BAD_REQUEST);

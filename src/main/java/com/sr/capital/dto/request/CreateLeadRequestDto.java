@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -32,7 +33,7 @@ public class CreateLeadRequestDto {
     String clientLoanId;
     String category;
     String subCategory;
-    Long principalAmount;
+    BigDecimal principalAmount;
     String email;
     String permanentAddress;
     String permanentCity;
@@ -43,6 +44,23 @@ public class CreateLeadRequestDto {
     List<String> bureauReportLink;
     Business business;
     List<DisbursementAccount> disbursementAccounts;
+
+    @Builder.Default
+    String disbursementType = "Single Disbursement";
+
+    @Builder.Default
+    Double interestRate =14.5;
+
+    Integer tenure;
+
+    @Builder.Default
+    String tenureFrequency = "monthly";
+
+    @Builder.Default
+    String repaymentFrequency= "Once";
+
+    Integer numberOfRepayments ;
+
 
     @Data
     @Builder
