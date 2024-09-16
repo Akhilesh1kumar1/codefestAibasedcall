@@ -138,6 +138,7 @@ public class UserServiceImpl implements UserService {
             user.setLastName(aes256.decrypt(user.getLastName()));
             user.setMiddleName(aes256.decrypt(user.getMiddleName()));
             user.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
+            user.setPanNumber(aes256.decrypt(user.getPanNumber()));
         }
         return user;
     }

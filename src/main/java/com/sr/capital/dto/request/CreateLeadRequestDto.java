@@ -57,7 +57,7 @@ public class CreateLeadRequestDto {
     String tenureFrequency = "monthly";
 
     @Builder.Default
-    String repaymentFrequency= "Once";
+    String repaymentFrequency= "monthly";
 
     Integer numberOfRepayments ;
 
@@ -78,7 +78,7 @@ public class CreateLeadRequestDto {
         String businessRegisteredOfficeAddress;
         String businessRegisteredOfficeState;
         Long businessRegisteredOfficePincode;
-        List<Long> businessPhoneNumber;
+        List<String> businessPhoneNumber;
         String businessPanNumber;
     }
 
@@ -96,5 +96,7 @@ public class CreateLeadRequestDto {
         String entityType;
         String accountNo;
         String bankAccountType;
+
+        BigDecimal amount;
     }
 }

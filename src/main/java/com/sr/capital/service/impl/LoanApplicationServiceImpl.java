@@ -106,7 +106,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         User user = userService.getCompanyDetails(Long.valueOf(tenantId));
 
-        CreateLeadRequestDto createLeadRequestDto = CreateLeadRequestDto.builder().clientLoanId(String.valueOf(loanApplicationResponseDto.getId())).customerCategory("other").applicationId(String.valueOf(loanApplicationResponseDto.getId())).clientCustomerId(tenantId).tenure(loanApplicationResponseDto.getLoanDuration()).numberOfRepayments(loanApplicationResponseDto.getLoanDuration()).principalAmount(loanApplicationResponseDto.getLoanAmountRequested())
+        CreateLeadRequestDto createLeadRequestDto = CreateLeadRequestDto.builder().clientLoanId(String.valueOf(loanApplicationResponseDto.getId()))
+                .customerCategory("other").
+                applicationId(String.valueOf(loanApplicationResponseDto.getId())).
+                clientCustomerId(tenantId).
+                tenure(loanApplicationResponseDto.getLoanDuration()).
+                numberOfRepayments(loanApplicationResponseDto.getLoanDuration()).
+                principalAmount(loanApplicationResponseDto.getLoanAmountRequested())
                 .build();
 
         if(user!=null){
@@ -148,7 +154,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                        .accountName(aes256.decrypt(bankDocDetails.getAccountName()))
                        .accountNo(aes256.decrypt(bankDocDetails.getAccountNo()))
                        .bankName(bankDocDetails.getBankName()).bankBranchName(aes256.decrypt(bankDocDetails.getBankAddress()))
-                       .ifscCode(aes256.decrypt(bankDocDetails.getIfscCode())).bankAccountType(bankDocDetails.getBankAccountType())
+                       .ifscCode(aes256.decrypt(bankDocDetails.getIfscCode())).bankAccountType(bankDocDetails.getBankAccountType()).amount(createLeadRequestDto.getPrincipalAmount())
                        .build();
                disbursementAccounts.add(disbursementAccount);
            });
@@ -157,7 +163,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     .accountName("DUMMY")
                     .accountNo("1234567890")
                     .bankName("DUMMY").bankBranchName("DUMMY")
-                    .ifscCode("ABCD0000123").bankAccountType("saving")
+                    .ifscCode("ABCD0000123").bankAccountType("saving").amount(createLeadRequestDto.getPrincipalAmount())
                     .build();
             disbursementAccounts.add(disbursementAccount);
 
@@ -167,13 +173,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     private void buildBusinessDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto,User user) {
         BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) doc.getDetails();
+        List<String> phoneNumber = new ArrayList<>();
+        phoneNumber.add(user.getMobile());
         CreateLeadRequestDto.Business business = CreateLeadRequestDto.Business.builder()
                 .businessPanNumber(aes256.decrypt(businessAddressDetails.getBusinessPanNumber()))
                 .businessType(businessAddressDetails.getBusinessType()).nameOfBusiness(businessAddressDetails.getBusinessName())
                 .businessRegisteredOfficePincode(Long.valueOf(aes256.decrypt(businessAddressDetails.getPincode())))
                 .businessRegisteredOfficeState(aes256.decrypt(businessAddressDetails.getState()))
                 .sectorType(businessAddressDetails.getSectorType())
-                .businessRegisteredOfficeAddress(aes256.decrypt(businessAddressDetails.getAddress()))
+                .businessRegisteredOfficeAddress(aes256.decrypt(businessAddressDetails.getAddress())).businessPhoneNumber(phoneNumber)
+                .typeOfConstitution(doc.getKycType().name()).industryType(businessAddressDetails.getIndustryType())
                 .build();
         createLeadRequestDto.setBusiness(business);
     }

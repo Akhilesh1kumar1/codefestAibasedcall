@@ -25,6 +25,8 @@ public class BusinessDetailsRequestDto {
 
     String businessType;
 
+    String industryType;
+
     String sectorType;
 
     String address;

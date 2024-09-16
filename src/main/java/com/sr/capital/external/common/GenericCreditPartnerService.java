@@ -121,6 +121,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
         HttpResponse<?> restResponseEntity = null;
         try {
+            log.info("request body is {} ",requestBody);
             restResponseEntity = providerHelperUtil.makeApiCall(params,
                     (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
                     requestBody,

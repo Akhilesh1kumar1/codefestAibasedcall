@@ -19,6 +19,8 @@ public class BusinessAddressDetails implements Serializable {
 
     String businessType;
 
+    String industryType;
+
     String sectorType;
 
     String address;

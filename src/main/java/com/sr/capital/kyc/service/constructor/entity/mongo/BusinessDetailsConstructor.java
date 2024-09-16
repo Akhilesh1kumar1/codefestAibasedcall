@@ -42,7 +42,7 @@ public class BusinessDetailsConstructor implements EntityConstructor {
                 city(aes256.encrypt(businessDetailsRequestDto.getCity())).state(aes256.encrypt(businessDetailsRequestDto.getState())).address(aes256.encrypt(businessDetailsRequestDto.getAddress())).
                 metaData(businessDetailsRequestDto.getMetaData()).
                 sectorType(businessDetailsRequestDto.getSectorType()).
-                businessType(businessDetailsRequestDto.getBusinessType()).
+                businessType(businessDetailsRequestDto.getBusinessType()).industryType(businessDetailsRequestDto.getIndustryType()).
                 businessPanNumber(aes256.encrypt(businessDetailsRequestDto.getBusinessPanNumber()))
                 .build();
         KycDocDetails<BusinessAddressDetails> kycDocDetails = (KycDocDetails<BusinessAddressDetails>) request.getKycDocDetails();
