@@ -86,6 +86,7 @@ public class UserServiceImpl implements UserService {
         userDetails.setMiddleName(aes256.encrypt(userDetails.getMiddleName()));
         userDetails.setPanNumber(aes256.encrypt(userDetails.getPanNumber()));
         userDetails.setDateOfBirth(aes256.encrypt(userDetails.getDateOfBirth()));
+        userDetails.setFatherName(aes256.encrypt(userDetails.getFatherName()));
     }
 
     @Override
@@ -102,6 +103,7 @@ public class UserServiceImpl implements UserService {
                 response.setEntityType(user.getEntityType());
                 response.setPanNumber(aes256.decrypt(user.getPanNumber()));
                 response.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
+                response.setFatherName(aes256.decrypt(user.getFatherName()));
             }
         }
         return response;

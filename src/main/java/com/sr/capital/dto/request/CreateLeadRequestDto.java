@@ -19,6 +19,7 @@ public class CreateLeadRequestDto {
     String clientCustomerId;
     String firstName;
     String lastName;
+    String fatherName;
     String dateOfBirth;
     String gender;
     String primaryBorrowerType;
@@ -49,17 +50,19 @@ public class CreateLeadRequestDto {
     String disbursementType = "Single Disbursement";
 
     @Builder.Default
-    Double interestRate =14.5;
-
-    Integer tenure;
+    Double interestRate =15d;
 
     @Builder.Default
-    String tenureFrequency = "monthly";
+    Integer tenure =2;
+
+    @Builder.Default
+    String tenureFrequency = "yearly";
 
     @Builder.Default
     String repaymentFrequency= "monthly";
 
-    Integer numberOfRepayments ;
+    @Builder.Default
+    Integer numberOfRepayments =24;
 
 
     @Data

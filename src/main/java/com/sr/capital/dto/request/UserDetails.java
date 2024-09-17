@@ -61,6 +61,8 @@ public class UserDetails {
 
     private String dateOfBirth;
 
+    private String fatherName;
+
     public static UserDetails mapUser(User user){
         UserDetails userDetails =new UserDetails();
         userDetails.setId(user.getId());

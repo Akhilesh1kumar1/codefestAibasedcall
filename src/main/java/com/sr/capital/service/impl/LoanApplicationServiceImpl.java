@@ -107,11 +107,11 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         User user = userService.getCompanyDetails(Long.valueOf(tenantId));
 
         CreateLeadRequestDto createLeadRequestDto = CreateLeadRequestDto.builder().clientLoanId(String.valueOf(loanApplicationResponseDto.getId()))
-                .customerCategory("other").
+                .customerCategory("self-employed").
                 applicationId(String.valueOf(loanApplicationResponseDto.getId())).
                 clientCustomerId(tenantId).
                 tenure(loanApplicationResponseDto.getLoanDuration()).
-                numberOfRepayments(loanApplicationResponseDto.getLoanDuration()).
+               // numberOfRepayments(loanApplicationResponseDto.getLoanDuration()).
                 principalAmount(loanApplicationResponseDto.getLoanAmountRequested())
                 .build();
 
@@ -190,13 +190,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private void buildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto) {
         createLeadRequestDto.setFirstName(user.getFirstName());
         createLeadRequestDto.setMobileNumber(user.getMobile());
-        createLeadRequestDto.setCustomerCategory("others");
         createLeadRequestDto.setEmail(user.getEmail());
         createLeadRequestDto.setLastName(user.getLastName());
+        createLeadRequestDto.setFatherName(user.getFatherName());
         createLeadRequestDto.setDateOfBirth(user.getDateOfBirth());
         createLeadRequestDto.setPanNumber(user.getPanNumber());
         PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) doc.getDetails();
-        createLeadRequestDto.setCategory("secured");
+        createLeadRequestDto.setCategory("unsecured");
         createLeadRequestDto.setSubCategory("fresh");
         personalAddressDetails.getAddress().forEach(address -> {
             if(address.getAddressType()==null || address.getAddressType().equalsIgnoreCase("current")) {

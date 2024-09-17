@@ -1,7 +1,9 @@
 package com.sr.capital.service.impl;
 
 import com.amazonaws.HttpMethod;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.CompanySalesDetails;
 import com.sr.capital.dto.response.LoanOfferDetails;
 import com.sr.capital.dto.response.MonthlySalesDetails;
@@ -20,6 +22,7 @@ import com.sr.capital.service.*;
 import com.sr.capital.service.entityimpl.BaseCreditPartnerEntityServiceImpl;
 import com.sr.capital.service.entityimpl.WhatsAppEntityServiceImpl;
 import com.sr.capital.util.CsvUtils;
+import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +53,8 @@ public class ExternalServiceImpl implements ExternalService {
     final LeadGenerationService leadGenerationService;
     final CommunicationService communicationService;
     final UserService userService;
+
+    final LoanStatusUpdateHandlerServiceImpl loanStatusUpdateHandlerService;
 
     @Override
     public Boolean validateRequest(String vendorToken, String vendorCode, String loanVendorName) throws InvalidVendorTokenException, InvalidVendorCodeException {
@@ -120,13 +125,14 @@ public class ExternalServiceImpl implements ExternalService {
     }
 
     @Override
-    public ResponseEntity<?> saveLoanStatus(String vendorToken,String vendorCode,String loanVendorName,Map<String, Object> loanStatusWebhook) throws InvalidVendorTokenException, InvalidVendorCodeException {
+    public ResponseEntity<?> saveLoanStatus(String vendorToken,String vendorCode,String loanVendorName,Map<String, Object> loanStatusWebhook) throws InvalidVendorTokenException, InvalidVendorCodeException, IOException {
 
         log.info("[saveLoanStatus] webhook content : {} ", loanStatusWebhook);
 
 
         creditPartnerFactoryService.getPartnerService(loanVendorName).validateExternalRequest(vendorToken, vendorCode);
-
+        LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto = MapperUtils.convertValue(loanStatusWebhook, LoanStatusUpdateWebhookDto.class);
+        loanStatusUpdateHandlerService.handleStatusUpdate(loanStatusUpdateWebhookDto,loanVendorName);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
     }

@@ -123,6 +123,8 @@ public class ProviderHelperUtil {
             Object result=null;
             if(template!=null){
                 result = jsonPathEvaluator.evaluate(template,restResponseEntity.getBody());
+            }else {
+                result = restResponseEntity.getBody();
             }
 
             response.setData(result);

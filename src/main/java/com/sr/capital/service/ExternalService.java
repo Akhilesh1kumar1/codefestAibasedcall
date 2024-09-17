@@ -26,5 +26,5 @@ public interface ExternalService {
 
     public ResponseEntity<?> saveWhatsAppCommunication(KaleyraWebhookDto content);
 
-    public ResponseEntity<?> saveLoanStatus(String vendorToken,String vendorCode,String loanVendorName,Map<String ,Object> loanStatusWebhook) throws InvalidVendorTokenException, InvalidVendorCodeException;
+    public ResponseEntity<?> saveLoanStatus(String vendorToken,String vendorCode,String loanVendorName,Map<String ,Object> loanStatusWebhook) throws InvalidVendorTokenException, InvalidVendorCodeException, IOException;
 }
