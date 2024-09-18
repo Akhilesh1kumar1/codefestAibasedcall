@@ -59,7 +59,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         if(loanApplicationRequestDto.getCreateLoanAtVendor()){
             CreateLeadResponseDto responseDto = creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
-            if(responseDto!=null && responseDto.getStatus()!=null && responseDto.getStatus().equalsIgnoreCase("success")){
+            if(responseDto!=null && responseDto.getStatus()!=null && responseDto.getStatus().equalsIgnoreCase("new")){
+                loanApplication.setLoanStatus(LoanStatus.PRE_APPROVED);
+                loanApplicationRepository.save(loanApplication);
+
             }
         }
         if(loanApplicationRequestDto.getLoanOfferId()!=null)
