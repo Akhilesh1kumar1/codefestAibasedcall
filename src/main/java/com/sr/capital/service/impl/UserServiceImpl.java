@@ -1,6 +1,7 @@
 package com.sr.capital.service.impl;
 
 import com.omunify.encryption.algorithm.AES256;
+import com.omunify.encryption.config.EncryptionConfig;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.TenantDetails;
 import com.sr.capital.dto.request.UserDetails;
@@ -96,14 +97,28 @@ public class UserServiceImpl implements UserService {
         if(response.getCompanyId()!=null){
             User user = userRepository.findTopBySrCompanyId(Long.valueOf(response.getCompanyId()));
             if(user!=null){
-                response.setFirstName(aes256.decrypt(user.getFirstName()));
-                response.setCompanyName(user.getCompanyName());
-                response.setMobile(aes256.decrypt(user.getMobile()));
-                response.setIsAccepted(user.getIsAccepted());
-                response.setEntityType(user.getEntityType());
-                response.setPanNumber(aes256.decrypt(user.getPanNumber()));
-                response.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
-                response.setFatherName(aes256.decrypt(user.getFatherName()));
+                try {
+                    response.setCompanyName(user.getCompanyName());
+                    response.setIsAccepted(user.getIsAccepted());
+                    response.setEntityType(user.getEntityType());
+                    response.setFirstName(aes256.decrypt(user.getFirstName()));
+                    response.setMobile(aes256.decrypt(user.getMobile()));
+                    response.setPanNumber(aes256.decrypt(user.getPanNumber()));
+                    response.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
+                    response.setFatherName(aes256.decrypt(user.getFatherName()));
+                    response.setTitle(response.getTitle());
+                }catch (Exception ex){
+                    EncryptionConfig encryptionConfig =new EncryptionConfig();
+                    encryptionConfig.setKey("test");
+                    AES256 aes2561 = new AES256(encryptionConfig);
+
+                    response.setFirstName(aes2561.decrypt(user.getFirstName()));
+                    response.setMobile(aes2561.decrypt(user.getMobile()));
+                    response.setPanNumber(aes2561.decrypt(user.getPanNumber()));
+                    response.setDateOfBirth(aes2561.decrypt(user.getDateOfBirth()));
+                    response.setFatherName(aes2561.decrypt(user.getFatherName()));
+
+                }
             }
         }
         return response;
@@ -134,13 +149,38 @@ public class UserServiceImpl implements UserService {
     public User getCompanyDetails(Long srCompanyId) {
         User user= userRepository.findTopBySrCompanyId(srCompanyId);
         if(user!=null) {
-            user.setFirstName(aes256.decrypt(user.getFirstName()));
-            user.setMobile(aes256.decrypt(user.getMobile()));
-            user.setEmail(aes256.decrypt(user.getEmail()));
-            user.setLastName(aes256.decrypt(user.getLastName()));
-            user.setMiddleName(aes256.decrypt(user.getMiddleName()));
-            user.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
-            user.setPanNumber(aes256.decrypt(user.getPanNumber()));
+            try {
+                user.setFirstName(aes256.decrypt(user.getFirstName()));
+                user.setMobile(aes256.decrypt(user.getMobile()));
+                user.setEmail(aes256.decrypt(user.getEmail()));
+                user.setLastName(aes256.decrypt(user.getLastName()));
+                user.setMiddleName(aes256.decrypt(user.getMiddleName()));
+                user.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
+                user.setPanNumber(aes256.decrypt(user.getPanNumber()));
+            }catch (Exception ex) {//temp code
+                EncryptionConfig encryptionConfig =new EncryptionConfig();
+                encryptionConfig.setKey("test");
+                AES256 aes2561 = new AES256(encryptionConfig);
+                user.setFirstName(aes2561.decrypt(user.getFirstName()));
+                user.setMobile(aes2561.decrypt(user.getMobile()));
+                user.setEmail(aes2561.decrypt(user.getEmail()));
+                user.setLastName(aes2561.decrypt(user.getLastName()));
+                user.setMiddleName(aes2561.decrypt(user.getMiddleName()));
+                user.setDateOfBirth(aes2561.decrypt(user.getDateOfBirth()));
+                user.setPanNumber(aes2561.decrypt(user.getPanNumber()));
+
+                User user1  =userRepository.findTopBySrCompanyId(srCompanyId);
+                user1.setEmail(aes256.encrypt(user.getEmail()));
+                user1.setMobile(aes256.encrypt(user.getMobile()));
+                user1.setFirstName(aes256.encrypt(user.getFirstName()));
+                user1.setLastName(aes256.encrypt(user.getLastName()));
+                user1.setMiddleName(aes256.encrypt(user.getMiddleName()));
+                user1.setPanNumber(aes256.encrypt(user.getPanNumber()));
+                user1.setDateOfBirth(aes256.encrypt(user.getDateOfBirth()));
+                user1.setFatherName(aes256.encrypt(user.getFatherName()));
+                userRepository.save(user1);
+
+            }
         }
         return user;
     }

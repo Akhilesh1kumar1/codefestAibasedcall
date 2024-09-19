@@ -51,4 +51,7 @@ public class InternalTokenUserDetailsResponse implements Serializable {
 
     @JsonProperty("father_name")
     private String fatherName;
+
+
+    private String title;
 }

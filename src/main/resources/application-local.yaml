@@ -223,7 +223,7 @@ allowed:
       score: '2'
 
 encryption:
-  key: ${ENCRYPTION_KEY:test}
+  key: ${ENCRYPTION_KEY:test2}
 
 
 logging:

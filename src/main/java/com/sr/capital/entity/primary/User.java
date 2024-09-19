@@ -81,10 +81,14 @@ public class User extends LongBaseEntity{
     @Column(name = "father_name")
     private String fatherName;
 
+    @Column(name = "title")
+    private String title;
+
     public static User mapUser(UserDetails userDetails){
         User user =User.builder().srUserId(Long.valueOf(userDetails.getUserId())).
         comments(userDetails.getComments()).srCompanyId(Long.valueOf(RequestData.getTenantId()))
-                .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).companyName(userDetails.getCompanyName()).panNumber(userDetails.getPanNumber()).dateOfBirth(userDetails.getDateOfBirth()).fatherName(userDetails.getFatherName()).build();
+                .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).companyName(userDetails.getCompanyName()).panNumber(userDetails.getPanNumber()).dateOfBirth(userDetails.getDateOfBirth()).fatherName(userDetails.getFatherName())
+                .title(userDetails.getTitle()).build();
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         return user;
@@ -103,6 +107,7 @@ public class User extends LongBaseEntity{
         user.setPanNumber(userDetails.getPanNumber());
         user.setDateOfBirth(user.getDateOfBirth());
         user.setFatherName(userDetails.getFatherName());
+        user.setTitle(userDetails.getTitle());
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
     }

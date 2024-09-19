@@ -62,6 +62,7 @@ public class UserDetails {
     private String dateOfBirth;
 
     private String fatherName;
+    private String title;
 
     public static UserDetails mapUser(User user){
         UserDetails userDetails =new UserDetails();
