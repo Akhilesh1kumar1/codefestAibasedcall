@@ -122,8 +122,8 @@ app:
       vendor-token: ${KLUB_VENDOR_TOKEN:test}
       vendor-code: ${KLUB_VENDOR_CODE:test}
     common:
-      vendor-token: ${KLUB_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
-      vendor-code: ${KLUB_VENDOR_CODE:661f14a7-9fbc-4f07-8f18-2917065d80}
+      vendor-token: ${COMMON_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
+      vendor-code: ${COMMON_VENDOR_CODE:8908f14a7-9fbc-4f07-3f18-2917063B8c}
 
 aws:
   region: ${AWS_REGION:test}
@@ -223,7 +223,7 @@ allowed:
       score: '2'
 
 encryption:
-  key: ${ENCRYPTION_KEY:test}
+  key: ${ENCRYPTION_KEY:dev-testing}
 
 kafka:
   basePath: KAFKA_BASE_PATH

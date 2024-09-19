@@ -152,7 +152,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
             throw new InvalidVendorCodeException();
         }
 
-        if(!appProperties.getCommonVendorCode().equalsIgnoreCase(vendorToken)){
+        if(!appProperties.getCommonVendorToken().equalsIgnoreCase(vendorToken)){
             throw new InvalidVendorTokenException();
         }
         return true;
