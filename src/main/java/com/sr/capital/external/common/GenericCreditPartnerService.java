@@ -148,11 +148,11 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     @Override
     public Boolean validateExternalRequest(String vendorToken, String vendorCode)
             throws InvalidVendorCodeException, InvalidVendorTokenException {
-        if(!appProperties.getKlubVendorCode().equalsIgnoreCase(vendorCode)){
+        if(!appProperties.getCommonVendorCode().equalsIgnoreCase(vendorCode)){
             throw new InvalidVendorCodeException();
         }
 
-        if(!appProperties.getKlubVendorToken().equalsIgnoreCase(vendorToken)){
+        if(!appProperties.getCommonVendorCode().equalsIgnoreCase(vendorToken)){
             throw new InvalidVendorTokenException();
         }
         return true;
