@@ -110,7 +110,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         User user = userService.getCompanyDetails(Long.valueOf(tenantId));
 
         CreateLeadRequestDto createLeadRequestDto = CreateLeadRequestDto.builder().clientLoanId(String.valueOf(loanApplicationResponseDto.getId()))
-                .customerCategory("self-employed").
+                .customerCategory("self_employed").
                 applicationId(String.valueOf(loanApplicationResponseDto.getId())).
                 clientCustomerId(tenantId).
                 tenure(loanApplicationResponseDto.getLoanDuration()).
