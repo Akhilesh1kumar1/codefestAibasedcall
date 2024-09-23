@@ -79,6 +79,11 @@ dependencies {
 		exclude group: 'org.springframework.boot'
 	}
 
+	//implementation("com.omunify:kafka-msg-consumer:0.0.1-v2")
+	//implementation('com.omunify:kafka-msg-publisher:1.0.3-v1')
+	//implementation("com.omunify:kafka-msg-common:0.0.1-v2")
+	//implementation('com.omunify:kafka-mysql-adapter:0.0.2-v2')
+
 
 	//adhoc
 	compileOnly 'org.projectlombok:lombok'

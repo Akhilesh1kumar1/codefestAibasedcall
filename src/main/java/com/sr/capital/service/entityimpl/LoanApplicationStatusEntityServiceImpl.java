@@ -15,4 +15,7 @@ public class LoanApplicationStatusEntityServiceImpl {
         return loanApplicationStatusRepository.findById(id).orElse(null);
     }
 
+    public LoanApplicationStatus saveLoanApplicationStatus(LoanApplicationStatus loanApplicationStatus){
+       return loanApplicationStatusRepository.save(loanApplicationStatus);
+    }
 }

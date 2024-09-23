@@ -1,0 +1,78 @@
+-- Alter `provider_url_config` for default values
+ALTER TABLE `provider_url_config`
+CHANGE `created_at` `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+CHANGE `created_by` `created_by` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'SYSTEM',
+CHANGE `updated_at` `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+CHANGE `updated_by` `updated_by` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'SYSTEM',
+CHANGE `is_enabled` `is_enabled` BIT(1) NULL DEFAULT b'1';
+--
+
+-- Alter `provider_template` for default values
+ALTER TABLE `provider_template`
+CHANGE `created_at` `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+CHANGE `created_by` `created_by` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'SYSTEM',
+CHANGE `updated_at` `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+CHANGE `updated_by` `updated_by` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'SYSTEM',
+CHANGE `is_enabled` `is_enabled` BIT(1) NULL DEFAULT b'1';
+--
+
+--
+-- Dumping data for table `provider_template` for Indifi
+-- Please check and update partner_id if necessary
+--
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+INSERT INTO `provider_template` (`partner_id`, `source`, `destination`, `type`, `group`)
+SELECT
+    p.id, v.source, v.destination, v.type, v.group
+FROM base_credit_partners p
+JOIN (
+    SELECT
+        '$.accountId' as `source`, '/client_id' as `destination`, 'static' as `type`, 'GET_TOKEN' as `group`
+    UNION ALL
+    SELECT
+        '$.authCode', '/client_secret', 'static', 'GET_TOKEN'
+    UNION ALL
+    SELECT
+        '$.metaData.grant_type', '/grant_type', 'static', 'GET_TOKEN'
+    UNION ALL
+    SELECT
+        '$.data.token', '/accessToken', 'static', 'GET_TOKEN_RESPONSE'
+    UNION ALL
+    SELECT
+        '$.data.expiresOn', '/expiry', 'static', 'GET_TOKEN_RESPONSE'
+) AS v
+ON p.credit_partner_name = 'indifi';
+
+COMMIT;
+--
+-- End of Dumping data for table `provider_template` for Indifi
+--
+
+--
+-- Dumping data for table `provider_url_config` for Indifi
+-- Please check and update partner_id if necessary
+--
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+INSERT INTO provider_url_config (`partner_id`, `group`, `type`, `key`, `value`, `priority`)
+SELECT
+    p.id, v.group, v.type, v.key, v.value, v.priority
+FROM base_credit_partners p
+JOIN (
+    SELECT
+        'GET_TOKEN' AS `group`, 'OTHER' AS `type`, 'method' AS `key`, 'POST' AS `value`, 1 AS `priority`
+    UNION ALL
+    SELECT
+        'GET_TOKEN', 'BASE_URL', 'BASE_URL', 'http://localhost:1234/auth/token', 1
+) AS v
+ON p.credit_partner_name = 'indifi';
+
+COMMIT;
+--
+-- End of Dumping data for table `provider_url_config` for Indifi
+--

@@ -5,13 +5,15 @@ import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.repository.secondary.TestRepository;
+import com.sr.capital.service.impl.ServicesHandler;
 import com.sr.capital.service.impl.TestServiceImpl;
 import com.sr.capital.external.shiprocket.client.ShiprocketClient;
 import com.sr.capital.external.shiprocket.dto.response.KycResponse;
 import com.sr.capital.util.ResponseBuilderUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.http.auth.InvalidCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -26,6 +28,8 @@ public class TestController {
     final ShiprocketClient shiprocketClient;
     final TestServiceImpl testService;
     final TestRepository testRepository;
+    final ServicesHandler servicesHandler;
+
     @GetMapping()
     public GenericResponse testValidateTokenApi(@RequestParam("token") String token) throws UnirestException, CustomException {
 
@@ -47,5 +51,16 @@ public class TestController {
     public GenericResponse testMultiteDb(@RequestParam("token") String token) throws UnirestException, CustomException {
 
         return ResponseBuilderUtil.getResponse(testRepository.findAll(), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/template/{partner}/access-token")
+    public GenericResponse<Object> testPartnerTemplate(
+            HttpServletRequest request,
+            @PathVariable(name = "partner") String partner
+    ) throws InvalidCredentialsException {
+        servicesHandler.validateSelfSecret(request);
+        return ResponseBuilderUtil.getResponse(
+                testService.testAccessToken(partner),
+                Constants.StatusEnum.SUCCESS, "", HttpStatus.SC_OK);
     }
 }

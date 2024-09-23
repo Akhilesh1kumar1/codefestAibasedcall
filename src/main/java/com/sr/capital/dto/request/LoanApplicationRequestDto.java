@@ -39,4 +39,6 @@ public class LoanApplicationRequestDto extends BaseRequest {
     Integer loanDuration;
 
     String loanType;
+
+    Boolean createLoanAtVendor=false;
 }

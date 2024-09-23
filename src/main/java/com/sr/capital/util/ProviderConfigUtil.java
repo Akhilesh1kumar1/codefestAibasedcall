@@ -8,7 +8,6 @@ import com.sr.capital.service.entityimpl.ProviderTemplateConfigServiceImpl;
 import com.sr.capital.service.entityimpl.ProviderUrlConfigEntityServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,7 +25,7 @@ public class ProviderConfigUtil {
 
     final ProviderUrlConfigEntityServiceImpl providerUrlConfigEntityService;
 
-    public Map<String, Object> getUrlAndQueryParam(Long partnerId, Map<String, String> metadData, String group) {
+    public Map<String, Object> getUrlAndQueryParam(Long partnerId, Map<String, String> metaData, String group) {
         Map<String, Object> params = new HashMap<>();
         Map<String, String> queryParams = new HashMap<>();
         Map<String, String> headerParam = new HashMap<>();
@@ -41,15 +40,15 @@ public class ProviderConfigUtil {
                         break;
                     case "QUERY_PARAM":
                         queryParams.put(providerConfig.getKey(),
-                                metadData.getOrDefault(providerConfig.getValue(), providerConfig.getValue()));
+                                metaData.getOrDefault(providerConfig.getValue(), providerConfig.getValue()));
                         break;
                     case "HEADER":
                         headerParam.put(providerConfig.getKey(),
-                                metadData.getOrDefault(providerConfig.getValue(), providerConfig.getValue()));
+                                metaData.getOrDefault(providerConfig.getValue(), providerConfig.getValue()));
                         break;
                     case "PATH_VARIABLE":
                         params.put(ProviderUrlConfigTypes.PATH_VARIABLE.name(),
-                                params.getOrDefault(ProviderUrlConfigTypes.PATH_VARIABLE.name(), "") + providerConfig.getValue());
+                                metaData.getOrDefault(ProviderUrlConfigTypes.PATH_VARIABLE.name(), "") + providerConfig.getValue());
                         break;
                     case "OTHER":
                         params.put(providerConfig.getKey(), providerConfig.getValue());

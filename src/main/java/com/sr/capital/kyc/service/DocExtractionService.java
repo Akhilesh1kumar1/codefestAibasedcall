@@ -7,6 +7,7 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
+import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.exception.custom.RequestTransformerNotFoundException;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
@@ -202,6 +203,12 @@ public class DocExtractionService {
             case PROVISIONAL:
             case LOAN_TRACKER:
                 return ReportMetaData.class;
+            case BUSINESS_ADDRESS:
+                return BusinessAddressDetails.class;
+            case PERSONAL_ADDRESS:
+                return PersonalAddressDetails.class;
+            case ITR:
+                 return ItrDocDetails.class;
             default:
                 throw new CustomException("Invalid Doc Type!", HttpStatus.INTERNAL_SERVER_ERROR);
         }

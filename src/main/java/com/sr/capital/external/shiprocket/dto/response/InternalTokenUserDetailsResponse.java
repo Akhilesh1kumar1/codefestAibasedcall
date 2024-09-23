@@ -45,4 +45,13 @@ public class InternalTokenUserDetailsResponse implements Serializable {
 
     @JsonProperty("pan_number")
     private String panNumber;
+
+    @JsonProperty("date_of_birth")
+    private String dateOfBirth;
+
+    @JsonProperty("father_name")
+    private String fatherName;
+
+
+    private String gender;
 }

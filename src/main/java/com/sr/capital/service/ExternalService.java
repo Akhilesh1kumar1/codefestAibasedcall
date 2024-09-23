@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface ExternalService {
 
@@ -24,4 +25,6 @@ public interface ExternalService {
     public ResponseEntity<?> fetchDocDetailsByTenantId(final DocDetailsRequest docDetailsRequest,String vendorToken,String vendorCode,String loanVendorName) throws Exception;
 
     public ResponseEntity<?> saveWhatsAppCommunication(KaleyraWebhookDto content);
+
+    public ResponseEntity<?> saveLoanStatus(String vendorToken,String vendorCode,String loanVendorName,Map<String ,Object> loanStatusWebhook) throws InvalidVendorTokenException, InvalidVendorCodeException, IOException;
 }

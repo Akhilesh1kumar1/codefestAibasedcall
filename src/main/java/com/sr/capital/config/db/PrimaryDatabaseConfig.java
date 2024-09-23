@@ -31,7 +31,7 @@ import java.util.Collections;
 @EnableJpaRepositories(
         entityManagerFactoryRef = "primaryEntityManagerFactory",
         transactionManagerRef = "primaryTransactionManager",
-        basePackages = {"com.sr.capital.repository.primary"}
+        basePackages = {"com.sr.capital.repository.primary","com.omunify.kafka.*"}
 )
 public class PrimaryDatabaseConfig {
 
@@ -58,7 +58,7 @@ public class PrimaryDatabaseConfig {
             @Qualifier("primaryDataSource") DataSource dataSource) throws Exception {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan(new String[]{"com.sr.capital.entity.primary"});
+        em.setPackagesToScan(new String[]{"com.sr.capital.entity.primary","com.omunify.kafka.*"});
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         // Register the AttributeEncryptor

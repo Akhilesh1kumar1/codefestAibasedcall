@@ -18,7 +18,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.setMaxPoolSize(50);
-        executor.setThreadNamePrefix("authmaster-async-");
+        executor.setThreadNamePrefix("capital-async-");
         executor.initialize();
         return ContextExecutorService.wrap(
                 executor.getThreadPoolExecutor(), ContextSnapshotFactory.builder().build()::captureAll);

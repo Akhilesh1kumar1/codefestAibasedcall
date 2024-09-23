@@ -8,7 +8,9 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
+import com.sr.capital.kyc.dto.request.PersonalAddressDetailsRequestDto;
 import com.sr.capital.kyc.dto.response.*;
+import com.sr.capital.kyc.external.request.extraction.data.ItrExtractionData;
 import com.sr.capital.kyc.service.interfaces.ResponseConstructor;
 import com.sr.capital.util.S3Util;
 import org.apache.commons.lang3.ObjectUtils;
@@ -46,6 +48,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                     .images(ObjectUtils.isEmpty(kycDocDetails.getImages()) ? null :  generatePreSignedUri(kycDocDetails.getImages()))
                     .imageIds(kycDocDetails.getImages())
                     .status(kycDocDetails.getStatus())
+                    .kycType(kycDocDetails.getKycType())
                     .details(getExtractedDetails(kycDocDetails))
                     .lastModifiedAt(String.valueOf(Optional.ofNullable(kycDocDetails.getLastModifiedAt())
                             .orElse(LocalDateTime.parse(kycDocDetails.getLastModifiedAt().toString()))))
@@ -136,10 +139,31 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             case GST_BY_PAN:
                 GstByPanDocDetails gstByPanDocDetails = (GstByPanDocDetails) kycDocDetails.getDetails();
                 return (T) gstByPanDocDetails;
+            case ITR:
+                ItrExtractionData itrExtractionData = getItrData(kycDocDetails);
+                return (T) itrExtractionData;
             case MSME:
             case LOAN_TRACKER:
             case PROVISIONAL:
                 return (T) kycDocDetails;
+            case PERSONAL_ADDRESS:
+                PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) kycDocDetails.getDetails();
+                personalAddressDetails.getAddress().forEach(personalAddress->{
+                    personalAddress.setAddress(aes256.decrypt(personalAddress.getAddress()));
+                    personalAddress.setCity(aes256.decrypt(personalAddress.getCity()));
+                    personalAddress.setState(aes256.decrypt(personalAddress.getState()));
+                    personalAddress.setPincode(aes256.decrypt(personalAddress.getPincode()));
+                });
+                personalAddressDetails.setKycType(kycDocDetails.getKycType());
+                return (T) personalAddressDetails;
+            case BUSINESS_ADDRESS:
+                 BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) kycDocDetails.getDetails();
+                 businessAddressDetails.setBusinessPanNumber(aes256.decrypt(businessAddressDetails.getBusinessPanNumber()));
+                 businessAddressDetails.setAddress(aes256.decrypt(businessAddressDetails.getAddress()));
+                 businessAddressDetails.setCity(aes256.decrypt(businessAddressDetails.getCity()));
+                 businessAddressDetails.setState(aes256.decrypt(businessAddressDetails.getState()));
+                 businessAddressDetails.setPincode(aes256.decrypt(businessAddressDetails.getPincode()));
+                 return (T) businessAddressDetails;
             case AGREEMENT:
             case CIN:
             case VOTER_ID:
@@ -155,6 +179,12 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             default:
                 return null;
         }
+    }
+
+    private ItrExtractionData getItrData(KycDocDetails<?> kycDocDetails) {
+        ItrDocDetails itrDocDetails = (ItrDocDetails) kycDocDetails.getDetails();
+        ItrExtractionData itrExtractionData =ItrExtractionData.builder().username(aes256.decrypt(itrDocDetails.getUsername())).password(aes256.decrypt(itrDocDetails.getPassword())).build();
+        return itrExtractionData;
     }
 
     private List<ExtractedBankResponse> getExtractedBankResponses(KycDocDetails<?> kycDocDetails) {

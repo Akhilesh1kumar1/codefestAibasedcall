@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Map;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -18,14 +20,10 @@ public class AccessTokenRequestDto {
     @NotNull
     String accountId;
     @NotNull
-    String channel;
+    String partner;
     String authCode;
     String refreshToken;
     boolean hardRefresh;
+    Map<String,String> metaData;
 
-    public AccessTokenRequestDto(String accountId, String channel, boolean hardRefresh) {
-        this.accountId = accountId;
-        this.channel = channel;
-        this.hardRefresh = hardRefresh;
-    }
 }

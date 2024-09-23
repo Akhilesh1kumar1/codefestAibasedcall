@@ -2,6 +2,7 @@ package com.sr.capital.kyc.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.sr.capital.external.shiprocket.enums.KycType;
 import com.sr.capital.helpers.enums.DocStatus;
 import com.sr.capital.helpers.enums.DocType;
 import lombok.Builder;
@@ -27,6 +28,9 @@ public class FetchDocDetailsResponse<T> {
 
     @JsonProperty("status")
     private DocStatus status;
+
+    @JsonProperty("kyc_type")
+    private KycType kycType;
 
     @JsonProperty("details")
     private T details;

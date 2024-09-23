@@ -45,6 +45,9 @@ public class BankDocDetails implements Serializable {
     @Field("images")
     private List<String> images;
 
+    @Field("bank_account_type")
+    private String bankAccountType;
+
 
     String statementPassword;
 

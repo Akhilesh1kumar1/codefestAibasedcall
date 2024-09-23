@@ -37,14 +37,15 @@ public class BankDocDetailsEntityConstructor implements EntityConstructor {
         BankDocDetails bankDocDetails =null;
         try {
              bankDocDetails = MapperUtils.convertValue(request.getDocDetails(),BankDocDetails.class);
-            encryptData(bankDocDetails);
-            bankDocDetailsList.add(bankDocDetails);
+             encryptData(bankDocDetails);
+             bankDocDetailsList.add(bankDocDetails);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         if(bankKycDocDetails!=null){
              bankKycDocDetails.getDetails().add(bankDocDetails);
+             bankKycDocDetails.setKycType(request.getKycType());
             return (T) bankKycDocDetails;
         }
 
@@ -53,6 +54,7 @@ public class BankDocDetailsEntityConstructor implements EntityConstructor {
                 .images(images)
                 .docType(request.getDocType())
                 .details(bankDocDetailsList)
+                .kycType(request.getKycType())
                 .build();
     }
 

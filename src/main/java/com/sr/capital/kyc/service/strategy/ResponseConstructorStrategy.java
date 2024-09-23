@@ -38,6 +38,9 @@ public class ResponseConstructorStrategy {
     @Autowired
     private ExtractedGstByPanResponseConstructor extractedGstByPanResponseConstructor;
 
+    @Autowired
+    private ItrDocResponseConstructor itrDocResponseConstructor;
+
 
     public <T,U> ResponseEntity<GenericResponse<T>> constructResponse(U input) throws ResponseConstructorNotFoundException {
 
@@ -65,8 +68,13 @@ public class ResponseConstructorStrategy {
                     case MSME:
                     case PROVISIONAL:
                     case LOAN_TRACKER:
+                    case BUSINESS_ADDRESS:
+                    case PERSONAL_ADDRESS:
                          responseConstructor = defaultResponseConstructor;
                          break;
+                    case ITR:
+                        responseConstructor =itrDocResponseConstructor;
+                        break;
                     default:
                         throw new ResponseConstructorNotFoundException();
                 }

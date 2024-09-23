@@ -54,6 +54,9 @@ public final class Constants {
         public static final String CAPITAL_REPORT = "report_capital_data_report";
 
         public static final String COMPANY_WISE_REPORT = "reports_company_wise_report";
+
+        public static final String UNDERWRITING_CONFIG = "underwriting_config";
+
     }
 
     public static class ServiceConstants{
@@ -164,6 +167,8 @@ public final class Constants {
         public static final String BANK_DETAILS = "banks";
 
         public static final String ACCOUNT_TYPE =  "account_type";
+
+        public static final String ACCESS_TOKEN =  "partner_access_tokens";
 
     }
 

@@ -25,7 +25,12 @@ public enum DocType {
 
     UNKNOWN_TYPE("unknown_type"),
     BANK_STATEMENT("bank_statement"),
-    BANK_NET_BANKING("bank_net_banking");
+    BANK_NET_BANKING("bank_net_banking"),
+    ITR("itr"),
+    BUSINESS_ADDRESS("business_address"),
+    PERSONAL_ADDRESS("current_address"),
+
+    DIRECTORS("directors");
 
     final String type;
 

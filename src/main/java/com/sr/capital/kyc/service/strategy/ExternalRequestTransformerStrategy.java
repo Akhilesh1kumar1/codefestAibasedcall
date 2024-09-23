@@ -47,6 +47,9 @@ public class ExternalRequestTransformerStrategy {
     @Autowired
     private GstDetailsByPanCardRequestTransformer gstDetailsByPanCardRequestTransformer;
 
+    @Autowired
+    private ItrExtractionRequestTransformer itrExtractionRequestTransformer;
+
 
     public <T extends KarzaBaseRequest<?>> T transformExtractionRequest(DocOrchestratorRequest request) throws RequestTransformerNotFoundException {
         ExternalRequestTransformer requestTransformer;
@@ -67,6 +70,11 @@ public class ExternalRequestTransformerStrategy {
             case GST_BY_PAN :
                  requestTransformer = gstDetailsByPanCardRequestTransformer;
                  break;
+            case ITR:
+                   requestTransformer = itrExtractionRequestTransformer;
+                   break;
+            case BUSINESS_ADDRESS:
+
             default:
                 throw new RequestTransformerNotFoundException();
         }

@@ -33,6 +33,7 @@ public class CapitalDataReport {
     @Column(name = "PLATFORM_AGE_FTS")
     private Integer platformAgeFts;
 
+    @Builder.Default
     @Column(name = "ORG_TYPE", nullable = false, columnDefinition = "varchar(100) default ''")
     private String orgType = "";
 
@@ -41,7 +42,7 @@ public class CapitalDataReport {
     private String detailsInfo;
 
     @Column(name = "UPDATED_ON")
-    private Timestamp updatedOn;
+    private String updatedOn;
 
     @Builder.Default
     @Column(name = "PLATFORM_AGE_SIGNUP_MONTH", nullable = false, columnDefinition = "int default 0")

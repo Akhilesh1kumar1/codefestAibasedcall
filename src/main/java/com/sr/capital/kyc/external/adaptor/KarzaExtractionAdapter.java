@@ -8,10 +8,12 @@ import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.kyc.dto.request.VerifyGstOtpRequest;
 import com.sr.capital.kyc.external.exception.KarzaExtractionException;
 import com.sr.capital.kyc.external.request.*;
+import com.sr.capital.kyc.external.request.extraction.data.ItrExtractionData;
 import com.sr.capital.kyc.external.response.KarzaBaseResponse;
 import com.sr.capital.kyc.external.response.extraction.*;
 import com.sr.capital.kyc.external.response.extraction.data.GstDetailsByPanResponseData;
 import com.sr.capital.kyc.external.response.extraction.data.GstExtractionResponseData;
+import com.sr.capital.kyc.external.response.extraction.data.ItrAdditionalResponseData;
 import com.sr.capital.kyc.external.response.verification.VerifyGstOtpResponse;
 import com.sr.capital.kyc.external.utill.KarzaUtil;
 import com.sr.capital.util.LoggerUtil;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,6 +70,9 @@ public class KarzaExtractionAdapter {
 
         if(requestMetaData.getDocType().equals(DocType.VERIFY_OTP)){
             return (U) createDummyGstOtpResponse();
+        }
+        if(requestMetaData.getDocType().equals(DocType.ITR)){
+            return (U) createItrData();
         }
 
         return null;
@@ -130,7 +136,13 @@ public class KarzaExtractionAdapter {
                     .docType(DocType.BANK_CHEQUE)
                     .responseClass(BankExtractionResponse.class)
                     .build();
-        } else {
+        }  else if (request instanceof ItrExtractionRequest) {
+           return ExternalRequestMetaData.builder()
+                   .endpoint(kycAppProperties.getKarzaExtractItrDetailsEndpoint())
+                   .docType(DocType.ITR)
+                   .responseClass(ItrExtractionResponseData.class)
+                   .build();
+       }else {
             throw new ServiceEndpointNotFoundException();
         }
     }
@@ -181,6 +193,20 @@ public class KarzaExtractionAdapter {
         response.setStatusCode(200);
 
         return response;
+    }
+
+
+    public ItrExtractionResponseData createItrData(){
+        ItrExtractionResponseData itrExtractionData = ItrExtractionResponseData.builder().build();
+        ItrAdditionalResponseData itrAdditionalResponseData =ItrAdditionalResponseData.builder().build();
+        itrAdditionalResponseData.setAsData(new ArrayList<>());
+        ItrAdditionalResponseData.FormDetails formDetails =new ItrAdditionalResponseData.FormDetails();
+        formDetails.setFinancialYear("2024-25");
+        itrExtractionData.setRequestId("dummmafn");
+        itrAdditionalResponseData.setFormDetails(formDetails);
+        itrExtractionData.setResult(itrAdditionalResponseData);
+      //  itrAdditionalResponseData.setPdfDownloadLink("https://rb.gy/2hlagh");
+        return itrExtractionData;
     }
 
 }

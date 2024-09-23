@@ -234,6 +234,9 @@ public class AppProperties {
     @Value("${external.karza.api.endpoint.compare.name.url}")
     private String karzaNameCompareEndpoint;
 
+    @Value("${external.karza.api.endpoint.extract.itr.url}")
+    private String karzaExtractItrDetailsEndpoint;
+
     @Value("${allowed.compare.name.score}")
     private Integer allowedNameScore;
 
@@ -266,6 +269,13 @@ public class AppProperties {
 
     @Value("${app.external.klub.vendor-code}")
     private String klubVendorCode;
+
+    //klub
+    @Value("${app.external.common.vendor-token}")
+    private String commonVendorToken;
+
+    @Value("${app.external.common.vendor-code}")
+    private String commonVendorCode;
 
 
     //database

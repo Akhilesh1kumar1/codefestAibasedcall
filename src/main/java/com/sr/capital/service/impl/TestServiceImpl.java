@@ -3,17 +3,18 @@ package com.sr.capital.service.impl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.external.dto.response.ValidateTokenResponse;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
 import com.sr.capital.helpers.enums.ProviderUrlConfigTypes;
+import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.spine.JsonPathEvaluator;
 import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.ProviderConfigUtil;
 import com.sr.capital.util.ProviderHelperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,9 +26,11 @@ import java.util.Map;
 @Slf4j
 public class TestServiceImpl {
 
+    final CreditPartnerFactoryService creditPartnerFactoryService;
     final JsonPathEvaluator jsonPathEvaluator;
     final ProviderHelperUtil providerHelperUtil;
     final ProviderConfigUtil providerConfigUtil;
+
     public boolean testJsonPath(Long partnerId, Map<String,String> metaData, Map<String,Object> request) throws UnirestException, URISyntaxException, IOException {
 
         Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerId,metaData, ProviderRequestTemplateType.VALIDATE_TOKEN.name());
@@ -49,5 +52,9 @@ public class TestServiceImpl {
         ValidateTokenResponse response1 = MapperUtils.convertValue(response.getData(),ValidateTokenResponse.class);
         log.info("response code {} ",response1.getCode());
         return true;
+    }
+
+    public AccessTokenResponseDto testAccessToken(String partner) {
+        return creditPartnerFactoryService.getPartnerService(partner).getAccessToken(partner);
     }
 }

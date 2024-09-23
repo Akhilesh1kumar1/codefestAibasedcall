@@ -1,0 +1,277 @@
+--
+
+    -- Dumping data for table `provider_template` for Yubi
+    -- Please check and update partner_id if necessary
+    --
+
+SET
+    SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION
+    ;
+SET
+    time_zone = "+00:00";
+INSERT INTO `provider_template`(
+    `partner_id`,
+    `source`,
+    `destination`,
+    `type`,
+    `group`
+)
+SELECT
+    p.id,
+    v.source,
+    v.destination,
+    v.type,
+    v.group
+FROM
+    base_credit_partners p
+JOIN(
+    SELECT
+        '$.client_loan_id' AS `source`,
+        '/clientLoanId' AS `destination`,
+        'static' AS `type`,
+        'CREATE_LEAD_RESPONSE' AS `group`
+    UNION ALL
+SELECT
+    '$.status',
+    '/status',
+    'static',
+    'CREATE_LEAD_RESPONSE'
+UNION ALL
+SELECT
+    '$.customerCategory',
+    '/customer_category',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    'ARVIND_SHIPROCKET_HERO',
+    '/product_id',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.disbursementAccounts',
+    '/disbursement_accounts',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.clientCustomerId',
+    '/client_customer_id',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.firstName',
+    '/first_name',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.lastName',
+    '/last_name',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.dateOfBirth',
+    '/date_of_birth',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.gender',
+    '/gender',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.primaryBorrowerType',
+    '/primary_borrower_type',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.currentAddress',
+    '/current_address',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.currentCity',
+    '/current_city',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.currentState',
+    '/current_state',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.currentPincode',
+    '/current_pincode',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.mobileNumber',
+    '/mobile_number',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.panNumber',
+    '/pan_number',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.applicationId',
+    '/application_id',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.clientLoanId',
+    '/client_loan_id',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.category',
+    '/category',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.subCategory',
+    '/sub_category',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.principalAmount',
+    '/principal_amount',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.email',
+    '/email',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.permanentAddress',
+    '/permanent_address',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.permanentCity',
+    '/permanent_city',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.permanentState',
+    '/permanent_state',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.permanentPincode',
+    '/permanent_pincode',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.nameOfBureau',
+    '/name_of_bureau',
+    'static',
+    'CREATE_LEAD'
+UNION ALL
+SELECT
+    '$.bureauScore',
+    '/bureau_score',
+    'static',
+    'CREATE_LEAD'
+) AS v
+ON
+    p.credit_partner_name = 'yubi';
+COMMIT
+    ;
+    --
+
+    -- End of Dumping data for table `provider_template` for Yubi
+    --
+
+    --
+
+    -- Dumping data for table `provider_url_config` for Yubi
+    -- Please check and update partner_id if necessary
+    --
+
+SET
+    SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION
+    ;
+SET
+    time_zone = "+00:00";
+INSERT INTO provider_url_config(
+    `partner_id`,
+    `group`,
+    `type`,
+    `key`,
+    `value`,
+    `priority`
+)
+SELECT
+    p.id,
+    v.group,
+    v.type,
+    v.key,
+    v.value,
+    v.priority
+FROM
+    base_credit_partners p
+JOIN(
+    SELECT
+        'CREATE_LEAD' AS `group`,
+        'BASE_URL' AS `type`,
+        'BASE_URL' AS `key`,
+        'https://colend-uat-01-api.go-yubi.in/colending/clients/arvind/api/v2/loans' AS `value`,
+        1 AS `priority`
+    UNION ALL
+SELECT
+    'CREATE_LEAD',
+    'OTHER',
+    'method',
+    'POST',
+    1
+UNION ALL
+SELECT
+    'CREATE_LEAD',
+    'HEADER',
+    'api-key',
+    'accessToken',
+    1
+UNION ALL
+SELECT
+    'CREATE_LEAD',
+    'HEADER',
+    'Product-Id',
+    'accountId',
+    1
+) AS v
+ON
+    p.credit_partner_name = 'yubi';
+COMMIT
+    ;
+    --
+
+    -- End of Dumping data for table `provider_url_config` for Yubi
+    --

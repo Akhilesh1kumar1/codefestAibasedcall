@@ -1,13 +1,26 @@
 package com.sr.capital.service;
 
-import com.sr.capital.dto.request.AccessTokenRequestDto;
+import com.sr.capital.dto.request.CreateLeadRequestDto;
+import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
+import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
 
+import java.time.format.DateTimeFormatter;
+
 public interface CreditPartnerService {
 
-    public AccessTokenResponseDto getAccessToken(AccessTokenRequestDto accessTokenRequestDto);
+    AccessTokenResponseDto getAccessToken(String partner);
 
-    public Boolean validateExternalRequest(String vendorToken,String vendorCode) throws InvalidVendorCodeException, InvalidVendorTokenException;
+    CreateLeadResponseDto createLead(String partner, CreateLeadRequestDto requestDto);
+
+    Boolean validateExternalRequest(String vendorToken,String vendorCode) throws InvalidVendorCodeException, InvalidVendorTokenException;
+
+    long expiryDurationInMs(String futureDate, DateTimeFormatter formatter);
+
+
+    LoanStatusUpdateWebhookDto getLoanDetails(String partner,String loanId);
+
+
 }

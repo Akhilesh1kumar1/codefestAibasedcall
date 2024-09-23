@@ -36,7 +36,6 @@ public class DocOrchestratorRequest {
     @JsonProperty("sr_company_id")
     private String srCompanyId;
 
-
     private List<DocActionType> actions;
 
     private FileDetails file1;
