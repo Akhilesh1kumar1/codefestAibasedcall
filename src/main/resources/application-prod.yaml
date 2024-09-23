@@ -121,10 +121,9 @@ app:
     klub:
       vendor-token: ${KLUB_VENDOR_TOKEN:test}
       vendor-code: ${KLUB_VENDOR_CODE:test}
-
     common:
-      vendor-token: ${COMMON_VENDOR_TOKEN:test}
-      vendor-code: ${COMMON_VENDOR_CODE:test}
+      vendor-token: ${COMMON_VENDOR_TOKEN:561f14a7-9fbc-4f07-8f18-2917065430}
+      vendor-code: ${COMMON_VENDOR_CODE:551f14a7-9fbc-4f07-8f18-2917345d80}
 
 aws:
   region: ${AWS_REGION:test}
@@ -225,6 +224,6 @@ allowed:
       score: '2'
 
 encryption:
-  key: ${ENCRYPTION_KEY:test}
+  key: ${ENCRYPTION_KEY:capital-prod}
 
 
