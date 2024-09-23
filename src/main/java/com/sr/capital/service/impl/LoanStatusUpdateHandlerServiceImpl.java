@@ -26,7 +26,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
 
                 LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanStatusUpdateWebhookDto.getClientLoanId())).orElse(null);
 
-                if(loanApplication!=null && loanApplication.getLoanStatus().equals(LoanStatus.PENDING)){
+                if(loanApplication!=null && (loanApplication.getLoanStatus().equals(LoanStatus.PENDING) || loanApplication.getLoanStatus().equals(LoanStatus.PRE_APPROVED))){
                     loanApplication.setLoanStatus(LoanStatus.APPROVED);
                     loanApplicationRepository.save(loanApplication);
                 }
