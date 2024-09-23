@@ -157,7 +157,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                        .accountName(aes256.decrypt(bankDocDetails.getAccountName()))
                        .accountNo(aes256.decrypt(bankDocDetails.getAccountNo()))
                        .bankName(bankDocDetails.getBankName()).bankBranchName(aes256.decrypt(bankDocDetails.getBankAddress()))
-                       .ifscCode(aes256.decrypt(bankDocDetails.getIfscCode())).bankAccountType(bankDocDetails.getBankAccountType()).amount(createLeadRequestDto.getPrincipalAmount())
+                       .ifscCode(bankDocDetails.getIfscCode()).bankAccountType(bankDocDetails.getBankAccountType()).amount(createLeadRequestDto.getPrincipalAmount())
                        .build();
                disbursementAccounts.add(disbursementAccount);
            });

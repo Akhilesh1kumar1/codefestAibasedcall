@@ -32,4 +32,7 @@ public class ExtractedBankResponse {
     @JsonProperty("bank_address")
     private String bankAddress;
 
+    private String bankAccountType;
+
+
 }
