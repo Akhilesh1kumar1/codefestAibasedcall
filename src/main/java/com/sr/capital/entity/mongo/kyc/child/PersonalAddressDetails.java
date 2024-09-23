@@ -3,6 +3,7 @@ package com.sr.capital.entity.mongo.kyc.child;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.sr.capital.external.shiprocket.enums.KycType;
 import com.sr.capital.kyc.dto.request.PersonalAddressDetailsRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,8 @@ public class PersonalAddressDetails implements Serializable {
     List<PersonalAddressDetails.Address> address;
 
     Map<String,String> metaData;
+
+    KycType kycType;
 
     @Data
     @Builder

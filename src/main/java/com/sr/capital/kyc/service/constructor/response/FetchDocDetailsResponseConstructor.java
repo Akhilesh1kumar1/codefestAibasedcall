@@ -153,6 +153,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                     personalAddress.setState(aes256.decrypt(personalAddress.getState()));
                     personalAddress.setPincode(aes256.decrypt(personalAddress.getPincode()));
                 });
+                personalAddressDetails.setKycType(kycDocDetails.getKycType());
                 return (T) personalAddressDetails;
             case BUSINESS_ADDRESS:
                  BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) kycDocDetails.getDetails();
