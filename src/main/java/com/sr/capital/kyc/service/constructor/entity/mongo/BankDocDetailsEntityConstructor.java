@@ -53,6 +53,7 @@ public class BankDocDetailsEntityConstructor implements EntityConstructor {
                 .images(images)
                 .docType(request.getDocType())
                 .details(bankDocDetailsList)
+                .kycType(request.getKycType())
                 .build();
     }
 

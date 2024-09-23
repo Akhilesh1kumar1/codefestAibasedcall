@@ -53,6 +53,7 @@ public class BusinessDetailsConstructor implements EntityConstructor {
                     .srCompanyId(RequestData.getTenantId())
                     .docType(DocType.BUSINESS_ADDRESS)
                     .details(businessAddressDetails)
+                    .kycType(request.getKycType())
                     .build();
         }else{
             kycDocDetails.setDetails(businessAddressDetails);

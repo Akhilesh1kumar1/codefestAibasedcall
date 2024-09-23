@@ -54,6 +54,7 @@ public class PersonalAddressDetailsConstructor implements EntityConstructor {
                     .srCompanyId(RequestData.getTenantId())
                     .docType(DocType.PERSONAL_ADDRESS)
                     .details(personalAddressDetails)
+                    .kycType(request.getKycType())
                     .build();
         }else{
             kycDocDetails.setDetails(personalAddressDetails);
