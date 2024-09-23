@@ -57,6 +57,13 @@ UNION ALL
 SELECT
     'CREATE_LEAD',
     'HEADER',
+    'Content-Type',
+    'application/json',
+    1
+UNION ALL
+SELECT
+    'CREATE_LEAD',
+    'HEADER',
     'Product-Id',
     'accountId',
     1
