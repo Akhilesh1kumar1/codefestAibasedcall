@@ -38,6 +38,7 @@ public class BusinessDetailsConstructor implements EntityConstructor {
             loggerUtil.error("error in doc parsing "+ex.getMessage());
         }
 
+
         BusinessAddressDetails  businessAddressDetails = BusinessAddressDetails.builder().pincode(aes256.encrypt(businessDetailsRequestDto.getPincode())).businessName(businessDetailsRequestDto.getBusinessName()).
                 city(aes256.encrypt(businessDetailsRequestDto.getCity())).state(aes256.encrypt(businessDetailsRequestDto.getState())).address(aes256.encrypt(businessDetailsRequestDto.getAddress())).
                 metaData(businessDetailsRequestDto.getMetaData()).
@@ -56,6 +57,7 @@ public class BusinessDetailsConstructor implements EntityConstructor {
                     .kycType(request.getKycType())
                     .build();
         }else{
+            kycDocDetails.setKycType(request.getKycType());
             kycDocDetails.setDetails(businessAddressDetails);
         }
         return (T) kycDocDetails;

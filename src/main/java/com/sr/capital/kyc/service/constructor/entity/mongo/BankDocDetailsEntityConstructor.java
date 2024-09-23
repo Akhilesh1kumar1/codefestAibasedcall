@@ -45,6 +45,7 @@ public class BankDocDetailsEntityConstructor implements EntityConstructor {
 
         if(bankKycDocDetails!=null){
              bankKycDocDetails.getDetails().add(bankDocDetails);
+             bankKycDocDetails.setKycType(request.getKycType());
             return (T) bankKycDocDetails;
         }
 
