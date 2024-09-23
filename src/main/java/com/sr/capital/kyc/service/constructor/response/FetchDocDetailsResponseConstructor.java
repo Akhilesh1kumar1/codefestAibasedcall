@@ -200,6 +200,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                     .bankName(bankDocDetails.getBankName())
                     .ifscCode(bankDocDetails.getIfscCode())
                     .bankAddress(aes256.decrypt(bankDocDetails.getBankAddress()))
+                            .bankAccountType(bankDocDetails.getBankAccountType())
                     .build());
         });
         return extractedBankResponses;
