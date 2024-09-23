@@ -201,6 +201,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) doc.getDetails();
         createLeadRequestDto.setCategory("unsecured");
         createLeadRequestDto.setSubCategory("fresh");
+        createLeadRequestDto.setGender(user.getGender());
         personalAddressDetails.getAddress().forEach(address -> {
             if(address.getAddressType()==null || address.getAddressType().equalsIgnoreCase("current")) {
                 createLeadRequestDto.setCurrentAddress(aes256.decrypt(address.getAddress()));

@@ -5,11 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.entity.primary.User;
-import jakarta.persistence.Column;
-import lombok.Builder;
 import lombok.Data;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -62,7 +59,7 @@ public class UserDetails {
     private String dateOfBirth;
 
     private String fatherName;
-    private String title;
+    private String gender;
 
     public static UserDetails mapUser(User user){
         UserDetails userDetails =new UserDetails();

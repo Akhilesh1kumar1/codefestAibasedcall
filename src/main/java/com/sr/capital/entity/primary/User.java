@@ -1,12 +1,9 @@
 package com.sr.capital.entity.primary;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sr.capital.config.AttributeEncryptor;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.UserDetails;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 
 import static com.sr.capital.helpers.constants.Constants.EntityNames.USER;
 
@@ -81,14 +78,14 @@ public class User extends LongBaseEntity{
     @Column(name = "father_name")
     private String fatherName;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "gender")
+    private String gender;
 
     public static User mapUser(UserDetails userDetails){
         User user =User.builder().srUserId(Long.valueOf(userDetails.getUserId())).
         comments(userDetails.getComments()).srCompanyId(Long.valueOf(RequestData.getTenantId()))
                 .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).companyName(userDetails.getCompanyName()).panNumber(userDetails.getPanNumber()).dateOfBirth(userDetails.getDateOfBirth()).fatherName(userDetails.getFatherName())
-                .title(userDetails.getTitle()).build();
+                .gender(userDetails.getGender()).build();
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         return user;
@@ -107,7 +104,7 @@ public class User extends LongBaseEntity{
         user.setPanNumber(userDetails.getPanNumber());
         user.setDateOfBirth(user.getDateOfBirth());
         user.setFatherName(userDetails.getFatherName());
-        user.setTitle(userDetails.getTitle());
+        user.setGender(userDetails.getGender());
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
     }

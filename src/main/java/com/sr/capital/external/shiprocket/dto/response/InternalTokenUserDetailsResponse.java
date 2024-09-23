@@ -53,5 +53,5 @@ public class InternalTokenUserDetailsResponse implements Serializable {
     private String fatherName;
 
 
-    private String title;
+    private String gender;
 }
