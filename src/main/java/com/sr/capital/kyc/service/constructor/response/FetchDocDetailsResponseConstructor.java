@@ -48,6 +48,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                     .images(ObjectUtils.isEmpty(kycDocDetails.getImages()) ? null :  generatePreSignedUri(kycDocDetails.getImages()))
                     .imageIds(kycDocDetails.getImages())
                     .status(kycDocDetails.getStatus())
+                    .kycType(kycDocDetails.getKycType())
                     .details(getExtractedDetails(kycDocDetails))
                     .lastModifiedAt(String.valueOf(Optional.ofNullable(kycDocDetails.getLastModifiedAt())
                             .orElse(LocalDateTime.parse(kycDocDetails.getLastModifiedAt().toString()))))
