@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
                     response.setFatherName(aes256.decrypt(user.getFatherName()));
                     response.setGender(user.getGender());
                 }catch (Exception ex){
-                    EncryptionConfig encryptionConfig =new EncryptionConfig();
+                 /*   EncryptionConfig encryptionConfig =new EncryptionConfig();
                     encryptionConfig.setKey("test");
                     AES256 aes2561 = new AES256(encryptionConfig);
 
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
                     response.setMobile(aes2561.decrypt(user.getMobile()));
                     response.setPanNumber(aes2561.decrypt(user.getPanNumber()));
                     response.setDateOfBirth(aes2561.decrypt(user.getDateOfBirth()));
-                    response.setFatherName(aes2561.decrypt(user.getFatherName()));
+                    response.setFatherName(aes2561.decrypt(user.getFatherName()));*/
 
                 }
             }
