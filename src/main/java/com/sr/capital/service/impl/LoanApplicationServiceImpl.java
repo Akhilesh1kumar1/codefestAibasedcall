@@ -27,9 +27,11 @@ import com.sr.capital.service.UserService;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     final RequestValidationStrategy requestValidationStrategy;
@@ -49,6 +52,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final AES256 aes256;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
 
         loanApplicationRequestDto = requestValidationStrategy.validateRequest(loanApplicationRequestDto, RequestType.LOAN_APPLICATION);
@@ -117,7 +121,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                // numberOfRepayments(loanApplicationResponseDto.getLoanDuration()).
                 principalAmount(loanApplicationResponseDto.getLoanAmountRequested())
                 .build();
-
+       log.info("[buildRequestDto] user details {} ",user);
         if(user!=null){
 
             List<KycDocDetails<?>> docDetails =docDetailsService.fetchDocDetailsByTenantId(tenantId);
@@ -126,12 +130,19 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
                 docDetails.stream().forEach(doc->{
                     if(doc.getDocType()== DocType.PERSONAL_ADDRESS){
-                       buildPersonalDetails(doc,user,createLeadRequestDto);
+                        log.info("[buildRequestDto] personal doc {} ",doc);
+
+                        buildPersonalDetails(doc,user,createLeadRequestDto);
 
                     }else if(doc.getDocType() == DocType.BUSINESS_ADDRESS){
-                          buildBusinessDetails(doc,createLeadRequestDto,user);
+                        log.info("[buildRequestDto] business doc {} ",doc);
+
+                        buildBusinessDetails(doc,createLeadRequestDto,user);
                     }else if(doc.getDocType() == DocType.BANK_CHEQUE){
-                           buildAccountDetails(doc,createLeadRequestDto,false);
+
+                        log.info("[buildRequestDto] bank cheque {} ",doc);
+
+                        buildAccountDetails(doc,createLeadRequestDto,false);
                     }
                 });
 

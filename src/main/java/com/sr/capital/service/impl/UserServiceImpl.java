@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
                 user.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
                 user.setPanNumber(aes256.decrypt(user.getPanNumber()));
             }catch (Exception ex) {//temp code
-                EncryptionConfig encryptionConfig =new EncryptionConfig();
+              /*  EncryptionConfig encryptionConfig =new EncryptionConfig();
                 encryptionConfig.setKey("test");
                 AES256 aes2561 = new AES256(encryptionConfig);
                 user.setFirstName(aes2561.decrypt(user.getFirstName()));
@@ -178,7 +178,8 @@ public class UserServiceImpl implements UserService {
                 user1.setPanNumber(aes256.encrypt(user.getPanNumber()));
                 user1.setDateOfBirth(aes256.encrypt(user.getDateOfBirth()));
                 user1.setFatherName(aes256.encrypt(user.getFatherName()));
-                userRepository.save(user1);
+                userRepository.save(user1);*/
+
 
             }
         }
