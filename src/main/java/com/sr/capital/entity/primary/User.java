@@ -102,7 +102,7 @@ public class User extends LongBaseEntity{
         user.setEntityType(userDetails.getEntityType());
         user.setCompanyName(userDetails.getCompanyName());
         user.setPanNumber(userDetails.getPanNumber());
-        user.setDateOfBirth(user.getDateOfBirth());
+        user.setDateOfBirth(userDetails.getDateOfBirth());
         user.setFatherName(userDetails.getFatherName());
         user.setGender(userDetails.getGender());
         user.setIsEnabled(true);
