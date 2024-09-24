@@ -150,15 +150,15 @@ public class UserServiceImpl implements UserService {
         User user= userRepository.findTopBySrCompanyId(srCompanyId);
         if(user!=null) {
             try {
-                user.setFirstName(aes256.decrypt(user.getFirstName()));
+               /* user.setFirstName(aes256.decrypt(user.getFirstName()));
                 user.setMobile(aes256.decrypt(user.getMobile()));
                 user.setEmail(aes256.decrypt(user.getEmail()));
                 user.setLastName(aes256.decrypt(user.getLastName()));
                 user.setMiddleName(aes256.decrypt(user.getMiddleName()));
                 user.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
-                user.setPanNumber(aes256.decrypt(user.getPanNumber()));
+                user.setPanNumber(aes256.decrypt(user.getPanNumber()));*/
             }catch (Exception ex) {//temp code
-                EncryptionConfig encryptionConfig =new EncryptionConfig();
+              /*  EncryptionConfig encryptionConfig =new EncryptionConfig();
                 encryptionConfig.setKey("test");
                 AES256 aes2561 = new AES256(encryptionConfig);
                 user.setFirstName(aes2561.decrypt(user.getFirstName()));
@@ -178,7 +178,8 @@ public class UserServiceImpl implements UserService {
                 user1.setPanNumber(aes256.encrypt(user.getPanNumber()));
                 user1.setDateOfBirth(aes256.encrypt(user.getDateOfBirth()));
                 user1.setFatherName(aes256.encrypt(user.getFatherName()));
-                userRepository.save(user1);
+                userRepository.save(user1);*/
+
 
             }
         }
