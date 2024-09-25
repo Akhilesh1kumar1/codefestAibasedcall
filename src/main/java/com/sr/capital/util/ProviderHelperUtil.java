@@ -50,7 +50,7 @@ public class ProviderHelperUtil {
             }
         }
 
-         url = getUrlWithQueryparam(url, (Map<String, Object>) params.get(ProviderUrlConfigTypes.QUERY_PARAM.name()));
+         url = getUrlWithQueryparam(url,(Map<String, Object>) params.get(ProviderUrlConfigTypes.PATH_VARIABLE.name()), (Map<String, Object>) params.get(ProviderUrlConfigTypes.QUERY_PARAM.name()));
         if (method != null && !method.isBlank()) {
 
             switch (method.toLowerCase()){
@@ -94,8 +94,17 @@ public class ProviderHelperUtil {
     }
 
 
-    private String getUrlWithQueryparam(String url ,Map<String,Object> queryParam) throws URISyntaxException {
+    private String getUrlWithQueryparam(String url ,Map<String,Object> pathVariables,Map<String,Object> queryParam) throws URISyntaxException {
+
+        if(pathVariables!=null){
+            StringBuilder urlBuilder =new StringBuilder(url);
+            pathVariables.forEach((k,v)->{
+                  urlBuilder.append(v +"/");
+            });
+            url = urlBuilder.toString();
+        }
         URIBuilder uri = new URIBuilder(url) ;
+
         if(queryParam!=null){
             queryParam.forEach((k,v)->{
                 uri.addParameter(k, String.valueOf(v));

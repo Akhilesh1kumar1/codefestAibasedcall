@@ -186,11 +186,14 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
         LoanStatusUpdateWebhookDto responseDto;
         Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
+        metaData.put(CreateLeadRequestDto.Fields.clientLoanId,loanId);
+
         BaseCreditPartner partnerInfo = getPartnerInfo(partner);
 
         Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
                 metaData,
                 ProviderRequestTemplateType.GET_LOAN.name());
+
 
         Object requestBody = null;
 
