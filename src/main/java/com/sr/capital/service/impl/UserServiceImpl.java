@@ -157,6 +157,7 @@ public class UserServiceImpl implements UserService {
                 user.setMiddleName(aes256.decrypt(user.getMiddleName()));
                 user.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
                 user.setPanNumber(aes256.decrypt(user.getPanNumber()));
+                user.setFatherName(aes256.decrypt(user.getFatherName()));
             }catch (Exception ex) {//temp code
               /*  EncryptionConfig encryptionConfig =new EncryptionConfig();
                 encryptionConfig.setKey("test");
