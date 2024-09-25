@@ -16,6 +16,11 @@ public class LoanDistributionEntityServiceImpl {
         return loanDisbursedRepository.findByLoanApplicationStatusId(loanApplicationStatusId);
     }
 
+    public LoanDisbursed getLoanDisbursedDetailsByStatusIdAndVendorDisbursedId(Long loanApplicationStatusId,String vendorDisbursedId){
+        return loanDisbursedRepository.findByLoanApplicationStatusIdAndVendorDisbursedId(loanApplicationStatusId,vendorDisbursedId);
+    }
+
+
     public LoanDisbursed saveLoanDisbursed(LoanDisbursed loanDisbursed){
         return loanDisbursedRepository.save(loanDisbursed);
     }

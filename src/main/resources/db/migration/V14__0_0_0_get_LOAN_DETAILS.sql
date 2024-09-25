@@ -47,3 +47,12 @@ SELECT
 ON
     p.credit_partner_name = 'yubi';
 
+
+ALTER TABLE `loan_disbursed`
+CHANGE `is_enabled` `is_enabled` BIT(1) NULL DEFAULT b'1';
+
+ALTER TABLE `loan_disbursed`
+add column disbursed_date varchar(255);
+
+ALTER TABLE `loan_application_status`
+CHANGE `is_enabled` `is_enabled` BIT(1) NULL DEFAULT b'1';
