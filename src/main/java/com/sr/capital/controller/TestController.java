@@ -63,4 +63,11 @@ public class TestController {
                 testService.testAccessToken(partner),
                 Constants.StatusEnum.SUCCESS, "", HttpStatus.SC_OK);
     }
+
+
+    @GetMapping("/loan/details")
+    public GenericResponse testMultiteDb(@RequestParam("loanId") String loanId,@RequestParam("partnerName") String loanPartnerName) throws UnirestException, CustomException {
+
+        return ResponseBuilderUtil.getResponse(testService.testAccessToken(loanPartnerName,loanId), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
+    }
 }

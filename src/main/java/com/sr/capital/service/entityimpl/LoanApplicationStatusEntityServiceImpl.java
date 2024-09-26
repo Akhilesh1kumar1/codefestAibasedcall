@@ -5,6 +5,8 @@ import com.sr.capital.repository.primary.LoanApplicationStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class LoanApplicationStatusEntityServiceImpl {
@@ -17,5 +19,9 @@ public class LoanApplicationStatusEntityServiceImpl {
 
     public LoanApplicationStatus saveLoanApplicationStatus(LoanApplicationStatus loanApplicationStatus){
        return loanApplicationStatusRepository.save(loanApplicationStatus);
+    }
+
+    public LoanApplicationStatus getLoanApplicationStatusByLoanId(UUID id){
+        return loanApplicationStatusRepository.findByLoanId(id);
     }
 }

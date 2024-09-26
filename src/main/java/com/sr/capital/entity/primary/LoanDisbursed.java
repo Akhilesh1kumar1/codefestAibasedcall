@@ -38,4 +38,7 @@ public class LoanDisbursed extends LongBaseEntity{
 
     @Column(name = "vendor_disbursed_id")
     String vendorDisbursedId;
+
+    @Column(name = "disbursed_date")
+    String disbursedDate;
 }

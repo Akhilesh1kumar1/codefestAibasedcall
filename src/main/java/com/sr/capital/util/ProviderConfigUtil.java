@@ -29,6 +29,7 @@ public class ProviderConfigUtil {
         Map<String, Object> params = new HashMap<>();
         Map<String, String> queryParams = new HashMap<>();
         Map<String, String> headerParam = new HashMap<>();
+        Map<String, String> pathVariables = new HashMap<>();
         System.out.println("[getUrlAndQueryParam] start channelId:" + params);
 
         List<ProviderUrlConfigEntity> urlConfig = providerUrlConfigEntityService.getUrlConfig(partnerId, group, true);
@@ -47,8 +48,8 @@ public class ProviderConfigUtil {
                                 metaData.getOrDefault(providerConfig.getValue(), providerConfig.getValue()));
                         break;
                     case "PATH_VARIABLE":
-                        params.put(ProviderUrlConfigTypes.PATH_VARIABLE.name(),
-                                metaData.getOrDefault(ProviderUrlConfigTypes.PATH_VARIABLE.name(), "") + providerConfig.getValue());
+                        pathVariables.put(providerConfig.getKey(),
+                                metaData.getOrDefault(providerConfig.getValue(), providerConfig.getValue()) );
                         break;
                     case "OTHER":
                         params.put(providerConfig.getKey(), providerConfig.getValue());
@@ -57,6 +58,7 @@ public class ProviderConfigUtil {
             }
             params.put(ProviderUrlConfigTypes.QUERY_PARAM.name(), queryParams);
             params.put(ProviderUrlConfigTypes.HEADER.name(), headerParam);
+            params.put(ProviderUrlConfigTypes.PATH_VARIABLE.name(),pathVariables);
         } else {
             log.error("[getUrlAndQueryParam] no url info found for partnerId %d group %s%n", partnerId, group);
         }
