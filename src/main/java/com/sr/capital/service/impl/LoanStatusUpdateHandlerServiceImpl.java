@@ -54,16 +54,16 @@ public class LoanStatusUpdateHandlerServiceImpl {
             switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getStatus())){
                 case APPROVED:
                     loanApplication.setLoanStatus(APPROVED);
-                    updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
+                    //updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
                     break;
 
                 case DISBURSED:
                     loanApplication.setLoanStatus(LoanStatus.DISBURSED);
-                    saveDisbursementDetails(loanStatusUpdateWebhookDto,loanApplication);
+                   // saveDisbursementDetails(loanStatusUpdateWebhookDto,loanApplication);
                     break;
                 case REJECTED:
                     loanApplication.setLoanStatus(REJECTED);
-                    updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
+                   // updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
             }
 
 
@@ -73,8 +73,8 @@ public class LoanStatusUpdateHandlerServiceImpl {
         }
 
         loanApplicationRepository.save(loanApplication);
-        WebhookDetails webhookDetails =WebhookDetails.builder().clientLoanId(loanApplication.getId()).srCompanyId(loanApplication.getSrCompanyId()).loanType("loan").loanWebhookData(loanStatusUpdateWebhookDto).build();
-        webhookDetailsEntityService.saveWebhookDetails(webhookDetails);
+      /*  WebhookDetails webhookDetails =WebhookDetails.builder().clientLoanId(loanApplication.getId()).srCompanyId(loanApplication.getSrCompanyId()).loanType("loan").loanWebhookData(loanStatusUpdateWebhookDto).build();
+        webhookDetailsEntityService.saveWebhookDetails(webhookDetails);*/
 
     }
 
