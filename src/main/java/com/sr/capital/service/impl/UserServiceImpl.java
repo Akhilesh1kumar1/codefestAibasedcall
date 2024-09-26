@@ -107,6 +107,7 @@ public class UserServiceImpl implements UserService {
                     response.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
                     response.setFatherName(aes256.decrypt(user.getFatherName()));
                     response.setGender(user.getGender());
+                    response.setIsMobileVerified(user.getIsMobileVerified());
                 }catch (Exception ex){
                  /*   EncryptionConfig encryptionConfig =new EncryptionConfig();
                     encryptionConfig.setKey("test");
@@ -119,6 +120,8 @@ public class UserServiceImpl implements UserService {
                     response.setFatherName(aes2561.decrypt(user.getFatherName()));*/
 
                 }
+            }else{
+                response.setIsMobileVerified(true);
             }
         }
         return response;

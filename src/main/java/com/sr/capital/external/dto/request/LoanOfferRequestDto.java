@@ -1,6 +1,5 @@
 package com.sr.capital.external.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
@@ -13,5 +12,21 @@ public class LoanOfferRequestDto {
 
     BigDecimal borrowerEligibleLoanAmount;
 
-    BigDecimal borrowerEligibleTenure;
+    Double borrowerEligibleTenure;
+
+    Double borrowerEligibleInterestRate;
+
+    String borrowerEligibleSanctionExpiryDate;
+
+    Double borrowerEligibleProcessingFeePercent;
+
+    Double borrowerEligibleProcessingFee;
+
+    String borrowerEligibleOfferStartDate;
+
+    String programType;
+
+    String loanStatus;
+
+    String loanId;
 }
