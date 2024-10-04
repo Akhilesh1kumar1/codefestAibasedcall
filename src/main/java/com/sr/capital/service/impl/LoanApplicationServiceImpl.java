@@ -62,7 +62,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         LoanApplicationResponseDto loanApplicationResponseDto =LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
 
         if(loanApplicationRequestDto.getCreateLoanAtVendor()){
-            CreateLeadResponseDto responseDto = creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
+            CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
             if(responseDto!=null && responseDto.getStatus()!=null && responseDto.getStatus().equalsIgnoreCase("new")){
                 loanApplication.setLoanStatus(LoanStatus.PRE_APPROVED);
                 loanApplicationRepository.save(loanApplication);
@@ -213,6 +213,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         createLeadRequestDto.setCategory("unsecured");
         createLeadRequestDto.setSubCategory("fresh");
         createLeadRequestDto.setGender(user.getGender());
+
+        CreateLeadRequestDto.LoanApplicant loanApplicant = CreateLeadRequestDto.LoanApplicant.builder().build();
+
+
         personalAddressDetails.getAddress().forEach(address -> {
             if(address.getAddressType()==null || address.getAddressType().equalsIgnoreCase("current")) {
                 createLeadRequestDto.setCurrentAddress(aes256.decrypt(address.getAddress()));

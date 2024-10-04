@@ -87,7 +87,6 @@ public class LoanStatusUpdateHandlerServiceImpl {
 
       LoanApplicationStatus loanApplicationStatus =  buildLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
 
-      BigDecimal totalDisbursementAmount = BigDecimal.ZERO;
         loanStatusUpdateWebhookDto.getDisbursementAccounts().forEach(disbursementAccount -> {
             if (disbursementAccount.getDisbursementId() != null && disbursementAccount.getDisbursedAmount()!=null) {
                 LoanDisbursed loanDisbursed = loanDistributionService.getLoanDisbursedDetailsByStatusIdAndVendorDisbursedId(loanApplicationStatus.getId(), disbursementAccount.getDisbursementId());

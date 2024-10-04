@@ -8,6 +8,7 @@ import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.AccessTokenRequestDto;
 import com.sr.capital.dto.request.CreateLeadRequestDto;
+import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
@@ -74,7 +75,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     private AppProperties appProperties;
 
     @Override
-    public AccessTokenResponseDto getAccessToken(String partner) {
+    public Object getAccessToken(String partner) {
         RMapCache<String, AccessTokenResponseDto> accessTokenInfo = redissonClient
                 .getMapCache(Constants.RedisKeys.ACCESS_TOKEN);
 
@@ -101,7 +102,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     }
 
     @Override
-    public CreateLeadResponseDto createLead(String partner, CreateLeadRequestDto requestDto) {
+    public Object createLead(String partner, CreateLeadRequestDto requestDto) {
         CreateLeadResponseDto responseDto;
         Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
         BaseCreditPartner partnerInfo = getPartnerInfo(partner);
@@ -158,7 +159,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
         return true;
     }
 
-    private BaseCreditPartner getPartnerInfo(String partner) {
+    protected BaseCreditPartner getPartnerInfo(String partner) {
         RMapCache<String, BaseCreditPartner> partnersInfo = redissonClient
                 .getMapCache(Constants.RedisKeys.BASE_CREDIT_PARTNER);
         BaseCreditPartner partnerInfo = partnersInfo.get(partner);
@@ -182,13 +183,13 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     }
 
     @Override
-    public LoanStatusUpdateWebhookDto getLoanDetails(String partner, String loanId) {
+    public Object getLoanDetails( LoanMetaDataDto loanMetaDataDto) {
 
         LoanStatusUpdateWebhookDto responseDto;
-        Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
-        metaData.put(CreateLeadRequestDto.Fields.clientLoanId,loanId);
+        Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(loanMetaDataDto.getLoanVendorName()), new TypeReference<>() {});
+        metaData.put(CreateLeadRequestDto.Fields.clientLoanId,loanMetaDataDto.getLoanId());
 
-        BaseCreditPartner partnerInfo = getPartnerInfo(partner);
+        BaseCreditPartner partnerInfo = getPartnerInfo(loanMetaDataDto.getLoanVendorName());
 
         Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
                 metaData,
@@ -197,11 +198,11 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
         Object requestBody = null;
 
-        Map<String, Object> template = providerConfigUtil.getProviderTemplates(loanId,
+        Map<String, Object> template = providerConfigUtil.getProviderTemplates(loanMetaDataDto.getLoanId(),
                 ProviderRequestTemplateType.GET_LOAN.name(), partnerInfo.getId(), true);
 
         if (template != null) {
-            requestBody = jsonPathEvaluator.evaluate(template, loanId);
+            requestBody = jsonPathEvaluator.evaluate(template, loanMetaDataDto.getLoanId());
         }
 
         HttpResponse<?> restResponseEntity = null;
@@ -211,7 +212,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
                     requestBody,
                     null);
         } catch (UnirestException | URISyntaxException e) {
-            log.error(partner, e);
+            log.error(loanMetaDataDto.getLoanVendorName(), e);
         }
 
         GenericResponse<?> response = new GenericResponse<>();
@@ -227,6 +228,11 @@ public class GenericCreditPartnerService implements CreditPartnerService {
         }
 
         return responseDto;
+    }
+
+    @Override
+    public Object validateLoanDetails(LoanMetaDataDto loanMetaDataDto) {
+        return null;
     }
 
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {

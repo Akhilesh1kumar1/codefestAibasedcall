@@ -55,11 +55,11 @@ public class TestServiceImpl {
         return true;
     }
 
-    public AccessTokenResponseDto testAccessToken(String partner) {
+    public Object testAccessToken(String partner) {
         return creditPartnerFactoryService.getPartnerService(partner).getAccessToken(partner);
     }
 
-    public LoanStatusUpdateWebhookDto testAccessToken(String partner,String loanId) {
-        return creditPartnerFactoryService.getPartnerService(partner).getLoanDetails(partner,loanId);
+    public Object testAccessToken(String partner,String loanId) {
+        return  null;//creditPartnerFactoryService.getPartnerService(partner).getLoanDetails(partner,loanId);
     }
 }

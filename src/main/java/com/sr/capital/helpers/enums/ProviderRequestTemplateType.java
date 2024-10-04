@@ -5,5 +5,6 @@ public enum ProviderRequestTemplateType {
     VALIDATE_TOKEN,
     GET_TOKEN,
     CREATE_LEAD,
-    GET_LOAN;
+    GET_LOAN,
+    VALIDATE_LOAN;
 }

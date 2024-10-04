@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @FieldNameConstants
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CreateLeadRequestDto {
 
     String customerCategory;
@@ -47,6 +48,133 @@ public class CreateLeadRequestDto {
     List<String> bureauReportLink;
     Business business;
     List<DisbursementAccount> disbursementAccounts;
+
+    private LoanDetails loanApplication;
+
+    // Getters and setters for each field
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class LoanDetails {
+        private BigDecimal amount;
+        private String partnerRefNo;
+        private Boolean termsConditionAcceptance;
+        private LoanApplicant loanApplicant;
+        private LoanBusiness loanBusiness;
+        private LoanFinance loanFinance;
+        private List<LoanBusinessPartner> loanBusinessPartners;
+        private List<LoanPersonalReference> loanPersonalReferences;
+
+        // Getters and setters for each field
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class LoanApplicant {
+        private String dob;
+        private String gender;
+        private String panNo;
+        private String pincode;
+        private String addressLine1;
+        private String addressLine2;
+        private String ownershipStatus;
+        private String whatsappNo;
+        private String alternateMobileNo;
+
+        // Getters and setters for each field
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class LoanBusiness {
+        private String legalStatus;
+        private String businessName;
+        private String addressLine1;
+        private String addressLine2;
+        private String pincode;
+        private BigDecimal partnerCount;
+        private String businessPanNo;
+        private String gstNo;
+        private String dateOfIncorporation;
+        private String ownershipStatus;
+
+        // Getters and setters for each field
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class LoanFinance {
+        private BigDecimal monthlyTotalSales;
+        private BigDecimal monthlyOnlineSales;
+        private BigDecimal monthlyOfflineSales;
+        private BigDecimal turnoverLastYear;
+        private BigDecimal profitLastYear;
+        private BigDecimal turnoverProjected;
+        private BigDecimal profitProjected;
+        private BigDecimal monthlyEmi;
+        private BigDecimal profitMargin;
+        private BigDecimal monthlyPosSales;
+        private String posSalesPartner;
+
+        // Getters and setters for each field
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class LoanBusinessPartner {
+        private String name;
+        private String panNo;
+        private String mobileNo;
+        private String gender;
+        private String dob;
+        private Double holding;
+        private String address;
+        private String city;
+        private String state;
+        private String pincode;
+        private String ownershipStatus;
+        private String interimBusinessPartnerIdentifier;
+
+        // Getters and setters for each field
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class LoanPersonalReference {
+        private String name;
+        private String mobileNo;
+        private String profession;
+        private Integer yearsOfKnowability;
+        private String email;
+        private String relationship;
+        private String interimPersonalReferenceIdentifier;
+
+        // Getters and setters for each field
+    }
 
     @Builder.Default
     String disbursementType = "Single Disbursement";

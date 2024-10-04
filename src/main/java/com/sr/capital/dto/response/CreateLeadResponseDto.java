@@ -11,7 +11,12 @@ import lombok.experimental.FieldDefaults;
 public class CreateLeadResponseDto {
 
     String loanId;
+
     String clientLoanId;
+
     String status;
+
+    String leadCode;
+
 
 }

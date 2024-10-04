@@ -1,6 +1,7 @@
 package com.sr.capital.service;
 
 import com.sr.capital.external.common.GenericCreditPartnerService;
+import com.sr.capital.external.flexi.service.FlexiPartnerService;
 import com.sr.capital.external.incred.service.IncredPartnerService;
 import com.sr.capital.external.indifi.service.IndifiPartnerService;
 import com.sr.capital.external.klub.service.KlubPartnerService;
@@ -19,6 +20,7 @@ public class CreditPartnerFactoryService {
     final IndifiPartnerService indifiPartnerService;
     final GenericCreditPartnerService genericCreditPartnerService;
     final BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
+    final FlexiPartnerService flexiPartnerService;
 
     public CreditPartnerService getPartnerService(String creditPartnerName) {
         CreditPartnerService creditPartnerService = null;
@@ -35,6 +37,10 @@ public class CreditPartnerFactoryService {
             case "velocity":
                 creditPartnerService = velocityPartnerService;
                 break;
+            case "flexi":
+                creditPartnerService = flexiPartnerService;
+                break;
+
             default:
                 creditPartnerService = genericCreditPartnerService;
         }
