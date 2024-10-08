@@ -7,8 +7,10 @@ import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
+import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public interface CreditPartnerService {
 
@@ -24,6 +26,8 @@ public interface CreditPartnerService {
     Object getLoanDetails( LoanMetaDataDto loanMetaDataDto);
 
     Object validateLoanDetails(LoanMetaDataDto loanMetaDataDto);
+
+    Object uploadDocument(List<DocumentUploadRequestDto> documentUploadRequestDto);
 
 
 }

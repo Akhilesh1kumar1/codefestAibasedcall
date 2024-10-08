@@ -16,6 +16,7 @@ import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
+import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
@@ -28,6 +29,7 @@ import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.ProviderConfigUtil;
 import com.sr.capital.util.ProviderHelperUtil;
 
+import com.sr.capital.util.WebClientUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -36,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -73,6 +76,9 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
     @Autowired
     private AppProperties appProperties;
+
+    @Autowired
+    private WebClientUtil webClientUtil;
 
     @Override
     public Object getAccessToken(String partner) {
@@ -232,6 +238,11 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
     @Override
     public Object validateLoanDetails(LoanMetaDataDto loanMetaDataDto) {
+        return null;
+    }
+
+    @Override
+    public Object uploadDocument(List<DocumentUploadRequestDto> documentUploadRequestDto) {
         return null;
     }
 

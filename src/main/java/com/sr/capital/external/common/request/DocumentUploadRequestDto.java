@@ -1,0 +1,27 @@
+package com.sr.capital.external.common.request;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
+import lombok.Data;
+
+import java.io.File;
+import java.util.Map;
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
+public class DocumentUploadRequestDto {
+
+    String fileName;
+
+    File file;
+
+    String documentType;
+
+    String documentCategory;
+
+    Map<String,String> metaData;
+
+    String businessPartnerCode;
+
+}

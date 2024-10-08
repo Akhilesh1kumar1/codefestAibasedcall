@@ -6,5 +6,9 @@ public enum ProviderRequestTemplateType {
     GET_TOKEN,
     CREATE_LEAD,
     GET_LOAN,
-    VALIDATE_LOAN;
+    VALIDATE_LOAN,
+
+    UPLOAD_DOCUMENT,
+
+    PENDING_DOCUMENT;
 }

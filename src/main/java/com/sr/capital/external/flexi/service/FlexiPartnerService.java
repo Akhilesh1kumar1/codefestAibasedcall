@@ -9,13 +9,12 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.AccessTokenRequestDto;
 import com.sr.capital.dto.request.CreateLeadRequestDto;
 import com.sr.capital.dto.request.LoanMetaDataDto;
-import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.external.common.GenericCreditPartnerService;
 import com.sr.capital.external.dto.response.ValidateLoanDetailsResponse;
-import com.sr.capital.external.flexi.dto.LoanDetails;
+import com.sr.capital.external.flexi.dto.response.LoanDetails;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
@@ -35,13 +34,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.time.format.DateTimeFormatter;
+import java.text.MessageFormat;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -75,7 +74,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     @Autowired
     private WebClientUtil webClientUtil;
     @Override
-    public Object getAccessToken(String partner) {
+    public AccessTokenResponseDto getAccessToken(String partner) {
         RMapCache<String, AccessTokenResponseDto> accessTokenInfo = redissonClient
                 .getMapCache(Constants.RedisKeys.ACCESS_TOKEN);
 
@@ -95,17 +94,20 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
     @Override
-    public Object validateLoanDetails(LoanMetaDataDto loanMetaDataDto) {
+    public ValidateLoanDetailsResponse validateLoanDetails(LoanMetaDataDto loanMetaDataDto) {
 
         ValidateLoanDetailsResponse validateLoanDetailsResponse =null;
 
         HttpResponse<?> restResponseEntity = null;
 
-        getMetadata(loanMetaDataDto,ProviderRequestTemplateType.VALIDATE_LOAN.name(),ProviderRequestTemplateType.VALIDATE_LOAN.name(),null);
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.VALIDATE_LOAN.name(),ProviderRequestTemplateType.VALIDATE_LOAN.name(),null);
 
         try {
+
+            String url = MessageFormat.format((String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),loanMetaDataDto.getValidateLoanData().getMobileNumber());
+
             restResponseEntity = providerHelperUtil.makeApiCall(loanMetaDataDto.getParams(),
-                    (String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
+                    url,
                     loanMetaDataDto.getExternalRequestBody(),
                     null);
         } catch (UnirestException | URISyntaxException e) {
@@ -134,7 +136,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
         HttpResponse<?> restResponseEntity = null;
 
-        getMetadata(loanMetaDataDto,ProviderRequestTemplateType.GET_LOAN.name(),ProviderRequestTemplateType.GET_LOAN.name(),null);
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.GET_LOAN.name(),ProviderRequestTemplateType.GET_LOAN.name(),null);
 
         try {
             restResponseEntity = providerHelperUtil.makeApiCall(loanMetaDataDto.getParams(),
@@ -170,9 +172,10 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
                 requestDto.getMetaData(),
                 ProviderRequestTemplateType.GET_TOKEN.name());
+        MultiValueMap<String,String> formdata = new LinkedMultiValueMap<>();
+      formdata.add("grant_type","client_credentials");
+      formdata.add("scopes","*");
 
-       BodyInserters.FormInserter<String> body =  BodyInserters.fromFormData("grant_type", "client_credentials")
-                .with("scopes", "*");
 
       HttpHeaders httpHeaders =new HttpHeaders();
       Map<String,String> headerParams = (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name());
@@ -181,10 +184,11 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                 httpHeaders.add(k, String.valueOf(v));
             });
         }
-        com.sr.capital.external.flexi.dto.response.AccessTokenResponseDto responseDto1 = webClientUtil.makeExternalCallBlocking(ServiceName.FLEXI,params.get(ProviderUrlConfigTypes.BASE_URL.name()).toString(),null, HttpMethod.POST,partner,httpHeaders, (Map<String, String>) params.get(ProviderUrlConfigTypes.QUERY_PARAM.name()),body, com.sr.capital.external.flexi.dto.response.AccessTokenResponseDto.class);
+        com.sr.capital.external.flexi.dto.response.AccessTokenResponseDto responseDto1 = webClientUtil.makeExternalCallBlocking(ServiceName.FLEXI,params.get(ProviderUrlConfigTypes.BASE_URL.name()).toString(),null, HttpMethod.POST,partner,httpHeaders, (Map<String, String>) params.get(ProviderUrlConfigTypes.QUERY_PARAM.name()),formdata, com.sr.capital.external.flexi.dto.response.AccessTokenResponseDto.class);
+
 
         if(responseDto1!=null){
-            responseDto =AccessTokenResponseDto.builder().accessToken(responseDto1.getAccessToken()).expiry(String.valueOf(responseDto1.getExpiresIn())).build();
+            responseDto =AccessTokenResponseDto.builder().accessToken("Bearer "+responseDto1.getAccessToken()).expiry(String.valueOf(responseDto1.getExpiresIn())).build();
         }
 
         accessTokenInfo.put(partner, responseDto, responseDto1.getExpiresIn()*partnerConfig.getExpiryMultiplier(), TimeUnit.MILLISECONDS);
@@ -193,7 +197,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
 
 
-    private void getMetadata(LoanMetaDataDto loanMetaDataDto,String providerTemplateName,String providerUrlConfigName,Class responseClass){
+    private void buildMetadata(LoanMetaDataDto loanMetaDataDto, String providerTemplateName, String providerUrlConfigName, Class responseClass){
 
         Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(loanMetaDataDto.getLoanVendorName()), new TypeReference<>() {});
 
