@@ -124,6 +124,9 @@ app:
     common:
       vendor-token: ${COMMON_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
       vendor-code: ${COMMON_VENDOR_CODE:8908f14a7-9fbc-4f07-3f18-2917063B8c}
+    flexi:
+      vendor-token: ${FLEXI_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
+      vendor-code: ${FLEXI_VENDOR_CODE:8908f14a7-9fbc-4f07-3f18-2917063B8c}
 
 aws:
   region: ${AWS_REGION:test}

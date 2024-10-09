@@ -10,5 +10,7 @@ public enum ProviderRequestTemplateType {
 
     UPLOAD_DOCUMENT,
 
-    PENDING_DOCUMENT;
+    PENDING_DOCUMENT,
+
+    LOAN__STATUS_WEBHOOK;
 }

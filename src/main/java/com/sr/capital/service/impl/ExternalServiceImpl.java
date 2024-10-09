@@ -129,7 +129,6 @@ public class ExternalServiceImpl implements ExternalService {
 
         log.info("[saveLoanStatus] webhook content : {} ", loanStatusWebhook);
 
-
         creditPartnerFactoryService.getPartnerService(loanVendorName).validateExternalRequest(vendorToken, vendorCode);
         LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto = MapperUtils.convertValue(loanStatusWebhook, LoanStatusUpdateWebhookDto.class);
         loanStatusUpdateHandlerService.handleStatusUpdate(loanStatusUpdateWebhookDto,loanVendorName);

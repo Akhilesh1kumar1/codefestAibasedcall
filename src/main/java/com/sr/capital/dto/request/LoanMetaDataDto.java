@@ -1,11 +1,13 @@
 package com.sr.capital.dto.request;
 
+import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -35,6 +37,12 @@ public class LoanMetaDataDto {
     Object externalRequestBody;
 
     Class<?> responseClass;
+
+    List<DocumentUploadRequestDto> documentUploadRequestDtos;
+
+    @Builder.Default
+    Boolean postSanction=false;
+
     @Data
     @FieldDefaults(level=AccessLevel.PRIVATE)
     @Builder

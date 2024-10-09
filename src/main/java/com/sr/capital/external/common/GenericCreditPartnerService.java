@@ -242,9 +242,15 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     }
 
     @Override
-    public Object uploadDocument(List<DocumentUploadRequestDto> documentUploadRequestDto) {
+    public Object uploadDocument(LoanMetaDataDto loanMetaDataDto) {
         return null;
     }
+
+    @Override
+    public Object getPendingDocuments(LoanMetaDataDto loanMetaDataDto) {
+        return null;
+    }
+
 
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
         AccessTokenResponseDto responseDto;

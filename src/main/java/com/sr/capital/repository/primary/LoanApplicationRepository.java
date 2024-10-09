@@ -40,4 +40,6 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
             "WHERE la.sr_company_id = :srCompanyId", nativeQuery = true)
     List<Object[]> findLoanApplicationsWithStatusBySrCompanyId(Long srCompanyId);
 
+    LoanApplication findByVendorLoanId(String vendorLoanId);
+
 }

@@ -12,9 +12,13 @@ import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.entity.primary.BaseCreditPartner;
+import com.sr.capital.exception.custom.InvalidVendorCodeException;
+import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.external.common.GenericCreditPartnerService;
+import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 import com.sr.capital.external.dto.response.ValidateLoanDetailsResponse;
 import com.sr.capital.external.flexi.dto.response.LoanDetails;
+import com.sr.capital.external.flexi.dto.response.PendingDocumentResponseDto;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
@@ -40,6 +44,8 @@ import org.springframework.util.MultiValueMap;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -91,6 +97,19 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
         }
         return responseDto;
+    }
+
+    @Override
+    public Boolean validateExternalRequest(String vendorToken, String vendorCode)
+            throws InvalidVendorCodeException, InvalidVendorTokenException {
+        if(!appProperties.getFlexiVendorCode().equalsIgnoreCase(vendorCode)){
+            throw new InvalidVendorCodeException();
+        }
+
+        if(!appProperties.getFlexiVendorToken().equalsIgnoreCase(vendorToken)){
+            throw new InvalidVendorTokenException();
+        }
+        return true;
     }
 
     @Override
@@ -163,6 +182,80 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
     }
 
+
+    @Override
+    public Object uploadDocument(LoanMetaDataDto loanMetaDataDto) {
+
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.UPLOAD_DOCUMENT.name(),ProviderRequestTemplateType.UPLOAD_DOCUMENT.name(),null);
+        List<String> responseDtoList =new ArrayList<>();
+
+        List<DocumentUploadRequestDto> documentUploadRequestDtos = loanMetaDataDto.getDocumentUploadRequestDtos();
+        documentUploadRequestDtos.stream().forEach(documentUploadRequestDto -> {
+            try {
+                MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
+                body.add("file",documentUploadRequestDto.getFile());
+                body.add("loan_code",loanMetaDataDto.getLoanId());
+                body.add("document_type",documentUploadRequestDto.getDocumentType());
+                body.add("document_category",documentUploadRequestDto.getDocumentCategory());
+                body.add("metadata",documentUploadRequestDto.getMetaData());
+                HttpHeaders httpHeaders =new HttpHeaders();
+                Map<String,String> headerParams = (Map<String, String>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.HEADER.name());
+                if(headerParams!=null){
+                    headerParams.forEach((k,v)->{
+                        httpHeaders.add(k, String.valueOf(v));
+                    });
+                }
+                String responseDto = webClientUtil.makeExternalCallBlocking(ServiceName.FLEXI,loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.BASE_URL.name()).toString(),null, HttpMethod.POST,loanMetaDataDto.getLoanVendorName(),httpHeaders, (Map<String, String>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.QUERY_PARAM.name()),body,String.class);
+                responseDtoList.add(responseDto);
+            }catch (Exception ex){
+                log.error("error in ducument upload {} for partner {} , loanId {} ",ex.getMessage(),loanMetaDataDto.getLoanVendorName(), loanMetaDataDto.getLoanId());
+
+                log.error("error in ducument upload {} ",ex);
+
+            }
+
+        });
+
+
+        return responseDtoList;
+    }
+
+    @Override
+    public Object getPendingDocuments(LoanMetaDataDto loanMetaDataDto) {
+
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.PENDING_DOCUMENT.name(),ProviderRequestTemplateType.PENDING_DOCUMENT.name(), PendingDocumentResponseDto.class);
+        HttpResponse<?> restResponseEntity = null;
+        PendingDocumentResponseDto pendingDocumentResponseDto =null;
+        try {
+
+            String url = (String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), "");
+
+            if(loanMetaDataDto.getPostSanction()){
+                Map<String, Object> queryParams = (Map<String, Object>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.QUERY_PARAM.name());
+                queryParams.put("list_type","post_sanction");
+            }
+            restResponseEntity = providerHelperUtil.makeApiCall(loanMetaDataDto.getParams(),
+                    url,
+                    loanMetaDataDto.getExternalRequestBody(),
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(loanMetaDataDto.getLoanVendorName(), e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.VALIDATE_TOKEN_RESPONSE.name(),loanMetaDataDto.getLoanVendorId());
+
+        try {
+            pendingDocumentResponseDto = MapperUtils.convertValue(response.getData(),
+                    PendingDocumentResponseDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return pendingDocumentResponseDto;
+    }
 
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
         AccessTokenResponseDto responseDto = null;

@@ -124,6 +124,9 @@ app:
     common:
       vendor-token: ${COMMON_VENDOR_TOKEN:test}
       vendor-code: ${COMMON_VENDOR_CODE:test}
+    flexi:
+      vendor-token: ${FLEXI_VENDOR_TOKEN:test}
+      vendor-code: ${FLEXI_VENDOR_CODE:test}
 
 aws:
   region: ${AWS_REGION:test}

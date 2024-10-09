@@ -1,9 +1,14 @@
 package com.sr.capital.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.sr.capital.external.flexi.dto.response.LoanDetails;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,6 +16,7 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoanStatusUpdateWebhookDto {
 
     private String clientLoanId;
@@ -48,6 +54,21 @@ public class LoanStatusUpdateWebhookDto {
     private List<Object> businessApplicants;
     private String errorMessage;
     private Object additionalProp1;
+
+    @JsonProperty("loanCode")
+    private String loanCode;
+
+    @JsonProperty("leadCode")
+    private String leadCode;
+    private String updatedAt;
+    private String s1;
+    private String s2;
+    private String s3;
+    private String applicationStatus;
+
+    private List<LoanDetails.Checkpoint> checkpoints;
+
+    private String createdAt;
 
     // Getters and Setters
 
@@ -226,5 +247,30 @@ public class LoanStatusUpdateWebhookDto {
         private String lanCreationDate;
 
         // Getters and Setters
+    }
+
+    @lombok.Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+
+    public static class Checkpoint {
+        private String checkpoint;
+        private String state;
+        private LoanDetails.Meta meta;
+
+    }
+
+    @lombok.Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+
+    public static class Meta {
+        private String subCode;
+        private String code;
+        private List<String> fields;
+        private String message;
+
     }
 }

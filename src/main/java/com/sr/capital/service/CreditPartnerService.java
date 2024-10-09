@@ -27,7 +27,9 @@ public interface CreditPartnerService {
 
     Object validateLoanDetails(LoanMetaDataDto loanMetaDataDto);
 
-    Object uploadDocument(List<DocumentUploadRequestDto> documentUploadRequestDto);
+    Object uploadDocument(LoanMetaDataDto loanMetaDataDto);
 
+
+    Object getPendingDocuments(LoanMetaDataDto loanMetaDataDto);
 
 }

@@ -47,7 +47,9 @@ public class LoanStatusUpdateHandlerServiceImpl {
     private void updateStatus(LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto, String loanVendorName) {
 
         LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanStatusUpdateWebhookDto.getClientLoanId())).orElse(null);
-
+         if(loanApplication==null && loanStatusUpdateWebhookDto.getLoanCode()!=null){
+             loanApplication =  loanApplicationRepository.findByVendorLoanId(loanStatusUpdateWebhookDto.getLoanCode());
+         }
 
         if(loanApplication!=null){
             loanStatusUpdateWebhookDto.setStatus(loanStatusUpdateWebhookDto.getStatus().toUpperCase());
