@@ -1,0 +1,38 @@
+package com.sr.capital.external.flexi.enums;
+
+public enum DocumentTypes {
+    pan_personal,
+    pan_guarantor,
+    aadhar,
+    voting_card,
+    passport,
+    driving_licence,
+   aadhar_guarantor_coapplicant,
+    gst_registration,
+    shop_est_registration,
+    trade_license,
+    food_license,
+    drug_license_certificate,
+    udyam_registration,
+    udyog_aadhaar,
+    bank_statement_current_6,
+    electricity_company,
+    sale_deed_company,
+    landline_bill_3month,
+    property_tax_receipt,
+    rent_agreement_company,
+    financial_audit,
+    itr_returns,
+    gst_returns_6,
+    valid_partnership_deed,
+    company_pan,
+    company_coi,
+    moa_aoa_company,
+    latest_ca_shareholdings,
+    electricity,
+    piped_gas_bill,
+    water_bill,
+    sale_deed,
+    landline_bill;
+
+}

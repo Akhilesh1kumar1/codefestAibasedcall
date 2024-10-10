@@ -230,3 +230,24 @@ encryption:
   key: ${ENCRYPTION_KEY:capital-prod}
 
 
+kafka:
+  basePath: KAFKA_BASE_PATH
+  topics:
+    statusUpdate: capital
+  producer:
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    numberOfProducers: 1
+    maxBlockTimeMs: 5000
+    retrylock: capital-write-publisher-lock
+    confluentUserName: ${CONFLUENT_USER_NAME:""}
+    confluentPassword: ${CONFLUENT_PASSWORD:""}
+    confluentEnabled: ${CONFLUENT_ENABLED:true}
+  consumer:
+    serviceName: capital
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    podPreDestroyGraceTimeInMs: ${KAFKA_PRE_POD_DESTROY_GRACE_MS:10000}
+    confluentUserName: ${CONFLUENT_USER_NAME:""}
+    confluentPassword: ${CONFLUENT_PASSWORD:""}
+    confluentEnabled: ${CONFLUENT_ENABLED:true}
+
+
