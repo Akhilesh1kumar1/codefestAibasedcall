@@ -33,7 +33,7 @@ public class MobileNumberValidation implements RequestValidator {
 
         ValidateLoanDetailsResponse validateLoanDetailsResponse= (ValidateLoanDetailsResponse) creditPartnerFactoryService.getPartnerService(loanVendorName).validateLoanDetails(loanMetaDataDto);
 
-        if(!validateLoanDetailsResponse.getSuccess()){
+        if(validateLoanDetailsResponse.getSuccess()){
             throw new CustomException("Loan Already Exist for Given Mobile Number", HttpStatus.BAD_REQUEST);
         }
         return (T) Boolean.TRUE;
