@@ -183,7 +183,12 @@ public final class Constants {
         public static final String REFERER_HEADER = "X-Referer";
         public static final String SERVICE_SECRET_HEADER = "X-Service-Secret";
 
+        public static final String MESSAGE_HEADER = "x-message-id";
+
+        public static final String EVENT_TYPE = "event-type";
+
         public static final String TOKEN = "X-Token";
+
     }
 
 

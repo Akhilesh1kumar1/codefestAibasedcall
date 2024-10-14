@@ -2,10 +2,12 @@ package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.ResendOtpRequest;
+import com.sr.capital.dto.request.ValidateMobileNumberRequestDto;
 import com.sr.capital.dto.request.VerifyOtpRequest;
 import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.service.VerificationService;
 import com.sr.capital.util.ResponseBuilderUtil;
+import com.sr.capital.validation.MobileNumberValidation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
@@ -49,4 +51,5 @@ public class VerificationController {
         return ResponseBuilderUtil.getResponse(verificationService.resendOtp(request),SUCCESS,
                 "", HttpStatus.SC_OK);
     }
+
 }

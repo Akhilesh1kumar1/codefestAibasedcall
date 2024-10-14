@@ -5,6 +5,7 @@ import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.shiprocket.dto.response.ApiTokenUserDetailsResponse;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
+import com.sr.capital.external.shiprocket.dto.response.ValidateMobileResponse;
 import com.sr.capital.service.UserService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
@@ -39,4 +40,6 @@ public class UserController {
         return ResponseBuilderUtil.getResponse(userService.saveUserDetails(userDetails),SUCCESS,
                 "", HttpStatus.SC_OK);
     }
+
+
 }

@@ -71,7 +71,7 @@ JOIN(
         'VALIDATE_LOAN' AS `group`,
         'BASE_URL' AS `type`,
         'BASE_URL' AS `key`,
-        'https://console-staging.flexiloans.com/unified/v2/loanapplicant/{0}/dedupecheck?' AS `value`,
+        'https://console-staging.flexiloans.com/unified/v2/loanapplicant/{0}/dedupecheck' AS `value`,
         1 AS `priority`
 UNION ALL
     SELECT

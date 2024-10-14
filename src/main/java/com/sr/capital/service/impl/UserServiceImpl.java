@@ -11,6 +11,7 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.shiprocket.client.ShiprocketClient;
 import com.sr.capital.external.shiprocket.dto.response.ApiTokenUserDetailsResponse;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
+import com.sr.capital.external.shiprocket.dto.response.ValidateMobileResponse;
 import com.sr.capital.helpers.enums.CallbackType;
 import com.sr.capital.helpers.enums.CommunicationChannels;
 import com.sr.capital.helpers.enums.VerificationType;
@@ -189,5 +190,11 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
+
+    @Override
+    public ValidateMobileResponse validateMobileNumber(String mobileNumber) {
+        return null;
+    }
+
 
 }
