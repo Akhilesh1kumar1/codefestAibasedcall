@@ -315,4 +315,10 @@ public class AppProperties {
     @Value("${spring.datasource.secondary.password}")
     private String passwordSecondary;
 
+
+    //kafka
+
+    @Value("${kafka.topics.statusUpdate}")
+    private String capitalTopicName;
+
 }

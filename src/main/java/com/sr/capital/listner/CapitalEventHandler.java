@@ -1,6 +1,13 @@
 package com.sr.capital.listner;
 
 
+import com.omunify.kafka.MsgMessage;
+import com.omunify.kafka.consumer.handler.MessageHandler;
+import com.sr.capital.dto.RequestData;
+import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.helpers.enums.KafkaEventTypes;
+import com.sr.capital.service.strategy.KafkaEventStrategy;
+import com.sr.capital.util.TenantUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,32 +25,38 @@ import static com.sr.capital.helpers.constants.Constants.Headers.MESSAGE_HEADER;
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CapitalEventHandler{ //implements MessageHandler {
+public class CapitalEventHandler implements MessageHandler {
 
-    /*final KafkaEventStrategy kafkaEventStrategy;
+    final KafkaEventStrategy kafkaEventStrategy;
 
 
     @Override
     public void handle(MsgMessage message) throws Exception {
-        setRequestMeta(message);
 
+        setRequestMeta(message);
         handleEvents(message);
 
       }
 
     private void handleEvents(MsgMessage message) throws Exception {
 
-        kafkaEventStrategy.handleEvents(message, KafkaEventTypes.valueOf(message.getHeaders().get(EVENT_TYPE)));
+        kafkaEventStrategy.handleEvents(message, KafkaEventTypes.valueOf(message.getEventType()));
 
     }
 
     @Override
     public String getHandlerName() {
-        return "kafkaEvents";
+        return "status-update-handler";
     }
 
-    private void setRequestMeta(MsgMessage message) throws CustomException {
-        RequestData.setTenantId(TenantUtils.fetchTenantId(message));
-        RequestData.setMessageId(StringUtils.isNotEmpty(message.getHeaders().get(MESSAGE_HEADER)) ? (message.getHeaders().get(MESSAGE_HEADER)): UUID.randomUUID().toString());
-    }*/
+    private void setRequestMeta(MsgMessage message)  {
+
+        try {
+            RequestData.setTenantId(TenantUtils.fetchTenantId(message));
+            RequestData.setMessageId(StringUtils.isNotEmpty(message.getHeaders().get(MESSAGE_HEADER)) ? (message.getHeaders().get(MESSAGE_HEADER)): UUID.randomUUID().toString());
+
+        }catch (Exception ex){
+
+        }
+    }
 }

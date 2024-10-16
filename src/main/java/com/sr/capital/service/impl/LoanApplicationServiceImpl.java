@@ -4,15 +4,19 @@ import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.CreateLeadRequestDto;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
+import com.sr.capital.dto.request.LoanMetaDataDto;
+import com.sr.capital.dto.request.PendingDocumentRequestDto;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.LoanApplicationStatusDto;
+import com.sr.capital.dto.response.PendingDocumentResponseDto;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.User;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.RequestType;
@@ -30,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +55,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final UserService userService;
     final DocDetailsService docDetailsService;
     final AES256 aes256;
+    final LoanAllocationServiceImpl loanAllocationService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -106,6 +112,25 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     @Override
     public LoanApplication getLoanApplicationById(UUID loanApplicationId) {
         return loanApplicationRepository.findById(loanApplicationId).orElse(null);
+    }
+
+    @Override
+    public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException {
+
+        LoanApplication loanApplication = loanApplicationRepository.findById(pendingDocumentRequestDto.getLoanId()).orElse(null);
+        PendingDocumentResponseDto pendingDocumentResponseDto =null;
+        if(loanApplication!=null){
+            LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().loanId(loanApplication.getVendorLoanId().toString()).build();
+            loanAllocationService.getLoanVendor(loanMetaDataDto);
+            PendingDocumentResponseDto pendingDocumentResponseDtoFromClient = (PendingDocumentResponseDto) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).getPendingDocuments(loanMetaDataDto);
+            if(pendingDocumentResponseDtoFromClient!=null){
+                pendingDocumentResponseDto = PendingDocumentResponseDto.builder().pendingList(pendingDocumentResponseDtoFromClient.getPendingList()).build();
+            }
+        }else{
+            throw new CustomException("Invalid LoadId ", HttpStatus.BAD_REQUEST);
+        }
+
+        return pendingDocumentResponseDto;
     }
 
 

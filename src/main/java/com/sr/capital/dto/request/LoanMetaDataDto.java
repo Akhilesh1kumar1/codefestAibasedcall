@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.FieldNameConstants;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
 @Data
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Builder
+@FieldNameConstants
 public class LoanMetaDataDto {
 
     String loanVendorName;
@@ -31,6 +33,8 @@ public class LoanMetaDataDto {
     String leadId;
 
     String loanId;
+
+    String sanctionCode;
 
     Map<String, Object> params;
 

@@ -241,7 +241,7 @@ kafka:
   topics:
     statusUpdate: capital
   producer:
-    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost}:9092
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     numberOfProducers: 1
     maxBlockTimeMs: 5000
     retrylock: capital-write-publisher-lock
@@ -250,8 +250,19 @@ kafka:
     confluentEnabled: ${CONFLUENT_ENABLED:false}
   consumer:
     serviceName: capital
-    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost}:9092
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     podPreDestroyGraceTimeInMs: ${KAFKA_PRE_POD_DESTROY_GRACE_MS:10000}
     confluentUserName: ${CONFLUENT_USER_NAME:""}
     confluentPassword: ${CONFLUENT_PASSWORD:""}
     confluentEnabled: ${CONFLUENT_ENABLED:false}
+    groups:
+      - topicName: capital
+        consumerCount: 1
+        groupId: status-update
+        topicHandler: status-update-handler
+        commitBlockTimeMs: 5000
+        handlerTimeoutMs: 25000
+        groupingEnabled: false
+        syncRetry:
+          maxRetry: 2
+          retryIntervalMs: 1000

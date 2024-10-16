@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
+import static com.sr.capital.helpers.constants.Constants.MessageConstants.VALID_MOBILE_NUMBER;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.VALID_PAN;
 
 @RestController
@@ -41,6 +42,6 @@ public class ValidateController {
     @PostMapping("/mobile")
     public GenericResponse<Boolean> verifyMobile(@Valid @RequestBody ValidateMobileNumberRequestDto validateMobileNumberRequestDto) throws Exception {
         return ResponseBuilderUtil.getResponse( validateService.validateMobileNumber(validateMobileNumberRequestDto),SUCCESS,
-                VALID_PAN, HttpStatus.SC_OK);
+                VALID_MOBILE_NUMBER, HttpStatus.SC_OK);
     }
 }

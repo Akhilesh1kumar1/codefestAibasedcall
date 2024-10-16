@@ -103,6 +103,9 @@ public final class Constants {
 
         public static final String VALID_PAN = "Pan Number is in valid format";
 
+        public static final String VALID_MOBILE_NUMBER = "Mobile Number is valid";
+
+
         public static final String INVALID_EMAIL = "The email address is invalid!";
         public static final String INVALID_MOBILE = "The mobile is invalid!";
         public static final String INVALID_USERNAME = "The username is invalid!";
@@ -188,6 +191,9 @@ public final class Constants {
         public static final String EVENT_TYPE = "event-type";
 
         public static final String TOKEN = "X-Token";
+
+        public static final String LOAN_VENDOR_NAME = "loan-vendor-name";
+
 
     }
 

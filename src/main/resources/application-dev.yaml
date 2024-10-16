@@ -249,12 +249,12 @@ kafka:
     confluentEnabled: ${CONFLUENT_ENABLED:true}
     groups:
       - topicName: capital
-        consumerCount: 0
+        consumerCount: 1
         groupId: status-update
         topicHandler: status-update-handler
         commitBlockTimeMs: 5000
         handlerTimeoutMs: 25000
-        groupingEnabled: true
+        groupingEnabled: false
         syncRetry:
           maxRetry: 2
           retryIntervalMs: 1000

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.external.flexi.dto.response.LoanDetails;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class LoanStatusUpdateWebhookDto {
 
     private String clientLoanId;
@@ -66,7 +68,7 @@ public class LoanStatusUpdateWebhookDto {
     private String s3;
     private String applicationStatus;
 
-    private List<LoanDetails.Checkpoint> checkpoints;
+    private List<Checkpoint> checkpoints;
 
     private String createdAt;
 
@@ -75,7 +77,7 @@ public class LoanStatusUpdateWebhookDto {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+    @NoArgsConstructor
     public static class ChargesSplit {
         private ChargeDetail investor;
         private ChargeDetail originator;
@@ -86,7 +88,7 @@ public class LoanStatusUpdateWebhookDto {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+    @NoArgsConstructor
     public static class ChargeDetail {
         private BigDecimal principalAmount;
         private Double processingFee;
@@ -105,7 +107,7 @@ public class LoanStatusUpdateWebhookDto {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+    @NoArgsConstructor
     public static class DisbursementAccount {
         private String accountType;
         private BigDecimal amount;
@@ -175,7 +177,7 @@ public class LoanStatusUpdateWebhookDto {
         @Data
         @JsonIgnoreProperties(ignoreUnknown = true)
         @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+        @NoArgsConstructor
         public static class PassThroughData {
             private String type;
 
@@ -186,7 +188,7 @@ public class LoanStatusUpdateWebhookDto {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+    @NoArgsConstructor
     public static class LimitInformation {
         private String borrowerLimitAtDisbursal;
 
@@ -196,7 +198,7 @@ public class LoanStatusUpdateWebhookDto {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+    @NoArgsConstructor
     public static class Insurances {
         private List<String> insurances;
 
@@ -206,7 +208,7 @@ public class LoanStatusUpdateWebhookDto {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+    @NoArgsConstructor
     public static class Borrower {
         private String investorCustomerId;
 
@@ -216,7 +218,7 @@ public class LoanStatusUpdateWebhookDto {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+    @NoArgsConstructor
     public static class BorrowerAdditionalInfo {
         private BigDecimal borrowerEligibleLoanAmount;
         private Integer borrowerEligibleTenure;
@@ -232,7 +234,7 @@ public class LoanStatusUpdateWebhookDto {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-
+    @NoArgsConstructor
     public static class AdditionalDetails {
         private String lenderLoanId;
         private String lenderApplicationId;
@@ -253,7 +255,7 @@ public class LoanStatusUpdateWebhookDto {
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonIgnoreProperties(ignoreUnknown = true)
-
+    @NoArgsConstructor
     public static class Checkpoint {
         private String checkpoint;
         private String state;
@@ -265,7 +267,7 @@ public class LoanStatusUpdateWebhookDto {
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonIgnoreProperties(ignoreUnknown = true)
-
+    @NoArgsConstructor
     public static class Meta {
         private String subCode;
         private String code;

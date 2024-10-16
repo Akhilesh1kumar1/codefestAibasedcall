@@ -17,8 +17,7 @@ import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.external.common.GenericCreditPartnerService;
 import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 import com.sr.capital.external.dto.response.ValidateLoanDetailsResponse;
-import com.sr.capital.external.flexi.dto.response.LoanDetails;
-import com.sr.capital.external.flexi.dto.response.PendingDocumentResponseDto;
+import com.sr.capital.external.flexi.dto.response.*;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
@@ -257,6 +256,105 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         return pendingDocumentResponseDto;
     }
 
+    @Override
+    public Object fetchDisburmentDetails(LoanMetaDataDto loanMetaDataDto) {
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.FETCH_DISBURSED_DETAILS.name(),ProviderRequestTemplateType.FETCH_DISBURSED_DETAILS.name(), DisbursmentDetails.class);
+        HttpResponse<?> restResponseEntity = null;
+        DisbursmentDetails disbursmentDetails =null;
+        try {
+
+         String url =   MessageFormat.format((String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),loanMetaDataDto.getLoanId());
+         restResponseEntity = providerHelperUtil.makeApiCall(loanMetaDataDto.getParams(),
+                    url,
+                    loanMetaDataDto.getExternalRequestBody(),
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(loanMetaDataDto.getLoanVendorName(), e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.DISBURSEMENT_RESPONSE.name(),loanMetaDataDto.getLoanVendorId());
+
+        try {
+            disbursmentDetails = MapperUtils.convertValue(response.getData(),
+                    DisbursmentDetails.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return disbursmentDetails;
+    }
+
+    @Override
+    public Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto) {
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.FETCH_SANCTIONED_OFFER.name(),ProviderRequestTemplateType.FETCH_SANCTIONED_OFFER.name(), SanctionResponseDto.class);
+        HttpResponse<?> restResponseEntity = null;
+        SanctionResponseDto sanctionResponseDto =null;
+        try {
+
+            String url = (String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), "");
+
+            restResponseEntity = providerHelperUtil.makeApiCall(loanMetaDataDto.getParams(),
+                    url,
+                    loanMetaDataDto.getExternalRequestBody(),
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(loanMetaDataDto.getLoanVendorName(), e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.SANCTION_RESPONSE.name(),loanMetaDataDto.getLoanVendorId());
+
+        try {
+            sanctionResponseDto = MapperUtils.convertValue(response.getData(),
+                    SanctionResponseDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return sanctionResponseDto;
+    }
+
+    @Override
+    public Object acceptOffer(LoanMetaDataDto loanMetaDataDto) {
+
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.ACCEPT_SECTION_OFFER.name(),ProviderRequestTemplateType.ACCEPT_SECTION_OFFER.name(), SanctionResponseDto.class);
+
+        HttpResponse<?> restResponseEntity = null;
+        AcceptSanctionOffer acceptSanctionOffer =null;
+        try {
+
+            String url = (String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), "");
+
+            restResponseEntity = providerHelperUtil.makeApiCall(loanMetaDataDto.getParams(),
+                    url,
+                    loanMetaDataDto.getExternalRequestBody(),
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(loanMetaDataDto.getLoanVendorName(), e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.ACCEPT_OFFER_RESPONSE.name(),loanMetaDataDto.getLoanVendorId());
+
+        try {
+            acceptSanctionOffer = MapperUtils.convertValue(response.getData(),
+                    AcceptSanctionOffer.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return acceptSanctionOffer;
+    }
+
+
+
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
         AccessTokenResponseDto responseDto = null;
         AccessTokenRequestDto requestDto = MapperUtils.mapClass(partnerConfig, AccessTokenRequestDto.class);
@@ -295,6 +393,8 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(loanMetaDataDto.getLoanVendorName()), new TypeReference<>() {});
 
         metaData.put(CreateLeadRequestDto.Fields.clientLoanId,loanMetaDataDto.getLoanId());
+        metaData.put(LoanMetaDataDto.Fields.sanctionCode,loanMetaDataDto.getSanctionCode());
+
         if(loanMetaDataDto.getValidateLoanData()!=null) {
             metaData.put(CreateLeadRequestDto.Fields.panNumber, loanMetaDataDto.getValidateLoanData().getPanNumber());
             metaData.put(CreateLeadRequestDto.Fields.mobileNumber ,loanMetaDataDto.getValidateLoanData().getMobileNumber());

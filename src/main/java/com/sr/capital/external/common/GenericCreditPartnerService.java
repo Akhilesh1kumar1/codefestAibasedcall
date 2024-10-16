@@ -251,6 +251,21 @@ public class GenericCreditPartnerService implements CreditPartnerService {
         return null;
     }
 
+    @Override
+    public Object fetchDisburmentDetails(LoanMetaDataDto loanMetaDataDto) {
+        return null;
+    }
+
+    @Override
+    public Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto) {
+        return null;
+    }
+
+    @Override
+    public Object acceptOffer(LoanMetaDataDto loanMetaDataDto) {
+        return null;
+    }
+
 
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
         AccessTokenResponseDto responseDto;

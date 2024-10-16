@@ -32,4 +32,10 @@ public interface CreditPartnerService {
 
     Object getPendingDocuments(LoanMetaDataDto loanMetaDataDto);
 
+    Object fetchDisburmentDetails(LoanMetaDataDto loanMetaDataDto);
+
+    Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto);
+
+    Object acceptOffer(LoanMetaDataDto loanMetaDataDto);
+
 }
