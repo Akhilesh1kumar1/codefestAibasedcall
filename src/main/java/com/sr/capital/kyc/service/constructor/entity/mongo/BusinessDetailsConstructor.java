@@ -13,6 +13,7 @@ import com.sr.capital.kyc.service.interfaces.EntityConstructor;
 import com.sr.capital.util.LoggerUtil;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -38,14 +39,29 @@ public class BusinessDetailsConstructor implements EntityConstructor {
             loggerUtil.error("error in doc parsing "+ex.getMessage());
         }
 
+        List<BusinessAddressDetails.BusinessPartnerInfo > partnerInfoList;
+        if(CollectionUtils.isNotEmpty(businessDetailsRequestDto.getBusinessPartnerInfo())){
+            partnerInfoList =new ArrayList<>();
+            businessDetailsRequestDto.getBusinessPartnerInfo().forEach(partnerInfoDto->{
+                BusinessAddressDetails.BusinessPartnerInfo partnerInfo =BusinessAddressDetails.BusinessPartnerInfo.builder()
+                        .dob(aes256.encrypt(partnerInfoDto.getDob()))
+                        .address(aes256.encrypt(partnerInfoDto.getAddress()))
+                        .name(aes256.encrypt(partnerInfoDto.getName()))
+                        .gender(partnerInfoDto.getGender()).mobileNumber(aes256.encrypt(partnerInfoDto.getMobileNumber())).pincode(aes256.encrypt(partnerInfoDto.getPincode()))
+                        .panNumber(aes256.encrypt(partnerInfoDto.getPanNumber())).businessPartnerHolding(aes256.encrypt(partnerInfoDto.getBusinessPartnerHolding())).build();
+                partnerInfoList.add(partnerInfo);
+            });
+        } else {
+            partnerInfoList = null;
+        }
 
         BusinessAddressDetails  businessAddressDetails = BusinessAddressDetails.builder().pincode(aes256.encrypt(businessDetailsRequestDto.getPincode())).businessName(businessDetailsRequestDto.getBusinessName()).
-                city(aes256.encrypt(businessDetailsRequestDto.getCity())).state(aes256.encrypt(businessDetailsRequestDto.getState())).address(aes256.encrypt(businessDetailsRequestDto.getAddress())).
+                city(aes256.encrypt(businessDetailsRequestDto.getCity())).state(aes256.encrypt(businessDetailsRequestDto.getState())).address1(aes256.encrypt(businessDetailsRequestDto.getAddress1())).address2(aes256.encrypt(businessDetailsRequestDto.getAddress2())).
                 metaData(businessDetailsRequestDto.getMetaData()).
                 sectorType(businessDetailsRequestDto.getSectorType()).
                 businessType(businessDetailsRequestDto.getBusinessType()).industryType(businessDetailsRequestDto.getIndustryType()).
-                businessPanNumber(aes256.encrypt(businessDetailsRequestDto.getBusinessPanNumber()))
-                .build();
+                businessPanNumber(aes256.encrypt(businessDetailsRequestDto.getBusinessPanNumber())).businessOwnerShipStatus(businessDetailsRequestDto.getBusinessOwnerShipStatus()).gstRegistered(businessDetailsRequestDto.getGstRegistered()).noOfDirector(businessDetailsRequestDto.getNoOfDirector())
+                .businessPartnerInfo(partnerInfoList).build();
         KycDocDetails<BusinessAddressDetails> kycDocDetails = (KycDocDetails<BusinessAddressDetails>) request.getKycDocDetails();
 
 

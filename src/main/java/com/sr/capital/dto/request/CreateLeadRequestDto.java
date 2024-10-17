@@ -104,11 +104,12 @@ public class CreateLeadRequestDto {
         private String addressLine1;
         private String addressLine2;
         private String pincode;
-        private BigDecimal partnerCount;
+        private Integer partnerCount;
         private String businessPanNo;
         private String gstNo;
         private String dateOfIncorporation;
         private String ownershipStatus;
+        private Integer hasGstRegistration;
 
         // Getters and setters for each field
     }

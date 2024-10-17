@@ -113,6 +113,10 @@ dependencies {
 	implementation 'org.apache.pdfbox:pdfbox:2.0.29'
 
 
+	//shedlock
+	implementation 'net.javacrumbs.shedlock:shedlock-spring:4.46.0'
+	implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.46.0'
+
 
 }
 

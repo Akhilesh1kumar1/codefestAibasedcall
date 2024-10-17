@@ -17,12 +17,12 @@ public enum KycType {
             KycDocumentType.PAN_UPLOAD,
             KycDocumentType.GST_UPLOAD,
             KycDocumentType.CIN_UPLOAD
-    }),
+    },"Private Limited"),
     INDIVIDUAL(2, new KycDocumentType[] {
             KycDocumentType.PAN_UPLOAD,
             KycDocumentType.LICENSE_UPLOAD,
             KycDocumentType.PASSPORT_UPLOAD
-    }),
+    },"One Person Company (OPC)"),
     PROPRIETORSHIP(3, new KycDocumentType[] {
             KycDocumentType.PAN_UPLOAD,
             KycDocumentType.LICENSE_UPLOAD,
@@ -30,27 +30,28 @@ public enum KycType {
             KycDocumentType.CIN_UPLOAD,
             KycDocumentType.GST_UPLOAD,
             KycDocumentType.UDYOG_AADHAR
-    }),
+    }, "Proprietorship"),
     PARTNERSHIP(4,new KycDocumentType[]{
 
-    }),
+    }, "Partnership"),
 
     PRIVATE_LIMITED(5,new KycDocumentType[]{
 
-    }),
+    }, "Private Limited"),
     PUBLIC_LIMITED(6,new KycDocumentType[]{
 
-    }),
+    }, "Public Limited"),
     OTHERS(7,new KycDocumentType[]{
 
-    });
+    }, "Others");
 
 
 
     final int value;
     final KycDocumentType[] acceptedDocumentTypes;
-    static final Map<Integer, KycType> VALUE_MAP = new HashMap<Integer, KycType>();
+    private final String clientType;
 
+    static final Map<Integer, KycType> VALUE_MAP = new HashMap<Integer, KycType>();
     static {
         for (KycType type : values()) {
             VALUE_MAP.put(type.getValue(), type);
@@ -61,4 +62,7 @@ public enum KycType {
         return VALUE_MAP.get(value);
     }
 
+    public String getClientType() {
+        return clientType;
+    }
 }

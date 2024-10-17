@@ -266,3 +266,12 @@ kafka:
         syncRetry:
           maxRetry: 2
           retryIntervalMs: 1000
+
+
+jobs:
+  disbursement:
+    cronInMinutes: 300
+  sanction:
+    cronInMinutes: 400
+  status:
+    cronInMinutes: 120

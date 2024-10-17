@@ -148,7 +148,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .build();
        log.info("[buildRequestDto] user details {} ",user);
         if(user!=null){
-
+             CreateLeadRequestDto.LoanDetails loanDetails =CreateLeadRequestDto.LoanDetails.builder().amount(loanApplicationResponseDto.getLoanAmountRequested()).partnerRefNo(String.valueOf(loanApplicationResponseDto.getId())).termsConditionAcceptance(true).build();
+             createLeadRequestDto.setLoanApplication(loanDetails);
             List<KycDocDetails<?>> docDetails =docDetailsService.fetchDocDetailsByTenantId(tenantId);
 
             if(CollectionUtils.isNotEmpty(docDetails)){
@@ -212,9 +213,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     private void buildBusinessDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto,User user) {
         BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) doc.getDetails();
-        List<String> phoneNumber = new ArrayList<>();
-        phoneNumber.add(user.getMobile());
-        CreateLeadRequestDto.Business business = CreateLeadRequestDto.Business.builder()
+        CreateLeadRequestDto.LoanBusiness loanBusiness = CreateLeadRequestDto.LoanBusiness.builder().legalStatus(doc.getKycType().getClientType())
+                .addressLine1(aes256.decrypt(businessAddressDetails.getAddress1()))
+                .addressLine2(aes256.decrypt(businessAddressDetails.getAddress2()))
+                .ownershipStatus(businessAddressDetails.getBusinessOwnerShipStatus())
+                .pincode(aes256.decrypt(businessAddressDetails.getPincode()))
+                .partnerCount(businessAddressDetails.getNoOfDirector()).ownershipStatus(businessAddressDetails.getBusinessOwnerShipStatus())
+                .hasGstRegistration(businessAddressDetails.getGstRegistered()==true?1:0).build();
+        /*CreateLeadRequestDto.Business business = CreateLeadRequestDto.Business.builder()
                 .businessPanNumber(aes256.decrypt(businessAddressDetails.getBusinessPanNumber()))
                 .businessType(businessAddressDetails.getBusinessType()).nameOfBusiness(businessAddressDetails.getBusinessName())
                 .businessRegisteredOfficePincode(Long.valueOf(aes256.decrypt(businessAddressDetails.getPincode())))
@@ -222,8 +228,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .sectorType(businessAddressDetails.getSectorType())
                 .businessRegisteredOfficeAddress(aes256.decrypt(businessAddressDetails.getAddress())).businessPhoneNumber(phoneNumber)
                 .typeOfConstitution(doc.getKycType().name()).industryType(businessAddressDetails.getIndustryType())
-                .build();
-        createLeadRequestDto.setBusiness(business);
+                .build();*/
+        createLeadRequestDto.getLoanApplication().setLoanBusiness(loanBusiness);
     }
 
     private void buildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto) {
@@ -239,22 +245,19 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         createLeadRequestDto.setSubCategory("fresh");
         createLeadRequestDto.setGender(user.getGender());
 
-        CreateLeadRequestDto.LoanApplicant loanApplicant = CreateLeadRequestDto.LoanApplicant.builder().build();
+        CreateLeadRequestDto.LoanApplicant loanApplicant = CreateLeadRequestDto.LoanApplicant.builder().dob(user.getDateOfBirth())
+                .panNo(user.getPanNumber()).gender(user.getGender()).build();
 
 
         personalAddressDetails.getAddress().forEach(address -> {
             if(address.getAddressType()==null || address.getAddressType().equalsIgnoreCase("current")) {
-                createLeadRequestDto.setCurrentAddress(aes256.decrypt(address.getAddress()));
-                createLeadRequestDto.setCurrentCity(aes256.decrypt(address.getCity()));
-                createLeadRequestDto.setCurrentPincode(aes256.decrypt(address.getPincode()));
-                createLeadRequestDto.setCurrentState(aes256.decrypt(address.getState()));
-                createLeadRequestDto.setPrimaryBorrowerType(user.getEntityType());
+                loanApplicant.setAddressLine1(aes256.decrypt(address.getAddress1()));
+                loanApplicant.setAddressLine2(aes256.decrypt(address.getAddress2()));
+                loanApplicant.setPincode(aes256.decrypt(address.getPincode()));
+                loanApplicant.setOwnershipStatus(address.getOwnershipStatus());
             }else{
-                createLeadRequestDto.setPermanentAddress(aes256.decrypt(address.getAddress()));
-                createLeadRequestDto.setPermanentCity(aes256.decrypt(address.getCity()));
-                createLeadRequestDto.setPermanentPincode(aes256.decrypt(address.getPincode()));
-                createLeadRequestDto.setPermanentState(aes256.decrypt(address.getState()));
             }
         });
+        createLeadRequestDto.getLoanApplication().setLoanApplicant(loanApplicant);
     }
 }

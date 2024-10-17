@@ -109,6 +109,7 @@ public class UserServiceImpl implements UserService {
                     response.setFatherName(aes256.decrypt(user.getFatherName()));
                     response.setGender(user.getGender());
                     response.setIsMobileVerified(user.getIsMobileVerified());
+                    response.setCurrentAccountAvailable(user.getCurrentAccountAvailable());
                 }catch (Exception ex){
                  /*   EncryptionConfig encryptionConfig =new EncryptionConfig();
                     encryptionConfig.setKey("test");

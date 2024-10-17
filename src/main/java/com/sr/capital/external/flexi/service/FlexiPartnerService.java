@@ -288,6 +288,14 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
     @Override
+    public Object createLead(String partner, CreateLeadRequestDto requestDto) {
+        updateCustomInfoForCreateLead(requestDto);
+       return super.createLead(partner,requestDto);
+    }
+
+
+
+    @Override
     public Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto) {
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.FETCH_SANCTIONED_OFFER.name(),ProviderRequestTemplateType.FETCH_SANCTIONED_OFFER.name(), SanctionResponseDto.class);
         HttpResponse<?> restResponseEntity = null;
@@ -421,6 +429,24 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
         loanMetaDataDto.setResponseClass(responseClass);
 
+
+    }
+
+
+    private void updateCustomInfoForCreateLead(CreateLeadRequestDto requestDto) {
+
+        if(requestDto.getGender().equalsIgnoreCase("m")){
+            requestDto.setGender("Male");
+        }else if(requestDto.getGender().equalsIgnoreCase("f")){
+            requestDto.setGender("Female");
+        }
+
+        if(requestDto.getLoanApplication()!=null && requestDto.getLoanApplication().getLoanBusiness()!=null){
+
+            if(requestDto.getLoanApplication().getLoanBusiness().getLegalStatus()!=null){
+
+            }
+        }
 
     }
 }
