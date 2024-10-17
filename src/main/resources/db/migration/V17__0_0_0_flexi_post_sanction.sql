@@ -161,7 +161,7 @@ INSERT INTO provider_url_config(
          p.credit_partner_name = 'flexi';
 
 
-CREATE TABLE `kafka_inbound_messages` (
+CREATE TABLE IF NOT EXISTS  `kafka_inbound_messages` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `message_id` varchar(255) DEFAULT NULL,
   `handler_name` varchar(255) DEFAULT NULL,
@@ -175,7 +175,7 @@ CREATE TABLE `kafka_inbound_messages` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-         CREATE TABLE `kafka_outbound_messages` (
+         CREATE TABLE IF NOT EXISTS  `kafka_outbound_messages` (
            `id` bigint NOT NULL AUTO_INCREMENT,
            `message_id` varchar(255) DEFAULT NULL,
            `group_id` varchar(255) DEFAULT NULL,
@@ -191,7 +191,7 @@ CREATE TABLE `kafka_inbound_messages` (
            KEY `idx_outbound_messages_sent` (`sent`)
          ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-         CREATE TABLE `kafka_jpa_lock` (
+         CREATE TABLE IF NOT EXISTS  `kafka_jpa_lock` (
            `lock_id` varchar(255) NOT NULL,
            `expires_at` varchar(45) DEFAULT NULL,
            PRIMARY KEY (`lock_id`)
