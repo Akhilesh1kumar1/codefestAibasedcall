@@ -18,6 +18,7 @@ public enum DocumentType {
 
     IDENTITY_PROOF("identity_proof");
 
+
     String type;
 
     DocumentType(String type){

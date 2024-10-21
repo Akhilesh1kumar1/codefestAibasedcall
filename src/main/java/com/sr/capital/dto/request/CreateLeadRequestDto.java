@@ -1,5 +1,6 @@
 package com.sr.capital.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -63,10 +64,15 @@ public class CreateLeadRequestDto {
         private BigDecimal amount;
         private String partnerRefNo;
         private Boolean termsConditionAcceptance;
+        @JsonProperty("loanApplicant")
         private LoanApplicant loanApplicant;
+        @JsonProperty("loanBusiness")
         private LoanBusiness loanBusiness;
+        @JsonProperty("loanFinance")
         private LoanFinance loanFinance;
+        @JsonProperty("loanBusinessPartners")
         private List<LoanBusinessPartner> loanBusinessPartners;
+        @JsonProperty("loanPersonalReferences")
         private List<LoanPersonalReference> loanPersonalReferences;
 
         // Getters and setters for each field
@@ -83,7 +89,9 @@ public class CreateLeadRequestDto {
         private String gender;
         private String panNo;
         private String pincode;
+        @JsonProperty("address_line_1")
         private String addressLine1;
+        @JsonProperty("address_line_2")
         private String addressLine2;
         private String ownershipStatus;
         private String whatsappNo;
@@ -100,7 +108,9 @@ public class CreateLeadRequestDto {
     public static class LoanBusiness {
         private String legalStatus;
         private String businessName;
+        @JsonProperty("address_line_1")
         private String addressLine1;
+        @JsonProperty("address_line_2")
         private String addressLine2;
         private String pincode;
         private Integer partnerCount;

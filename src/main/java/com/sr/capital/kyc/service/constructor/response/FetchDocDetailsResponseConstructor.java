@@ -170,9 +170,9 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                  return (T) businessAddressDetails;
             case AGREEMENT:
             case CIN:
-            case VOTER_ID:
+            case VOTING_CARD:
             case PROPRIETORSHIP:
-            case DRIVING_LICENSE:
+            case DRIVING_LICENCE:
                 OldDocDetails oldDocDetails = (OldDocDetails) kycDocDetails.getDetails();
                 if(oldDocDetails == null){
                     return null;
