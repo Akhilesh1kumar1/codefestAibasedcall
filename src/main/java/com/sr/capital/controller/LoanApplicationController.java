@@ -1,6 +1,7 @@
 package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.dto.request.CreateLoanAtVendorRequest;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.dto.request.PendingDocumentRequestDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
@@ -45,6 +46,13 @@ public class LoanApplicationController {
     public GenericResponse<PendingDocumentResponseDto> getLoanApplications(@Valid @RequestBody PendingDocumentRequestDto pendingDocumentRequestDto) throws Exception {
 
         return ResponseBuilderUtil.getResponse(loanApplicationService.fetchPendingDocuments(pendingDocumentRequestDto), SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @PostMapping("/vendor")
+    public GenericResponse<LoanApplicationResponseDto> submitLoanApplication(@RequestBody CreateLoanAtVendorRequest loanApplicationRequestDto) throws Exception {
+
+        return ResponseBuilderUtil.getResponse(loanApplicationService.createLoanAtVendor(loanApplicationRequestDto), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.sr.capital.service;
 
+import com.sr.capital.dto.request.CreateLoanAtVendorRequest;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.dto.request.PendingDocumentRequestDto;
@@ -23,6 +24,8 @@ public interface LoanApplicationService {
    public LoanApplication getLoanApplicationById(UUID loanApplicationId);
 
    public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException;
+
+   public LoanApplicationResponseDto createLoanAtVendor(CreateLoanAtVendorRequest createLoanAtVendorRequest);
 
 
 }

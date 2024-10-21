@@ -18,5 +18,7 @@ public class CreateLeadResponseDto {
 
     String leadCode;
 
+    Boolean success;
+
 
 }

@@ -2,13 +2,9 @@ package com.sr.capital.service.impl;
 
 import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
-import com.sr.capital.dto.request.CreateLeadRequestDto;
-import com.sr.capital.dto.request.LoanApplicationRequestDto;
-import com.sr.capital.dto.request.LoanMetaDataDto;
-import com.sr.capital.dto.request.PendingDocumentRequestDto;
+import com.sr.capital.dto.request.*;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
-import com.sr.capital.dto.response.LoanApplicationStatusDto;
 import com.sr.capital.dto.response.PendingDocumentResponseDto;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
@@ -20,8 +16,6 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.RequestType;
-import com.sr.capital.kyc.dto.request.DocDetailsRequest;
-import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.CreditPartnerFactoryService;
@@ -29,19 +23,17 @@ import com.sr.capital.service.LoanApplicationService;
 import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.service.UserService;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
-import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +61,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         if(loanApplicationRequestDto.getCreateLoanAtVendor()){
             CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
-            if(responseDto!=null && responseDto.getStatus()!=null && responseDto.getStatus().equalsIgnoreCase("new")){
+            if(responseDto!=null && responseDto.getSuccess()!=null ){
                 loanApplication.setLoanStatus(LoanStatus.PRE_APPROVED);
                 loanApplicationRepository.save(loanApplication);
 
@@ -133,6 +125,38 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         return pendingDocumentResponseDto;
     }
 
+    @Override
+    public LoanApplicationResponseDto createLoanAtVendor(CreateLoanAtVendorRequest createLoanAtVendorRequest) {
+
+        LoanApplicationResponseDto loanApplicationResponseDto = null;
+        LoanApplication loan =null;
+        if(createLoanAtVendorRequest.getLoanId()!=null){
+            loan = loanApplicationRepository.findById(createLoanAtVendorRequest.getLoanId()).orElse(null);
+            if(loan!=null){
+                loanApplicationResponseDto = LoanApplicationResponseDto.mapLoanApplicationResponse(loan);
+            }
+        }else{
+            List<LoanApplication> loanApplications =loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+            if(CollectionUtils.isNotEmpty(loanApplications))
+                for(LoanApplication loanApplication:loanApplications) {
+                    if(loanApplication.getLoanStatus().equals(LoanStatus.PENDING)) {
+                        loan =loanApplication;
+                        loanApplicationResponseDto= LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
+                        break;
+                    }
+                };
+        }
+
+        CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(createLoanAtVendorRequest.getLoanVendorName()).createLead(createLoanAtVendorRequest.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
+        if(responseDto!=null && responseDto.getSuccess()!=null ){
+            loan.setLoanStatus(LoanStatus.PRE_APPROVED);
+            loan.setVendorLoanId(responseDto.getLoanId());
+            loanApplicationRepository.save(loan);
+
+        }
+        return loanApplicationResponseDto;
+    }
+
 
     private CreateLeadRequestDto buildRequestDto(String tenantId,LoanApplicationResponseDto loanApplicationResponseDto) {
 
@@ -150,7 +174,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         if(user!=null){
              CreateLeadRequestDto.LoanDetails loanDetails =CreateLeadRequestDto.LoanDetails.builder().amount(loanApplicationResponseDto.getLoanAmountRequested()).partnerRefNo(String.valueOf(loanApplicationResponseDto.getId())).termsConditionAcceptance(true).build();
              createLeadRequestDto.setLoanApplication(loanDetails);
-            List<KycDocDetails<?>> docDetails =docDetailsService.fetchDocDetailsByTenantId(tenantId);
+             List<KycDocDetails<?>> docDetails =docDetailsService.fetchDocDetailsByTenantId(tenantId);
 
             if(CollectionUtils.isNotEmpty(docDetails)){
 
@@ -229,7 +253,34 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .businessRegisteredOfficeAddress(aes256.decrypt(businessAddressDetails.getAddress())).businessPhoneNumber(phoneNumber)
                 .typeOfConstitution(doc.getKycType().name()).industryType(businessAddressDetails.getIndustryType())
                 .build();*/
+
+        buildBusinessPartner(createLeadRequestDto ,businessAddressDetails);
         createLeadRequestDto.getLoanApplication().setLoanBusiness(loanBusiness);
+    }
+
+    private void buildBusinessPartner(CreateLeadRequestDto createLeadRequestDto, BusinessAddressDetails businessAddressDetails) {
+
+        List<CreateLeadRequestDto.LoanBusinessPartner> loanBusinessPartnerList;
+        if(CollectionUtils.isNotEmpty(businessAddressDetails.getBusinessPartnerInfo())){
+            loanBusinessPartnerList = new ArrayList<>();
+            businessAddressDetails.getBusinessPartnerInfo().forEach(businessPartnerInfo -> {
+
+                CreateLeadRequestDto.LoanBusinessPartner partner =CreateLeadRequestDto.LoanBusinessPartner.builder()
+                .dob(aes256.decrypt(businessPartnerInfo.getDob())).
+                address(aes256.decrypt(businessPartnerInfo.getAddress())).
+                name(aes256.decrypt(businessPartnerInfo.getName())).
+                gender(businessPartnerInfo.getGender()).
+                mobileNo(aes256.decrypt(businessPartnerInfo.getMobileNumber())).
+                pincode(aes256.decrypt(businessPartnerInfo.getPincode())).
+                panNo(aes256.decrypt(businessPartnerInfo.getPanNumber())).
+                holding(Double.valueOf(aes256.decrypt(businessPartnerInfo.getBusinessPartnerHolding()))).interimBusinessPartnerIdentifier(businessPartnerInfo.getUniqueIdentifier())
+                        .build();
+                loanBusinessPartnerList.add(partner);
+            });
+        } else {
+            loanBusinessPartnerList = null;
+        }
+        createLeadRequestDto.getLoanApplication().setLoanBusinessPartners(loanBusinessPartnerList);
     }
 
     private void buildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto) {
@@ -246,7 +297,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         createLeadRequestDto.setGender(user.getGender());
 
         CreateLeadRequestDto.LoanApplicant loanApplicant = CreateLeadRequestDto.LoanApplicant.builder().dob(user.getDateOfBirth())
-                .panNo(user.getPanNumber()).gender(user.getGender()).build();
+                .panNo(user.getPanNumber()).gender(user.getGender()).isCurrentAccountAvailable(user.getCurrentAccountAvailable()?1:0).build();
 
 
         personalAddressDetails.getAddress().forEach(address -> {

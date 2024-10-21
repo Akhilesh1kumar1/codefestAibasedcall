@@ -2,10 +2,10 @@ package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.UserDetails;
+import com.sr.capital.dto.response.UserProgressResponseDto;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.shiprocket.dto.response.ApiTokenUserDetailsResponse;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
-import com.sr.capital.external.shiprocket.dto.response.ValidateMobileResponse;
 import com.sr.capital.service.UserService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +38,12 @@ public class UserController {
     @PostMapping("/save")
     public GenericResponse<UserDetails> getUserDetails(@RequestBody UserDetails userDetails) throws CustomException {
         return ResponseBuilderUtil.getResponse(userService.saveUserDetails(userDetails),SUCCESS,
+                "", HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/state")
+    public GenericResponse<UserProgressResponseDto> getUserState() throws CustomException {
+        return ResponseBuilderUtil.getResponse(userService.getCompanyCompanyProgressState(),SUCCESS,
                 "", HttpStatus.SC_OK);
     }
 

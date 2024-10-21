@@ -1,6 +1,7 @@
 package com.sr.capital.service;
 
 import com.sr.capital.dto.request.UserDetails;
+import com.sr.capital.dto.response.UserProgressResponseDto;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.shiprocket.dto.response.ApiTokenUserDetailsResponse;
@@ -20,4 +21,6 @@ public interface UserService {
     User getCompanyDetails(Long srCompanyId);
 
     ValidateMobileResponse validateMobileNumber(String mobileNumber);
+
+    UserProgressResponseDto getCompanyCompanyProgressState();
 }

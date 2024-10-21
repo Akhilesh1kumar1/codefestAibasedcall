@@ -4,11 +4,9 @@ import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
-import com.sr.capital.entity.mongo.kyc.child.ItrDocDetails;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.kyc.dto.request.BusinessDetailsRequestDto;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
-import com.sr.capital.kyc.external.response.extraction.ItrExtractionResponseData;
 import com.sr.capital.kyc.service.interfaces.EntityConstructor;
 import com.sr.capital.util.LoggerUtil;
 import com.sr.capital.util.MapperUtils;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +39,7 @@ public class BusinessDetailsConstructor implements EntityConstructor {
         }
 
         List<BusinessAddressDetails.BusinessPartnerInfo > partnerInfoList;
+        AtomicReference<Integer> counter = new AtomicReference<>(1);
         if(CollectionUtils.isNotEmpty(businessDetailsRequestDto.getBusinessPartnerInfo())){
             partnerInfoList =new ArrayList<>();
             businessDetailsRequestDto.getBusinessPartnerInfo().forEach(partnerInfoDto->{
@@ -48,7 +48,8 @@ public class BusinessDetailsConstructor implements EntityConstructor {
                         .address(aes256.encrypt(partnerInfoDto.getAddress()))
                         .name(aes256.encrypt(partnerInfoDto.getName()))
                         .gender(partnerInfoDto.getGender()).mobileNumber(aes256.encrypt(partnerInfoDto.getMobileNumber())).pincode(aes256.encrypt(partnerInfoDto.getPincode()))
-                        .panNumber(aes256.encrypt(partnerInfoDto.getPanNumber())).businessPartnerHolding(aes256.encrypt(partnerInfoDto.getBusinessPartnerHolding())).build();
+                        .panNumber(aes256.encrypt(partnerInfoDto.getPanNumber())).businessPartnerHolding(aes256.encrypt(partnerInfoDto.getBusinessPartnerHolding())).uniqueIdentifier(RequestData.getTenantId()+"_"+counter).build();
+                counter.getAndSet(counter.get() + 1);
                 partnerInfoList.add(partnerInfo);
             });
         } else {

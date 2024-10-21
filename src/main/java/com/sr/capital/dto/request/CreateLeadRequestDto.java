@@ -88,8 +88,7 @@ public class CreateLeadRequestDto {
         private String ownershipStatus;
         private String whatsappNo;
         private String alternateMobileNo;
-
-        // Getters and setters for each field
+        private Integer isCurrentAccountAvailable;
     }
 
     @Data

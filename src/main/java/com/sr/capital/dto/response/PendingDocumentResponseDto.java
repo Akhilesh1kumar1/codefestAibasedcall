@@ -24,7 +24,6 @@ public class PendingDocumentResponseDto {
 
     @lombok.Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-
     public static class PendingItem {
         private String key;
         private String label;

@@ -55,4 +55,7 @@ public class LoanApplicationStatus extends LongBaseEntity{
 
     @Column(name = "vendor_status")
     String vendorStatus;
+
+    @Column(name = "sanction_code")
+    String sanctionCode;
 }

@@ -57,6 +57,8 @@ public final class Constants {
 
         public static final String UNDERWRITING_CONFIG = "underwriting_config";
 
+        public static final String PINCODE = "pincode";
+
     }
 
     public static class ServiceConstants{

@@ -1,36 +1,44 @@
 package com.sr.capital.service.impl;
 
 import com.omunify.encryption.algorithm.AES256;
-import com.omunify.encryption.config.EncryptionConfig;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.TenantDetails;
 import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
+import com.sr.capital.dto.response.UserProgressResponseDto;
+import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.shiprocket.client.ShiprocketClient;
 import com.sr.capital.external.shiprocket.dto.response.ApiTokenUserDetailsResponse;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
 import com.sr.capital.external.shiprocket.dto.response.ValidateMobileResponse;
-import com.sr.capital.helpers.enums.CallbackType;
-import com.sr.capital.helpers.enums.CommunicationChannels;
-import com.sr.capital.helpers.enums.VerificationType;
+import com.sr.capital.helpers.enums.*;
+import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.repository.primary.UserRepository;
 import com.sr.capital.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-   final ShiprocketClient shiprocketClient;
+    final ShiprocketClient shiprocketClient;
 
-   final UserRepository userRepository;
+    final UserRepository userRepository;
 
     final AES256 aes256;
+
     final VerificationUtilService verificationUtilService;
+
+    final LoanApplicationRepository loanApplicationRepository;
+
+    final UserProgressServiceImpl userProgressService;
 
     @Override
     public ApiTokenUserDetailsResponse getUserDetails(String token) {
@@ -195,6 +203,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public ValidateMobileResponse validateMobileNumber(String mobileNumber) {
         return null;
+    }
+
+    @Override
+    public UserProgressResponseDto getCompanyCompanyProgressState() {
+
+        List<LoanApplication> loanApplication = loanApplicationRepository.findBySrCompanyIdAndLoanStatus(Long.valueOf(RequestData.getTenantId()), LoanStatus.PENDING);
+        String currentState = Screens.LOAN_DETAILS.name();
+        if(CollectionUtils.isNotEmpty(loanApplication)){
+            currentState = Screens.PERSONAL_INFO.name();
+
+            User user = userRepository.findTopBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+
+            if(user!=null){
+                currentState = userProgressService.getUserProgress(RequestData.getTenantId());
+
+            }
+        }
+        return UserProgressResponseDto.builder().screenName(currentState).build();
     }
 
 

@@ -8,6 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -64,6 +65,7 @@ public class BusinessAddressDetails implements Serializable {
 
         String businessPartnerHolding;
 
+        String uniqueIdentifier;
 
     }
 
