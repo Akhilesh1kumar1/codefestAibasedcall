@@ -50,7 +50,7 @@ public class LoanApplicationController {
     }
 
     @PostMapping("/vendor")
-    public GenericResponse<LoanApplicationResponseDto> submitLoanApplication(@RequestBody CreateLoanAtVendorRequest loanApplicationRequestDto) throws Exception {
+    public GenericResponse<LoanApplicationResponseDto> submitLoanToVendor(@RequestBody CreateLoanAtVendorRequest loanApplicationRequestDto) throws Exception {
 
         return ResponseBuilderUtil.getResponse(loanApplicationService.createLoanAtVendor(loanApplicationRequestDto), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);

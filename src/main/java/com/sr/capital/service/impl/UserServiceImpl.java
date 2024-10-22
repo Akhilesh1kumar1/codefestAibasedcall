@@ -208,19 +208,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProgressResponseDto getCompanyCompanyProgressState() {
 
-        List<LoanApplication> loanApplication = loanApplicationRepository.findBySrCompanyIdAndLoanStatus(Long.valueOf(RequestData.getTenantId()), LoanStatus.PENDING);
-        String currentState = Screens.LOAN_DETAILS.name();
-        if(CollectionUtils.isNotEmpty(loanApplication)){
-            currentState = Screens.PERSONAL_INFO.name();
-
-            User user = userRepository.findTopBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
-
-            if(user!=null){
-                currentState = userProgressService.getUserProgress(RequestData.getTenantId());
-
-            }
-        }
-        return UserProgressResponseDto.builder().screenName(currentState).build();
+        return userProgressService.getUserProgress(RequestData.getTenantId());
     }
 
 

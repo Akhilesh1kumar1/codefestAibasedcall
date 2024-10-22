@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.util.UUID;
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,4 +19,10 @@ public class UserProgressResponseDto {
 
 
     String screenName;
+
+    UUID loanId;
+
+    String clientLoanId;
+
+    String comments;
 }

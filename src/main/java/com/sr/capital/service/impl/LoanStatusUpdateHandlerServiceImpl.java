@@ -34,7 +34,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
 
     public void handleStatusUpdate(LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto,String loanVendorName){
 
-        if(loanStatusUpdateWebhookDto!=null && loanStatusUpdateWebhookDto.getAdditionalDetails()!=null){
+        if(loanStatusUpdateWebhookDto!=null && loanStatusUpdateWebhookDto.getLoanCode()!=null){
 
             if(loanStatusUpdateWebhookDto.getStatus()!=null ){
 
