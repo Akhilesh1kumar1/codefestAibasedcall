@@ -21,6 +21,8 @@ public class LoanMetaDataDto {
 
     Long loanVendorId;
 
+    Long srCompanyId;
+
     ProviderRequestTemplateType providerRequestTemplateType;
 
     @Builder.Default
@@ -42,7 +44,7 @@ public class LoanMetaDataDto {
 
     Class<?> responseClass;
 
-    List<DocumentUploadRequestDto> documentUploadRequestDtos;
+    DocumentUploadRequestDto documentUploadRequestDtos;
 
     @Builder.Default
     Boolean postSanction=false;

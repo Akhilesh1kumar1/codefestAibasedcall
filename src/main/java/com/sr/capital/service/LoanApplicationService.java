@@ -1,12 +1,10 @@
 package com.sr.capital.service;
 
-import com.sr.capital.dto.request.CreateLoanAtVendorRequest;
-import com.sr.capital.dto.request.IcrmLeadRequestDto;
-import com.sr.capital.dto.request.LoanApplicationRequestDto;
-import com.sr.capital.dto.request.PendingDocumentRequestDto;
+import com.sr.capital.dto.request.*;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.LoanApplicationStatusDto;
 import com.sr.capital.dto.response.PendingDocumentResponseDto;
+import com.sr.capital.dto.response.SyncDocumentResponseDto;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.exception.custom.CustomException;
 
@@ -26,6 +24,9 @@ public interface LoanApplicationService {
    public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException;
 
    public LoanApplicationResponseDto createLoanAtVendor(CreateLoanAtVendorRequest createLoanAtVendorRequest);
+
+    public SyncDocumentResponseDto syncDocumentToVendor(SyncDocumentToVendor syncDocumentToVendor) throws CustomException;
+
 
 
 }

@@ -36,7 +36,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
 
         if(loanStatusUpdateWebhookDto!=null && loanStatusUpdateWebhookDto.getLoanCode()!=null){
 
-            if(loanStatusUpdateWebhookDto.getStatus()!=null ){
+            if(loanStatusUpdateWebhookDto.getApplicationStatus()!=null ){
 
                 updateStatus(loanStatusUpdateWebhookDto,loanVendorName);
             }
@@ -52,8 +52,8 @@ public class LoanStatusUpdateHandlerServiceImpl {
          }
 
         if(loanApplication!=null){
-            loanStatusUpdateWebhookDto.setStatus(loanStatusUpdateWebhookDto.getStatus().toUpperCase());
-            switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getStatus())){
+            loanStatusUpdateWebhookDto.setStatus(loanStatusUpdateWebhookDto.getApplicationStatus().toUpperCase());
+            switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getApplicationStatus())){
                 case APPROVED:
                     loanApplication.setLoanStatus(APPROVED);
                     //updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);

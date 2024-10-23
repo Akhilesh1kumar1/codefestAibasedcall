@@ -6,6 +6,7 @@ import com.sr.capital.dto.request.*;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.PendingDocumentResponseDto;
+import com.sr.capital.dto.response.SyncDocumentResponseDto;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
@@ -48,6 +49,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final DocDetailsService docDetailsService;
     final AES256 aes256;
     final LoanAllocationServiceImpl loanAllocationService;
+    final DocumentSyncHelperServiceImpl documentSyncHelperService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -157,6 +159,20 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             }
         }
         return loanApplicationResponseDto;
+    }
+
+    @Override
+    public SyncDocumentResponseDto syncDocumentToVendor(SyncDocumentToVendor syncDocumentToVendor) throws CustomException {
+
+        LoanApplication loanApplication = loanApplicationRepository.findById(syncDocumentToVendor.getLoanId()).orElse(null);
+        if(loanApplication!=null){
+            LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().loanVendorId(loanApplication.getLoanVendorId())
+                    .loanId(loanApplication.getVendorLoanId()).srCompanyId(loanApplication.getSrCompanyId()).loanVendorName(syncDocumentToVendor.getLoanVendorName()).build();
+
+            documentSyncHelperService.syncDocumentToVendor(loanMetaDataDto);
+        }
+
+        return SyncDocumentResponseDto.builder().loanId(syncDocumentToVendor.getLoanId()).build();
     }
 
 

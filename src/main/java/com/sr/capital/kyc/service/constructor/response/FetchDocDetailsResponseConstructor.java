@@ -96,7 +96,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
     @SuppressWarnings("unchecked")
     private <T> T getExtractedDetails(KycDocDetails<?> kycDocDetails) {
         switch(kycDocDetails.getDocType()){
-            case AADHAAR:
+           /* case AADHAAR:
                 AadhaarDocDetails aadhaarDocDetails = (AadhaarDocDetails) kycDocDetails.getDetails();
                 return (T) ExtractedAadhaarResponse.builder()
                         .idNumber(aadhaarDocDetails.getIdNumber())
@@ -132,7 +132,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                     gstResponse.getGstUserDetails().add(ExtractedGstResponse.GstUserDetails.builder().gstin(aes256.decrypt(gstUserDetails.getGstin())).username(aes256.decrypt(gstUserDetails.getUsername())).refId(gstUserDetails.getRefId()).status(gstUserDetails.getStatus()).build());
                 });
 
-                return (T) gstResponse;
+                return (T) gstResponse;*/
             case BANK_CHEQUE:
                 List<ExtractedBankResponse> extractedBankResponses = getExtractedBankResponses(kycDocDetails);
                 return (T) extractedBankResponses;
@@ -143,8 +143,47 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                 ItrExtractionData itrExtractionData = getItrData(kycDocDetails);
                 return (T) itrExtractionData;
             case MSME:
-            case LOAN_TRACKER:
             case PROVISIONAL:
+            case LOAN_TRACKER:
+            case DRIVING_LICENCE:
+            case PROPRIETORSHIP:
+            case VOTING_CARD:
+            case CIN:
+            case AGREEMENT:
+            case DIRECTORS:
+            case PAN_GUARANTOR:
+            case PAN_PERSONAL:
+            case PASSPORT:
+            case ADHAR_GUARANTOR_COAPPLICANT:
+            case GST_REGISTRATION:
+            case SHOP_EST_REGISTRATION:
+            case TRADE_LICENSE:
+            case FOOD_LICENSE:
+            case DRUG_LICENSE_CERTIFICATE:
+            case UDYAM_REGISTRATION:
+            case UDYOG_AADHAAR:
+            case BANK_STATEMENT_CURRENT_6:
+            case ELECTRICITY_COMPANY:
+            case SALE_DEED_COMPANY:
+            case LANDLINE_BILL_3MONTH:
+            case PROPERTY_TAX_RECEIPT:
+            case RENT_AGREEMENT_COMPANY:
+            case FINANCIAL_AUDIT:
+            case ITR_RETURNS:
+            case GST_RETURNS_6:
+            case VALID_PARTNERSHIP_DEED:
+            case COMPANY_PAN:
+            case COMPANY_COI:
+            case MOA_AOA_COMPANY:
+            case LATEST_CA_SHAREHOLDINGS:
+            case ELECTRICITY:
+            case PIPED_GAS_BILL:
+            case WATER_BILL:
+            case SALE_DEED:
+            case LANDLINE_BILL:
+            case PAN:
+            case AADHAAR:
+            case GST:
                 return (T) kycDocDetails;
             case PERSONAL_ADDRESS:
                 PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) kycDocDetails.getDetails();
@@ -168,7 +207,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                  businessAddressDetails.setPincode(aes256.decrypt(businessAddressDetails.getPincode()));
                  buildPartnerInfo(businessAddressDetails);
                  return (T) businessAddressDetails;
-            case AGREEMENT:
+            /*case AGREEMENT:
             case CIN:
             case VOTING_CARD:
             case PROPRIETORSHIP:
@@ -179,7 +218,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                 }
                 return (T) OldDocResponse.builder()
                         .docId(oldDocDetails.getDocId())
-                        .build();
+                        .build();*/
             default:
                 return null;
         }

@@ -4,8 +4,10 @@ import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.CreateLoanAtVendorRequest;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.dto.request.PendingDocumentRequestDto;
+import com.sr.capital.dto.request.SyncDocumentToVendor;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.PendingDocumentResponseDto;
+import com.sr.capital.dto.response.SyncDocumentResponseDto;
 import com.sr.capital.service.LoanApplicationService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import jakarta.validation.Valid;
@@ -53,6 +55,14 @@ public class LoanApplicationController {
     public GenericResponse<LoanApplicationResponseDto> submitLoanToVendor(@RequestBody CreateLoanAtVendorRequest loanApplicationRequestDto) throws Exception {
 
         return ResponseBuilderUtil.getResponse(loanApplicationService.createLoanAtVendor(loanApplicationRequestDto), SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+
+    @PostMapping("/sync/document")
+    public GenericResponse<SyncDocumentResponseDto> syncDocumentToVendor(@Valid @RequestBody SyncDocumentToVendor syncDocumentToVendor) throws Exception {
+
+        return ResponseBuilderUtil.getResponse(loanApplicationService.syncDocumentToVendor(syncDocumentToVendor), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 }

@@ -34,13 +34,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -186,13 +189,18 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     public Object uploadDocument(LoanMetaDataDto loanMetaDataDto) {
 
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.UPLOAD_DOCUMENT.name(),ProviderRequestTemplateType.UPLOAD_DOCUMENT.name(),null);
-        List<String> responseDtoList =new ArrayList<>();
+        String responseDto =null;
 
-        List<DocumentUploadRequestDto> documentUploadRequestDtos = loanMetaDataDto.getDocumentUploadRequestDtos();
-        documentUploadRequestDtos.stream().forEach(documentUploadRequestDto -> {
+        DocumentUploadRequestDto documentUploadRequestDto = loanMetaDataDto.getDocumentUploadRequestDtos();
             try {
+                RMapCache<String, Boolean> documentCacheDetails = redissonClient
+                        .getMapCache(documentUploadRequestDto.getKey());
+                HttpHeaders fileHeaders = new HttpHeaders();
+                fileHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+                HttpEntity<InputStream> fileEntity = new HttpEntity<>(documentUploadRequestDto.getInputStream(), fileHeaders);
+
                 MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
-                body.add("file",documentUploadRequestDto.getFile());
+                body.add("file",fileEntity);
                 body.add("loan_code",loanMetaDataDto.getLoanId());
                 body.add("document_type",documentUploadRequestDto.getDocumentType());
                 body.add("document_category",documentUploadRequestDto.getDocumentCategory());
@@ -204,8 +212,9 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                         httpHeaders.add(k, String.valueOf(v));
                     });
                 }
-                String responseDto = webClientUtil.makeExternalCallBlocking(ServiceName.FLEXI,loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.BASE_URL.name()).toString(),null, HttpMethod.POST,loanMetaDataDto.getLoanVendorName(),httpHeaders, (Map<String, String>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.QUERY_PARAM.name()),body,String.class);
-                responseDtoList.add(responseDto);
+                 responseDto = webClientUtil.makeExternalCallBlocking(ServiceName.FLEXI,loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.BASE_URL.name()).toString(),null, HttpMethod.POST,loanMetaDataDto.getLoanVendorName(),httpHeaders, (Map<String, String>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.QUERY_PARAM.name()),body,String.class);
+
+                documentCacheDetails.put(documentUploadRequestDto.getKey(), true,15, TimeUnit.MINUTES);
             }catch (Exception ex){
                 log.error("error in ducument upload {} for partner {} , loanId {} ",ex.getMessage(),loanMetaDataDto.getLoanVendorName(), loanMetaDataDto.getLoanId());
 
@@ -213,10 +222,10 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
             }
 
-        });
 
 
-        return responseDtoList;
+
+        return responseDto;
     }
 
     @Override

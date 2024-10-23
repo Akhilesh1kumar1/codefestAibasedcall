@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
 
 @Data
@@ -23,5 +24,9 @@ public class DocumentUploadRequestDto {
     Map<String,String> metaData;
 
     String businessPartnerCode;
+
+    String key;
+
+    InputStream inputStream;
 
 }
