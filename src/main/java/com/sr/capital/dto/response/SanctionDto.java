@@ -22,6 +22,7 @@ public class SanctionDto {
 
     @lombok.Data
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @Builder
     public static class PartnerIntegrationProject {
         private List<String> tnc;
         private String product;
@@ -49,6 +50,7 @@ public class SanctionDto {
 
     @lombok.Data
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @Builder
     public static class FeeCharge {
         private String key;
         private String raw;
@@ -60,6 +62,7 @@ public class SanctionDto {
 
     @lombok.Data
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @Builder
     public static class DetailsOfCharge {
         private String label;
         private String value;

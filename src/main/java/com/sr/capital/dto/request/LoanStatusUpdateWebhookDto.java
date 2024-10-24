@@ -72,6 +72,7 @@ public class LoanStatusUpdateWebhookDto {
 
     private String createdAt;
 
+    private String errors;
     // Getters and Setters
 
     @Data

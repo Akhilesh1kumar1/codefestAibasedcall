@@ -14,6 +14,7 @@ import com.sr.capital.service.entityimpl.WebhookDetailsEntityServiceImpl;
 import com.sr.capital.service.entityimpl.WebhookHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -53,7 +54,14 @@ public class LoanStatusUpdateHandlerServiceImpl {
 
         if(loanApplication!=null){
             loanStatusUpdateWebhookDto.setStatus(loanStatusUpdateWebhookDto.getApplicationStatus().toUpperCase());
-            switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getApplicationStatus())){
+
+            if(CollectionUtils.isNotEmpty(loanStatusUpdateWebhookDto.getCheckpoints())){
+                 loanStatusUpdateWebhookDto.getCheckpoints().forEach(checkpoint -> {
+
+                 });
+            }
+
+            switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getStatus())){
                 case APPROVED:
                     loanApplication.setLoanStatus(APPROVED);
                     //updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
