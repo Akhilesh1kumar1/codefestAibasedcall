@@ -39,6 +39,7 @@ public class LoanApplicationResponseDto extends BasesResponse {
     LocalDate startDate;
 
     LocalDate endDate;
+
     public static LoanApplicationResponseDto mapLoanApplicationResponse(LoanApplication loanApplication){
         LoanApplicationResponseDto responseDto =new LoanApplicationResponseDto();
         responseDto.setCreatedAt(loanApplication.getAuditData().getCreatedAt());

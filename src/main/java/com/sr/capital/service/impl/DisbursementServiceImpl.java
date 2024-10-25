@@ -1,20 +1,20 @@
 package com.sr.capital.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.sr.capital.dto.request.LoanMetaDataDto;
-import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
-import com.sr.capital.dto.response.DisbursementDetails;
-import com.sr.capital.dto.response.SanctionDto;
-import com.sr.capital.entity.mongo.SanctionDetails;
-import com.sr.capital.entity.primary.LoanApplication;
+import com.sr.capital.dto.response.DisbursementDetailsResponseDto;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.entity.primary.LoanDisbursed;
+import com.sr.capital.external.flexi.dto.response.DisbursmentDetails;
 import com.sr.capital.repository.mongo.DisbursmentMongoRepository;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
-import com.sr.capital.repository.primary.LoanDisbursedRepository;
+import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.entityimpl.LoanApplicationStatusEntityServiceImpl;
 import com.sr.capital.service.entityimpl.LoanDistributionEntityServiceImpl;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,6 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DisbursementServiceImpl {
 
 
@@ -31,28 +32,72 @@ public class DisbursementServiceImpl {
     final LoanApplicationRepository loanApplicationRepository;
     final LoanDistributionEntityServiceImpl loanDistributionService;
     final DisbursmentMongoRepository disbursmentMongoRepository;
+    final CreditPartnerFactoryService creditPartnerFactoryService;
 
-    private List<DisbursementDetails> fetchAndSaveDisbursementDetails(LoanMetaDataDto loanMetaDataDto){
-        List<DisbursementDetails> disbursementDetails =new ArrayList<>();
+    static TypeReference<List<DisbursementDetailsResponseDto>> tRef = new TypeReference<List<DisbursementDetailsResponseDto>>() {
+    };
+    private List<DisbursementDetailsResponseDto> fetchAndSaveDisbursementDetails(LoanMetaDataDto loanMetaDataDto) throws IOException {
+        List<DisbursementDetailsResponseDto> disbursementDetailResponseDtos =new ArrayList<>();
 
+        LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanMetaDataDto.getInternalLoanId());
+        Boolean disbursmentDetailsFound =false;
+        if(loanApplicationStatus!=null){
 
-        return disbursementDetails;
+            if(loanMetaDataDto.getVendorDisbursedId()==null) {
+                List<LoanDisbursed> loanDisburseds = loanDistributionService.getLoanDisbursedDetailsByStatusId(loanApplicationStatus.getId());
+                if(CollectionUtils.isNotEmpty(loanDisburseds)){
+                    log.info("Disbursement details found ");
+                    disbursmentDetailsFound =true;
+                }
+            }else{
+                List<LoanDisbursed> loanDisburseds = loanDistributionService.getLoanDisbursedDetailsByStatusId(loanApplicationStatus.getId());
+                if(CollectionUtils.isNotEmpty(loanDisburseds)){
+                    log.info("Disbursement details found ");
+                    disbursmentDetailsFound =true;
+                }
+            }
+         }
+
+        if(!disbursmentDetailsFound){
+            DisbursementDetailsResponseDto disbursementDetailsResponseDto1 = fetchAndSaveDisbursementDetailsFromPartner(loanMetaDataDto);
+            disbursementDetailResponseDtos.add(disbursementDetailsResponseDto1);
+        }else{
+            com.sr.capital.entity.mongo.DisbursementDetails disbursementDetails1 = disbursmentMongoRepository.findBySrCompanyIdAndLoanId(loanMetaDataDto.getSrCompanyId(), loanMetaDataDto.getInternalLoanId());
+
+            disbursementDetailResponseDtos = MapperUtils.convertValue( disbursementDetails1.getDisbursementDetails(),tRef);
+        }
+
+        return disbursementDetailResponseDtos;
     }
 
+
+    private DisbursementDetailsResponseDto fetchAndSaveDisbursementDetailsFromPartner(LoanMetaDataDto loanMetaDataDto) throws IOException {
+
+        DisbursmentDetails disbursementDetails = (DisbursmentDetails) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).fetchDisburmentDetails(loanMetaDataDto);
+        DisbursementDetailsResponseDto disbursementDetailsResponseDto1 =null;
+        if(disbursementDetails!=null ) {
+             disbursementDetailsResponseDto1 = MapperUtils.convertValue(disbursementDetails, DisbursementDetailsResponseDto.class);
+            if(disbursementDetailsResponseDto1 !=null){
+                loanMetaDataDto.setDisbursementDetailsResponseDto(disbursementDetailsResponseDto1);
+                saveDisbursementDetails(loanMetaDataDto);
+            }
+        }
+        return disbursementDetailsResponseDto1;
+    }
     private void saveDisbursementDetails(LoanMetaDataDto loanMetaDataDto) {
 
-        if(loanMetaDataDto.getDisbursementDetails()!=null){
+        if(loanMetaDataDto.getDisbursementDetailsResponseDto()!=null){
             List<Object> disbursementDetailsList =new ArrayList<>();
-            DisbursementDetails disbursementDetails =loanMetaDataDto.getDisbursementDetails();
-           LoanDisbursed loanDisbursed = LoanDisbursed.builder().loanAmountDisbursed(BigDecimal.valueOf(disbursementDetails.getDisbursementAmount()))
-                    .loanApplicationStatusId(loanMetaDataDto.getLoanApplicationStatusId()).durationAtDisbursal(disbursementDetails.getRepaymentPeriod())
-                    .interestRateAtDisbursal(disbursementDetails.getInterestRate())
-                    .interestAmountAtDisbursal(BigDecimal.valueOf(disbursementDetails.getApprovedAmount()))
-                    .vendorDisbursedId(disbursementDetails.getUtrNo()).disbursedDate(disbursementDetails.getDisbursalDate())
-                    .build();
+            DisbursementDetailsResponseDto disbursementDetailsResponseDto =loanMetaDataDto.getDisbursementDetailsResponseDto();
+           LoanDisbursed loanDisbursed = LoanDisbursed.builder().loanAmountDisbursed(BigDecimal.valueOf(disbursementDetailsResponseDto.getDisbursementAmount()))
+                    .loanApplicationStatusId(loanMetaDataDto.getLoanApplicationStatusId()).durationAtDisbursal(disbursementDetailsResponseDto.getRepaymentPeriod())
+                    .interestRateAtDisbursal(disbursementDetailsResponseDto.getInterestRate())
+                    .interestAmountAtDisbursal(BigDecimal.valueOf(disbursementDetailsResponseDto.getApprovedAmount()))
+                    .vendorDisbursedId(disbursementDetailsResponseDto.getUtrNo()).disbursedDate(disbursementDetailsResponseDto.getDisbursalDate())
+                   .vendorDisbursedId(disbursementDetailsResponseDto.getUtrNo()==null? disbursementDetailsResponseDto.getLoanCode(): disbursementDetailsResponseDto.getUtrNo()).build();
             loanDistributionService.saveLoanDisbursed(loanDisbursed);
 
-            disbursementDetailsList.add(disbursementDetails);
+            disbursementDetailsList.add(disbursementDetailsResponseDto);
             com.sr.capital.entity.mongo.DisbursementDetails disbursementDetails1 = com.sr.capital.entity.mongo.DisbursementDetails.builder()
                     .srCompanyId(loanMetaDataDto.getSrCompanyId()).loanId(loanMetaDataDto.getInternalLoanId())
                     .disbursementDetails(disbursementDetailsList).build();

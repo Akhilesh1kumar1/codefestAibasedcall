@@ -12,6 +12,7 @@ import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
+import com.sr.capital.entity.primary.Pincode;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
@@ -23,6 +24,7 @@ import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.LoanApplicationService;
 import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.service.UserService;
+import com.sr.capital.service.entityimpl.PincodeEntityServiceImpl;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final AES256 aes256;
     final LoanAllocationServiceImpl loanAllocationService;
     final DocumentSyncHelperServiceImpl documentSyncHelperService;
-
+    final PincodeEntityServiceImpl pincodeEntityService;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
@@ -62,7 +63,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         LoanApplicationResponseDto loanApplicationResponseDto =LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
 
         if(loanApplicationRequestDto.getCreateLoanAtVendor()){
-            CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
+            CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
             if(responseDto!=null && responseDto.getSuccess()!=null ){
                 loanApplication.setLoanStatus(LoanStatus.PRE_APPROVED);
                 loanApplicationRepository.save(loanApplication);
@@ -128,7 +129,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
-    public LoanApplicationResponseDto createLoanAtVendor(CreateLoanAtVendorRequest createLoanAtVendorRequest) {
+    public LoanApplicationResponseDto createLoanAtVendor(CreateLoanAtVendorRequest createLoanAtVendorRequest) throws CustomException {
 
         LoanApplicationResponseDto loanApplicationResponseDto = null;
         LoanApplication loan =null;
@@ -150,7 +151,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         }
 
         if(loanApplicationResponseDto!=null) {
-            CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(createLoanAtVendorRequest.getLoanVendorName()).createLead(createLoanAtVendorRequest.getLoanVendorName(), buildRequestDto(RequestData.getTenantId(), loanApplicationResponseDto));
+            CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(createLoanAtVendorRequest.getLoanVendorName()).createLead(createLoanAtVendorRequest.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(), loanApplicationResponseDto));
             if (responseDto != null && responseDto.getSuccess() != null) {
                 loan.setLoanStatus(LoanStatus.PRE_APPROVED);
                 loan.setVendorLoanId(responseDto.getLoanCode());
@@ -176,7 +177,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
 
-    private CreateLeadRequestDto buildRequestDto(String tenantId,LoanApplicationResponseDto loanApplicationResponseDto) {
+    private CreateLeadRequestDto validateAndBuildRequestDto(String tenantId, LoanApplicationResponseDto loanApplicationResponseDto) throws CustomException {
 
         User user = userService.getCompanyDetails(Long.valueOf(tenantId));
 
@@ -196,23 +197,22 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
             if(CollectionUtils.isNotEmpty(docDetails)){
 
-                docDetails.stream().forEach(doc->{
-                    if(doc.getDocType()== DocType.PERSONAL_ADDRESS){
-                        log.info("[buildRequestDto] personal doc {} ",doc);
+                for (KycDocDetails<?> doc : docDetails) {
+                    if (doc.getDocType() == DocType.PERSONAL_ADDRESS) {
+                        log.info("[buildRequestDto] personal doc {} ", doc);
+                        validateAndBuildPersonalDetails(doc, user, createLeadRequestDto, loanApplicationResponseDto.getLoanVendorId());
 
-                        buildPersonalDetails(doc,user,createLeadRequestDto);
+                    } else if (doc.getDocType() == DocType.BUSINESS_ADDRESS) {
+                        log.info("[buildRequestDto] business doc {} ", doc);
 
-                    }else if(doc.getDocType() == DocType.BUSINESS_ADDRESS){
-                        log.info("[buildRequestDto] business doc {} ",doc);
+                        buildBusinessDetails(doc, createLeadRequestDto, user);
+                    } else if (doc.getDocType() == DocType.BANK_CHEQUE) {
 
-                        buildBusinessDetails(doc,createLeadRequestDto,user);
-                    }else if(doc.getDocType() == DocType.BANK_CHEQUE){
+                        log.info("[buildRequestDto] bank cheque {} ", doc);
 
-                        log.info("[buildRequestDto] bank cheque {} ",doc);
-
-                        buildAccountDetails(doc,createLeadRequestDto,false);
+                        buildAccountDetails(doc, createLeadRequestDto, false);
                     }
-                });
+                }
 
                 if(CollectionUtils.isEmpty(createLeadRequestDto.getDisbursementAccounts())){
                     buildAccountDetails(null,createLeadRequestDto,true);
@@ -301,7 +301,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         createLeadRequestDto.getLoanApplication().setLoanBusinessPartners(loanBusinessPartnerList);
     }
 
-    private void buildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto) {
+    private void validateAndBuildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto,Long loanVendorId) throws CustomException {
         createLeadRequestDto.setFirstName(user.getFirstName());
         createLeadRequestDto.setMobileNumber(user.getMobile());
         createLeadRequestDto.setEmail(user.getEmail());
@@ -318,15 +318,19 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .panNo(user.getPanNumber()).gender(user.getGender()).isCurrentAccountAvailable(user.getCurrentAccountAvailable()?1:0).build();
 
 
-        personalAddressDetails.getAddress().forEach(address -> {
-            if(address.getAddressType()==null || address.getAddressType().equalsIgnoreCase("current")) {
+        for (PersonalAddressDetails.Address address : personalAddressDetails.getAddress()) {
+            if (address.getAddressType() == null || address.getAddressType().equalsIgnoreCase("current")) {
                 loanApplicant.setAddressLine1(aes256.decrypt(address.getAddress1()));
                 loanApplicant.setAddressLine2(aes256.decrypt(address.getAddress2()));
                 loanApplicant.setPincode(aes256.decrypt(address.getPincode()));
                 loanApplicant.setOwnershipStatus(address.getOwnershipStatus());
-            }else{
+                Pincode pincode = pincodeEntityService.getPincodeDetailsByVendorId(Long.valueOf(loanApplicant.getPincode()), loanVendorId);
+                if (pincode == null) {
+                    throw new CustomException("We cannot provide loan at pincode " + loanApplicant.getPincode(), HttpStatus.BAD_REQUEST);
+                }
+            } else {
             }
-        });
+        }
         createLeadRequestDto.getLoanApplication().setLoanApplicant(loanApplicant);
     }
 }

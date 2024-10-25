@@ -1,6 +1,6 @@
 package com.sr.capital.dto.request;
 
-import com.sr.capital.dto.response.DisbursementDetails;
+import com.sr.capital.dto.response.DisbursementDetailsResponseDto;
 import com.sr.capital.dto.response.SanctionDto;
 import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.FieldNameConstants;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -56,9 +55,11 @@ public class LoanMetaDataDto {
 
     SanctionDto sanctionDto;
 
-    DisbursementDetails disbursementDetails;
+    DisbursementDetailsResponseDto disbursementDetailsResponseDto;
 
     Long loanApplicationStatusId;
+
+    String vendorDisbursedId;
 
     @Data
     @FieldDefaults(level=AccessLevel.PRIVATE)
