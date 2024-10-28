@@ -39,6 +39,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -450,6 +451,18 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
             requestDto.setGender("Female");
         }
 
+        if(!CollectionUtils.isEmpty(requestDto.getLoanApplication().getLoanBusinessPartners())){
+            requestDto.getLoanApplication().getLoanBusinessPartners().forEach(loanBusinessPartner -> {
+
+                if(loanBusinessPartner.getGender()!=null) {
+                    if (loanBusinessPartner.getGender().equalsIgnoreCase("m")) {
+                        loanBusinessPartner.setGender("Male");
+                    } else if (loanBusinessPartner.getGender().equalsIgnoreCase("f")) {
+                        loanBusinessPartner.setGender("Female");
+                    }
+                }
+            });
+        }
 
     }
 }
