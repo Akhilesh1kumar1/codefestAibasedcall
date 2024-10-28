@@ -25,4 +25,6 @@ public class UserProgressResponseDto {
     String clientLoanId;
 
     String comments;
+
+    Long loanVendorId;
 }

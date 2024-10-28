@@ -58,4 +58,7 @@ public class LoanApplicationStatus extends LongBaseEntity{
 
     @Column(name = "sanction_code")
     String sanctionCode;
+
+    @Column(name = "total_amount_recovered")
+    BigDecimal totalAmountRecovered;
 }

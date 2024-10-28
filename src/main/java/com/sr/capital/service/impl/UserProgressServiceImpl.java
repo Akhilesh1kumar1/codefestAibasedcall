@@ -42,6 +42,7 @@ public class UserProgressServiceImpl {
             userProgressResponseDto.setLoanId(loanApplication1.getId());
             userProgressResponseDto.setClientLoanId(loanApplication1.getVendorLoanId());
             userProgressResponseDto.setComments(loanApplication1.getComments());
+            userProgressResponseDto.setLoanVendorId(loanApplication1.getLoanVendorId());
 
             if(loanApplication1.getLoanStatus().equals(LoanStatus.PRE_APPROVED) ){
                 currentState = Screens.BUSINESS_DETAILS.name();
