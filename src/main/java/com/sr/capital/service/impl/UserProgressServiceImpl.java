@@ -32,13 +32,12 @@ public class UserProgressServiceImpl {
     public UserProgressResponseDto getUserProgress(String tenantId){
 
         List<LoanApplication> loanApplication = loanApplicationRepository.findBySrCompanyIdAndLoanStatus(Long.valueOf(RequestData.getTenantId()), LoanStatus.PENDING);
-        String currentState = Screens.LOAN_DETAILS.name();
+        String currentState = Screens.MOBILE_VERIFICATION.name();
         UserProgressResponseDto userProgressResponseDto =UserProgressResponseDto.builder().build();
         if(CollectionUtils.isNotEmpty(loanApplication)){
-
+            currentState = Screens.LOAN_DETAILS.name();
             LoanApplication loanApplication1 = loanApplication.get(0);
 
-            currentState = Screens.PERSONAL_INFO.name();
             userProgressResponseDto.setLoanId(loanApplication1.getId());
             userProgressResponseDto.setClientLoanId(loanApplication1.getVendorLoanId());
             userProgressResponseDto.setComments(loanApplication1.getComments());
@@ -52,7 +51,8 @@ public class UserProgressServiceImpl {
                     currentState = Screens.BUSINESS_DETAILS.name();
                 }
             }else{
-            User user = userRepository.findTopBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+                currentState = Screens.PERSONAL_INFO.name();
+                User user = userRepository.findTopBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
 
             if(user!=null) {
                 List<KycDocDetails<?>> kycDocDetailsList = docDetailsService.fetchDocDetailsByTenantId(tenantId);
