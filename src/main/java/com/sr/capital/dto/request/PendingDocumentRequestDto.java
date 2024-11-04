@@ -18,4 +18,8 @@ public class PendingDocumentRequestDto {
 
     @NotNull(message = "loan_id cannot be null")
     UUID loanId;
+
+
+    String loanVendorName;
+
 }

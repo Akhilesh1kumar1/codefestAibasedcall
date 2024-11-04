@@ -8,6 +8,7 @@ import com.sr.capital.dto.response.SyncDocumentResponseDto;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.exception.custom.CustomException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public interface LoanApplicationService {
 
    public LoanApplication getLoanApplicationById(UUID loanApplicationId);
 
-   public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException;
+   public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException, IOException;
 
    public LoanApplicationResponseDto createLoanAtVendor(CreateLoanAtVendorRequest createLoanAtVendorRequest) throws CustomException;
 

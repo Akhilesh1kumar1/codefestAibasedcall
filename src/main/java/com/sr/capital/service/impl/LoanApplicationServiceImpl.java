@@ -1,5 +1,6 @@
 package com.sr.capital.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.*;
@@ -26,6 +27,7 @@ import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.service.UserService;
 import com.sr.capital.service.entityimpl.PincodeEntityServiceImpl;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
+import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -33,6 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -110,16 +113,20 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
-    public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException {
+    public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException, IOException {
 
         LoanApplication loanApplication = loanApplicationRepository.findById(pendingDocumentRequestDto.getLoanId()).orElse(null);
         PendingDocumentResponseDto pendingDocumentResponseDto =null;
         if(loanApplication!=null){
             LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().loanId(loanApplication.getVendorLoanId().toString()).build();
             loanAllocationService.getLoanVendor(loanMetaDataDto);
-            PendingDocumentResponseDto pendingDocumentResponseDtoFromClient = (PendingDocumentResponseDto) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).getPendingDocuments(loanMetaDataDto);
-            if(pendingDocumentResponseDtoFromClient!=null){
-                pendingDocumentResponseDto = PendingDocumentResponseDto.builder().pendingList(pendingDocumentResponseDtoFromClient.getPendingList()).build();
+            com.sr.capital.external.flexi.dto.response.PendingDocumentResponseDto pendingDocumentResponseDtoFromClient = (com.sr.capital.external.flexi.dto.response.PendingDocumentResponseDto) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).getPendingDocuments(loanMetaDataDto);
+            if(pendingDocumentResponseDtoFromClient!=null && pendingDocumentResponseDtoFromClient.getData()!=null){
+                TypeReference<List<PendingDocumentResponseDto.PendingItem>> tRef = new TypeReference<List<PendingDocumentResponseDto.PendingItem>>() {
+                };
+                List<PendingDocumentResponseDto.PendingItem>  pendingDocumentItems = MapperUtils.convertValue(pendingDocumentResponseDtoFromClient.getData().getPendingList(),tRef);
+
+                pendingDocumentResponseDto = PendingDocumentResponseDto.builder().pendingList(pendingDocumentItems).build();
             }
         }else{
             throw new CustomException("Invalid LoadId ", HttpStatus.BAD_REQUEST);

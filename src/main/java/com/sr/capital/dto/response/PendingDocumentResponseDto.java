@@ -19,6 +19,7 @@ import java.util.Map;
 @Builder
 public class PendingDocumentResponseDto {
 
+
     private List<PendingItem> pendingList;
 
 

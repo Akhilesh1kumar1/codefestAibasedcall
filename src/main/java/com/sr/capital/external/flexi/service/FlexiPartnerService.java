@@ -214,7 +214,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                     });
                 }
                  responseDto = webClientUtil.makeExternalCallBlocking(ServiceName.FLEXI,loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.BASE_URL.name()).toString(),null, HttpMethod.POST,loanMetaDataDto.getLoanVendorName(),httpHeaders, (Map<String, String>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.QUERY_PARAM.name()),body,String.class);
-
+                log.info("[uploadDocument] response dto {} ",responseDto);
                 documentCacheDetails.put(documentUploadRequestDto.getKey(), true,15, TimeUnit.MINUTES);
             }catch (Exception ex){
                 log.error("error in ducument upload {} for partner {} , loanId {} ",ex.getMessage(),loanMetaDataDto.getLoanVendorName(), loanMetaDataDto.getLoanId());

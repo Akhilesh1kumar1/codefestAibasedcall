@@ -1,5 +1,6 @@
 package com.sr.capital.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -17,6 +18,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @FieldNameConstants
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateLeadRequestDto {
 
     String customerCategory;
@@ -60,6 +62,7 @@ public class CreateLeadRequestDto {
     @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class LoanDetails {
         private BigDecimal amount;
         private String partnerRefNo;
@@ -84,6 +87,7 @@ public class CreateLeadRequestDto {
     @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class LoanApplicant {
         private String dob;
         private String gender;
@@ -105,6 +109,7 @@ public class CreateLeadRequestDto {
     @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class LoanBusiness {
         private String legalStatus;
         private String businessName;
@@ -129,6 +134,7 @@ public class CreateLeadRequestDto {
     @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class LoanFinance {
         private BigDecimal monthlyTotalSales;
         private BigDecimal monthlyOnlineSales;
@@ -151,6 +157,7 @@ public class CreateLeadRequestDto {
     @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class LoanBusinessPartner {
         private String name;
         private String panNo;
@@ -174,6 +181,7 @@ public class CreateLeadRequestDto {
     @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class LoanPersonalReference {
         private String name;
         private String mobileNo;
@@ -211,6 +219,7 @@ public class CreateLeadRequestDto {
     @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Business {
         String nameOfBusiness;
         String typeOfConstitution;
@@ -231,6 +240,7 @@ public class CreateLeadRequestDto {
     @NoArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class DisbursementAccount {
         String bankName;
         String accountName;
