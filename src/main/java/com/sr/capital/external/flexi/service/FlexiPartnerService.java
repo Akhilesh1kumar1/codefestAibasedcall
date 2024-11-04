@@ -191,7 +191,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.UPLOAD_DOCUMENT.name(),ProviderRequestTemplateType.UPLOAD_DOCUMENT.name(),null);
         String responseDto =null;
-
+         log.info("[uploadDocument] start request {} ",loanMetaDataDto);
         DocumentUploadRequestDto documentUploadRequestDto = loanMetaDataDto.getDocumentUploadRequestDtos();
             try {
                 RMapCache<String, Boolean> documentCacheDetails = redissonClient

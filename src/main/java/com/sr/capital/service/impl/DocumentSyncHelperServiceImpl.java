@@ -36,7 +36,7 @@ public class DocumentSyncHelperServiceImpl {
     final CreditPartnerFactoryService creditPartnerFactoryService;
     final AppProperties appProperties;
     @Async
-    public Boolean syncDocumentToVendor(LoanMetaDataDto loanMetaDataDto) {
+    public void syncDocumentToVendor(LoanMetaDataDto loanMetaDataDto) {
 
         List<KycDocDetails<?>> kycDocDetailsList = docDetailsService.fetchDocDetailsByTenantId(String.valueOf(loanMetaDataDto.getSrCompanyId()));
 
@@ -99,6 +99,5 @@ public class DocumentSyncHelperServiceImpl {
             }
 
         }
-        return true;
     }
 }
