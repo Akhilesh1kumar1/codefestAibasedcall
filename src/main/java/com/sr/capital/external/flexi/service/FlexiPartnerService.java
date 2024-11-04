@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -198,10 +199,17 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                         .getMapCache(documentUploadRequestDto.getKey());
                 HttpHeaders fileHeaders = new HttpHeaders();
                 fileHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
-                HttpEntity<InputStream> fileEntity = new HttpEntity<>(documentUploadRequestDto.getInputStream(), fileHeaders);
+               // HttpEntity<InputStream> fileEntity = new HttpEntity<>(documentUploadRequestDto.getInputStream(), fileHeaders);
 
+                InputStreamResource fileResource = new InputStreamResource(documentUploadRequestDto.getInputStream()) {
+                    @Override
+                    public String getFilename() {
+                        // Provide a default file name if needed
+                        return documentUploadRequestDto.getFileName();
+                    }
+                };
                 MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
-                body.add("file",fileEntity);
+                body.add("file",fileResource);
                 body.add("loan_code",loanMetaDataDto.getLoanId());
                 body.add("document_type",documentUploadRequestDto.getDocumentType());
                 body.add("document_category",documentUploadRequestDto.getDocumentCategory());
