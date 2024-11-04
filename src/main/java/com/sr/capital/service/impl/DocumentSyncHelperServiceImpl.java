@@ -42,7 +42,7 @@ public class DocumentSyncHelperServiceImpl {
 
 
         if (CollectionUtils.isNotEmpty(kycDocDetailsList)) {
-
+           log.info("[syncDocumentToVendor] start {} ",loanMetaDataDto);
             for (KycDocDetails<?> kycDocDetails : kycDocDetailsList) {
                 if (kycDocDetails.getDocType().name().equalsIgnoreCase(DocType.BUSINESS_ADDRESS.name()) || kycDocDetails.getDocType().name().equalsIgnoreCase(DocType.PERSONAL_ADDRESS.name())) {
                     log.info("Document Sync not required");
@@ -54,6 +54,8 @@ public class DocumentSyncHelperServiceImpl {
                     if (CollectionUtils.isNotEmpty(kycDocDetails.getImages())) {
                         if (!documentCacheDetails.get(key) && kycDocDetails.getDetails() instanceof ReportMetaData) {
                             ReportMetaData reportMetaData = (ReportMetaData) kycDocDetails.getDetails();
+                            log.info("[syncDocumentToVendor] report meta data {} ",reportMetaData);
+
                             for (String image : kycDocDetails.getImages()) {
                                 try (InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), image)) {
                                     if (inputStream != null) {
