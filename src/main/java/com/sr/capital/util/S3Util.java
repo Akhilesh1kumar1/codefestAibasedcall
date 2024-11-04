@@ -190,4 +190,18 @@ public class S3Util {
         // Convert to File object
         return file;
     }
+
+    public static Boolean deleteObjectFromS3(String bucketName,String key){
+        DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucketName,key);
+
+        // Delete the object
+        try {
+            s3Client.deleteObject(deleteRequest);
+
+        }catch (Exception ex){
+            log.error("eror in deletion {} ",key);
+            return false;
+        }
+        return true;
+    }
 }

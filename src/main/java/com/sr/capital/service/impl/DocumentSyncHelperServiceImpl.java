@@ -45,14 +45,14 @@ public class DocumentSyncHelperServiceImpl {
            log.info("[syncDocumentToVendor] start {} ",loanMetaDataDto);
             for (KycDocDetails<?> kycDocDetails : kycDocDetailsList) {
                 if (kycDocDetails.getDocType().name().equalsIgnoreCase(DocType.BUSINESS_ADDRESS.name()) || kycDocDetails.getDocType().name().equalsIgnoreCase(DocType.PERSONAL_ADDRESS.name())) {
-                    log.info("Document Sync not required");
+                    log.info("Document Sync not required..doc type {} ",kycDocDetails.getDocType());
                 } else {
 
                     String key = loanMetaDataDto.getSrCompanyId() + "_" + kycDocDetails.getDocType();
                     RMapCache<String, Boolean> documentCacheDetails = redissonClient
                             .getMapCache(key);
                     if (CollectionUtils.isNotEmpty(kycDocDetails.getImages())) {
-                        if (!documentCacheDetails.get(key) && kycDocDetails.getDetails() instanceof ReportMetaData) {
+                        if ((documentCacheDetails.get(key)==null || !documentCacheDetails.get(key)) && kycDocDetails.getDetails() instanceof ReportMetaData) {
                             ReportMetaData reportMetaData = (ReportMetaData) kycDocDetails.getDetails();
                             log.info("[syncDocumentToVendor] report meta data {} ",reportMetaData);
 
@@ -86,6 +86,7 @@ public class DocumentSyncHelperServiceImpl {
                                     //throw new RuntimeException(e);
                                     log.error("error in document sync{} ", e);
                                 }
+                               // S3Util.deleteObjectFromS3(appProperties.getBucketName(), image);
                             }
                         }
                     }
