@@ -200,16 +200,8 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                 HttpHeaders fileHeaders = new HttpHeaders();
                 fileHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
                // HttpEntity<InputStream> fileEntity = new HttpEntity<>(documentUploadRequestDto.getInputStream(), fileHeaders);
-
-                InputStreamResource fileResource = new InputStreamResource(documentUploadRequestDto.getInputStream()) {
-                    @Override
-                    public String getFilename() {
-                        // Provide a default file name if needed
-                        return documentUploadRequestDto.getFileName();
-                    }
-                };
                 MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
-                body.add("file",fileResource);
+                body.add("file",documentUploadRequestDto.getInputStream());
                 body.add("loan_code",loanMetaDataDto.getLoanId());
                 body.add("document_type",documentUploadRequestDto.getDocumentType());
                 body.add("document_category",documentUploadRequestDto.getDocumentCategory());

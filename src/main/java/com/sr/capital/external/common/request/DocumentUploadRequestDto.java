@@ -3,7 +3,9 @@ package com.sr.capital.external.common.request;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.core.io.ByteArrayResource;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
@@ -27,6 +29,6 @@ public class DocumentUploadRequestDto {
 
     String key;
 
-    InputStream inputStream;
+    ByteArrayResource inputStream;
 
 }

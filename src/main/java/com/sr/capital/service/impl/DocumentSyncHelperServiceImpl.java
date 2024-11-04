@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -64,11 +65,21 @@ public class DocumentSyncHelperServiceImpl {
                                         Map<String, String> metaData = (Map<String, String>) reportMetaData.getMetaData().get("meta_data");
 
                                         if (documentType != null && documentCategory != null && metaData != null) {
+                                            byte[] fileContent = inputStream.readAllBytes();
+
+// Use ByteArrayResourc
+                                            ByteArrayResource fileResource = new ByteArrayResource(fileContent) {
+                                                @Override
+                                                public String getFilename() {
+                                                    return image;
+                                                }
+                                            };
+
                                             DocumentUploadRequestDto documentUploadRequestDto = DocumentUploadRequestDto.builder()
                                                     .documentType(documentType)
                                                     .documentCategory(documentCategory)
                                                     .fileName(image)
-                                                    .inputStream(inputStream)
+                                                    .inputStream(fileResource)
                                                     .metaData(metaData)
                                                     .key(key)
                                                     .build();
