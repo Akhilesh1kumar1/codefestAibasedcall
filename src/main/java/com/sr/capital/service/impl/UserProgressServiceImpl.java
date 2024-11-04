@@ -44,12 +44,13 @@ public class UserProgressServiceImpl {
             userProgressResponseDto.setComments(loanApplication1.getComments());
             userProgressResponseDto.setLoanVendorId(loanApplication1.getLoanVendorId());
 
-            if(loanApplication1.getLoanStatus().equals(LoanStatus.PRE_APPROVED) ){
-                currentState = Screens.BUSINESS_DETAILS.name();
+            if(loanApplication1.getVendorLoanId()!=null) {
+                if (loanApplication1.getLoanStatus().equals(LoanStatus.PRE_APPROVED)) {
+                    currentState = Screens.PENDING_DOCUMENT.name();
 
-            }
-            else if(loanApplication1.getLoanStatus().equals(LoanStatus.PENDING) ){
-               currentState = Screens.PENDING_DOCUMENT.name();
+                } else if (loanApplication1.getLoanStatus().equals(LoanStatus.PENDING)) {
+                    currentState = Screens.BUSINESS_DETAILS.name();
+                }
             }else{
             User user = userRepository.findTopBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
 
