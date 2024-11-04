@@ -46,7 +46,7 @@ public class BusinessDetailsConstructor implements EntityConstructor {
                 BusinessAddressDetails.BusinessPartnerInfo partnerInfo =BusinessAddressDetails.BusinessPartnerInfo.builder()
                         .dob(aes256.encrypt(partnerInfoDto.getDob()))
                         .address(aes256.encrypt(partnerInfoDto.getAddress()))
-                        .name(aes256.encrypt(partnerInfoDto.getName()))
+                        .name(aes256.encrypt(partnerInfoDto.getName())).city(partnerInfoDto.getCity()).state(partnerInfoDto.getState())
                         .gender(partnerInfoDto.getGender()).mobileNumber(aes256.encrypt(partnerInfoDto.getMobileNumber())).pincode(aes256.encrypt(partnerInfoDto.getPincode()))
                         .panNumber(aes256.encrypt(partnerInfoDto.getPanNumber())).businessPartnerHolding(aes256.encrypt(partnerInfoDto.getBusinessPartnerHolding())).uniqueIdentifier(RequestData.getTenantId()+"_"+counter).build();
                 counter.getAndSet(counter.get() + 1);

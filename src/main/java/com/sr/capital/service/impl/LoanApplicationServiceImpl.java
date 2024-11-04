@@ -294,7 +294,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .dob(aes256.decrypt(businessPartnerInfo.getDob())).
                 address(aes256.decrypt(businessPartnerInfo.getAddress())).
                 name(aes256.decrypt(businessPartnerInfo.getName())).
-                gender(businessPartnerInfo.getGender()).
+                gender(businessPartnerInfo.getGender()).city(businessPartnerInfo.getCity()).state(businessPartnerInfo.getState()).
                 mobileNo(aes256.decrypt(businessPartnerInfo.getMobileNumber())).
                 pincode(aes256.decrypt(businessPartnerInfo.getPincode())).
                 panNo(aes256.decrypt(businessPartnerInfo.getPanNumber())).

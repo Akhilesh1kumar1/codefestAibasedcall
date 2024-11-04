@@ -67,6 +67,10 @@ public class BusinessAddressDetails implements Serializable {
 
         String uniqueIdentifier;
 
+        String city;
+
+        String state;
+
     }
 
 

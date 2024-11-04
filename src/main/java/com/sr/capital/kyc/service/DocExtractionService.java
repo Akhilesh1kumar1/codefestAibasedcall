@@ -99,6 +99,7 @@ public class DocExtractionService {
         KycDocDetails<?> kycDocDetails = entityConstructorStrategy.constructEntity(orchestratorRequest, orchestratorRequest.getKycDocDetails(),
                 getResponseClass(orchestratorRequest.getDocType()));
 
+        loggerUtil.info("[uploadAndExtractDetails] kycDocDetails doc type "+kycDocDetails.getDocType());
         kycDocDetailsManager.saveKycDocDetails(kycDocDetails);
 
         if(orchestratorRequest.getTask()!=null){

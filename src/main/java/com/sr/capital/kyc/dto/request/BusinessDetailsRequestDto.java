@@ -75,7 +75,9 @@ public class BusinessDetailsRequestDto {
 
         String businessPartnerHolding;
 
+        String city;
 
+        String state;
 
     }
 
