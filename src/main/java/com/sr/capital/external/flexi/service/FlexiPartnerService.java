@@ -453,7 +453,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
         if(requestDto.getLoanApplication().getLoanApplicant().getGender().equalsIgnoreCase("m")){
             requestDto.getLoanApplication().getLoanApplicant().setGender("Male");
-        }else if(requestDto.getGender().equalsIgnoreCase("f")){
+        }else if(requestDto.getLoanApplication().getLoanApplicant().getGender().equalsIgnoreCase("f")){
             requestDto.getLoanApplication().getLoanApplicant().setGender("Female");
         }
 
