@@ -36,7 +36,7 @@ public class DocumentSyncHelperServiceImpl {
     final FileUploadService fileUploadService;
     final CreditPartnerFactoryService creditPartnerFactoryService;
     final AppProperties appProperties;
-    @Async
+    //@Async
     public void syncDocumentToVendor(LoanMetaDataDto loanMetaDataDto) {
 
         List<KycDocDetails<?>> kycDocDetailsList = docDetailsService.fetchDocDetailsByTenantId(String.valueOf(loanMetaDataDto.getSrCompanyId()));
