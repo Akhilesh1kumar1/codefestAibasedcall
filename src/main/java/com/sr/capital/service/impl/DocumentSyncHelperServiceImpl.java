@@ -102,18 +102,18 @@ public class DocumentSyncHelperServiceImpl {
                                     log.error("error in document sync{} ", e);
                                 }
 
-                                try {
-                                    S3Util.deleteObjectFromS3(appProperties.getBucketName(), image);
-                                    kycDocDetails.setImages(null);
-                                    if(RequestData.getUserId()==null){
-                                        RequestData.setUserId(-1l);
-                                    }
-                                    kycDocDetailsManager.saveKycDocDetails(kycDocDetails);
-                                } catch (IncompatibleDetailsException e) {
-                                   // throw new RuntimeException(e);
-                                    log.info("error in document save ");
-                                }
+                            }
 
+                            try {
+                                S3Util.deleteObjectFromS3(appProperties.getBucketName(), kycDocDetails.getImages().get(0));
+                                kycDocDetails.setImages(null);
+                                if(RequestData.getUserId()==null){
+                                    RequestData.setUserId(-1l);
+                                }
+                                kycDocDetailsManager.saveKycDocDetails(kycDocDetails);
+                            } catch (IncompatibleDetailsException e) {
+                                // throw new RuntimeException(e);
+                                log.info("error in document save ");
                             }
                         }
                     }
