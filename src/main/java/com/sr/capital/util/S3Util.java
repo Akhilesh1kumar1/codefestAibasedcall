@@ -192,12 +192,13 @@ public class S3Util {
     }
 
     public static Boolean deleteObjectFromS3(String bucketName,String key){
+        
         DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucketName,key);
 
         // Delete the object
         try {
             s3Client.deleteObject(deleteRequest);
-
+            log.info("object deleted from s3");
         }catch (Exception ex){
             log.error("eror in deletion {} ",key);
             return false;

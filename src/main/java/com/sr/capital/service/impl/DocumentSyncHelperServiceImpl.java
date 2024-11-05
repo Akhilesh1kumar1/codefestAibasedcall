@@ -1,11 +1,14 @@
 package com.sr.capital.service.impl;
 
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.ReportMetaData;
+import com.sr.capital.exception.custom.IncompatibleDetailsException;
 import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 import com.sr.capital.helpers.enums.DocType;
+import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.FileUploadService;
@@ -36,6 +39,7 @@ public class DocumentSyncHelperServiceImpl {
     final FileUploadService fileUploadService;
     final CreditPartnerFactoryService creditPartnerFactoryService;
     final AppProperties appProperties;
+    final KycDocDetailsManager kycDocDetailsManager;
     //@Async
     public void syncDocumentToVendor(LoanMetaDataDto loanMetaDataDto) {
 
@@ -97,7 +101,19 @@ public class DocumentSyncHelperServiceImpl {
                                     //throw new RuntimeException(e);
                                     log.error("error in document sync{} ", e);
                                 }
-                                S3Util.deleteObjectFromS3(appProperties.getBucketName(), image);
+
+                                try {
+                                    S3Util.deleteObjectFromS3(appProperties.getBucketName(), image);
+                                    kycDocDetails.setImages(null);
+                                    if(RequestData.getUserId()==null){
+                                        RequestData.setUserId(-1l);
+                                    }
+                                    kycDocDetailsManager.saveKycDocDetails(kycDocDetails);
+                                } catch (IncompatibleDetailsException e) {
+                                   // throw new RuntimeException(e);
+                                    log.info("error in document save ");
+                                }
+
                             }
                         }
                     }
