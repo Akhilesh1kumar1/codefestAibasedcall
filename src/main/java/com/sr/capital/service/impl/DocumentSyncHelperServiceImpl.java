@@ -80,7 +80,7 @@ public class DocumentSyncHelperServiceImpl {
                                                     .documentCategory(documentCategory)
                                                     .fileName(image)
                                                     .inputStream(fileResource)
-                                                  //  .metaData(metaData)
+                                                    .metaData(metaData)
                                                     .key(key)
                                                     .build();
 
@@ -97,7 +97,7 @@ public class DocumentSyncHelperServiceImpl {
                                     //throw new RuntimeException(e);
                                     log.error("error in document sync{} ", e);
                                 }
-                               // S3Util.deleteObjectFromS3(appProperties.getBucketName(), image);
+                                S3Util.deleteObjectFromS3(appProperties.getBucketName(), image);
                             }
                         }
                     }
