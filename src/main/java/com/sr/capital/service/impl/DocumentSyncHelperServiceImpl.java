@@ -76,7 +76,7 @@ public class DocumentSyncHelperServiceImpl {
                                             };
 
                                             DocumentUploadRequestDto documentUploadRequestDto = DocumentUploadRequestDto.builder()
-                                                    .documentType(documentType)
+                                                    .documentType(documentType.toLowerCase())
                                                     .documentCategory(documentCategory)
                                                     .fileName(image)
                                                     .inputStream(fileResource)

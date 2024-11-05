@@ -193,6 +193,8 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.UPLOAD_DOCUMENT.name(),ProviderRequestTemplateType.UPLOAD_DOCUMENT.name(),null);
         String responseDto =null;
          log.info("[uploadDocument] start request {} ",loanMetaDataDto);
+        log.info("[uploadDocument] params {} ",loanMetaDataDto.getParams());
+
         DocumentUploadRequestDto documentUploadRequestDto = loanMetaDataDto.getDocumentUploadRequestDtos();
             try {
                 RMapCache<String, Boolean> documentCacheDetails = redissonClient
@@ -205,7 +207,9 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                 body.add("loan_code",loanMetaDataDto.getLoanId());
                 body.add("document_type",documentUploadRequestDto.getDocumentType());
                 body.add("document_category",documentUploadRequestDto.getDocumentCategory());
-                body.add("metadata",documentUploadRequestDto.getMetaData());
+                if(documentUploadRequestDto.getMetaData()!=null) {
+                    body.add("metadata", documentUploadRequestDto.getMetaData());
+                }
                 HttpHeaders httpHeaders =new HttpHeaders();
                 log.info("[uploadDocument] request body is {} ",body);
                 Map<String,String> headerParams = (Map<String, String>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.HEADER.name());
