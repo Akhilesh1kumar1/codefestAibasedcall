@@ -143,9 +143,9 @@ public class WebClientUtil {
                         } catch (Exception ignored){
 
                         }
-//                        loggerUtil.logExternalAPIResponse(serviceName, uri, method, requestId,
-//                                HttpStatus.valueOf(clientResponse.statusCode().value()), clientResponse.headers().asHttpHeaders(),
-//                                responseObject, latency, Level.INFO);
+                        loggerUtil.logExternalAPIResponse(serviceName, uri, method, requestId,
+                                HttpStatus.valueOf(clientResponse.statusCode().value()), clientResponse.headers().asHttpHeaders(),
+                                responseObject, latency, LogLevel.INFO);
                         try {
                             ObjectMapper objectMapper = new ObjectMapper();
                             return Mono.just(objectMapper.readValue(body, responseClass));
