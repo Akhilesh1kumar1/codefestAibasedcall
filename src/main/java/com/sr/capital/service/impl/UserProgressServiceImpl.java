@@ -44,11 +44,11 @@ public class UserProgressServiceImpl {
             userProgressResponseDto.setLoanVendorId(loanApplication1.getLoanVendorId());
 
             if(loanApplication1.getVendorLoanId()!=null) {
-                if (loanApplication1.getLoanStatus().equals(LoanStatus.PRE_APPROVED)) {
-                    currentState = Screens.PENDING_DOCUMENT.name();
 
-                } else if (loanApplication1.getLoanStatus().equals(LoanStatus.PENDING)) {
-                    currentState = Screens.BUSINESS_DETAILS.name();
+                switch (loanApplication1.getLoanStatus()){
+                    case PRE_APPROVED -> currentState = Screens.PENDING_DOCUMENT.name();
+                    case PENDING -> currentState =Screens.BUSINESS_DETAILS.name();
+                    case APPROVED -> currentState = Screens.DOCUMENT_VERIFICATION.name();
                 }
             }else{
                 currentState = Screens.PERSONAL_INFO.name();
