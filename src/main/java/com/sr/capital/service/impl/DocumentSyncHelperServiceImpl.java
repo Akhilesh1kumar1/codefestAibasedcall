@@ -64,7 +64,7 @@ public class DocumentSyncHelperServiceImpl {
                                         String documentCategory = (String) reportMetaData.getMetaData().get("document_category");
                                         Map<String, String> metaData = (Map<String, String>) reportMetaData.getMetaData().get("meta_data");
 
-                                        if (documentType != null && documentCategory != null && metaData != null) {
+                                        if (documentType != null && documentCategory != null ) {
                                             byte[] fileContent = inputStream.readAllBytes();
 
 // Use ByteArrayResourc
@@ -80,7 +80,7 @@ public class DocumentSyncHelperServiceImpl {
                                                     .documentCategory(documentCategory)
                                                     .fileName(image)
                                                     .inputStream(fileResource)
-                                                    .metaData(metaData)
+                                                  //  .metaData(metaData)
                                                     .key(key)
                                                     .build();
 
