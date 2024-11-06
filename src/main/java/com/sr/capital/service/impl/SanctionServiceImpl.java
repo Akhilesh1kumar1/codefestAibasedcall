@@ -100,7 +100,7 @@ public class SanctionServiceImpl {
            .srCompanyId(loanMetaDataDto.getSrCompanyId()).vendorSanctionCode(sanctionResponseDto.getData().getPartnerIntegrationProject().getSanction_code()).loanId(loanMetaDataDto.getInternalLoanId()).build();
            sanctionRepository.save(sanctionDetails);
            SanctionDto.PartnerIntegrationProject partnerIntegrationProject = MapperUtils.convertValue(sanctionResponseDto.getData().getPartnerIntegrationProject(),SanctionDto.PartnerIntegrationProject.class);
-           return SanctionDto.builder().partnerIntegrationProject(partnerIntegrationProject).build();
+           return SanctionDto.builder().partnerIntegrationProject(partnerIntegrationProject).postSanctionConditionsArray(sanctionResponseDto.getData().getPostSanctionConditionsArray()).build();
        }
        return null;
     }

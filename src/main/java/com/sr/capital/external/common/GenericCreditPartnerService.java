@@ -17,6 +17,7 @@ import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.external.common.request.DocumentUploadRequestDto;
+import com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
@@ -263,6 +264,11 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
     @Override
     public Object acceptOffer(LoanMetaDataDto loanMetaDataDto) {
+        return null;
+    }
+
+    @Override
+    public Object updateLead(String partner, UpdateLeadRequestDto requestDto) {
         return null;
     }
 

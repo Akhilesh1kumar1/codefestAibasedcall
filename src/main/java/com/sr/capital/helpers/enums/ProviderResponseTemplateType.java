@@ -15,6 +15,8 @@ public enum ProviderResponseTemplateType {
 
     SANCTION_RESPONSE,
 
-    ACCEPT_OFFER_RESPONSE;
+    ACCEPT_OFFER_RESPONSE,
+
+    UPDATE_LEAD_RESPONSE;
 
 }

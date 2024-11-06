@@ -2,7 +2,6 @@ package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.ValidateMobileNumberRequestDto;
-import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.service.ValidateService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import jakarta.validation.Valid;
@@ -41,7 +40,7 @@ public class ValidateController {
 
     @PostMapping("/mobile")
     public GenericResponse<Boolean> verifyMobile(@Valid @RequestBody ValidateMobileNumberRequestDto validateMobileNumberRequestDto) throws Exception {
-        return ResponseBuilderUtil.getResponse( validateService.validateMobileNumber(validateMobileNumberRequestDto),SUCCESS,
+        return ResponseBuilderUtil.getResponse( validateService.validateMobileNumberAndCreateLoanApplication(validateMobileNumberRequestDto),SUCCESS,
                 VALID_MOBILE_NUMBER, HttpStatus.SC_OK);
     }
 }

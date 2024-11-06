@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -27,4 +29,30 @@ public class UserProgressResponseDto {
     String comments;
 
     Long loanVendorId;
+
+    private List<Checkpoint> checkpoints;
+
+    @lombok.Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @NoArgsConstructor
+    public static class Checkpoint {
+        private String checkpoint;
+        private String state;
+        private Meta meta;
+
+    }
+
+    @lombok.Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @NoArgsConstructor
+    public static class Meta {
+        private String subCode;
+        private String code;
+        private List<String> fields;
+        private String message;
+    }
 }

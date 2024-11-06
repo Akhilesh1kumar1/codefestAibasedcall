@@ -18,5 +18,6 @@ public enum ProviderRequestTemplateType {
 
     FETCH_SANCTIONED_OFFER,
 
-    ACCEPT_SECTION_OFFER;
+    ACCEPT_SECTION_OFFER,
+    UPDATE_LEAD;
 }

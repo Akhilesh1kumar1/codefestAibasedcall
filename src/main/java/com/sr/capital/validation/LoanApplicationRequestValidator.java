@@ -40,10 +40,10 @@ public class LoanApplicationRequestValidator  implements RequestValidator {
             }
         }
 
-        if(requestDto.getLoanAmountRequested()==null || requestDto.getLoanAmountRequested().equals(BigDecimal.ZERO)){
+       /* if(requestDto.getLoanAmountRequested()==null || requestDto.getLoanAmountRequested().equals(BigDecimal.ZERO)){
             requestDto.setLoanAmountRequested(BigDecimal.valueOf(500000));
             requestDto.setLoanDuration(3);
-        }
+        }*/
 
         if(requestDto.getLoanVendorId()!=null){
             if(!baseCreditPartnerEntityService.isVendorExist(requestDto.getLoanVendorId())){

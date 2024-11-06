@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.*;
-import com.sr.capital.dto.response.CreateLeadResponseDto;
-import com.sr.capital.dto.response.LoanApplicationResponseDto;
-import com.sr.capital.dto.response.PendingDocumentResponseDto;
-import com.sr.capital.dto.response.SyncDocumentResponseDto;
+import com.sr.capital.dto.response.*;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
@@ -79,6 +76,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         return loanApplicationResponseDto;
     }
+
 
 
     @Override
@@ -181,6 +179,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         }
 
         return SyncDocumentResponseDto.builder().loanId(syncDocumentToVendor.getLoanId()).build();
+    }
+
+    @Override
+    public LoanApplication updateLoanApplication(LoanApplication loanApplication) {
+        return loanApplicationRepository.save(loanApplication);
+    }
+
+    @Override
+    public EnachRedirectionUrlResponseDto getRedirectionurl(EnachRedirectUrlRequestDto enachRedirectUrlRequestDto) {
+        return EnachRedirectionUrlResponseDto.builder().loanId(enachRedirectUrlRequestDto.getLoanId()).redirectUrl(enachRedirectUrlRequestDto.getRedirectionUrl()).build();
     }
 
 
@@ -340,4 +348,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         }
         createLeadRequestDto.getLoanApplication().setLoanApplicant(loanApplicant);
     }
+
+
+
 }

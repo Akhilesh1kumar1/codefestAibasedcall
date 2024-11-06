@@ -10,6 +10,7 @@ import com.sr.capital.dto.request.AccessTokenRequestDto;
 import com.sr.capital.dto.request.CreateLeadRequestDto;
 import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
+import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
@@ -17,6 +18,7 @@ import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.external.common.GenericCreditPartnerService;
 import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 import com.sr.capital.external.dto.response.ValidateLoanDetailsResponse;
+import com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto;
 import com.sr.capital.external.flexi.dto.response.*;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
@@ -376,6 +378,52 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         return acceptSanctionOffer;
     }
 
+
+    @Override
+    public Object updateLead(String partner, UpdateLeadRequestDto requestDto) {
+        String responseDto;
+        Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
+        BaseCreditPartner partnerInfo = getPartnerInfo(partner);
+        metaData.put("leadCode",requestDto.getLeadCode());
+
+        Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
+                metaData,
+                ProviderRequestTemplateType.UPDATE_LEAD.name());
+
+        Object requestBody = null;
+
+        Map<String, Object> template = providerConfigUtil.getProviderTemplates(requestDto,
+                ProviderRequestTemplateType.UPDATE_LEAD.name(), partnerInfo.getId(), true);
+
+        if (template != null) {
+            requestBody = jsonPathEvaluator.evaluate(template, requestDto);
+        }
+
+        HttpResponse<?> restResponseEntity = null;
+        try {
+            log.info("request body is {} ",requestBody);
+            restResponseEntity = providerHelperUtil.makeApiCall(params,
+                    (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
+                    requestBody,
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(partner, e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.UPDATE_LEAD_RESPONSE.name(), partnerInfo.getId());
+
+        try {
+            responseDto = MapperUtils.convertValue(response.getData(),
+                    String.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return responseDto;
+    }
 
 
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {

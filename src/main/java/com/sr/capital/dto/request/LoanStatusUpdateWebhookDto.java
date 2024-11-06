@@ -68,6 +68,13 @@ public class LoanStatusUpdateWebhookDto {
     private String s3;
     private String applicationStatus;
 
+    private String vendorStatus;
+
+    private String internalStatus;
+
+    private String internalState;
+
+
     private List<Checkpoint> checkpoints;
 
     private String createdAt;

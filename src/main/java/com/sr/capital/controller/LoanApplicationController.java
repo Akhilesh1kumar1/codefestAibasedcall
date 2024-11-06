@@ -1,14 +1,13 @@
 package com.sr.capital.controller;
 
 import com.omunify.core.model.GenericResponse;
-import com.sr.capital.dto.request.CreateLoanAtVendorRequest;
-import com.sr.capital.dto.request.LoanApplicationRequestDto;
-import com.sr.capital.dto.request.PendingDocumentRequestDto;
-import com.sr.capital.dto.request.SyncDocumentToVendor;
+import com.sr.capital.dto.request.*;
+import com.sr.capital.dto.response.EnachRedirectionUrlResponseDto;
 import com.sr.capital.dto.response.LoanApplicationResponseDto;
 import com.sr.capital.dto.response.PendingDocumentResponseDto;
 import com.sr.capital.dto.response.SyncDocumentResponseDto;
 import com.sr.capital.service.LoanApplicationService;
+import com.sr.capital.service.impl.LeadUpdateServiceImpl;
 import com.sr.capital.util.ResponseBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,7 @@ import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUES
 public class LoanApplicationController {
 
    final LoanApplicationService loanApplicationService;
+   final LeadUpdateServiceImpl leadUpdateService;
     @PostMapping("/submit")
     public GenericResponse<LoanApplicationResponseDto> submitLoanApplication(@RequestBody LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
 
@@ -63,6 +63,21 @@ public class LoanApplicationController {
     public GenericResponse<SyncDocumentResponseDto> syncDocumentToVendor(@Valid @RequestBody SyncDocumentToVendor syncDocumentToVendor) throws Exception {
 
         return ResponseBuilderUtil.getResponse(loanApplicationService.syncDocumentToVendor(syncDocumentToVendor), SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @PutMapping("/vendor")
+    public GenericResponse<Boolean> updateLoanDetails(@RequestBody UpdateLeadRequestDto updateLeadRequestDto) throws Exception {
+
+        return ResponseBuilderUtil.getResponse(leadUpdateService.updateLeadDetails(updateLeadRequestDto), SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+
+    @PostMapping("/enach/url")
+    public GenericResponse<EnachRedirectionUrlResponseDto> redirctUrl(@RequestBody EnachRedirectUrlRequestDto enachRedirectUrlRequestDto) throws Exception {
+
+        return ResponseBuilderUtil.getResponse(loanApplicationService.getRedirectionurl(enachRedirectUrlRequestDto), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 }

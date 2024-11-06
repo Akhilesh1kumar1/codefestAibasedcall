@@ -8,6 +8,7 @@ import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.external.common.request.DocumentUploadRequestDto;
+import com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -37,5 +38,8 @@ public interface CreditPartnerService {
     Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto);
 
     Object acceptOffer(LoanMetaDataDto loanMetaDataDto);
+
+    Object updateLead(String partner, UpdateLeadRequestDto requestDto);
+
 
 }

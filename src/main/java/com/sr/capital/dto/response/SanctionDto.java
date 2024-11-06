@@ -18,6 +18,7 @@ import java.util.List;
 public class SanctionDto {
 
     PartnerIntegrationProject partnerIntegrationProject;
+    private List<String> postSanctionConditionsArray;
 
 
     @lombok.Data

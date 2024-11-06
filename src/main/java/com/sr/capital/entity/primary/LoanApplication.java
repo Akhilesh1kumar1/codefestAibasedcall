@@ -49,6 +49,13 @@ public class LoanApplication extends UUIDBaseEntity{
 
     @Column(name = "comments")
     String comments;
+
+    @Column(name = "external_lead_code")
+    String externalLeadCode;
+
+    @Column(name = "state")
+    String state;
+
     public static LoanApplication mapLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto){
         LoanApplication loanApplication =LoanApplication.builder().srCompanyId(loanApplicationRequestDto.getSrCompanyId()).loanAmountRequested(loanApplicationRequestDto.getLoanAmountRequested()).loanOfferId(loanApplicationRequestDto.getLoanOfferId()).loanVendorId(loanApplicationRequestDto.getLoanVendorId()).loanDuration(loanApplicationRequestDto.getLoanDuration()).loanType(loanApplicationRequestDto.getLoanType()).loanStatus(loanApplicationRequestDto.getLoanStatus())
                 .build();
