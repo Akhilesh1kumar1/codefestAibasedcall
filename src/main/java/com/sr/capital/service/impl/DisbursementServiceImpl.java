@@ -3,6 +3,7 @@ package com.sr.capital.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.response.DisbursementDetailsResponseDto;
+import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.entity.primary.LoanDisbursed;
 import com.sr.capital.external.flexi.dto.response.DisbursmentDetails;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,16 @@ public class DisbursementServiceImpl {
 
     static TypeReference<List<DisbursementDetailsResponseDto>> tRef = new TypeReference<List<DisbursementDetailsResponseDto>>() {
     };
+
+    public List<DisbursementDetailsResponseDto> getDisbursmentDetails(UUID loanApplicationId, String loanVendorName) throws IOException {
+        LoanApplication loanApplication = loanApplicationRepository.findById(loanApplicationId).orElse(null);
+        if (loanApplication != null) {
+            LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
+                    .loanId(loanApplication.getVendorLoanId()).internalLoanId(loanApplicationId).loanVendorName(loanVendorName).build();
+            return fetchAndSaveDisbursementDetails(loanMetaDataDto);
+        }
+        return null;
+    }
     private List<DisbursementDetailsResponseDto> fetchAndSaveDisbursementDetails(LoanMetaDataDto loanMetaDataDto) throws IOException {
         List<DisbursementDetailsResponseDto> disbursementDetailResponseDtos =new ArrayList<>();
 
