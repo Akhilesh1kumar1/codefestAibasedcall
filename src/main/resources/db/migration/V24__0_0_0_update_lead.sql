@@ -17,7 +17,7 @@ FROM
     base_credit_partners p
 JOIN(
     SELECT
-        'CREATE_LEAD' AS `group`,
+        'UPDATE_LEAD' AS `group`,
         'BASE_URL' AS `type`,
         'BASE_URL' AS `key`,
         'https://console-staging.flexiloans.com/unified/lead/' AS `value`,
@@ -27,11 +27,11 @@ SELECT
     'UPDATE_LEAD',
     'OTHER',
     'method',
-    'POST',
+    'PUT',
     1
 UNION ALL
           SELECT
-              'FETCH_SANCTIONED_OFFER',
+              'UPDATE_LEAD',
               'PATH_VARIABLE',
               'leadCode',
               'leadCode',
@@ -53,3 +53,9 @@ SELECT
 ) AS v
 ON
     p.credit_partner_name = 'flexi';
+
+
+
+ALTER TABLE loan_application
+ADD COLUMN external_lead_code varchar(255),
+ADD COLUMN state varchar(255);

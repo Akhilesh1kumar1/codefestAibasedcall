@@ -75,7 +75,7 @@ public class LoanApplicationController {
 
 
     @PostMapping("/enach/url")
-    public GenericResponse<EnachRedirectionUrlResponseDto> redirctUrl(@RequestBody EnachRedirectUrlRequestDto enachRedirectUrlRequestDto) throws Exception {
+    public GenericResponse<EnachRedirectionUrlResponseDto> redirectUrl(@RequestBody EnachRedirectUrlRequestDto enachRedirectUrlRequestDto) throws Exception {
 
         return ResponseBuilderUtil.getResponse(loanApplicationService.getRedirectionurl(enachRedirectUrlRequestDto), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);

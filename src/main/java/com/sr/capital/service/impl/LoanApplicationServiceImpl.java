@@ -160,6 +160,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             if (responseDto != null && responseDto.getSuccess() != null) {
                 loan.setLoanStatus(LoanStatus.PRE_APPROVED);
                 loan.setVendorLoanId(responseDto.getLoanCode());
+                loan.setExternalLeadCode(responseDto.getLeadCode());
                 loanApplicationRepository.save(loan);
 
             }

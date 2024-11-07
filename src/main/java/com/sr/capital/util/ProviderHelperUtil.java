@@ -61,7 +61,7 @@ public class ProviderHelperUtil {
                     restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).post(url, requestBody, responseClass);
                     break;
                 case PUT:
-                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).put(url, requestBody, responseClass);
+                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).logRequest(true).put(url, requestBody, responseClass);
 
             }
         } else {

@@ -390,21 +390,23 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                 metaData,
                 ProviderRequestTemplateType.UPDATE_LEAD.name());
 
-        Object requestBody = null;
+       // Object requestBody = null;
 
         Map<String, Object> template = providerConfigUtil.getProviderTemplates(requestDto,
                 ProviderRequestTemplateType.UPDATE_LEAD.name(), partnerInfo.getId(), true);
 
-        if (template != null) {
+        /*if (template != null) {
             requestBody = jsonPathEvaluator.evaluate(template, requestDto);
-        }
+        }else{
+            requestBody = requestDto;
+        }*/
 
         HttpResponse<?> restResponseEntity = null;
         try {
-            log.info("request body is {} ",requestBody);
+            log.info("request body is {} ",requestDto);
             restResponseEntity = providerHelperUtil.makeApiCall(params,
                     (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
-                    requestBody,
+                    requestDto,
                     null);
         } catch (UnirestException | URISyntaxException e) {
             log.error(partner, e);
