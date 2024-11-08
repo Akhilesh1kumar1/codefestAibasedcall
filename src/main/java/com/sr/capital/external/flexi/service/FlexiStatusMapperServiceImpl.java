@@ -7,7 +7,6 @@ import com.sr.capital.helpers.enums.LoanStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import static com.sr.capital.external.flexi.constants.Checkpoint.PERSONAL_DETAILS;
 
 @Service
 public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
@@ -25,7 +24,11 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.REJECTED.name());
                 break;
             case "approved"  :
-                loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.APPROVED.name());
+                if(loanStatusUpdateWebhookDto.getInternalCurrentStatus().equalsIgnoreCase(LoanStatus.LOAN_VERIFICATION.name())) {
+                    loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.LOAN_ACCEPTED.name());
+                }else{
+                    loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.LOAN_VERIFICATION.name());
+                }
 
                 break;
             case "disbursed":

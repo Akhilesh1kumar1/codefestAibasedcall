@@ -72,6 +72,8 @@ public class LoanStatusUpdateWebhookDto {
 
     private String internalStatus;
 
+    private String internalCurrentStatus;
+
     private String internalState;
 
 

@@ -17,4 +17,8 @@ public class AcceptSanctionOfferDto {
     String loanVendorName;
 
     Long loanVendorId;
+
+    Boolean acceptOffer;
+
+    String reason;
 }

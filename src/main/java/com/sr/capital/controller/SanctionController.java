@@ -29,7 +29,7 @@ public class SanctionController {
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
-    @PostMapping("/offer/accept")
+    @PostMapping("/offer")
     public GenericResponse<Boolean> acceptOffer(@RequestBody AcceptSanctionOfferDto acceptSanctionOffer) throws Exception {
 
         return ResponseBuilderUtil.getResponse(sanctionService.acceptOffer(acceptSanctionOffer), SUCCESS,

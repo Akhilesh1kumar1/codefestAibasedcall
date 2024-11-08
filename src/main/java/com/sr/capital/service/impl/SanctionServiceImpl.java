@@ -52,12 +52,19 @@ public class SanctionServiceImpl {
                 LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
                         .loanId(loanApplication.getVendorLoanId()).internalLoanId(acceptSanctionOffer.getLoanApplicationId()).loanVendorName(acceptSanctionOffer.getLoanVendorName()).sanctionCode(loanApplicationStatus.getSanctionCode()).build();
 
-                AcceptSanctionOffer acceptSanctionOffer1 = (AcceptSanctionOffer) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).acceptOffer(loanMetaDataDto);
+                if(acceptSanctionOffer.getAcceptOffer()) {
 
-                loanApplication.setLoanStatus(LoanStatus.LOAN_OFFER_ACCEPTED);
+                    AcceptSanctionOffer acceptSanctionOffer1 = (AcceptSanctionOffer) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).acceptOffer(loanMetaDataDto);
+
+                    loanApplication.setLoanStatus(LoanStatus.LOAN_VERIFICATION);
+
+                    loanApplicationStatus.setVendorStatus(LoanStatus.APPROVED.name());
+                }else{
+                    loanApplication.setLoanStatus(LoanStatus.LOAN_DECLINE);
+
+                }
                 loanApplicationRepository.save(loanApplication);
 
-                loanApplicationStatus.setVendorStatus(LoanStatus.LOAN_OFFER_ACCEPTED.name());
                 loanApplicationStatusEntityService.saveLoanApplicationStatus(loanApplicationStatus);
             }
         }
