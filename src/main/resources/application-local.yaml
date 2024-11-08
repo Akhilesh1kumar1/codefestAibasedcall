@@ -127,6 +127,7 @@ app:
     flexi:
       vendor-token: ${FLEXI_VENDOR_TOKEN:test}
       vendor-code: ${FLEXI_VENDOR_CODE:test}
+      redirection-url: ${FLEXI_REDIRECTION_URL:https://ops.flexiloans.net/sanction/accept/%s}
 
 aws:
   region: ${AWS_REGION:test}

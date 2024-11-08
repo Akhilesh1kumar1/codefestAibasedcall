@@ -285,6 +285,10 @@ public class AppProperties {
     @Value("${app.external.flexi.vendor-code}")
     private String flexiVendorCode;
 
+    @Value("${app.external.flexi.redirection-url}")
+    private String flexiRedirectUrl;
+
+
     //database
 
     @Value("${spring.datasource.primary.hikari.maximum-pool-size}")

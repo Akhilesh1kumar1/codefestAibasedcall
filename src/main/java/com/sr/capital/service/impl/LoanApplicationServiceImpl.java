@@ -2,6 +2,7 @@ package com.sr.capital.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.omunify.encryption.algorithm.AES256;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.*;
 import com.sr.capital.dto.response.*;
@@ -52,6 +53,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final LoanAllocationServiceImpl loanAllocationService;
     final DocumentSyncHelperServiceImpl documentSyncHelperService;
     final PincodeEntityServiceImpl pincodeEntityService;
+    final AppProperties appProperties;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
@@ -189,7 +191,17 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Override
     public EnachRedirectionUrlResponseDto getRedirectionurl(EnachRedirectUrlRequestDto enachRedirectUrlRequestDto) {
-        return EnachRedirectionUrlResponseDto.builder().loanId(enachRedirectUrlRequestDto.getLoanId()).redirectUrl(enachRedirectUrlRequestDto.getRedirectionUrl()).build();
+
+        LoanApplication loanApplication = loanApplicationRepository.findById(enachRedirectUrlRequestDto.getLoanId()).orElse(null);
+
+        if(loanApplication!=null){
+               if(enachRedirectUrlRequestDto.getRedirectionUrl()==null){
+                   enachRedirectUrlRequestDto.setRedirectionUrl(String.format(appProperties.getFlexiRedirectUrl(), loanApplication.getVendorLoanId()));
+               }
+            return EnachRedirectionUrlResponseDto.builder().loanId(enachRedirectUrlRequestDto.getLoanId()).redirectUrl(enachRedirectUrlRequestDto.getRedirectionUrl()).build();
+        }else {
+            return null;
+        }
     }
 
 
