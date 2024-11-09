@@ -1,15 +1,14 @@
 package com.sr.capital.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.jayway.jsonpath.TypeRef;
 import com.omunify.restutil.exceptions.InvalidResourceException;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.entity.mongo.LoanMetaData;
-import com.sr.capital.entity.mongo.WebhookDetails;
 import com.sr.capital.entity.mongo.kyc.child.Checkpoints;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.entity.primary.LoanDisbursed;
+import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.entityimpl.*;
@@ -17,11 +16,9 @@ import com.sr.capital.service.strategy.StatusMapperServiceStrategy;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -170,5 +167,28 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplicationStatusEntityService.saveLoanApplicationStatus(loanApplicationStatus);
         }
         return loanApplicationStatus;
+    }
+
+    public LoanApplication updateLoanState(UUID id , DocType type) {
+        LoanStatus loanStatus = LoanStatus.LEAD_IN_PROGRESS;
+        String state = "PERSONAL_DETAILS";
+
+        switch (type){
+            case PERSONAL_ADDRESS -> state = "PERSONAL_DETAILS";
+            case BUSINESS_ADDRESS -> state ="BUSINESS_DETAILS";
+            default -> {
+                state = "DOCUMENT_UPLOAD";
+                loanStatus = LoanStatus.LEAD_DOCUMENT_UPLOAD;
+            }
+        }
+
+        LoanApplication loanApplication =loanApplicationRepository.findById(id).orElse(null);
+        if(loanApplication!=null){
+            loanApplication.setLoanStatus(loanStatus);
+            loanApplication.setState(state);
+            loanApplicationRepository.save(loanApplication);
+        }
+
+        return loanApplication;
     }
 }

@@ -62,4 +62,10 @@ public class LoanApplication extends UUIDBaseEntity{
         loanApplication.setIsEnabled(true);
         return loanApplication;
     }
+
+    public static void mapLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto,LoanApplication loanApplication){
+        loanApplication.setLoanAmountRequested(loanApplicationRequestDto.getLoanAmountRequested());
+        loanApplication.setLoanDuration(loanApplicationRequestDto.getLoanDuration());
+        loanApplication.setLoanStatus(loanApplicationRequestDto.getLoanStatus());
+    }
 }

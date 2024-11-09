@@ -23,6 +23,8 @@ import java.util.UUID;
 @Builder
 public class LoanApplicationRequestDto extends BaseRequest {
 
+    UUID loanId;
+
     Long loanVendorId;
 
     String loanVendorName;

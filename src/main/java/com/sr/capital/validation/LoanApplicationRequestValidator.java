@@ -8,6 +8,7 @@ import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanOffer;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.service.RequestValidator;
@@ -59,7 +60,7 @@ public class LoanApplicationRequestValidator  implements RequestValidator {
             }
         }
 
-
+        requestDto.setLoanStatus(LoanStatus.LEAD_VERIFIED);
 
         return (T) requestDto;
     }

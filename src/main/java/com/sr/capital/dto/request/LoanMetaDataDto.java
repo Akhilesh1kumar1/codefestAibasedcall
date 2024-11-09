@@ -61,6 +61,10 @@ public class LoanMetaDataDto {
 
     String vendorDisbursedId;
 
+    String internalStatus;
+
+    String vendorStatus;
+
     @Data
     @FieldDefaults(level=AccessLevel.PRIVATE)
     @Builder

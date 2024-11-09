@@ -21,7 +21,11 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.APPLICATION_IN_PROGRESS.name());
                 break;
             case "not approved":
-                loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.REJECTED.name());
+                if(loanStatusUpdateWebhookDto.getInternalCurrentStatus().equalsIgnoreCase(LoanStatus.LEAD_DOCUMENT_UPLOAD.name()) || loanStatusUpdateWebhookDto.getInternalCurrentStatus().equalsIgnoreCase(LoanStatus.LEAD_PROCESSING.name())) {
+                    loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.LEAD_DECLINE.name());
+                }else{
+                    loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.LEAD_REJECTED.name());
+                }
                 break;
             case "approved"  :
                 if(loanStatusUpdateWebhookDto.getInternalCurrentStatus().equalsIgnoreCase(LoanStatus.LOAN_VERIFICATION.name())) {
@@ -33,6 +37,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 break;
             case "disbursed":
                 loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.DISBURSED.name());
+                loanStatusUpdateWebhookDto.setInternalState();LoanStatus.DISBURSED.name());
 
                 break;
         }

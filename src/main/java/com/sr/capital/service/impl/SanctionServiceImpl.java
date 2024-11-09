@@ -8,6 +8,7 @@ import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.external.flexi.dto.response.AcceptSanctionOffer;
 import com.sr.capital.external.flexi.dto.response.SanctionResponseDto;
+import com.sr.capital.external.flexi.enums.FlexiStatus;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.repository.mongo.SanctionRepository;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
@@ -36,7 +37,15 @@ public class SanctionServiceImpl {
         if(loanApplication!=null){
             LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
                     .loanId(loanApplication.getVendorLoanId()).internalLoanId(loanApplicationId).loanVendorName(loanVendorName).build();
-            return fetchAndSaveSanctionDetails(loanMetaDataDto);
+            SanctionDto sanctionDto = fetchAndSaveSanctionDetails(loanMetaDataDto);
+            if(sanctionDto!=null){
+                if(loanApplication.getLoanStatus().name().equalsIgnoreCase(LoanStatus.LEAD_PROCESSING.name()){
+                    loanApplication.setLoanStatus(LoanStatus.LOAN_GENERATE);
+                    loanApplication.setState(LoanStatus.LOAN_GENERATE.name());
+                    loanApplicationRepository.save(loanApplication);
+                }
+            }
+            return sanctionDto;
         }
         return null;
     }
@@ -89,7 +98,7 @@ public class SanctionServiceImpl {
         }
 
         if(sanctionDto!=null){
-
+            loanMetaDataDto.setVendorStatus(FlexiStatus.APPROVED.name());
             loanMetaDataDto.setSanctionDto(sanctionDto);
             buildLoanApplicationStatus(loanMetaDataDto);
 
@@ -121,7 +130,7 @@ public class SanctionServiceImpl {
                 }
             });*/
           LoanApplicationStatus  loanApplicationStatus = LoanApplicationStatus.builder().loanId(loanMetaDataDto.getInternalLoanId())
-                    .vendorLoanId(loanMetaDataDto.getLoanId()).vendorStatus(LoanStatus.LOAN_OFFER_GENERATED.name())
+                    .vendorLoanId(loanMetaDataDto.getLoanId()).vendorStatus(loanMetaDataDto.getVendorStatus())
                     .comment("Loan Sanctioned")
                     .loanAmountApproved(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanAmount().replaceAll(",",""))))
                     .interestRate(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getAnnualRateOfInterest().replaceAll("%","")))

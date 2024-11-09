@@ -44,10 +44,10 @@ public class ValidateServiceImpl implements ValidateService {
         loanAllocationService.getLoanVendor(loanMetaDataDto);
         LoanApplicationRequestDto requestDto =LoanApplicationRequestDto.builder().loanAmountRequested(BigDecimal.ZERO)
                 .loanDuration(0).loanVendorId(loanMetaDataDto.getLoanVendorId()).loanVendorName(loanMetaDataDto.getLoanVendorName()).loanType("Flexi Loan")
-                .loanStatus(LoanStatus.DEDUPECHECK).createLoanAtVendor(false)
+                .loanStatus(LoanStatus.LEAD_DUPLICATE).createLoanAtVendor(false)
                 .build();
         if(validateMobileNumber){
-            requestDto.setLoanStatus(LoanStatus.DEDUPEREJECT);
+            requestDto.setLoanStatus(LoanStatus.LEAD_INITIATED);
         }
          loanApplicationService.submitLoanApplication(requestDto);
          return validateMobileNumber;

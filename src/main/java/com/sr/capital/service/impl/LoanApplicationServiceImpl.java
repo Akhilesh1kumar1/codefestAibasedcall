@@ -59,15 +59,24 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
 
         loanApplicationRequestDto = requestValidationStrategy.validateRequest(loanApplicationRequestDto, RequestType.LOAN_APPLICATION);
-        LoanApplication loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
-        loanApplication = loanApplicationRepository.save(loanApplication);
+        LoanApplication loanApplication =null ;
+
+        if(loanApplicationRequestDto.getLoanId()!=null){
+              loanApplication = loanApplicationRepository.findById(loanApplicationRequestDto.getLoanId()).orElse(null);
+              LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
+        }else {
+            loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
+            loanApplication = loanApplicationRepository.save(loanApplication);
+        }
 
         LoanApplicationResponseDto loanApplicationResponseDto =LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
 
         if(loanApplicationRequestDto.getCreateLoanAtVendor()){
             CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
             if(responseDto!=null && responseDto.getSuccess()!=null ){
-                loanApplication.setLoanStatus(LoanStatus.PRE_APPROVED);
+                loanApplication.setLoanStatus(LoanStatus.LEAD_VERIFIED);
+                loanApplication.setVendorLoanId(responseDto.getLoanCode());
+                loanApplication.setExternalLeadCode(responseDto.getLeadCode());
                 loanApplicationRepository.save(loanApplication);
 
             }

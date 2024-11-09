@@ -4,7 +4,6 @@ import com.amazonaws.HttpMethod;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.config.AppProperties;
-import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
@@ -25,13 +24,13 @@ import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.service.strategy.EntityConstructorStrategy;
 import com.sr.capital.kyc.service.strategy.ExternalRequestTransformerStrategy;
 import com.sr.capital.service.entityimpl.TaskManager;
+import com.sr.capital.service.impl.LoanStatusUpdateHandlerServiceImpl;
 import com.sr.capital.util.CsvUtils;
 import com.sr.capital.util.LoggerUtil;
 import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.S3Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.http.HttpStatusCode;
 
@@ -65,6 +64,9 @@ public class DocExtractionService {
 
     @Autowired
     private TaskManager taskManager;
+
+    @Autowired
+    private LoanStatusUpdateHandlerServiceImpl loanStatusUpdateHandlerService;
 
     private final LoggerUtil loggerUtil = LoggerUtil.getLogger(DocExtractionService.class);
 
@@ -106,6 +108,10 @@ public class DocExtractionService {
             taskManager.saveTask(orchestratorRequest.getTask());
         }
         orchestratorRequest.setKycDocDetails(kycDocDetails);
+
+        if(orchestratorRequest.getLoanId()!=null) {
+            loanStatusUpdateHandlerService.updateLoanState(orchestratorRequest.getLoanId(), orchestratorRequest.getDocType());
+        }
 
     }
 
