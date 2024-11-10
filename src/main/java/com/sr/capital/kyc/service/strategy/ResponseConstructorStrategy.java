@@ -107,7 +107,7 @@ public class ResponseConstructorStrategy {
                     case SALE_DEED:
                     case LANDLINE_BILL:
                     case PAN:
-                    case AADHAAR:
+                    case AADHAR:
                     case GST:
                         responseConstructor = defaultResponseConstructor;
                          break;

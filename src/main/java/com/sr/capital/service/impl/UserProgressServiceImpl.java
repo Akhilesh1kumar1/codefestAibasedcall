@@ -2,23 +2,19 @@ package com.sr.capital.service.impl;
 
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.response.UserProgressResponseDto;
-import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.primary.LoanApplication;
-import com.sr.capital.entity.primary.User;
-import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.Screens;
 import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.repository.primary.UserRepository;
-import com.sr.capital.service.LoanApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import static com.sr.capital.helpers.enums.Screens.PERSONAL_DETAILS;
 
 @Service
 @RequiredArgsConstructor
@@ -36,18 +32,34 @@ public class UserProgressServiceImpl {
         UserProgressResponseDto userProgressResponseDto =UserProgressResponseDto.builder().build();
         if(CollectionUtils.isNotEmpty(loanApplication)){
             currentState = Screens.LOAN_DETAILS.name();
-            LoanApplication loanApplication1 = loanApplication.get(0);
+            LoanApplication loanApplication1 = loanApplication.get(loanApplication.size()-1);
 
             userProgressResponseDto.setLoanId(loanApplication1.getId());
             userProgressResponseDto.setClientLoanId(loanApplication1.getVendorLoanId());
             userProgressResponseDto.setComments(loanApplication1.getComments());
             userProgressResponseDto.setLoanVendorId(loanApplication1.getLoanVendorId());
 
-            if(loanApplication1.getVendorLoanId()!=null) {
+            switch (loanApplication1.getLoanStatus()){
+                case LEAD_INITIATED -> currentState = Screens.LOAN_DETAILS.name();
+                case LEAD_VERIFIED ->currentState = PERSONAL_DETAILS.name();
+                case LEAD_IN_PROGRESS -> currentState =loanApplication1.getState();
+                case LEAD_REJECTED -> currentState = Screens.LEAD_REJECTION.name();
+                case LEAD_DOCUMENT_UPLOAD -> currentState =Screens.PENDING_DOCUMENT.name();
+                case LEAD_PROCESSING -> currentState = Screens.DOCUMENT_VERIFICATION.name();
+                case LOAN_GENERATE -> currentState =Screens.LOAN_SANCTION.name();
+                case LOAN_OFFER_DECLINED -> currentState =Screens.LOAN_SANCTION_DECLINED.name();
+                case LOAN_VERIFICATION -> currentState =Screens.LOAN_DISBURSED.name();
+            }
+
+            /*if(loanApplication1.getVendorLoanId()!=null) {
 
                 switch (loanApplication1.getLoanStatus()){
-                    case PRE_APPROVED -> currentState = Screens.PENDING_DOCUMENT.name();
-                    case PENDING -> currentState =Screens.BUSINESS_DETAILS.name();
+                    case LEAD_INITIATED -> currentState = Screens.LOAN_DETAILS.name();
+                    case LEAD_VERIFIED ->currentState =Screens.PERSONAL_INFO.name();
+                    case LEAD_IN_PROGRESS -> {
+                        if(loanApplication1.)
+                        currentState =Screens.BUSINESS_DETAILS.name();
+                    }
                     case APPROVED -> currentState = Screens.DOCUMENT_VERIFICATION.name();
                 }
             }else{
@@ -73,7 +85,7 @@ public class UserProgressServiceImpl {
             }
         }
 
-
+*/
         }
         userProgressResponseDto.setScreenName(currentState);
         return userProgressResponseDto;

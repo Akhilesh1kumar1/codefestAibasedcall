@@ -5,10 +5,8 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.ServiceName;
-import com.sr.capital.kyc.dto.request.VerifyGstOtpRequest;
 import com.sr.capital.kyc.external.exception.KarzaExtractionException;
 import com.sr.capital.kyc.external.request.*;
-import com.sr.capital.kyc.external.request.extraction.data.ItrExtractionData;
 import com.sr.capital.kyc.external.response.KarzaBaseResponse;
 import com.sr.capital.kyc.external.response.extraction.*;
 import com.sr.capital.kyc.external.response.extraction.data.GstDetailsByPanResponseData;
@@ -127,7 +125,7 @@ public class KarzaExtractionAdapter {
         } else if (request instanceof AadhaarExtractionRequest) {
             return ExternalRequestMetaData.builder()
                     .endpoint(kycAppProperties.getKarzaExtractAadhaarDetailsEndpoint())
-                    .docType(DocType.AADHAAR)
+                    .docType(DocType.AADHAR)
                     .responseClass(AadhaarExtractionResponse.class)
                     .build();
         } else if (request instanceof BankExtractionRequest) {

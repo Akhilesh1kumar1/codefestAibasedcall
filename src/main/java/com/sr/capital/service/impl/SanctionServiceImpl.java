@@ -39,7 +39,7 @@ public class SanctionServiceImpl {
                     .loanId(loanApplication.getVendorLoanId()).internalLoanId(loanApplicationId).loanVendorName(loanVendorName).build();
             SanctionDto sanctionDto = fetchAndSaveSanctionDetails(loanMetaDataDto);
             if(sanctionDto!=null){
-                if(loanApplication.getLoanStatus().name().equalsIgnoreCase(LoanStatus.LEAD_PROCESSING.name()){
+                if(loanApplication.getLoanStatus().name().equalsIgnoreCase(LoanStatus.LEAD_PROCESSING.name())){
                     loanApplication.setLoanStatus(LoanStatus.LOAN_GENERATE);
                     loanApplication.setState(LoanStatus.LOAN_GENERATE.name());
                     loanApplicationRepository.save(loanApplication);

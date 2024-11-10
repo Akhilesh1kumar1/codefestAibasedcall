@@ -182,7 +182,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             case SALE_DEED:
             case LANDLINE_BILL:
             case PAN:
-            case AADHAAR:
+            case AADHAR:
             case GST:
                 return (T) kycDocDetails.getDetails();
             case PERSONAL_ADDRESS:

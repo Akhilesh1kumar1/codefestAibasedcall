@@ -17,7 +17,6 @@ import com.sr.capital.helpers.enums.TaskType;
 import com.sr.capital.kyc.dto.request.BankDetailsRequest;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import com.sr.capital.kyc.dto.request.UpdateDocsDetailsRequest;
-import com.sr.capital.kyc.dto.request.VerifyGstOtpRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateAadhaarDocDetailsRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateBankDocDetailsRequest;
 import com.sr.capital.kyc.dto.request.child.UpdateGstDocDetailsRequest;
@@ -251,7 +250,7 @@ public class DocDetailsService {
                         .findKycDocDetailsByTenantIdAndDocType(updateDocsDetailsRequest.getSrCompanyId(), docType);
 
                 switch (docType) {
-                    case AADHAAR:
+                    case AADHAR:
                         UpdateAadhaarDocDetailsRequest ur = objectMapper.readValue(objectMapper.writeValueAsString(entry.getDetails()), UpdateAadhaarDocDetailsRequest.class);
                         if(ur == null){
                             if(!CollectionUtils.isEmpty(entry.getImageIds())) {
@@ -276,7 +275,7 @@ public class DocDetailsService {
                                     .build();
                             KycDocDetails<?> newDoc = KycDocDetails.builder()
                                     .srCompanyId(updateDocsDetailsRequest.getSrCompanyId())
-                                    .docType(DocType.AADHAAR)
+                                    .docType(DocType.AADHAR)
                                     .details(aadhaarDocDetails)
                                     .images(CollectionUtils.isEmpty(entry.getImageIds()) ? null : entry.getImageIds())
                                     .build();
@@ -420,7 +419,7 @@ public class DocDetailsService {
     private DocType getDocTypeBasisOfTaskType(TaskType taskType) {
         switch (taskType){
             case AADHAAR:
-                return DocType.AADHAAR;
+                return DocType.AADHAR;
             case BANK_DETAILS:
                 return DocType.BANK_CHEQUE;
             case GST:

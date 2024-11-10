@@ -23,8 +23,6 @@ import software.amazon.awssdk.http.HttpStatusCode;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sr.capital.helpers.enums.DocType.BANK_CHEQUE;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -107,7 +105,7 @@ public class UploadExtractAndSaveResponseConstructor implements ResponseConstruc
                         .panType(panDocDetails.getPanType())
                         .dateOfIssue(panDocDetails.getDateOfIssue())
                         .build();
-            case AADHAAR:
+            case AADHAR:
                 AadhaarDocDetails aadhaarDocDetails = ((KycDocDetails<AadhaarDocDetails>) orchestratorRequest.getKycDocDetails()).getDetails();
                 return (T) ExtractedAadhaarResponse.builder()
                         .idNumber(aadhaarDocDetails.getIdNumber())

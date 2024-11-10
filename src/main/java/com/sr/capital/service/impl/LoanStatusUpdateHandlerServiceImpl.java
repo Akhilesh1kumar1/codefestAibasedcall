@@ -10,6 +10,7 @@ import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.entity.primary.LoanDisbursed;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
+import com.sr.capital.helpers.enums.Screens;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.entityimpl.*;
 import com.sr.capital.service.strategy.StatusMapperServiceStrategy;
@@ -22,8 +23,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-import static com.sr.capital.helpers.enums.LoanStatus.APPROVED;
-import static com.sr.capital.helpers.enums.LoanStatus.REJECTED;
 
 @Service
 @RequiredArgsConstructor
@@ -53,8 +52,12 @@ public class LoanStatusUpdateHandlerServiceImpl {
 
     private void updateStatus(LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto, String loanVendorName) {
 
-        LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanStatusUpdateWebhookDto.getClientLoanId())).orElse(null);
-         if(loanApplication==null && loanStatusUpdateWebhookDto.getLoanCode()!=null){
+        LoanApplication loanApplication =null;
+
+        if(loanStatusUpdateWebhookDto.getClientLoanId()!=null)
+           loanApplication = loanApplicationRepository.findById(UUID.fromString(loanStatusUpdateWebhookDto.getClientLoanId())).orElse(null);
+
+        if(loanApplication==null && loanStatusUpdateWebhookDto.getLoanCode()!=null){
              loanApplication =  loanApplicationRepository.findByVendorLoanId(loanStatusUpdateWebhookDto.getLoanCode());
          }
 
@@ -64,21 +67,24 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setComments(loanStatusUpdateWebhookDto.getS3());
             saveLoanMetaData(loanApplication,loanStatusUpdateWebhookDto);
             loanApplication.setComments(loanStatusUpdateWebhookDto.getS3());
-
+            loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
             switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getStatus())){
-                case APPROVED:
-                    loanApplication.setLoanStatus(APPROVED);
+
+                /*case LEAD_PROCESSING:
+                    loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
                     //updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
                     break;
 
                 case DISBURSED:
-                    loanApplication.setLoanStatus(LoanStatus.DISBURSED);
+                    loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
                    // saveDisbursementDetails(loanStatusUpdateWebhookDto,loanApplication);
                     break;
                 case REJECTED:
-                    loanApplication.setLoanStatus(REJECTED);
-                   // updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
+                    loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
+                   // updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);*/
+
             }
+            loanApplication.setState(loanStatusUpdateWebhookDto.getInternalState());
 
 
         }else{
@@ -174,8 +180,8 @@ public class LoanStatusUpdateHandlerServiceImpl {
         String state = "PERSONAL_DETAILS";
 
         switch (type){
-            case PERSONAL_ADDRESS -> state = "PERSONAL_DETAILS";
-            case BUSINESS_ADDRESS -> state ="BUSINESS_DETAILS";
+            case PERSONAL_ADDRESS -> state = Screens.PERSONAL_DETAILS.name();
+            case BUSINESS_ADDRESS -> state =Screens.BUSINESS_DETAILS.name();
             default -> {
                 state = "DOCUMENT_UPLOAD";
                 loanStatus = LoanStatus.LEAD_DOCUMENT_UPLOAD;
@@ -183,7 +189,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
         }
 
         LoanApplication loanApplication =loanApplicationRepository.findById(id).orElse(null);
-        if(loanApplication!=null){
+        if(loanApplication!=null && loanApplication.getLoanStatus()!=loanStatus){
             loanApplication.setLoanStatus(loanStatus);
             loanApplication.setState(state);
             loanApplicationRepository.save(loanApplication);

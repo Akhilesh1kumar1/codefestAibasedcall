@@ -59,7 +59,7 @@ public class ValidationService {
         }
 
         // AADHAAR SECOND FILE VALIDATION
-        if(orchestratorRequest.getDocType().equals(DocType.AADHAAR)){
+        if(orchestratorRequest.getDocType().equals(DocType.AADHAR)){
             if(!orchestratorRequest.hasFile2() || file2.getFile().getSize() == 0){
                 throw new FileNotFoundException();
             }

@@ -40,6 +40,10 @@ public class LoanApplicationResponseDto extends BasesResponse {
 
     LocalDate endDate;
 
+    String comments;
+
+    String state;
+
     public static LoanApplicationResponseDto mapLoanApplicationResponse(LoanApplication loanApplication){
         LoanApplicationResponseDto responseDto =new LoanApplicationResponseDto();
         responseDto.setCreatedAt(loanApplication.getAuditData().getCreatedAt());
@@ -49,6 +53,8 @@ public class LoanApplicationResponseDto extends BasesResponse {
         responseDto.setLoanAmountRequested(loanApplication.getLoanAmountRequested());
         responseDto.setLoanVendorId(loanApplication.getLoanVendorId());
         responseDto.setLoanDuration(loanApplication.getLoanDuration());
+        responseDto.setComments(loanApplication.getComments());
+        responseDto.setState(loanApplication.getState());
        return responseDto;
     }
 }

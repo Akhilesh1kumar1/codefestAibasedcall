@@ -4,7 +4,7 @@ public enum DocType {
 
     SELFI("selfi"),
     PAN("pan"),
-    AADHAAR("aadhaar"),
+    AADHAR("aadhar"),
     GST("gst"),
     BANK_CHEQUE("bank_cheque"),
     MSME("msme"),

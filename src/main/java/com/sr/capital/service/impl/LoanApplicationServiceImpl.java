@@ -135,6 +135,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 };
                 List<PendingDocumentResponseDto.PendingItem>  pendingDocumentItems = MapperUtils.convertValue(pendingDocumentResponseDtoFromClient.getData().getPendingList(),tRef);
 
+                if(CollectionUtils.isEmpty(pendingDocumentItems) ){
+                    if(loanApplication.getLoanStatus()==LoanStatus.DOCUMENT_UPLOAD){
+                        loanApplication.setLoanStatus(LoanStatus.LEAD_PROCESSING);
+                        loanApplication.setState(LoanStatus.LEAD_PROCESSING.name());
+                        loanApplicationRepository.save(loanApplication);
+                    }
+                }
                 pendingDocumentResponseDto = PendingDocumentResponseDto.builder().pendingList(pendingDocumentItems).build();
             }
         }else{
