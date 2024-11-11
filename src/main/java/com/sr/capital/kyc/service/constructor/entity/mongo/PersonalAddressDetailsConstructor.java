@@ -56,6 +56,7 @@ public class PersonalAddressDetailsConstructor implements EntityConstructor {
                     .details(personalAddressDetails)
                     .kycType(request.getKycType())
                     .build();
+            kycDocDetails.setCreatedBy(RequestData.getUserId()==null?"SYSTEM":""+RequestData.getUserId());
         }else{
             kycDocDetails.setDetails(personalAddressDetails);
             kycDocDetails.setLastModifiedAt(LocalDateTime.now());

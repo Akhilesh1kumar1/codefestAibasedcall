@@ -31,7 +31,9 @@ public class UserProgressServiceImpl {
         String currentState = Screens.MOBILE_VERIFICATION.name();
         UserProgressResponseDto userProgressResponseDto =UserProgressResponseDto.builder().build();
         if(CollectionUtils.isNotEmpty(loanApplication)){
+
             currentState = Screens.LOAN_DETAILS.name();
+
             LoanApplication loanApplication1 = loanApplication.get(loanApplication.size()-1);
 
             userProgressResponseDto.setLoanId(loanApplication1.getId());

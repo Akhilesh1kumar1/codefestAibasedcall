@@ -40,5 +40,6 @@ public class LoanApplicationRequestDto extends BaseRequest {
 
     String loanType;
 
+    @Builder.Default
     Boolean createLoanAtVendor=false;
 }

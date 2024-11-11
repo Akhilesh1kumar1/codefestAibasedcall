@@ -73,6 +73,8 @@ public class BusinessDetailsConstructor implements EntityConstructor {
                     .details(businessAddressDetails)
                     .kycType(request.getKycType())
                     .build();
+            kycDocDetails.setCreatedBy(RequestData.getUserId()==null?"SYSTEM":""+RequestData.getUserId());
+
         }else{
             kycDocDetails.setKycType(request.getKycType());
             kycDocDetails.setDetails(businessAddressDetails);

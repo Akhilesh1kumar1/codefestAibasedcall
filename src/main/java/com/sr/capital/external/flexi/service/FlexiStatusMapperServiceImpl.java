@@ -39,7 +39,11 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
 
     private void handleInProgressStatus(LoanStatusUpdateWebhookDto dto) {
         if (!CollectionUtils.isEmpty(dto.getCheckpoints())) {
-            dto.getCheckpoints().forEach(checkpoint -> processCheckpoint(dto, checkpoint));
+            for (LoanStatusUpdateWebhookDto.Checkpoint checkpoint : dto.getCheckpoints()) {
+                Boolean currentStateFound = processCheckpoint(dto, checkpoint);
+                if (currentStateFound)
+                    return;
+            }
         }
     }
 
@@ -48,8 +52,11 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
         if (LoanStatus.LEAD_DOCUMENT_UPLOAD.name().equalsIgnoreCase(currentStatus) ||
                 LoanStatus.LEAD_PROCESSING.name().equalsIgnoreCase(currentStatus)) {
             dto.setInternalStatus(LoanStatus.LEAD_DECLINE.name());
-        } else {
+        } else if(LoanStatus.LOAN_GENERATE.name().equalsIgnoreCase(currentStatus)){
+            dto.setInternalStatus(LoanStatus.LOAN_DECLINE.name());
+        }else{
             dto.setInternalStatus(LoanStatus.LEAD_REJECTED.name());
+
         }
     }
 
@@ -61,41 +68,51 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
         }
     }
 
-    private void processCheckpoint(LoanStatusUpdateWebhookDto dto, LoanStatusUpdateWebhookDto.Checkpoint checkpoint) {
+    private Boolean processCheckpoint(LoanStatusUpdateWebhookDto dto, LoanStatusUpdateWebhookDto.Checkpoint checkpoint) {
         String state = checkpoint.getState();
+        Boolean currentStateFound =false;
         switch (Checkpoint.valueOf(checkpoint.getCheckpoint())) {
             case PERSONAL_DETAILS:
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.PERSONAL_DETAILS, LoanStatus.LEAD_IN_PROGRESS);
+                    currentStateFound =true;
                 }
+
                 break;
             case BUSINESS_DETAILS:
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.BUSINESS_DETAILS, LoanStatus.LEAD_IN_PROGRESS);
+                    currentStateFound =true;
                 }
                 break;
             case DOCUMENTS_RECEIVED:
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.PENDING_DOCUMENT, LoanStatus.LEAD_DOCUMENT_UPLOAD);
+                    currentStateFound =true;
                 }
                 break;
             case DOCUMENTS_VERIFIED:
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.PENDING_DOCUMENT, LoanStatus.LEAD_DOCUMENT_UPLOAD);
+                    currentStateFound =true;
                 } else {
                     setInternalState(dto, Screens.DOCUMENT_VERIFICATION, LoanStatus.LEAD_PROCESSING);
+                    currentStateFound =true;
                 }
                 break;
-            case LOAN_APPROVED:
+            /*case LOAN_APPROVED:
                 if ("SUCCESS".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.LOAN_SANCTION, LoanStatus.LOAN_GENERATE);
+                    currentStateFound =true;
                 } else {
                     setInternalState(dto, Screens.DOCUMENT_VERIFICATION, LoanStatus.LEAD_PROCESSING);
+                    currentStateFound =true;
                 }
-                break;
+                break;*/
             default:
                 break;
         }
+        return  currentStateFound;
     }
 
     private void setInternalState(LoanStatusUpdateWebhookDto dto, Screens screen, LoanStatus status) {

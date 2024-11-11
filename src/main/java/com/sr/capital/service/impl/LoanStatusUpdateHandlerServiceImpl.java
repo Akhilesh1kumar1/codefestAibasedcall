@@ -39,13 +39,8 @@ public class LoanStatusUpdateHandlerServiceImpl {
     public void handleStatusUpdate(LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto,String loanVendorName){
 
         if(loanStatusUpdateWebhookDto!=null && loanStatusUpdateWebhookDto.getLoanCode()!=null){
+           updateStatus(loanStatusUpdateWebhookDto,loanVendorName);
 
-            loanStatusUpdateWebhookDto = statusMapperServiceStrategy.getPartnerService(loanVendorName).mapStatus(loanStatusUpdateWebhookDto);
-
-            if(loanStatusUpdateWebhookDto.getInternalStatus()!=null ){
-
-                updateStatus(loanStatusUpdateWebhookDto,loanVendorName);
-            }
         }
 
     }
@@ -61,7 +56,14 @@ public class LoanStatusUpdateHandlerServiceImpl {
              loanApplication =  loanApplicationRepository.findByVendorLoanId(loanStatusUpdateWebhookDto.getLoanCode());
          }
 
+
         if(loanApplication!=null){
+
+            loanStatusUpdateWebhookDto.setInternalCurrentStatus(loanApplication.getLoanStatus().name());
+
+            loanStatusUpdateWebhookDto = statusMapperServiceStrategy.getPartnerService(loanVendorName).mapStatus(loanStatusUpdateWebhookDto);
+
+
             loanStatusUpdateWebhookDto.setStatus(loanStatusUpdateWebhookDto.getInternalStatus());
             loanApplication.setState(loanStatusUpdateWebhookDto.getInternalState());
             loanApplication.setComments(loanStatusUpdateWebhookDto.getS3());
@@ -101,7 +103,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
     private void saveLoanMetaData(LoanApplication loanApplication, LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto) {
 
         LoanMetaData loanMetaData = loanMetaDataEntityService.getLoanMetaDataDetails(loanApplication.getId());
-        if(loanMetaData!=null){
+        if(loanMetaData==null){
             TypeReference<List<Checkpoints>> tref =new TypeReference<List<Checkpoints>>() {
             };
             List<Checkpoints> checkpoints = MapperUtils.convertValue(loanStatusUpdateWebhookDto.getCheckpoints(),tref);
@@ -110,6 +112,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
                     .externalStatus2(loanMetaData.getExternalStatus2()).externalStatus3(loanMetaData.getExternalStatus3()).leadCode(loanStatusUpdateWebhookDto.getLeadCode())
                     .externalApplicationStatus(loanStatusUpdateWebhookDto.getApplicationStatus()).build();
         }else{
+
             TypeReference<List<Checkpoints>> tref =new TypeReference<List<Checkpoints>>() {
             };
             List<Checkpoints> checkpoints = MapperUtils.convertValue(loanStatusUpdateWebhookDto.getCheckpoints(),tref);
@@ -189,7 +192,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
         }
 
         LoanApplication loanApplication =loanApplicationRepository.findById(id).orElse(null);
-        if(loanApplication!=null && loanApplication.getLoanStatus()!=loanStatus){
+        if(loanApplication!=null && (loanApplication.getLoanStatus()!=loanStatus || loanApplication.getState()!=state)){
             loanApplication.setLoanStatus(loanStatus);
             loanApplication.setState(state);
             loanApplicationRepository.save(loanApplication);

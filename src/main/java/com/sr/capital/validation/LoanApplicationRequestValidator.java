@@ -60,7 +60,6 @@ public class LoanApplicationRequestValidator  implements RequestValidator {
             }
         }
 
-        requestDto.setLoanStatus(LoanStatus.LEAD_VERIFIED);
 
         return (T) requestDto;
     }

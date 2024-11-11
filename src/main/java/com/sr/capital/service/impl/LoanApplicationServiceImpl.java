@@ -62,7 +62,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         LoanApplication loanApplication =null ;
 
         if(loanApplicationRequestDto.getLoanId()!=null){
-              loanApplication = loanApplicationRepository.findById(loanApplicationRequestDto.getLoanId()).orElse(null);
+            loanApplicationRequestDto.setLoanStatus(LoanStatus.LEAD_VERIFIED);
+            loanApplication = loanApplicationRepository.findById(loanApplicationRequestDto.getLoanId()).orElse(null);
               LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
         }else {
             loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
