@@ -23,7 +23,7 @@ public class SanctionController {
 
     final SanctionServiceImpl sanctionService;
     @GetMapping("")
-    public GenericResponse<SanctionDto> getSanctionDetails(@RequestParam(name = "loan+id") UUID loanApplicationId,@RequestParam(name = "loan_vendor_name") String loanVendorName) throws Exception {
+    public GenericResponse<SanctionDto> getSanctionDetails(@RequestParam(name = "loan_id") UUID loanApplicationId,@RequestParam(name = "loan_vendor_name") String loanVendorName) throws Exception {
 
         return ResponseBuilderUtil.getResponse(sanctionService.getSanctionDetails(loanApplicationId,loanVendorName), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
