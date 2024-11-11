@@ -52,14 +52,14 @@ public class SanctionServiceImpl {
 
     public Boolean acceptOffer(AcceptSanctionOfferDto acceptSanctionOffer){
 
-        LoanApplication loanApplication = loanApplicationRepository.findById(acceptSanctionOffer.getLoanApplicationId()).orElse(null);
+        LoanApplication loanApplication = loanApplicationRepository.findById(acceptSanctionOffer.getLoanId()).orElse(null);
         if(loanApplication!=null){
 
             LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanApplication.getId());
             if(loanApplicationStatus!=null) {
 
                 LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
-                        .loanId(loanApplication.getVendorLoanId()).internalLoanId(acceptSanctionOffer.getLoanApplicationId()).loanVendorName(acceptSanctionOffer.getLoanVendorName()).sanctionCode(loanApplicationStatus.getSanctionCode()).build();
+                        .loanId(loanApplication.getVendorLoanId()).internalLoanId(acceptSanctionOffer.getLoanId()).loanVendorName(acceptSanctionOffer.getLoanVendorName()).sanctionCode(loanApplicationStatus.getSanctionCode()).build();
 
                 if(acceptSanctionOffer.getAcceptOffer()) {
 
