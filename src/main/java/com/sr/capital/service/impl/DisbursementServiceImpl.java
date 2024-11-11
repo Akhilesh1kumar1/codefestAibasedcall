@@ -105,7 +105,7 @@ public class DisbursementServiceImpl {
                     .loanApplicationStatusId(loanMetaDataDto.getLoanApplicationStatusId()).durationAtDisbursal(disbursementDetailsResponseDto.getRepaymentPeriod())
                     .interestRateAtDisbursal(disbursementDetailsResponseDto.getInterestRate())
                     .interestAmountAtDisbursal(BigDecimal.valueOf(disbursementDetailsResponseDto.getApprovedAmount()))
-                    .vendorDisbursedId(disbursementDetailsResponseDto.getUtrNo()).disbursedDate(disbursementDetailsResponseDto.getDisbursalDate())
+                    .vendorDisbursedId(disbursementDetailsResponseDto.getUtrNo()).disbursedDate(disbursementDetailsResponseDto.getDisbursalDate()).loanId(loanMetaDataDto.getInternalLoanId())
                    .vendorDisbursedId(disbursementDetailsResponseDto.getUtrNo()==null? disbursementDetailsResponseDto.getLoanCode(): disbursementDetailsResponseDto.getUtrNo()).build();
             loanDistributionService.saveLoanDisbursed(loanDisbursed);
 

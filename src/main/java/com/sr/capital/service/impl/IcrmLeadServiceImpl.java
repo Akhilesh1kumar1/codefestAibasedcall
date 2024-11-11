@@ -412,7 +412,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         }
 
         if(icrmLeadRequestDto.getExternalLoanIdOfVendor()!=null){
-            whereClauseValues.put(loanApplicationStattusPrefix+"vendor_loan_id",icrmLeadRequestDto.getExternalLoanIdOfVendor());
+            whereClauseValues.put(loanApplicationPrefix+"vendor_loan_id",icrmLeadRequestDto.getExternalLoanIdOfVendor());
         }
 
         if(icrmLeadRequestDto.getLoanVendorIds()!=null){

@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static com.sr.capital.helpers.constants.Constants.EntityNames.LOAN_DISBURSED;
 
@@ -23,6 +24,9 @@ public class LoanDisbursed extends LongBaseEntity{
 
     @Column(name = "loan_application_status_id")
     Long loanApplicationStatusId;
+
+    @Column(name = "loan_id")
+    UUID loanId;
 
     @Column(name = "loan_amount_disbursed")
     BigDecimal loanAmountDisbursed;
