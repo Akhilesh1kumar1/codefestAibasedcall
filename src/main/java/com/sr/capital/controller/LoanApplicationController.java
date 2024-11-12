@@ -38,7 +38,7 @@ public class LoanApplicationController {
     }
 
     @GetMapping("/details")
-    public GenericResponse<List<LoanApplicationResponseDto>> getLoanApplications(@RequestParam(name = "loan_application_id",required = false)UUID loanApplicationId) throws Exception {
+    public GenericResponse<List<LoanApplicationResponseDto>> getLoanApplications(@RequestParam(name = "loan_id",required = false)UUID loanApplicationId) throws Exception {
 
         return ResponseBuilderUtil.getResponse(loanApplicationService.getLoanApplication(loanApplicationId), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);

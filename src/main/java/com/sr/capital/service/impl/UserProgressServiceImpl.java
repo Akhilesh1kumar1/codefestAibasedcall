@@ -50,7 +50,9 @@ public class UserProgressServiceImpl {
                 case LEAD_PROCESSING -> currentState = Screens.DOCUMENT_VERIFICATION.name();
                 case LOAN_GENERATE -> currentState =Screens.LOAN_SANCTION.name();
                 case LOAN_OFFER_DECLINED -> currentState =Screens.LOAN_SANCTION_DECLINED.name();
-                case LOAN_VERIFICATION -> currentState =Screens.LOAN_DISBURSED.name();
+                case LOAN_VERIFICATION -> currentState =Screens.E_SIGN.name();
+                case LOAN_ACCEPTED, LOAN_DISBURSED -> currentState =Screens.LOAN_DISBURSED.name();
+
             }
 
             /*if(loanApplication1.getVendorLoanId()!=null) {
