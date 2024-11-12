@@ -166,7 +166,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             List<LoanApplication> loanApplications =loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
             if(CollectionUtils.isNotEmpty(loanApplications))
                 for(LoanApplication loanApplication:loanApplications) {
-                    if(loanApplication.getLoanStatus().equals(LoanStatus.PENDING)) {
+                    if(loanApplication.getLoanStatus().equals(LoanStatus.LEAD_VERIFIED)) {
                         loan =loanApplication;
                         loanApplicationResponseDto= LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
                         break;
@@ -177,7 +177,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         if(loanApplicationResponseDto!=null) {
             CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(createLoanAtVendorRequest.getLoanVendorName()).createLead(createLoanAtVendorRequest.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(), loanApplicationResponseDto));
             if (responseDto != null && responseDto.getSuccess() != null) {
-                loan.setLoanStatus(LoanStatus.PRE_APPROVED);
+                loan.setLoanStatus(LoanStatus.LEAD_DOCUMENT_UPLOAD);
                 loan.setVendorLoanId(responseDto.getLoanCode());
                 loan.setExternalLeadCode(responseDto.getLeadCode());
                 loanApplicationRepository.save(loan);
