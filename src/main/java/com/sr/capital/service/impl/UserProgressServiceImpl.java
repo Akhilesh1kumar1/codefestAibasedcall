@@ -44,7 +44,14 @@ public class UserProgressServiceImpl {
             switch (loanApplication1.getLoanStatus()){
                 case LEAD_INITIATED -> currentState = Screens.LOAN_DETAILS.name();
                 case LEAD_VERIFIED ->currentState = PERSONAL_DETAILS.name();
-                case LEAD_IN_PROGRESS -> currentState =loanApplication1.getState();
+                case LEAD_IN_PROGRESS -> {
+                    currentState =loanApplication1.getState();
+
+                    if(loanApplication1.getVendorLoanId()==null && (loanApplication1.getState()!=null && loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name()))){
+                            currentState = Screens.BUSINESS_DETAILS.name();
+                    }
+
+                }
                 case LEAD_REJECTED -> currentState = Screens.LEAD_REJECTION.name();
                 case LEAD_DOCUMENT_UPLOAD -> currentState =Screens.PENDING_DOCUMENT.name();
                 case LEAD_PROCESSING -> currentState = Screens.DOCUMENT_VERIFICATION.name();
