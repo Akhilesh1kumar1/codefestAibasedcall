@@ -5,6 +5,7 @@ import com.sr.capital.helpers.enums.LoanStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.LOAN_APPLIC
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = LOAN_APPLICATION)
+@FieldNameConstants
 public class LoanApplication extends UUIDBaseEntity{
 
     @Column(name = "sr_company_id")

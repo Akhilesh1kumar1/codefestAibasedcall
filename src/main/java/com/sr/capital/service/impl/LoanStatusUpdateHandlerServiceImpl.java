@@ -14,12 +14,14 @@ import com.sr.capital.helpers.enums.Screens;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.entityimpl.*;
 import com.sr.capital.service.strategy.StatusMapperServiceStrategy;
+import com.sr.capital.util.CoreUtil;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -144,7 +146,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
                              .loanApplicationStatusId(loanApplicationStatus.getId()).durationAtDisbursal(loanApplicationStatus.getLoanDuration())
                              .interestRateAtDisbursal(loanStatusUpdateWebhookDto.getInterestRate())
                              .interestAmountAtDisbursal(loanApplicationStatus.getInterestAmountAtSanction())
-                             .vendorDisbursedId(disbursementAccount.getDisbursementId()).disbursedDate(disbursementAccount.getDisbursedDate())
+                             .vendorDisbursedId(disbursementAccount.getDisbursementId()).disbursedDate(CoreUtil.convertTOdate(disbursementAccount.getDisbursedDate(), "yyyy-MM-dd"))
                              .build();
                      loanDistributionService.saveLoanDisbursed(loanDisbursed);
                  }

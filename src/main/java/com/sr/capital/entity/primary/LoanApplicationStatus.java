@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.LOAN_APPLIC
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = LOAN_APPLICATION_STATUS)
+@FieldNameConstants
 public class LoanApplicationStatus extends LongBaseEntity{
 
     @Column(name = "loan_id")
@@ -61,4 +63,7 @@ public class LoanApplicationStatus extends LongBaseEntity{
 
     @Column(name = "total_amount_recovered")
     BigDecimal totalAmountRecovered;
+
+    @Column(name = "total_recoverable_amount")
+    BigDecimal totalRecoverableAmount;
 }

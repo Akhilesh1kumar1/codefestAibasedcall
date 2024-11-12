@@ -12,6 +12,7 @@ import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.entityimpl.LoanApplicationStatusEntityServiceImpl;
 import com.sr.capital.service.entityimpl.LoanDistributionEntityServiceImpl;
+import com.sr.capital.util.CoreUtil;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,7 +106,7 @@ public class DisbursementServiceImpl {
                     .loanApplicationStatusId(loanMetaDataDto.getLoanApplicationStatusId()).durationAtDisbursal(disbursementDetailsResponseDto.getRepaymentPeriod())
                     .interestRateAtDisbursal(disbursementDetailsResponseDto.getInterestRate())
                     .interestAmountAtDisbursal(BigDecimal.valueOf(disbursementDetailsResponseDto.getApprovedAmount()))
-                    .vendorDisbursedId(disbursementDetailsResponseDto.getUtrNo()).disbursedDate(disbursementDetailsResponseDto.getDisbursalDate()).loanId(loanMetaDataDto.getInternalLoanId())
+                    .vendorDisbursedId(disbursementDetailsResponseDto.getUtrNo()).disbursedDate(CoreUtil.convertTOdate(disbursementDetailsResponseDto.getDisbursalDate(),"yyyy-MM-dd")).loanId(loanMetaDataDto.getInternalLoanId())
                    .vendorDisbursedId(disbursementDetailsResponseDto.getUtrNo()==null? disbursementDetailsResponseDto.getLoanCode(): disbursementDetailsResponseDto.getUtrNo()).build();
             loanDistributionService.saveLoanDisbursed(loanDisbursed);
 

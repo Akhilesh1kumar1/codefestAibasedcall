@@ -27,8 +27,8 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 handleApprovedStatus(loanStatusUpdateWebhookDto);
                 break;
             case "disbursed":
-                loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.DISBURSED.name());
-                loanStatusUpdateWebhookDto.setInternalState(LoanStatus.DISBURSED.name());
+                loanStatusUpdateWebhookDto.setInternalStatus(LoanStatus.LOAN_DISBURSED.name());
+                loanStatusUpdateWebhookDto.setInternalState(LoanStatus.LOAN_DISBURSED.name());
                 break;
             default:
                 // Optionally handle unknown status here

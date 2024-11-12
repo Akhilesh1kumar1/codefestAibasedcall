@@ -4,6 +4,7 @@ import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadDetailsRequestDto;
 import com.sr.capital.dto.request.IcrmLeadRequestDto;
+import com.sr.capital.dto.request.IcrmLoanRequestDto;
 import com.sr.capital.dto.response.*;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.LeadStatus;
@@ -38,21 +39,21 @@ public class IcrmController {
     final IcrmLeadService icrmLeadService;
 
     @PostMapping("/loan/details")
-    public GenericResponse<IcrmLoanResponseDto> getLoanDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+    public GenericResponse<IcrmLoanResponseDto> getLoanDetails(@RequestBody IcrmLoanRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
 
         return ResponseBuilderUtil.getResponse(icrmLeadService.getLoanDetails(icrmLeadRequestDto),SUCCESS,
                 CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 
     @PostMapping("/loan/details/download")
-    public GenericResponse<Boolean> downloadLoanReport(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+    public GenericResponse<Boolean> downloadLoanReport(@RequestBody IcrmLoanRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
              icrmLeadService.downloadLoanReport(icrmLeadRequestDto);
         return ResponseBuilderUtil.getResponse(true,SUCCESS,
                 CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 
     @PostMapping("/loan/complete/details")
-    public GenericResponse<IcrmLoanResponseDto> getCompleteDetails(@RequestBody IcrmLeadRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
+    public GenericResponse<IcrmLoanResponseDto> getCompleteDetails(@RequestBody IcrmLoanRequestDto icrmLeadRequestDto) throws CustomException, ParseException, IOException {
 
         return ResponseBuilderUtil.getResponse(icrmLeadService.getCompleteLoanDetails(icrmLeadRequestDto),SUCCESS,
                 CREDIT_PARTNER_CREATED_SUCCESSFULLY, HttpStatus.SC_OK);

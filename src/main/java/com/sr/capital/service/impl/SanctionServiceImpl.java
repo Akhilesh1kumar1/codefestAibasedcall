@@ -201,7 +201,7 @@ public class SanctionServiceImpl {
                     .interestAmountAtSanction(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalInterest().replaceAll(",",""))))
                     .loanDuration(Integer.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanRepaymentPeriod())).
                     totalDisbursedAmount(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getDisbursalAmount().replaceAll(",",""))))
-                    .sanctionCode(loanMetaDataDto.getSanctionCode()).build();
+                    .sanctionCode(loanMetaDataDto.getSanctionCode()).totalRecoverableAmount(BigDecimal.valueOf(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalRepayable().replaceAll(",","")))).build();
             loanApplicationStatusEntityService.saveLoanApplicationStatus(loanApplicationStatus);
 
         return loanApplicationStatus;
