@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.UUID;
 
 
@@ -37,6 +38,11 @@ public class SanctionServiceImpl {
         if(loanApplication!=null){
             LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
                     .loanId(loanApplication.getVendorLoanId()).internalLoanId(loanApplicationId).loanVendorName(loanVendorName).build();
+
+            if(1==1){
+                return buildDummyDto(loanMetaDataDto);
+            }
+
             SanctionDto sanctionDto = fetchAndSaveSanctionDetails(loanMetaDataDto);
             if(sanctionDto!=null){
                 if(loanApplication.getLoanStatus().name().equalsIgnoreCase(LoanStatus.LEAD_PROCESSING.name())){
@@ -48,6 +54,64 @@ public class SanctionServiceImpl {
             return sanctionDto;
         }
         return null;
+    }
+
+    private SanctionDto buildDummyDto(LoanMetaDataDto loanMetaDataDto) {
+        SanctionDto.PartnerIntegrationProject partnerIntegrationProject = SanctionDto.PartnerIntegrationProject.builder()
+                .tnc(Arrays.asList(
+                        "*All government taxes, wherever applicable, will be applied on the above charges.",
+                        "**Pre-EMI Interest - Interest on disbursed amount from disbursement date to billing date i.e. 1st or 16th of the month."
+                ))
+                .product("Term Loan Fixed APR")
+                .sanction_code("NjM3ZGIxZDNkeHhoeXx8MTExMTExMTExMTF8fDQwNTlhMTFsYm5nYnpqZw==")
+                .totalGst("1260")
+                .emiAmount("17,639")
+                .feeCharges(Arrays.asList(
+                        SanctionDto.FeeCharge.builder().key("PROCESSING_FEE").raw("5900").index(1)
+                                .label("Processing Fee (including GST @18%)").value("5,900").build(),
+                        SanctionDto.FeeCharge.builder().key("INSURANCE_PREMIUM").raw("0").index(5)
+                                .label("Insurance Premium").value("0").build(),
+                        SanctionDto.FeeCharge.builder().key("PRE_EMI_INTEREST").raw("3308").index(4)
+                                .label("Pre EMI Interest**").value("3,308").build(),
+                        SanctionDto.FeeCharge.builder().key("STAMP_DUTY").raw("250").index(3)
+                                .label("Stamp Duty").value("250").build(),
+                        SanctionDto.FeeCharge.builder().key("DOCUMENTATION_CHARGES").raw("2360").index(2)
+                                .label("Documentation Charges (including GST @18%)").value("2,360")
+                                .sub_label("(including GST @18%)").build()
+                ))
+                .loanAmount("2,50,000")
+                .totalInterest("67,500")
+                .totalRepayable("3,17,500")
+                .disbursalAmount("2,38,182")
+                .processingFeeOg("5000")
+                .totalFeeCharges("11,818")
+                .detailsOfCharges(Arrays.asList(
+                        SanctionDto.DetailsOfCharge.builder().label("Cheque Bounce Charges").value("Rs. 750/- for each bounce").build(),
+                        SanctionDto.DetailsOfCharge.builder().label("Penal Charges").value("4% per month on overdue amount").build(),
+                        SanctionDto.DetailsOfCharge.builder().label("Loan Pre-payment Charges").value("0% of principal outstanding on amount foreclosed").build()
+                ))
+                .processingFeeGst("900")
+                .documentChargesOg("2000")
+                .interestFrequency("year%")
+                .documentChargesGst("360")
+                .loanRepaymentPeriod("18")
+                .annualRateOfInterest("32%")
+                .monthlyRateOfInterest("2.6469%")
+                .loanRepaymentFrequency("Months")
+                .postSanctionConditions("Escrow not required,Repayment to be taken from HDFC Bank CURRENT A/C - 50200035716144,Required CPV of office: shop no 11 Near sahyog society Opp Omkar Plywood Sayan Surat Hyderabad Telangana 500085,One reference of relative and one reference of buyer/supplier required,Zero Foreclosure Charges Post 6 months,Required ownership proof of residential address and business address.")
+                .build();
+
+        // Creating SanctionDto with partnerIntegrationProject and postSanctionConditionsArray
+        SanctionDto sanctionDto = SanctionDto.builder().partnerIntegrationProject(partnerIntegrationProject).postSanctionConditionsArray(Arrays.asList(
+                "One reference of relative and one reference of buyer/supplier required",
+                "Repayment to be taken from HDFC Bank CURRENT A/C - 50200035716144",
+                "Required CPV of office: shop no 11 Near sahyog society Opp Omkar Plywood Sayan Surat Hyderabad Telangana 500085",
+                "Required ownership proof of residential address and business address.",
+                "Zero Foreclosure Charges Post 6 months",
+                "Escrow not required"
+        )).build();
+
+        return sanctionDto;
     }
 
     public Boolean acceptOffer(AcceptSanctionOfferDto acceptSanctionOffer){
@@ -63,7 +127,7 @@ public class SanctionServiceImpl {
 
                 if(acceptSanctionOffer.getAcceptOffer()) {
 
-                    AcceptSanctionOffer acceptSanctionOffer1 = (AcceptSanctionOffer) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).acceptOffer(loanMetaDataDto);
+                  //  AcceptSanctionOffer acceptSanctionOffer1 = (AcceptSanctionOffer) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).acceptOffer(loanMetaDataDto);
 
                     loanApplication.setLoanStatus(LoanStatus.LOAN_VERIFICATION);
 
