@@ -142,7 +142,7 @@ public class CompanyWiseReport {
     @Column(name = "company_tag", length = 100)
     private String companyTag;
 
-    @Column(name = "first_rto_date")
+    /*@Column(name = "first_rto_date")
     private LocalDateTime firstRtoDate;
 
     @Column(name = "total_ndr_awbs", nullable = false)
@@ -275,7 +275,7 @@ public class CompanyWiseReport {
     private String kycStatus;
 
     @Column(name = "amount_to_be_remitted", columnDefinition = "decimal(10,2)")
-    private BigDecimal amountToBeRemitted;
+    private BigDecimal amountToBeRemitted;*/
 
 
 }

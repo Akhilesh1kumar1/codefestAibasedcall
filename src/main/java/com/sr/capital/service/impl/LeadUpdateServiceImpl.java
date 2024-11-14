@@ -156,6 +156,14 @@ public class LeadUpdateServiceImpl {
                 loanApplicant.setAddressLine2(aes256.decrypt(address.getAddress2()));
                 loanApplicant.setPincode(aes256.decrypt(address.getPincode()));
                 loanApplicant.setOwnershipStatus(address.getOwnershipStatus());
+
+                if(loanApplicant.getAddressLine2()==null){
+                    loanApplicant.setAddressLine2("city "+ aes256.decrypt(address.getCity()).concat(" ,state "+aes256.decrypt(address.getState())));
+                }else{
+                    loanApplicant.setAddressLine2(loanApplicant.getAddressLine2()+" , city "+ aes256.decrypt(address.getCity()).concat(" ,state "+aes256.decrypt(address.getState())));
+
+                }
+
                 Pincode pincode = pincodeEntityService.getPincodeDetailsByVendorId(Long.valueOf(loanApplicant.getPincode()), loanVendorId);
                 if (pincode == null) {
                     throw new CustomException("We cannot provide loan at pincode " + loanApplicant.getPincode(), HttpStatus.BAD_REQUEST);

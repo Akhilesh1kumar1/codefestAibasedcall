@@ -367,6 +367,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             if (address.getAddressType() == null || address.getAddressType().equalsIgnoreCase("current")) {
                 loanApplicant.setAddressLine1(aes256.decrypt(address.getAddress1()));
                 loanApplicant.setAddressLine2(aes256.decrypt(address.getAddress2()));
+
+                if(loanApplicant.getAddressLine2()==null){
+                    loanApplicant.setAddressLine2("city "+ aes256.decrypt(address.getCity()).concat(" ,state "+aes256.decrypt(address.getState())));
+                }else{
+                    loanApplicant.setAddressLine2(loanApplicant.getAddressLine2()+" , city "+ aes256.decrypt(address.getCity()).concat(" ,state "+aes256.decrypt(address.getState())));
+
+                }
+
                 loanApplicant.setPincode(aes256.decrypt(address.getPincode()));
                 loanApplicant.setOwnershipStatus(address.getOwnershipStatus());
                 Pincode pincode = pincodeEntityService.getPincodeDetailsByVendorId(Long.valueOf(loanApplicant.getPincode()), loanVendorId);

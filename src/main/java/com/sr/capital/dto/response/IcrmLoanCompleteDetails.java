@@ -87,6 +87,35 @@ public class IcrmLoanCompleteDetails {
     String zipLink;
 
     String loanVendorName;
+
+
+
+    Double interestRateAtDisbursal;
+
+    BigDecimal interestAmountAtDisbursal;
+
+    Integer disbursementTenure;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    String disbursedDate;
+
+    BigDecimal totalRecoverableAmount;
+
+    BigDecimal monthlyEmi;
+
+    Date nextEmiDate;
+
+    Date lastEmiDate;
+
+    BigDecimal totalRecoveredAmount;
+
+    BigDecimal LoanAmountRequested;
+
+    String userName;
+
+    String emailId;
+
+    String mobileNumber;
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder

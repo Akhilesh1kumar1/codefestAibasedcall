@@ -34,7 +34,7 @@ public class IcrmLoanResponseDto {
    public static class PaginationInfo{
         Integer pageSize;
 
-        Integer noOfRecords;
+        Long noOfRecords;
 
         Integer pageNumber;
 

@@ -16,6 +16,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
 
         LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto = (LoanStatusUpdateWebhookDto) loanApplicationDetails;
 
+        loanStatusUpdateWebhookDto.setStatus(loanStatusUpdateWebhookDto.getS1());
         switch (loanStatusUpdateWebhookDto.getS1().toLowerCase()) {
             case "in progress":
                 handleInProgressStatus(loanStatusUpdateWebhookDto);

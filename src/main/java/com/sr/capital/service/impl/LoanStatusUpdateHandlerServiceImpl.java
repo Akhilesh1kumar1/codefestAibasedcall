@@ -72,6 +72,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
             saveLoanMetaData(loanApplication,loanStatusUpdateWebhookDto);
             loanApplication.setComments(loanStatusUpdateWebhookDto.getS3());
             loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
+            loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getStatus())){
 
                 /*case LEAD_PROCESSING:

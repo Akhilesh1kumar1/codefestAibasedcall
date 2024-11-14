@@ -25,6 +25,7 @@ public class UpdateLeadRequestDto {
     private String lastName;
     private String mobileNo;
     private String email;
+    @JsonProperty("loanApplication")
     private LoanDetails loanApplication;
 
     @Data

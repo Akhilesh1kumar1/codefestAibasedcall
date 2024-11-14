@@ -47,7 +47,7 @@ public class IcrmLoanRequestDto {
 
     Integer pageSize =20;
 
-    Integer noOfRecord ;
+    Long noOfRecord ;
 
     UUID loanId;
 

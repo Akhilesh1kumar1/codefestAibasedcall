@@ -9,6 +9,7 @@ import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 import static com.sr.capital.helpers.constants.Constants.EntityNames.LOAN_APPLICATION;
@@ -41,7 +42,8 @@ public class LoanApplicationStatus extends LongBaseEntity{
     Integer loanDuration;
 
     @Column(name = "interest_amount_at_sanction")
-    BigDecimal interestAmountAtSanction;
+    @Builder.Default
+    BigDecimal interestAmountAtSanction=BigDecimal.ZERO;
 
     @Column(name = "start_date")
     LocalDate startDate;
@@ -53,7 +55,8 @@ public class LoanApplicationStatus extends LongBaseEntity{
     String comment;
 
     @Column(name = "total_disbursed_amount")
-    BigDecimal totalDisbursedAmount;
+    @Builder.Default
+    BigDecimal totalDisbursedAmount=BigDecimal.ZERO;
 
     @Column(name = "vendor_status")
     String vendorStatus;
@@ -66,4 +69,5 @@ public class LoanApplicationStatus extends LongBaseEntity{
 
     @Column(name = "total_recoverable_amount")
     BigDecimal totalRecoverableAmount;
+    
 }

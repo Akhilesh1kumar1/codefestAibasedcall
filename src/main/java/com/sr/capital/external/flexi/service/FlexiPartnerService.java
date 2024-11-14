@@ -382,6 +382,8 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     @Override
     public Object updateLead(String partner, UpdateLeadRequestDto requestDto) {
         String responseDto;
+
+        updateCustomInfoForUpdateLead(requestDto);
         Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
         BaseCreditPartner partnerInfo = getPartnerInfo(partner);
         metaData.put("leadCode",requestDto.getLeadCode());
@@ -505,6 +507,32 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         }else if(requestDto.getGender().equalsIgnoreCase("f")){
             requestDto.setGender("Female");
         }
+
+        if(requestDto.getLoanApplication().getLoanApplicant().getGender().equalsIgnoreCase("m")){
+            requestDto.getLoanApplication().getLoanApplicant().setGender("Male");
+        }else if(requestDto.getLoanApplication().getLoanApplicant().getGender().equalsIgnoreCase("f")){
+            requestDto.getLoanApplication().getLoanApplicant().setGender("Female");
+        }
+
+        if(!CollectionUtils.isEmpty(requestDto.getLoanApplication().getLoanBusinessPartners())){
+            requestDto.getLoanApplication().getLoanBusinessPartners().forEach(loanBusinessPartner -> {
+
+                if(loanBusinessPartner.getGender()!=null) {
+                    if (loanBusinessPartner.getGender().equalsIgnoreCase("m")) {
+                        loanBusinessPartner.setGender("Male");
+                    } else if (loanBusinessPartner.getGender().equalsIgnoreCase("f")) {
+                        loanBusinessPartner.setGender("Female");
+                    }
+                }
+            });
+        }
+
+
+    }
+
+    private void updateCustomInfoForUpdateLead(UpdateLeadRequestDto requestDto) {
+
+
 
         if(requestDto.getLoanApplication().getLoanApplicant().getGender().equalsIgnoreCase("m")){
             requestDto.getLoanApplication().getLoanApplicant().setGender("Male");
