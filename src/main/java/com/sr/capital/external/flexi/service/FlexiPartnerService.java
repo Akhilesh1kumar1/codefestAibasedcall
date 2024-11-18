@@ -430,6 +430,73 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
 
+    @Override
+    public Object getKFS(LoanMetaDataDto loanMetaDataDto) {
+
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.FETCH_KFS.name(),ProviderRequestTemplateType.FETCH_KFS.name(), SanctionResponseDto.class);
+
+        HttpResponse<?> restResponseEntity = null;
+        KfsResponseDto kfsResponseDto =null;
+        try {
+
+            String url =   MessageFormat.format((String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),loanMetaDataDto.getLoanId());
+
+            restResponseEntity = providerHelperUtil.makeApiCall(loanMetaDataDto.getParams(),
+                    url,
+                    loanMetaDataDto.getExternalRequestBody(),
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(loanMetaDataDto.getLoanVendorName(), e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.FETCH_KFS_RESPONSE.name(),loanMetaDataDto.getLoanVendorId());
+
+        try {
+            kfsResponseDto = MapperUtils.convertValue(response.getData(),
+                    KfsResponseDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return kfsResponseDto;
+    }
+
+    @Override
+    public Object rejectSanctionOffer(LoanMetaDataDto loanMetaDataDto) {
+        buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.REJECT_OFFER.name(),ProviderRequestTemplateType.REJECT_OFFER.name(), SanctionResponseDto.class);
+
+        HttpResponse<?> restResponseEntity = null;
+        AcceptSanctionOffer acceptSanctionOffer =null;
+        try {
+
+            String url = (String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), "");
+
+            restResponseEntity = providerHelperUtil.makeApiCall(loanMetaDataDto.getParams(),
+                    url,
+                    loanMetaDataDto.getExternalRequestBody(),
+                    null);
+        } catch (UnirestException | URISyntaxException e) {
+            log.error(loanMetaDataDto.getLoanVendorName(), e);
+        }
+
+        GenericResponse<?> response = new GenericResponse<>();
+
+        providerHelperUtil.setResponse(response, restResponseEntity,
+                ProviderResponseTemplateType.FETCH_KFS_RESPONSE.name(),loanMetaDataDto.getLoanVendorId());
+
+        try {
+            acceptSanctionOffer = MapperUtils.convertValue(response.getData(),
+                    AcceptSanctionOffer.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return acceptSanctionOffer;
+    }
+
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
         AccessTokenResponseDto responseDto = null;
         AccessTokenRequestDto requestDto = MapperUtils.mapClass(partnerConfig, AccessTokenRequestDto.class);

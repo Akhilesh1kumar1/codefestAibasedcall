@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AcceptSanctionOfferDto {
+public class UpdateSanctionOfferDto {
 
     String sanctionCode;
 

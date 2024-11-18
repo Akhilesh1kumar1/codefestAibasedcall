@@ -17,6 +17,10 @@ public enum ProviderResponseTemplateType {
 
     ACCEPT_OFFER_RESPONSE,
 
-    UPDATE_LEAD_RESPONSE;
+    UPDATE_LEAD_RESPONSE,
+
+    REJECT_OFFER_RESPONSE,
+
+    FETCH_KFS_RESPONSE;
 
 }

@@ -19,5 +19,7 @@ public enum ProviderRequestTemplateType {
     FETCH_SANCTIONED_OFFER,
 
     ACCEPT_SECTION_OFFER,
-    UPDATE_LEAD;
+    UPDATE_LEAD,
+    FETCH_KFS,
+    REJECT_OFFER;
 }

@@ -65,6 +65,7 @@ public class LoanMetaDataDto {
 
     String vendorStatus;
 
+    String rejectReason;
     @Data
     @FieldDefaults(level=AccessLevel.PRIVATE)
     @Builder

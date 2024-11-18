@@ -2,6 +2,7 @@ package com.sr.capital.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.omunify.restutil.exceptions.InvalidResourceException;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.entity.mongo.LoanMetaData;
 import com.sr.capital.entity.mongo.kyc.child.Checkpoints;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,6 +75,8 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setComments(loanStatusUpdateWebhookDto.getS3());
             loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
             loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
+            loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
+            loanApplication.getAuditData().setUpdatedBy("SYSTEM");
             switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getStatus())){
 
                 /*case LEAD_PROCESSING:
@@ -198,6 +202,8 @@ public class LoanStatusUpdateHandlerServiceImpl {
         if(loanApplication!=null && (loanApplication.getLoanStatus()!=loanStatus || loanApplication.getState()!=state)){
             loanApplication.setLoanStatus(loanStatus);
             loanApplication.setState(state);
+            loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
+            loanApplication.getAuditData().setUpdatedBy(String.valueOf(RequestData.getUserId()));
             loanApplicationRepository.save(loanApplication);
         }
 

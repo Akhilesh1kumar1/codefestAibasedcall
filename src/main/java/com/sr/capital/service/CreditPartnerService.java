@@ -41,5 +41,10 @@ public interface CreditPartnerService {
 
     Object updateLead(String partner, UpdateLeadRequestDto requestDto);
 
+    Object getKFS(LoanMetaDataDto loanMetaDataDto);
+
+    Object rejectSanctionOffer(LoanMetaDataDto loanMetaDataDto);
+
+
 
 }
