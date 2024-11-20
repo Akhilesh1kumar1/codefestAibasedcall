@@ -88,7 +88,7 @@ public class IcrmLoanCompleteDetails {
 
     String loanVendorName;
 
-
+    String tier;
 
     Double interestRateAtDisbursal;
 

@@ -180,6 +180,17 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
              icrmLoanResponseDto.getCompleteDetails().get(0).setUserName(user.getFirstName());
          }
 
+         try {
+             CompanyWiseReport companyWiseReport = companyWiseReportEntityService.getReportData(icrmLeadRequestDto.getSrCompanyId());
+
+             if (companyWiseReport != null) {
+                 icrmLoanResponseDto.getCompleteDetails().get(0).setTier(companyWiseReport.getTier());
+
+             }
+         }catch (Exception ex){
+
+         }
+
         return icrmLoanResponseDto;
     }
 
@@ -374,6 +385,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
         if(loanApplication!=null){
             setLoanApplicationDetails(loanApplication, icrmLoanResponseDto);
+            icrmLeadRequestDto.setSrCompanyId(loanApplication.getSrCompanyId());
         }else{
             throw new CustomException("Invalid Loan Id ",HttpStatus.BAD_REQUEST);
         }
