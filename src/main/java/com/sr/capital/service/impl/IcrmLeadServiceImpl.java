@@ -46,6 +46,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -124,6 +125,15 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         if(CollectionUtils.isNotEmpty(listRecords)){
            return buildLeadResponse(responseDto,listRecords);
         }*/
+
+        if(icrmLeadRequestDto.getCreatedAtEnd()!=null){
+            icrmLeadRequestDto.setCreatedAtEnd(LocalDate.parse(icrmLeadRequestDto.getCreatedAtEnd()).plusDays(1).toString());
+        }
+
+        if(icrmLeadRequestDto.getDateOfDisbursalEnd()!=null){
+            icrmLeadRequestDto.setDateOfDisbursalEnd(LocalDate.parse(icrmLeadRequestDto.getDateOfDisbursalEnd()).plusDays(1).toString());
+
+        }
 
         Long noOfRecords =icrmLeadRequestDto.getNoOfRecord();
         if(noOfRecords==null){

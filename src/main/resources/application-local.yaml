@@ -56,6 +56,7 @@ app:
   cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
+  web-url: ${WEB_URL:https://multichannel-appstore-qa.kartrocket.com/capital/home}
   verification:
     otp:
       request-limit: 4
@@ -276,3 +277,4 @@ jobs:
     cronInMinutes: 400
   status:
     cronInMinutes: 120
+

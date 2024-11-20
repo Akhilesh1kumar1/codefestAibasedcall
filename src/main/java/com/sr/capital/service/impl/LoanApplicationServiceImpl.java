@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -180,6 +181,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loan.setLoanStatus(LoanStatus.LEAD_DOCUMENT_UPLOAD);
                 loan.setVendorLoanId(responseDto.getLoanCode());
                 loan.setExternalLeadCode(responseDto.getLeadCode());
+                loan.getAuditData().setUpdatedAt(LocalDateTime.now());
                 loanApplicationRepository.save(loan);
 
             }

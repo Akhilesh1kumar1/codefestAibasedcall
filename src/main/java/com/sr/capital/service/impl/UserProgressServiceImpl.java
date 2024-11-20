@@ -1,13 +1,18 @@
 package com.sr.capital.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.response.UserProgressResponseDto;
+import com.sr.capital.entity.mongo.LoanMetaData;
+import com.sr.capital.entity.mongo.kyc.child.Checkpoints;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.Screens;
 import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.repository.primary.UserRepository;
+import com.sr.capital.service.entityimpl.LoanMetaDataEntityServiceImpl;
+import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -23,6 +28,7 @@ public class UserProgressServiceImpl {
     final DocDetailsService docDetailsService;
     final UserRepository userRepository;
     final LoanApplicationRepository loanApplicationRepository;
+    final LoanMetaDataEntityServiceImpl loanMetaDataEntityService;
 
 
     public UserProgressResponseDto getUserProgress(String tenantId){
@@ -49,6 +55,19 @@ public class UserProgressServiceImpl {
 
                     if(loanApplication1.getVendorLoanId()==null && (loanApplication1.getState()!=null && loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name()))){
                             currentState = Screens.BUSINESS_DETAILS.name();
+                    }
+
+                    LoanMetaData loanMetaData = loanMetaDataEntityService.getLoanMetaDataDetails(loanApplication1.getId());
+
+                    if(loanMetaData!=null && CollectionUtils.isNotEmpty(loanMetaData.getCheckPoints())){
+                        TypeReference<List<UserProgressResponseDto.Checkpoint>> tref =new TypeReference<List<UserProgressResponseDto.Checkpoint>>() {
+                        };
+                        try {
+
+                            userProgressResponseDto.setCheckpoints(MapperUtils.convertValue(loanMetaData.getCheckPoints(), tref));
+                        }catch (Exception ex){
+                            
+                        }
                     }
 
                 }

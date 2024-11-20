@@ -2,6 +2,7 @@ package com.sr.capital.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.omunify.restutil.exceptions.InvalidResourceException;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.entity.mongo.LoanMetaData;
@@ -9,16 +10,22 @@ import com.sr.capital.entity.mongo.kyc.child.Checkpoints;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.entity.primary.LoanDisbursed;
+import com.sr.capital.entity.primary.User;
+import com.sr.capital.external.dto.request.CommunicationRequestTemp;
+import com.sr.capital.external.service.CommunicationService;
+import com.sr.capital.helpers.enums.CommunicationTemplateNames;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.Screens;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
+import com.sr.capital.service.UserService;
 import com.sr.capital.service.entityimpl.*;
 import com.sr.capital.service.strategy.StatusMapperServiceStrategy;
 import com.sr.capital.util.CoreUtil;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -39,6 +46,9 @@ public class LoanStatusUpdateHandlerServiceImpl {
     final WebhookDetailsEntityServiceImpl webhookDetailsEntityService;
     final StatusMapperServiceStrategy statusMapperServiceStrategy;
     final LoanMetaDataEntityServiceImpl loanMetaDataEntityService;
+    final CommunicationService communicationService;
+    final AppProperties appProperties;
+    final UserService userService;
 
     public void handleStatusUpdate(LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto,String loanVendorName){
 
@@ -77,9 +87,10 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
-            switch (LoanStatus.valueOf(loanStatusUpdateWebhookDto.getStatus())){
+            //sendCommunication(loanApplication,loanVendorName);
+           /* switch (loanApplication.getLoanStatus()){
 
-                /*case LEAD_PROCESSING:
+                case LEAD_PROCESSING:
                     loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
                     //updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
                     break;
@@ -90,10 +101,10 @@ public class LoanStatusUpdateHandlerServiceImpl {
                     break;
                 case REJECTED:
                     loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
-                   // updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);*/
+                   // updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
 
             }
-            loanApplication.setState(loanStatusUpdateWebhookDto.getInternalState());
+            loanApplication.setState(loanStatusUpdateWebhookDto.getInternalState());*/
 
 
         }else{
@@ -105,6 +116,55 @@ public class LoanStatusUpdateHandlerServiceImpl {
       /*  WebhookDetails webhookDetails =WebhookDetails.builder().clientLoanId(loanApplication.getId()).srCompanyId(loanApplication.getSrCompanyId()).loanType("loan").loanWebhookData(loanStatusUpdateWebhookDto).build();
         webhookDetailsEntityService.saveWebhookDetails(webhookDetails);*/
 
+    }
+
+    public void sendCommunication(LoanApplication loanApplication,String vendorName) {
+
+        String templateName =null;
+        String subject =null;
+        switch (loanApplication.getLoanStatus()){
+            case LEAD_PROCESSING -> {
+                templateName = CommunicationTemplateNames.PROCESSING_STAGE.getTemplateName();
+                subject = "Your Loan Application is Being Processed!";
+            }
+            case DISBURSED -> {templateName =CommunicationTemplateNames.LOAN_DISBURSED.getTemplateName();
+                subject = "Congratulations—Your Loan Has Been Disbursed!";
+            }
+            case LOAN_OFFER_GENERATED -> {
+                templateName = CommunicationTemplateNames.OFFER_GENERATION.getTemplateName();
+                subject = "Your Loan Offer is Ready—Review and Accept!";
+            }
+            case LEAD_REJECTED -> {
+                templateName = CommunicationTemplateNames.LEAD_REJECTED.getTemplateName();
+                subject = "Update on Your Loan Application";
+            }
+        }
+        if(templateName!=null) {
+            CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder().loanId(loanApplication.getId().toString())
+                    .requestedLoanAmount(loanApplication.getLoanAmountRequested()).vendorName(vendorName)
+                    .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).build();
+
+            LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanApplication.getId());
+            if(loanApplicationStatus!=null){
+                metaData.setApprovedLoanAmount(loanApplicationStatus.getLoanAmountApproved());
+                List<LoanDisbursed> loanDisbursedList = loanDistributionService.getLoanDisbursedDetailsByStatusId(loanApplicationStatus.getId());
+                if(CollectionUtils.isNotEmpty(loanDisbursedList)){
+                    metaData.setDisbursmentDate(loanDisbursedList.get(0).getDisbursedDate());
+                    metaData.setInvitationLink("");
+                    metaData.setRepaymentTerms("");
+                }
+            }
+
+            User user =  userService.getCompanyDetails(loanApplication.getSrCompanyId());
+            if(user!=null) {
+                CommunicationRequestTemp.EmailCommunicationDTO emailCommunicationDTO = CommunicationRequestTemp.EmailCommunicationDTO.builder()
+                        .recipientEmail(user.getEmail()).recipientName(user.getFirstName()).subject(subject).build();
+
+                CommunicationRequestTemp communicationRequestTemp = CommunicationRequestTemp.builder().contentMetaData(metaData).emailCommunicationDto(emailCommunicationDTO).build();
+
+                communicationService.sendCommunicationForLoan(communicationRequestTemp);
+            }
+        }
     }
 
     private void saveLoanMetaData(LoanApplication loanApplication, LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto) {

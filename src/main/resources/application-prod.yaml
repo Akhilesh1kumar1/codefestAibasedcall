@@ -56,6 +56,7 @@ app:
   cors-allowed-origins: https://qa-web-1.kartrocket.com,https://multichannel-appstore-qa.kartrocket.com,http://localhost:5371,http://app.shiprocket.local,https://app.shiprocket.in
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:669dfe82d4490f4cf9f27c10}
+  web-url: ${WEB_URL:https://app.shiprocket.in/capital/home}
   verification:
     otp:
       request-limit: 4

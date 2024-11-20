@@ -11,6 +11,7 @@ import com.sr.capital.entity.primary.Pincode;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
+import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.CreditPartnerFactoryService;
@@ -82,6 +83,8 @@ public class LeadUpdateServiceImpl {
                 }
 
             }
+            loanApplication.setLoanStatus(LoanStatus.LEAD_DOCUMENT_UPLOAD);
+            loanApplicationRepository.save(loanApplication);
         }else{
             throw new CustomException("Invalid loan_id",HttpStatus.BAD_REQUEST);
         }

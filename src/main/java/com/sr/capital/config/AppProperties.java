@@ -325,4 +325,8 @@ public class AppProperties {
     @Value("${kafka.topics.statusUpdate}")
     private String capitalTopicName;
 
+
+    @Value("${app.web-url}")
+    private String capitalWebUrl;
+
 }

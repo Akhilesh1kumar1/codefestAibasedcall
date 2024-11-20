@@ -69,6 +69,7 @@ public class MongoEntityUtil {
             case PAN:
             case AADHAR:
             case GST:
+            case EPAN:
                 return kycDocDetails.getDetails() instanceof ReportMetaData;
             case PERSONAL_ADDRESS:
                 return kycDocDetails.getDetails() instanceof PersonalAddressDetails;
