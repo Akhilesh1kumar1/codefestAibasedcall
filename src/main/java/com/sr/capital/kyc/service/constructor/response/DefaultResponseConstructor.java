@@ -1,6 +1,8 @@
 package com.sr.capital.kyc.service.constructor.response;
 
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.dto.response.DocUploadResponseDto;
+import com.sr.capital.external.common.request.DocumentUploadRequestDto;
 import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.service.interfaces.ResponseConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,9 +23,12 @@ public class DefaultResponseConstructor implements ResponseConstructor {
             message = "OK!";
         }*/
         DocOrchestratorRequest orchestratorRequest = (DocOrchestratorRequest) input;
+        DocUploadResponseDto<?> docUploadResponseDto =DocUploadResponseDto.builder().kycDocDetails(orchestratorRequest.getKycDocDetails())
+                .imageUrl(orchestratorRequest.getFile1()!=null?orchestratorRequest.getFile1().getPreSignedUri():null)
+                .build();
         GenericResponse<T> response = new GenericResponse<>();
         response.setStatusCode(HttpStatusCode.OK);
-        response.setData((T) orchestratorRequest.getKycDocDetails());
+        response.setData((T) docUploadResponseDto);
 
         return new ResponseEntity<>(
             response,
