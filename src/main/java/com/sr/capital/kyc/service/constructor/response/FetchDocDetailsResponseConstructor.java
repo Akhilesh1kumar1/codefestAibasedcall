@@ -8,11 +8,11 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
-import com.sr.capital.kyc.dto.request.PersonalAddressDetailsRequestDto;
 import com.sr.capital.kyc.dto.response.*;
 import com.sr.capital.kyc.external.request.extraction.data.ItrExtractionData;
 import com.sr.capital.kyc.service.interfaces.ResponseConstructor;
 import com.sr.capital.util.S3Util;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -96,7 +96,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
     @SuppressWarnings("unchecked")
     private <T> T getExtractedDetails(KycDocDetails<?> kycDocDetails) {
         switch(kycDocDetails.getDocType()){
-            case AADHAAR:
+           /* case AADHAAR:
                 AadhaarDocDetails aadhaarDocDetails = (AadhaarDocDetails) kycDocDetails.getDetails();
                 return (T) ExtractedAadhaarResponse.builder()
                         .idNumber(aadhaarDocDetails.getIdNumber())
@@ -132,7 +132,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                     gstResponse.getGstUserDetails().add(ExtractedGstResponse.GstUserDetails.builder().gstin(aes256.decrypt(gstUserDetails.getGstin())).username(aes256.decrypt(gstUserDetails.getUsername())).refId(gstUserDetails.getRefId()).status(gstUserDetails.getStatus()).build());
                 });
 
-                return (T) gstResponse;
+                return (T) gstResponse;*/
             case BANK_CHEQUE:
                 List<ExtractedBankResponse> extractedBankResponses = getExtractedBankResponses(kycDocDetails);
                 return (T) extractedBankResponses;
@@ -143,41 +143,101 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
                 ItrExtractionData itrExtractionData = getItrData(kycDocDetails);
                 return (T) itrExtractionData;
             case MSME:
-            case LOAN_TRACKER:
             case PROVISIONAL:
-                return (T) kycDocDetails;
+            case LOAN_TRACKER:
+            case DRIVING_LICENCE:
+            case PROPRIETORSHIP:
+            case VOTING_CARD:
+            case CIN:
+            case AGREEMENT:
+            case DIRECTORS:
+            case PAN_GUARANTOR:
+            case PAN_PERSONAL:
+            case PASSPORT:
+            case ADHAR_GUARANTOR_COAPPLICANT:
+            case GST_REGISTRATION:
+            case SHOP_EST_REGISTRATION:
+            case TRADE_LICENSE:
+            case FOOD_LICENSE:
+            case DRUG_LICENSE_CERTIFICATE:
+            case UDYAM_REGISTRATION:
+            case UDYOG_AADHAAR:
+            case BANK_STATEMENT_CURRENT_6:
+            case ELECTRICITY_COMPANY:
+            case SALE_DEED_COMPANY:
+            case LANDLINE_BILL_3MONTH:
+            case PROPERTY_TAX_RECEIPT:
+            case RENT_AGREEMENT_COMPANY:
+            case FINANCIAL_AUDIT:
+            case ITR_RETURNS:
+            case GST_RETURNS_6:
+            case VALID_PARTNERSHIP_DEED:
+            case COMPANY_PAN:
+            case COMPANY_COI:
+            case MOA_AOA_COMPANY:
+            case LATEST_CA_SHAREHOLDINGS:
+            case ELECTRICITY:
+            case PIPED_GAS_BILL:
+            case WATER_BILL:
+            case SALE_DEED:
+            case LANDLINE_BILL:
+            case PAN:
+            case AADHAR:
+            case GST:
+            case EPAN:
+                return (T) kycDocDetails.getDetails();
             case PERSONAL_ADDRESS:
                 PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) kycDocDetails.getDetails();
                 personalAddressDetails.getAddress().forEach(personalAddress->{
-                    personalAddress.setAddress(aes256.decrypt(personalAddress.getAddress()));
+                    personalAddress.setAddress1(aes256.decrypt(personalAddress.getAddress1()));
+                    personalAddress.setAddress2(aes256.decrypt(personalAddress.getAddress2()));
                     personalAddress.setCity(aes256.decrypt(personalAddress.getCity()));
                     personalAddress.setState(aes256.decrypt(personalAddress.getState()));
                     personalAddress.setPincode(aes256.decrypt(personalAddress.getPincode()));
+                    personalAddress.setOwnershipStatus(personalAddress.getOwnershipStatus());
                 });
                 personalAddressDetails.setKycType(kycDocDetails.getKycType());
                 return (T) personalAddressDetails;
             case BUSINESS_ADDRESS:
                  BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) kycDocDetails.getDetails();
                  businessAddressDetails.setBusinessPanNumber(aes256.decrypt(businessAddressDetails.getBusinessPanNumber()));
-                 businessAddressDetails.setAddress(aes256.decrypt(businessAddressDetails.getAddress()));
+                 businessAddressDetails.setAddress1(aes256.decrypt(businessAddressDetails.getAddress1()));
+                 businessAddressDetails.setAddress2(aes256.decrypt(businessAddressDetails.getAddress2()));
                  businessAddressDetails.setCity(aes256.decrypt(businessAddressDetails.getCity()));
                  businessAddressDetails.setState(aes256.decrypt(businessAddressDetails.getState()));
                  businessAddressDetails.setPincode(aes256.decrypt(businessAddressDetails.getPincode()));
+                 buildPartnerInfo(businessAddressDetails);
                  return (T) businessAddressDetails;
-            case AGREEMENT:
+            /*case AGREEMENT:
             case CIN:
-            case VOTER_ID:
+            case VOTING_CARD:
             case PROPRIETORSHIP:
-            case DRIVING_LICENSE:
+            case DRIVING_LICENCE:
                 OldDocDetails oldDocDetails = (OldDocDetails) kycDocDetails.getDetails();
                 if(oldDocDetails == null){
                     return null;
                 }
                 return (T) OldDocResponse.builder()
                         .docId(oldDocDetails.getDocId())
-                        .build();
+                        .build();*/
             default:
                 return null;
+        }
+    }
+
+    private void buildPartnerInfo(BusinessAddressDetails businessAddressDetails) {
+
+        if(CollectionUtils.isNotEmpty(businessAddressDetails.getBusinessPartnerInfo())){
+            businessAddressDetails.getBusinessPartnerInfo().forEach(partnerInfoDto->{
+                partnerInfoDto.setDob(aes256.decrypt(partnerInfoDto.getDob()));
+                partnerInfoDto.setAddress(aes256.decrypt(partnerInfoDto.getAddress()));
+                partnerInfoDto.setName(aes256.decrypt(partnerInfoDto.getName()));
+                partnerInfoDto.setGender(partnerInfoDto.getGender());
+                partnerInfoDto.setMobileNumber(aes256.decrypt(partnerInfoDto.getMobileNumber()));
+                partnerInfoDto.setPincode(aes256.decrypt(partnerInfoDto.getPincode()));
+                partnerInfoDto.setPanNumber(aes256.decrypt(partnerInfoDto.getPanNumber()));
+                partnerInfoDto.setBusinessPartnerHolding(aes256.decrypt(partnerInfoDto.getBusinessPartnerHolding()));
+            });
         }
     }
 

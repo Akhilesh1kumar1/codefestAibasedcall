@@ -11,6 +11,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -86,6 +87,35 @@ public class IcrmLoanCompleteDetails {
     String zipLink;
 
     String loanVendorName;
+
+    String tier;
+
+    Double interestRateAtDisbursal;
+
+    BigDecimal interestAmountAtDisbursal;
+
+    Integer disbursementTenure;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    String disbursedDate;
+
+    BigDecimal totalRecoverableAmount;
+
+    BigDecimal monthlyEmi;
+
+    Date nextEmiDate;
+
+    Date lastEmiDate;
+
+    BigDecimal totalRecoveredAmount;
+
+    BigDecimal LoanAmountRequested;
+
+    String userName;
+
+    String emailId;
+
+    String mobileNumber;
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
@@ -107,7 +137,8 @@ public class IcrmLoanCompleteDetails {
 
         Integer tenure;
 
-
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        Date disbursedDate;
     }
 
 }

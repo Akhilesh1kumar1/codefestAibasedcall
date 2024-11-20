@@ -2,6 +2,7 @@ package com.sr.capital.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omunify.logger.enums.LogLevel;
 import com.sr.capital.exception.custom.ExternalServiceException;
 import com.sr.capital.exception.custom.RequestBodyRequiredException;
 import com.sr.capital.exception.custom.UnsupportedHttpMethodException;
@@ -142,9 +143,9 @@ public class WebClientUtil {
                         } catch (Exception ignored){
 
                         }
-//                        loggerUtil.logExternalAPIResponse(serviceName, uri, method, requestId,
-//                                HttpStatus.valueOf(clientResponse.statusCode().value()), clientResponse.headers().asHttpHeaders(),
-//                                responseObject, latency, Level.INFO);
+                        loggerUtil.logExternalAPIResponse(serviceName, uri, method, requestId,
+                                HttpStatus.valueOf(clientResponse.statusCode().value()), clientResponse.headers().asHttpHeaders(),
+                                responseObject, latency, LogLevel.INFO);
                         try {
                             ObjectMapper objectMapper = new ObjectMapper();
                             return Mono.just(objectMapper.readValue(body, responseClass));
@@ -161,9 +162,9 @@ public class WebClientUtil {
                         } catch (Exception ignored){
 
                         }
-//                        loggerUtil.logExternalAPIResponse(serviceName, uri, method, requestId,
-//                                HttpStatus.valueOf(clientResponse.statusCode().value()), clientResponse.headers().asHttpHeaders(),
-//                                errorObject, latency, Level.ERROR);
+                        loggerUtil.logExternalAPIResponse(serviceName, uri, method, requestId,
+                                HttpStatus.valueOf(clientResponse.statusCode().value()), clientResponse.headers().asHttpHeaders(),
+                                errorObject, latency, LogLevel.ERROR);
                         return Mono.error(new ExternalServiceException(HttpStatus.valueOf(clientResponse.statusCode().value())));
                     });
         }

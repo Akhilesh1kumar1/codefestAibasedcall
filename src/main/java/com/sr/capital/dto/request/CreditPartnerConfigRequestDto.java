@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
@@ -29,4 +30,6 @@ public class CreditPartnerConfigRequestDto {
     Boolean authCodeHardcoded = false;
 
     Map<String,String> metaData;
+
+    Long expiryMultiplier=1l;
 }

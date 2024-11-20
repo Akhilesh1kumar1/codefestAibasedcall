@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import org.apache.commons.io.IOUtils;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -174,5 +176,33 @@ public class S3Util {
             }
         }
         return is;
+    }
+
+
+    public static File downloadFileFromS3( String bucketName, String key, File file) {
+        // Define the path where the file will be saved
+
+        // Create the GetObjectRequest for S3
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName,key);
+        // Download the file
+        s3Client.getObject(getObjectRequest, file);
+
+        // Convert to File object
+        return file;
+    }
+
+    public static Boolean deleteObjectFromS3(String bucketName,String key){
+        
+        DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucketName,key);
+
+        // Delete the object
+        try {
+            s3Client.deleteObject(deleteRequest);
+            log.info("object deleted from s3");
+        }catch (Exception ex){
+            log.error("eror in deletion {} ",key);
+            return false;
+        }
+        return true;
     }
 }

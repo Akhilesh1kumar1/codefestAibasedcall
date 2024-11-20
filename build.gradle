@@ -15,11 +15,12 @@ java {
 repositories {
 	mavenCentral()
 	maven {
-		url 'https://o2-stage-nexus.kartrocket.in/repository/maven-releases'
+		//url 'https://o2-stage-nexus.kartrocket.in/repository/maven-releases'
+		url 'https://sr-o2-nexus.shiprocket.in/repository/maven-releases'
 	}
-	maven {
+	/*maven {
 		url 'https://o2prod-nexus.shiprocket.com/repository/maven-releases'
-	}
+	}*/
 
 }
 
@@ -47,6 +48,7 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-web:6.1.2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 
 	//DATASOURCE CONNECTION CLIENTS
@@ -79,10 +81,10 @@ dependencies {
 		exclude group: 'org.springframework.boot'
 	}
 
-	//implementation("com.omunify:kafka-msg-consumer:0.0.1-v2")
-	//implementation('com.omunify:kafka-msg-publisher:1.0.3-v1')
-	//implementation("com.omunify:kafka-msg-common:0.0.1-v2")
-	//implementation('com.omunify:kafka-mysql-adapter:0.0.2-v2')
+	implementation("com.omunify:kafka-msg-consumer:0.0.1-v2")
+	implementation('com.omunify:kafka-msg-publisher:1.0.3-v1')
+	implementation("com.omunify:kafka-msg-common:0.0.1-v2")
+	implementation('com.omunify:kafka-mysql-adapter:0.0.2-v2')
 
 
 	//adhoc
@@ -112,6 +114,10 @@ dependencies {
 	implementation group: 'jakarta.inject', name: 'jakarta.inject-api', version: '2.0.1'
 	implementation 'org.apache.pdfbox:pdfbox:2.0.29'
 
+
+	//shedlock
+	implementation 'net.javacrumbs.shedlock:shedlock-spring:4.46.0'
+	implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.46.0'
 
 
 }

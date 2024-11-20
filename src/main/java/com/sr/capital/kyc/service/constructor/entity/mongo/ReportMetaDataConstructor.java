@@ -35,7 +35,9 @@ public class ReportMetaDataConstructor implements EntityConstructor {
                    .build();
        }else{
            KycDocDetails<ReportMetaData> kyc = (KycDocDetails<ReportMetaData>) request.getKycDocDetails();
+           kyc.setImages(images);
            kyc.setDetails(reportMetaData);
+           kyc.setLastModifiedBy(RequestData.getUserId()==null?"SYSTEM":""+RequestData.getUserId());
            return (T) kyc;
        }
 

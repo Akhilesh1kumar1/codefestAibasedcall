@@ -4,11 +4,14 @@ import com.sr.capital.dto.response.LoanApplicationStatusDto;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.helpers.enums.LoanStatus;
 import org.hibernate.annotations.Parameter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,5 +42,14 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
             "JOIN loan_application_status las ON la.id = las.loan_id " +
             "WHERE la.sr_company_id = :srCompanyId", nativeQuery = true)
     List<Object[]> findLoanApplicationsWithStatusBySrCompanyId(Long srCompanyId);
+
+    LoanApplication findByVendorLoanId(String vendorLoanId);
+
+   /* @Query(
+            value = "SELECT c FROM loan_application c  WHERE c.created_at BETWEEN :startDate AND :endDate",
+            countQuery = "SELECT count(*) FROM child_entity_table WHERE audit_data_created_at BETWEEN :startDate AND :endDate",
+            nativeQuery = true
+    )*/
+    Page<LoanApplication> findByLoanStatusAndAuditDataCreatedAtBetween(LoanStatus loanStatus, LocalDateTime startDate,LocalDateTime endDate, Pageable pageable);
 
 }

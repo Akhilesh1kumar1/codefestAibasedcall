@@ -176,7 +176,7 @@ public class DetailsComparator {
     private DocType getDocTypeBasisOfTaskType(TaskType taskType) {
         switch (taskType){
             case AADHAAR:
-                return DocType.AADHAAR;
+                return DocType.AADHAR;
             case BANK_DETAILS:
                 return DocType.BANK_CHEQUE;
             case GST:

@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -23,7 +25,9 @@ public class BusinessAddressDetails implements Serializable {
 
     String sectorType;
 
-    String address;
+    String address1;
+
+    String address2;
 
     String city;
 
@@ -32,4 +36,42 @@ public class BusinessAddressDetails implements Serializable {
     String pincode;
 
     Map<String,Object> metaData;
+
+    String businessOwnerShipStatus;
+
+    Boolean gstRegistered;
+
+    Integer noOfDirector;
+
+    List<BusinessPartnerInfo> businessPartnerInfo;
+    @Data
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class BusinessPartnerInfo{
+
+        String name;
+
+        String panNumber;
+
+        String gender;
+
+        String dob;
+
+        String mobileNumber;
+
+        String address;
+
+        String pincode;
+
+        String businessPartnerHolding;
+
+        String uniqueIdentifier;
+
+        String city;
+
+        String state;
+
+    }
+
+
 }

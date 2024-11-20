@@ -34,13 +34,17 @@ public class PersonalAddressDetailsRequestDto {
 
         String addressType;
 
-        String address;
+        String address1;
+
+        String address2;
 
         String city;
 
         String state;
 
         String pincode;
+
+        String ownershipStatus;
 
     }
 }

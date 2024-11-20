@@ -8,6 +8,7 @@ import com.sr.capital.exception.custom.IncompatibleDetailsException;
 import com.sr.capital.repository.mongo.KycDocDetailsHistoryRepo;
 import com.sr.capital.repository.mongo.KycDocDetailsRepo;
 import com.sr.capital.util.MongoEntityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.sr.capital.helpers.enums.DocType;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class KycDocDetailsManager {
 
     @Autowired
@@ -27,6 +29,7 @@ public class KycDocDetailsManager {
 
     public KycDocDetails<?> saveKycDocDetails(KycDocDetails<?> kycDocDetails) throws IncompatibleDetailsException {
         if(kycDocDetails == null) {
+            log.error("kyc do details is null for tenantid {} "+RequestData.getTenantId());
             return null;
         }
         if(!MongoEntityUtil.validateKycDocDetails(kycDocDetails)){

@@ -5,9 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 import static com.sr.capital.helpers.constants.Constants.EntityNames.LOAN_APPLICATION;
@@ -21,6 +23,7 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.LOAN_APPLIC
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = LOAN_APPLICATION_STATUS)
+@FieldNameConstants
 public class LoanApplicationStatus extends LongBaseEntity{
 
     @Column(name = "loan_id")
@@ -39,7 +42,8 @@ public class LoanApplicationStatus extends LongBaseEntity{
     Integer loanDuration;
 
     @Column(name = "interest_amount_at_sanction")
-    BigDecimal interestAmountAtSanction;
+    @Builder.Default
+    BigDecimal interestAmountAtSanction=BigDecimal.ZERO;
 
     @Column(name = "start_date")
     LocalDate startDate;
@@ -51,8 +55,19 @@ public class LoanApplicationStatus extends LongBaseEntity{
     String comment;
 
     @Column(name = "total_disbursed_amount")
-    BigDecimal totalDisbursedAmount;
+    @Builder.Default
+    BigDecimal totalDisbursedAmount=BigDecimal.ZERO;
 
     @Column(name = "vendor_status")
     String vendorStatus;
+
+    @Column(name = "sanction_code")
+    String sanctionCode;
+
+    @Column(name = "total_amount_recovered")
+    BigDecimal totalAmountRecovered;
+
+    @Column(name = "total_recoverable_amount")
+    BigDecimal totalRecoverableAmount;
+    
 }

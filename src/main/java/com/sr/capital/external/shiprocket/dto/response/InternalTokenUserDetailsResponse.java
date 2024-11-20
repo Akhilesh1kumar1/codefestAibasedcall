@@ -56,4 +56,8 @@ public class InternalTokenUserDetailsResponse implements Serializable {
     private String gender;
 
    private Boolean isMobileVerified=true;
+
+    @JsonProperty("current_account_available")
+    private Boolean currentAccountAvailable;
+
 }

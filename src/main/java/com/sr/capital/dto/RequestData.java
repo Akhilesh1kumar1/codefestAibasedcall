@@ -20,6 +20,9 @@ public class RequestData {
 
     static ThreadLocal<RequestType> requestTypeLocal = new ThreadLocal<>();
 
+    static ThreadLocal<String> messageIdLocal = new ThreadLocal<>();
+
+
     public static void setTenantId(String tenantId) {
         tenantIdLocal.set(tenantId);
     }
@@ -51,4 +54,13 @@ public class RequestData {
     public static void setRequestType(RequestType requestType) {
         requestTypeLocal.set( requestType);
     }
+
+    public static void setMessageId(String messageId) {
+        messageIdLocal.set(messageId);
+    }
+
+    public static String getMessageId() {
+        return messageIdLocal.get();
+    }
+
 }

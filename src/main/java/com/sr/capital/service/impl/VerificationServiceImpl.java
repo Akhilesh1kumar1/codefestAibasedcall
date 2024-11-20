@@ -2,6 +2,7 @@ package com.sr.capital.service.impl;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.ResendOtpRequest;
+import com.sr.capital.dto.request.ValidateMobileNumberRequestDto;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
 import com.sr.capital.entity.primary.User;
@@ -73,6 +74,8 @@ public class VerificationServiceImpl implements VerificationService {
         communicationService.sendOtpForVerification(communicationService.getCommunicationRequestForOtpVerificationViaSmsAndWhatsApp(mobile, verificationEntity.getData(), List.of(verificationEntity.getData())));
         return true;
     }
+
+
 
 
 }

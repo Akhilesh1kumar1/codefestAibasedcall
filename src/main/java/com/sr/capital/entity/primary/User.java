@@ -81,11 +81,14 @@ public class User extends LongBaseEntity{
     @Column(name = "gender")
     private String gender;
 
+    @Column(name = "current_account_available")
+    private Boolean currentAccountAvailable;
+
     public static User mapUser(UserDetails userDetails){
         User user =User.builder().srUserId(Long.valueOf(userDetails.getUserId())).
         comments(userDetails.getComments()).srCompanyId(Long.valueOf(RequestData.getTenantId()))
                 .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).companyName(userDetails.getCompanyName()).panNumber(userDetails.getPanNumber()).dateOfBirth(userDetails.getDateOfBirth()).fatherName(userDetails.getFatherName())
-                .gender(userDetails.getGender()).build();
+                .gender(userDetails.getGender()).currentAccountAvailable(userDetails.getCurrentAccountAvailable()).build();
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         return user;
@@ -107,5 +110,6 @@ public class User extends LongBaseEntity{
         user.setGender(userDetails.getGender());
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
+        user.setCurrentAccountAvailable(userDetails.getCurrentAccountAvailable());
     }
 }

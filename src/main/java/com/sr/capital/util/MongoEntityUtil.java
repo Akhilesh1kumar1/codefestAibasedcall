@@ -16,25 +16,60 @@ public class MongoEntityUtil {
         switch (docType){
             case GST_BY_PAN:
                 return kycDocDetails.getDetails() instanceof GstByPanDocDetails;
-            case GST:
+           /* case GST:
                 return kycDocDetails.getDetails() instanceof GstDocDetails;
             case PAN:
                 return kycDocDetails.getDetails() instanceof PanDocDetails;
             case AADHAAR:
-                return kycDocDetails.getDetails() instanceof AadhaarDocDetails;
+                return kycDocDetails.getDetails() instanceof AadhaarDocDetails;*/
             case BANK_CHEQUE:
                 List<BankDocDetails> bankDocDetailsList = (List<BankDocDetails>) kycDocDetails.getDetails();
                 return bankDocDetailsList.get(bankDocDetailsList.size()-1) instanceof BankDocDetails;
             case ITR:
                 return kycDocDetails.getDetails() instanceof ItrDocDetails;
-            case DRIVING_LICENSE:
+            case DRIVING_LICENCE:
             case PROPRIETORSHIP:
-            case VOTER_ID:
+            case VOTING_CARD:
             case CIN:
             case AGREEMENT:
             case MSME:
             case PROVISIONAL:
             case LOAN_TRACKER:
+            case DIRECTORS:
+            case PAN_GUARANTOR:
+            case PAN_PERSONAL:
+            case PASSPORT:
+            case ADHAR_GUARANTOR_COAPPLICANT:
+            case GST_REGISTRATION:
+            case SHOP_EST_REGISTRATION:
+            case TRADE_LICENSE:
+            case FOOD_LICENSE:
+            case DRUG_LICENSE_CERTIFICATE:
+            case UDYAM_REGISTRATION:
+            case UDYOG_AADHAAR:
+            case BANK_STATEMENT_CURRENT_6:
+            case ELECTRICITY_COMPANY:
+            case SALE_DEED_COMPANY:
+            case LANDLINE_BILL_3MONTH:
+            case PROPERTY_TAX_RECEIPT:
+            case RENT_AGREEMENT_COMPANY:
+            case FINANCIAL_AUDIT:
+            case ITR_RETURNS:
+            case GST_RETURNS_6:
+            case VALID_PARTNERSHIP_DEED:
+            case COMPANY_PAN:
+            case COMPANY_COI:
+            case MOA_AOA_COMPANY:
+            case LATEST_CA_SHAREHOLDINGS:
+            case ELECTRICITY:
+            case PIPED_GAS_BILL:
+            case WATER_BILL:
+            case SALE_DEED:
+            case LANDLINE_BILL:
+            case PAN:
+            case AADHAR:
+            case GST:
+            case EPAN:
                 return kycDocDetails.getDetails() instanceof ReportMetaData;
             case PERSONAL_ADDRESS:
                 return kycDocDetails.getDetails() instanceof PersonalAddressDetails;

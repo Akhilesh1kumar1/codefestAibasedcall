@@ -32,6 +32,9 @@ public class CreditPartnerConfig extends BaseDoc {
 
     Map<String, String> metaData;
 
+    @Builder.Default
+    Long expiryMultiplier=1l;
+
     public static void encryptInfo(CreditPartnerConfig config, AES256 aes256) {
         config.setAccountId(aes256.encrypt(config.getAccountId()));
         config.setAuthCode(aes256.encrypt(config.getAuthCode()));

@@ -55,7 +55,7 @@ public class ExternalRequestTransformerStrategy {
         ExternalRequestTransformer requestTransformer;
         DocType docType = request.getDocType();
         switch (docType) {
-            case AADHAAR:
+            case AADHAR:
                 requestTransformer = aadhaarExtractionRequestTransformer;
                 break;
             case BANK_CHEQUE:

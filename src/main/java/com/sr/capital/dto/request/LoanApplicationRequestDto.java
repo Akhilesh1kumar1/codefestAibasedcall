@@ -8,10 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
@@ -23,7 +20,10 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Builder
 public class LoanApplicationRequestDto extends BaseRequest {
+
+    UUID loanId;
 
     Long loanVendorId;
 
@@ -40,5 +40,6 @@ public class LoanApplicationRequestDto extends BaseRequest {
 
     String loanType;
 
+    @Builder.Default
     Boolean createLoanAtVendor=false;
 }

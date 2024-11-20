@@ -4,7 +4,6 @@ import com.amazonaws.HttpMethod;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.config.AppProperties;
-import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.*;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
@@ -25,13 +24,13 @@ import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.kyc.service.strategy.EntityConstructorStrategy;
 import com.sr.capital.kyc.service.strategy.ExternalRequestTransformerStrategy;
 import com.sr.capital.service.entityimpl.TaskManager;
+import com.sr.capital.service.impl.LoanStatusUpdateHandlerServiceImpl;
 import com.sr.capital.util.CsvUtils;
 import com.sr.capital.util.LoggerUtil;
 import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.S3Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.http.HttpStatusCode;
 
@@ -66,6 +65,9 @@ public class DocExtractionService {
     @Autowired
     private TaskManager taskManager;
 
+    @Autowired
+    private LoanStatusUpdateHandlerServiceImpl loanStatusUpdateHandlerService;
+
     private final LoggerUtil loggerUtil = LoggerUtil.getLogger(DocExtractionService.class);
 
     public void uploadAndExtractDetails(DocOrchestratorRequest orchestratorRequest) throws Exception {
@@ -99,12 +101,17 @@ public class DocExtractionService {
         KycDocDetails<?> kycDocDetails = entityConstructorStrategy.constructEntity(orchestratorRequest, orchestratorRequest.getKycDocDetails(),
                 getResponseClass(orchestratorRequest.getDocType()));
 
+        loggerUtil.info("[uploadAndExtractDetails] kycDocDetails doc type "+kycDocDetails.getDocType());
         kycDocDetailsManager.saveKycDocDetails(kycDocDetails);
 
         if(orchestratorRequest.getTask()!=null){
             taskManager.saveTask(orchestratorRequest.getTask());
         }
         orchestratorRequest.setKycDocDetails(kycDocDetails);
+
+        if(orchestratorRequest.getLoanId()!=null) {
+            loanStatusUpdateHandlerService.updateLoanState(orchestratorRequest.getLoanId(), orchestratorRequest.getDocType());
+        }
 
     }
 
@@ -187,14 +194,14 @@ public class DocExtractionService {
 
     private Class<?> getResponseClass(DocType docType) throws CustomException {
         switch (docType){
-            case AADHAAR:
-                return AadhaarDocDetails.class;
+            /*case AADHAAR:
+                return AadhaarDocDetails.class;*/
             case BANK_CHEQUE:
                 return BankDocDetails.class;
-            case GST:
+           /* case GST:
                 return GstDocDetails.class;
             case PAN:
-                return PanDocDetails.class;
+                return PanDocDetails.class;*/
             case SELFI:
                 return SelfiDocDetails.class;
             case GST_BY_PAN:
@@ -202,6 +209,46 @@ public class DocExtractionService {
             case MSME:
             case PROVISIONAL:
             case LOAN_TRACKER:
+            case DRIVING_LICENCE:
+            case PROPRIETORSHIP:
+            case VOTING_CARD:
+            case CIN:
+            case AGREEMENT:
+            case DIRECTORS:
+            case PAN_GUARANTOR:
+            case PAN_PERSONAL:
+            case PASSPORT:
+            case ADHAR_GUARANTOR_COAPPLICANT:
+            case GST_REGISTRATION:
+            case SHOP_EST_REGISTRATION:
+            case TRADE_LICENSE:
+            case FOOD_LICENSE:
+            case DRUG_LICENSE_CERTIFICATE:
+            case UDYAM_REGISTRATION:
+            case UDYOG_AADHAAR:
+            case BANK_STATEMENT_CURRENT_6:
+            case ELECTRICITY_COMPANY:
+            case SALE_DEED_COMPANY:
+            case LANDLINE_BILL_3MONTH:
+            case PROPERTY_TAX_RECEIPT:
+            case RENT_AGREEMENT_COMPANY:
+            case FINANCIAL_AUDIT:
+            case ITR_RETURNS:
+            case GST_RETURNS_6:
+            case VALID_PARTNERSHIP_DEED:
+            case COMPANY_PAN:
+            case COMPANY_COI:
+            case MOA_AOA_COMPANY:
+            case LATEST_CA_SHAREHOLDINGS:
+            case ELECTRICITY:
+            case PIPED_GAS_BILL:
+            case WATER_BILL:
+            case SALE_DEED:
+            case LANDLINE_BILL:
+            case PAN:
+            case AADHAR:
+            case GST:
+            case EPAN:
                 return ReportMetaData.class;
             case BUSINESS_ADDRESS:
                 return BusinessAddressDetails.class;

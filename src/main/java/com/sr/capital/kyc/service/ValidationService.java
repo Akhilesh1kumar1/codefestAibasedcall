@@ -59,7 +59,7 @@ public class ValidationService {
         }
 
         // AADHAAR SECOND FILE VALIDATION
-        if(orchestratorRequest.getDocType().equals(DocType.AADHAAR)){
+       /* if(orchestratorRequest.getDocType().equals(DocType.AADHAR)){
             if(!orchestratorRequest.hasFile2() || file2.getFile().getSize() == 0){
                 throw new FileNotFoundException();
             }
@@ -68,7 +68,7 @@ public class ValidationService {
             if(StringUtils.hasLength(file2Type) && !DocExtractionConstants.FileTypes.supportedFileTypes.contains(file2Type.toLowerCase())) {
                 throw new UnsupportedMediaType();
             }
-        }
+        }*/
 
         KycDocDetails<?> kycDocDetails = kycDocDetailsManager
                 .findKycDocDetailsByTenantIdAndDocType(RequestData.getTenantId(), orchestratorRequest.getDocType());

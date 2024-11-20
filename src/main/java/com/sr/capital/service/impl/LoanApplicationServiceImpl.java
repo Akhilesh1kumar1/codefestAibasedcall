@@ -1,39 +1,40 @@
 package com.sr.capital.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.omunify.encryption.algorithm.AES256;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
-import com.sr.capital.dto.request.CreateLeadRequestDto;
-import com.sr.capital.dto.request.LoanApplicationRequestDto;
-import com.sr.capital.dto.response.CreateLeadResponseDto;
-import com.sr.capital.dto.response.LoanApplicationResponseDto;
-import com.sr.capital.dto.response.LoanApplicationStatusDto;
+import com.sr.capital.dto.request.*;
+import com.sr.capital.dto.response.*;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BankDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
+import com.sr.capital.entity.primary.Pincode;
 import com.sr.capital.entity.primary.User;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.RequestType;
-import com.sr.capital.kyc.dto.request.DocDetailsRequest;
-import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
 import com.sr.capital.kyc.service.DocDetailsService;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.LoanApplicationService;
 import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.service.UserService;
+import com.sr.capital.service.entityimpl.PincodeEntityServiceImpl;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -50,21 +51,34 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final UserService userService;
     final DocDetailsService docDetailsService;
     final AES256 aes256;
-
+    final LoanAllocationServiceImpl loanAllocationService;
+    final DocumentSyncHelperServiceImpl documentSyncHelperService;
+    final PincodeEntityServiceImpl pincodeEntityService;
+    final AppProperties appProperties;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
 
         loanApplicationRequestDto = requestValidationStrategy.validateRequest(loanApplicationRequestDto, RequestType.LOAN_APPLICATION);
-        LoanApplication loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
-        loanApplication = loanApplicationRepository.save(loanApplication);
+        LoanApplication loanApplication =null ;
+
+        if(loanApplicationRequestDto.getLoanId()!=null){
+            loanApplicationRequestDto.setLoanStatus(LoanStatus.LEAD_VERIFIED);
+            loanApplication = loanApplicationRepository.findById(loanApplicationRequestDto.getLoanId()).orElse(null);
+              LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
+        }else {
+            loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
+            loanApplication = loanApplicationRepository.save(loanApplication);
+        }
 
         LoanApplicationResponseDto loanApplicationResponseDto =LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
 
         if(loanApplicationRequestDto.getCreateLoanAtVendor()){
-            CreateLeadResponseDto responseDto = creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(),buildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
-            if(responseDto!=null && responseDto.getStatus()!=null && responseDto.getStatus().equalsIgnoreCase("new")){
-                loanApplication.setLoanStatus(LoanStatus.PRE_APPROVED);
+            CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(loanApplicationRequestDto.getLoanVendorName()).createLead(loanApplicationRequestDto.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(),loanApplicationResponseDto));
+            if(responseDto!=null && responseDto.getSuccess()!=null ){
+                loanApplication.setLoanStatus(LoanStatus.LEAD_VERIFIED);
+                loanApplication.setVendorLoanId(responseDto.getLoanCode());
+                loanApplication.setExternalLeadCode(responseDto.getLeadCode());
                 loanApplicationRepository.save(loanApplication);
 
             }
@@ -75,6 +89,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         return loanApplicationResponseDto;
     }
+
 
 
     @Override
@@ -108,8 +123,108 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         return loanApplicationRepository.findById(loanApplicationId).orElse(null);
     }
 
+    @Override
+    public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException, IOException {
 
-    private CreateLeadRequestDto buildRequestDto(String tenantId,LoanApplicationResponseDto loanApplicationResponseDto) {
+        LoanApplication loanApplication = loanApplicationRepository.findById(pendingDocumentRequestDto.getLoanId()).orElse(null);
+        PendingDocumentResponseDto pendingDocumentResponseDto =null;
+        if(loanApplication!=null){
+            LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().loanId(loanApplication.getVendorLoanId().toString()).build();
+            loanAllocationService.getLoanVendor(loanMetaDataDto);
+            com.sr.capital.external.flexi.dto.response.PendingDocumentResponseDto pendingDocumentResponseDtoFromClient = (com.sr.capital.external.flexi.dto.response.PendingDocumentResponseDto) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).getPendingDocuments(loanMetaDataDto);
+            if(pendingDocumentResponseDtoFromClient!=null && pendingDocumentResponseDtoFromClient.getData()!=null){
+                TypeReference<List<PendingDocumentResponseDto.PendingItem>> tRef = new TypeReference<List<PendingDocumentResponseDto.PendingItem>>() {
+                };
+                List<PendingDocumentResponseDto.PendingItem>  pendingDocumentItems = MapperUtils.convertValue(pendingDocumentResponseDtoFromClient.getData().getPendingList(),tRef);
+
+                if(CollectionUtils.isEmpty(pendingDocumentItems) ){
+                    if(loanApplication.getLoanStatus()==LoanStatus.DOCUMENT_UPLOAD){
+                        loanApplication.setLoanStatus(LoanStatus.LEAD_PROCESSING);
+                        loanApplication.setState(LoanStatus.LEAD_PROCESSING.name());
+                        loanApplicationRepository.save(loanApplication);
+                    }
+                }
+                pendingDocumentResponseDto = PendingDocumentResponseDto.builder().pendingList(pendingDocumentItems).build();
+            }
+        }else{
+            throw new CustomException("Invalid LoadId ", HttpStatus.BAD_REQUEST);
+        }
+
+        return pendingDocumentResponseDto;
+    }
+
+    @Override
+    public LoanApplicationResponseDto createLoanAtVendor(CreateLoanAtVendorRequest createLoanAtVendorRequest) throws CustomException {
+
+        LoanApplicationResponseDto loanApplicationResponseDto = null;
+        LoanApplication loan =null;
+        if(createLoanAtVendorRequest.getLoanId()!=null){
+            loan = loanApplicationRepository.findById(createLoanAtVendorRequest.getLoanId()).orElse(null);
+            if(loan!=null){
+                loanApplicationResponseDto = LoanApplicationResponseDto.mapLoanApplicationResponse(loan);
+            }
+        }else{
+            List<LoanApplication> loanApplications =loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+            if(CollectionUtils.isNotEmpty(loanApplications))
+                for(LoanApplication loanApplication:loanApplications) {
+                    if(loanApplication.getLoanStatus().equals(LoanStatus.LEAD_VERIFIED)) {
+                        loan =loanApplication;
+                        loanApplicationResponseDto= LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
+                        break;
+                    }
+                };
+        }
+
+        if(loanApplicationResponseDto!=null) {
+            CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(createLoanAtVendorRequest.getLoanVendorName()).createLead(createLoanAtVendorRequest.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(), loanApplicationResponseDto));
+            if (responseDto != null && responseDto.getSuccess() != null) {
+                loan.setLoanStatus(LoanStatus.LEAD_PROCESSING);
+                loan.setVendorLoanId(responseDto.getLoanCode());
+                loan.setExternalLeadCode(responseDto.getLeadCode());
+                loan.getAuditData().setUpdatedAt(LocalDateTime.now());
+                loanApplicationRepository.save(loan);
+
+            }
+        }
+        return loanApplicationResponseDto;
+    }
+
+    @Override
+    public SyncDocumentResponseDto syncDocumentToVendor(SyncDocumentToVendor syncDocumentToVendor) throws CustomException {
+
+        LoanApplication loanApplication = loanApplicationRepository.findById(syncDocumentToVendor.getLoanId()).orElse(null);
+        if(loanApplication!=null){
+            LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().loanVendorId(loanApplication.getLoanVendorId())
+                    .loanId(loanApplication.getVendorLoanId()).srCompanyId(loanApplication.getSrCompanyId()).loanVendorName(syncDocumentToVendor.getLoanVendorName()).build();
+
+            documentSyncHelperService.syncDocumentToVendor(loanMetaDataDto);
+        }
+
+        return SyncDocumentResponseDto.builder().loanId(syncDocumentToVendor.getLoanId()).build();
+    }
+
+    @Override
+    public LoanApplication updateLoanApplication(LoanApplication loanApplication) {
+        return loanApplicationRepository.save(loanApplication);
+    }
+
+    @Override
+    public EnachRedirectionUrlResponseDto getRedirectionurl(EnachRedirectUrlRequestDto enachRedirectUrlRequestDto) {
+
+        LoanApplication loanApplication = loanApplicationRepository.findById(enachRedirectUrlRequestDto.getLoanId()).orElse(null);
+
+        if(loanApplication!=null){
+               if(enachRedirectUrlRequestDto.getRedirectionUrl()==null){
+                   enachRedirectUrlRequestDto.setRedirectionUrl(String.format(appProperties.getFlexiRedirectUrl(), loanApplication.getVendorLoanId()));
+               }
+            return EnachRedirectionUrlResponseDto.builder().loanId(enachRedirectUrlRequestDto.getLoanId()).redirectUrl(enachRedirectUrlRequestDto.getRedirectionUrl()).build();
+        }else {
+            return null;
+        }
+    }
+
+
+    private CreateLeadRequestDto validateAndBuildRequestDto(String tenantId, LoanApplicationResponseDto loanApplicationResponseDto) throws CustomException {
 
         User user = userService.getCompanyDetails(Long.valueOf(tenantId));
 
@@ -123,28 +238,28 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .build();
        log.info("[buildRequestDto] user details {} ",user);
         if(user!=null){
-
-            List<KycDocDetails<?>> docDetails =docDetailsService.fetchDocDetailsByTenantId(tenantId);
+             CreateLeadRequestDto.LoanDetails loanDetails =CreateLeadRequestDto.LoanDetails.builder().amount(loanApplicationResponseDto.getLoanAmountRequested()).partnerRefNo(String.valueOf(loanApplicationResponseDto.getId())).termsConditionAcceptance(true).build();
+             createLeadRequestDto.setLoanApplication(loanDetails);
+             List<KycDocDetails<?>> docDetails =docDetailsService.fetchDocDetailsByTenantId(tenantId);
 
             if(CollectionUtils.isNotEmpty(docDetails)){
 
-                docDetails.stream().forEach(doc->{
-                    if(doc.getDocType()== DocType.PERSONAL_ADDRESS){
-                        log.info("[buildRequestDto] personal doc {} ",doc);
+                for (KycDocDetails<?> doc : docDetails) {
+                    if (doc.getDocType() == DocType.PERSONAL_ADDRESS) {
+                        log.info("[buildRequestDto] personal doc {} ", doc);
+                        validateAndBuildPersonalDetails(doc, user, createLeadRequestDto, loanApplicationResponseDto.getLoanVendorId());
 
-                        buildPersonalDetails(doc,user,createLeadRequestDto);
+                    } else if (doc.getDocType() == DocType.BUSINESS_ADDRESS) {
+                        log.info("[buildRequestDto] business doc {} ", doc);
 
-                    }else if(doc.getDocType() == DocType.BUSINESS_ADDRESS){
-                        log.info("[buildRequestDto] business doc {} ",doc);
+                        buildBusinessDetails(doc, createLeadRequestDto, user);
+                    } else if (doc.getDocType() == DocType.BANK_CHEQUE) {
 
-                        buildBusinessDetails(doc,createLeadRequestDto,user);
-                    }else if(doc.getDocType() == DocType.BANK_CHEQUE){
+                        log.info("[buildRequestDto] bank cheque {} ", doc);
 
-                        log.info("[buildRequestDto] bank cheque {} ",doc);
-
-                        buildAccountDetails(doc,createLeadRequestDto,false);
+                        buildAccountDetails(doc, createLeadRequestDto, false);
                     }
-                });
+                }
 
                 if(CollectionUtils.isEmpty(createLeadRequestDto.getDisbursementAccounts())){
                     buildAccountDetails(null,createLeadRequestDto,true);
@@ -187,9 +302,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     private void buildBusinessDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto,User user) {
         BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) doc.getDetails();
-        List<String> phoneNumber = new ArrayList<>();
-        phoneNumber.add(user.getMobile());
-        CreateLeadRequestDto.Business business = CreateLeadRequestDto.Business.builder()
+        CreateLeadRequestDto.LoanBusiness loanBusiness = CreateLeadRequestDto.LoanBusiness.builder().legalStatus(doc.getKycType().getClientType())
+                .addressLine1(aes256.decrypt(businessAddressDetails.getAddress1()))
+                .addressLine2(aes256.decrypt(businessAddressDetails.getAddress2()))
+                .ownershipStatus(businessAddressDetails.getBusinessOwnerShipStatus())
+                .pincode(aes256.decrypt(businessAddressDetails.getPincode()))
+                .partnerCount(businessAddressDetails.getNoOfDirector()).ownershipStatus(businessAddressDetails.getBusinessOwnerShipStatus())
+                .hasGstRegistration(businessAddressDetails.getGstRegistered()==true?1:0).build();
+        /*CreateLeadRequestDto.Business business = CreateLeadRequestDto.Business.builder()
                 .businessPanNumber(aes256.decrypt(businessAddressDetails.getBusinessPanNumber()))
                 .businessType(businessAddressDetails.getBusinessType()).nameOfBusiness(businessAddressDetails.getBusinessName())
                 .businessRegisteredOfficePincode(Long.valueOf(aes256.decrypt(businessAddressDetails.getPincode())))
@@ -197,11 +317,38 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .sectorType(businessAddressDetails.getSectorType())
                 .businessRegisteredOfficeAddress(aes256.decrypt(businessAddressDetails.getAddress())).businessPhoneNumber(phoneNumber)
                 .typeOfConstitution(doc.getKycType().name()).industryType(businessAddressDetails.getIndustryType())
-                .build();
-        createLeadRequestDto.setBusiness(business);
+                .build();*/
+
+        buildBusinessPartner(createLeadRequestDto ,businessAddressDetails);
+        createLeadRequestDto.getLoanApplication().setLoanBusiness(loanBusiness);
     }
 
-    private void buildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto) {
+    private void buildBusinessPartner(CreateLeadRequestDto createLeadRequestDto, BusinessAddressDetails businessAddressDetails) {
+
+        List<CreateLeadRequestDto.LoanBusinessPartner> loanBusinessPartnerList;
+        if(CollectionUtils.isNotEmpty(businessAddressDetails.getBusinessPartnerInfo())){
+            loanBusinessPartnerList = new ArrayList<>();
+            businessAddressDetails.getBusinessPartnerInfo().forEach(businessPartnerInfo -> {
+
+                CreateLeadRequestDto.LoanBusinessPartner partner =CreateLeadRequestDto.LoanBusinessPartner.builder()
+                .dob(aes256.decrypt(businessPartnerInfo.getDob())).
+                address(aes256.decrypt(businessPartnerInfo.getAddress())).
+                name(aes256.decrypt(businessPartnerInfo.getName())).
+                gender(businessPartnerInfo.getGender()).city(businessPartnerInfo.getCity()).state(businessPartnerInfo.getState()).
+                mobileNo(aes256.decrypt(businessPartnerInfo.getMobileNumber())).
+                pincode(aes256.decrypt(businessPartnerInfo.getPincode())).
+                panNo(aes256.decrypt(businessPartnerInfo.getPanNumber())).
+                holding(Double.valueOf(aes256.decrypt(businessPartnerInfo.getBusinessPartnerHolding()))).interimBusinessPartnerIdentifier(businessPartnerInfo.getUniqueIdentifier())
+                        .build();
+                loanBusinessPartnerList.add(partner);
+            });
+        } else {
+            loanBusinessPartnerList = null;
+        }
+        createLeadRequestDto.getLoanApplication().setLoanBusinessPartners(loanBusinessPartnerList);
+    }
+
+    private void validateAndBuildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto,Long loanVendorId) throws CustomException {
         createLeadRequestDto.setFirstName(user.getFirstName());
         createLeadRequestDto.setMobileNumber(user.getMobile());
         createLeadRequestDto.setEmail(user.getEmail());
@@ -213,19 +360,35 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         createLeadRequestDto.setCategory("unsecured");
         createLeadRequestDto.setSubCategory("fresh");
         createLeadRequestDto.setGender(user.getGender());
-        personalAddressDetails.getAddress().forEach(address -> {
-            if(address.getAddressType()==null || address.getAddressType().equalsIgnoreCase("current")) {
-                createLeadRequestDto.setCurrentAddress(aes256.decrypt(address.getAddress()));
-                createLeadRequestDto.setCurrentCity(aes256.decrypt(address.getCity()));
-                createLeadRequestDto.setCurrentPincode(aes256.decrypt(address.getPincode()));
-                createLeadRequestDto.setCurrentState(aes256.decrypt(address.getState()));
-                createLeadRequestDto.setPrimaryBorrowerType(user.getEntityType());
-            }else{
-                createLeadRequestDto.setPermanentAddress(aes256.decrypt(address.getAddress()));
-                createLeadRequestDto.setPermanentCity(aes256.decrypt(address.getCity()));
-                createLeadRequestDto.setPermanentPincode(aes256.decrypt(address.getPincode()));
-                createLeadRequestDto.setPermanentState(aes256.decrypt(address.getState()));
+
+        CreateLeadRequestDto.LoanApplicant loanApplicant = CreateLeadRequestDto.LoanApplicant.builder().dob(user.getDateOfBirth())
+                .panNo(user.getPanNumber()).gender(user.getGender()).isCurrentAccountAvailable(user.getCurrentAccountAvailable()?1:0).build();
+
+
+        for (PersonalAddressDetails.Address address : personalAddressDetails.getAddress()) {
+            if (address.getAddressType() == null || address.getAddressType().equalsIgnoreCase("current")) {
+                loanApplicant.setAddressLine1(aes256.decrypt(address.getAddress1()));
+                loanApplicant.setAddressLine2(aes256.decrypt(address.getAddress2()));
+
+                if(loanApplicant.getAddressLine2()==null){
+                    loanApplicant.setAddressLine2("city "+ aes256.decrypt(address.getCity()).concat(" ,state "+aes256.decrypt(address.getState())));
+                }else{
+                    loanApplicant.setAddressLine2(loanApplicant.getAddressLine2()+" , city "+ aes256.decrypt(address.getCity()).concat(" ,state "+aes256.decrypt(address.getState())));
+
+                }
+
+                loanApplicant.setPincode(aes256.decrypt(address.getPincode()));
+                loanApplicant.setOwnershipStatus(address.getOwnershipStatus());
+                Pincode pincode = pincodeEntityService.getPincodeDetailsByVendorId(Long.valueOf(loanApplicant.getPincode()), loanVendorId);
+                if (pincode == null) {
+                    throw new CustomException("We cannot provide loan at pincode " + loanApplicant.getPincode(), HttpStatus.BAD_REQUEST);
+                }
+            } else {
             }
-        });
+        }
+        createLeadRequestDto.getLoanApplication().setLoanApplicant(loanApplicant);
     }
+
+
+
 }

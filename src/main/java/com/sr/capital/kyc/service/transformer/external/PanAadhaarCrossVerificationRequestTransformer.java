@@ -28,7 +28,7 @@ public class PanAadhaarCrossVerificationRequestTransformer implements ExternalRe
         KycDocDetails<PanDocDetails> kycDocDetails = (KycDocDetails<PanDocDetails>) request.getKycDocDetails();
         PanDocDetails panDocDetails = kycDocDetails.getDetails();
         KycDocDetails<AadhaarDocDetails> aadhaarDocDetailsKycDocDetails =
-                (KycDocDetails<AadhaarDocDetails>) kycDocDetailsManager.findKycDocDetailsByTenantIdAndDocType(RequestData.getTenantId(), DocType.AADHAAR);
+                (KycDocDetails<AadhaarDocDetails>) kycDocDetailsManager.findKycDocDetailsByTenantIdAndDocType(RequestData.getTenantId(), DocType.AADHAR);
         AadhaarDocDetails aadhaarDocDetails = aadhaarDocDetailsKycDocDetails.getDetails();
 
         //TODO: Find a way to add aadhar here

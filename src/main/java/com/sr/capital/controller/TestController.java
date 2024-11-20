@@ -4,6 +4,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.repository.secondary.TestRepository;
 import com.sr.capital.service.impl.ServicesHandler;
 import com.sr.capital.service.impl.TestServiceImpl;
@@ -29,6 +30,7 @@ public class TestController {
     final TestServiceImpl testService;
     final TestRepository testRepository;
     final ServicesHandler servicesHandler;
+    final CommunicationService communicationService;
 
     @GetMapping()
     public GenericResponse testValidateTokenApi(@RequestParam("token") String token) throws UnirestException, CustomException {
@@ -69,5 +71,11 @@ public class TestController {
     public GenericResponse testMultiteDb(@RequestParam("loanId") String loanId,@RequestParam("partnerName") String loanPartnerName) throws UnirestException, CustomException {
 
         return ResponseBuilderUtil.getResponse(testService.testAccessToken(loanPartnerName,loanId), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/email")
+    public GenericResponse testEmailId(@RequestParam("emailId") String emailid,@RequestParam("userName") String userName) throws UnirestException, CustomException {
+
+        return ResponseBuilderUtil.getResponse(communicationService.testCommunicationRequestForEmailVerification(emailid,userName,"https://codebeautify.org/htmlviewer"), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
     }
 }

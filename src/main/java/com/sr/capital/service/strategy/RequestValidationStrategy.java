@@ -23,6 +23,7 @@ public class RequestValidationStrategy {
     final EnachLinkingValidator enachLinkingValidator;
     final LoanApplicationRequestValidator loanApplicationRequestValidator;
     final ResendOtpRequestValidator resendOtpRequestValidator;
+    final MobileNumberValidation mobileNumberValidation;
     public <T,U> T validateRequest(U request, RequestType type) throws Exception {
         RequestValidator requestValidator;
         switch (type) {
@@ -36,6 +37,7 @@ public class RequestValidationStrategy {
             case ENACH_LINKING -> requestValidator = enachLinkingValidator;
             case LOAN_APPLICATION -> requestValidator = loanApplicationRequestValidator;
             case RESEND_OTP -> requestValidator = resendOtpRequestValidator;
+            case VERIFY_MOBILE_FOR_LOAN -> requestValidator = mobileNumberValidation;
             default -> {
                 throw new RequestValidatorNotFoundException();
             }

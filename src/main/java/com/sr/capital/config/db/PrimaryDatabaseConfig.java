@@ -42,6 +42,7 @@ public class PrimaryDatabaseConfig {
 
 
     @Bean(name = "primaryDataSource")
+    @Primary
     //@ConfigurationProperties(prefix = "spring.datasource.primary")
     public HikariDataSource primaryDataSource() {
         HikariConfig config = new HikariConfig();
@@ -56,6 +57,7 @@ public class PrimaryDatabaseConfig {
     }
 
     @Bean(name = "primaryEntityManagerFactory")
+    @Primary
     public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(
             @Qualifier("primaryDataSource") DataSource dataSource) throws Exception {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -81,6 +83,7 @@ public class PrimaryDatabaseConfig {
     }
 
     @Bean(name = "primaryJdbcTemplate")
+    @Primary
     public JdbcTemplate primaryJdbcTemplate(@Qualifier("primaryDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }

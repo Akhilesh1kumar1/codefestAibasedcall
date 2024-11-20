@@ -33,6 +33,7 @@ public class KarzaWebhookServiceImpl implements KarzaWebhookService {
 
     @Override
     public Boolean saveGstDetails(GstConsolidationWebhookRequest gstConsolidationWebhookRequest, String vendorToken, String vendorCode) throws CustomException {
+
         validateRequest(gstConsolidationWebhookRequest,vendorCode,vendorToken);
 
         GstCompleteDocDetails gstCompleteDocDetails = gstCompleteDetailsManager.getGstDetailsByTenantIdAndGstInId(gstConsolidationWebhookRequest.getSrCompanyId(),gstConsolidationWebhookRequest.getResult().getGstin());

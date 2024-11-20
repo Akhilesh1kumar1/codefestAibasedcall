@@ -38,10 +38,10 @@ public class PersonalAddressDetailsConstructor implements EntityConstructor {
 
         List<PersonalAddressDetails.Address> addressList =new ArrayList<>();
         personalAddressDetailsRequest.getAddress().stream().forEach(personalAddressDetailsRequestDto-> {
-                    PersonalAddressDetails.Address address = PersonalAddressDetails.Address.builder().address(aes256.encrypt(personalAddressDetailsRequestDto.getAddress()))
+                    PersonalAddressDetails.Address address = PersonalAddressDetails.Address.builder().address1(aes256.encrypt(personalAddressDetailsRequestDto.getAddress1())).address2(aes256.encrypt(personalAddressDetailsRequestDto.getAddress2()))
                             .pincode(aes256.encrypt(personalAddressDetailsRequestDto.getPincode())).city(aes256.encrypt(personalAddressDetailsRequestDto.getCity())).addressType(personalAddressDetailsRequestDto.getAddressType())
 
-                            .state(aes256.encrypt(personalAddressDetailsRequestDto.getState())).build();
+                            .state(aes256.encrypt(personalAddressDetailsRequestDto.getState())).ownershipStatus(personalAddressDetailsRequestDto.getOwnershipStatus()).build();
                     addressList.add(address);
                 });
         PersonalAddressDetails personalAddressDetails = PersonalAddressDetails.builder().address(addressList).metaData(personalAddressDetailsRequest.getMetaData()).build();
@@ -56,6 +56,7 @@ public class PersonalAddressDetailsConstructor implements EntityConstructor {
                     .details(personalAddressDetails)
                     .kycType(request.getKycType())
                     .build();
+            kycDocDetails.setCreatedBy(RequestData.getUserId()==null?"SYSTEM":""+RequestData.getUserId());
         }else{
             kycDocDetails.setDetails(personalAddressDetails);
             kycDocDetails.setLastModifiedAt(LocalDateTime.now());

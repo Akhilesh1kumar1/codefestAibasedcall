@@ -56,6 +56,7 @@ app:
   cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
+  web-url: ${WEB_URL:https://multichannel-appstore-qa.kartrocket.com/capital/home}
   verification:
     otp:
       request-limit: 4
@@ -124,6 +125,10 @@ app:
     common:
       vendor-token: ${COMMON_VENDOR_TOKEN:test}
       vendor-code: ${COMMON_VENDOR_CODE:test}
+    flexi:
+      vendor-token: ${FLEXI_VENDOR_TOKEN:test}
+      vendor-code: ${FLEXI_VENDOR_CODE:test}
+      redirection-url: ${FLEXI_REDIRECTION_URL:https://ops.flexiloans.net/sanction/accept/%s}
 
 aws:
   region: ${AWS_REGION:test}
@@ -238,7 +243,7 @@ kafka:
   topics:
     statusUpdate: capital
   producer:
-    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost}:9092
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     numberOfProducers: 1
     maxBlockTimeMs: 5000
     retrylock: capital-write-publisher-lock
@@ -247,8 +252,29 @@ kafka:
     confluentEnabled: ${CONFLUENT_ENABLED:false}
   consumer:
     serviceName: capital
-    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost}:9092
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     podPreDestroyGraceTimeInMs: ${KAFKA_PRE_POD_DESTROY_GRACE_MS:10000}
     confluentUserName: ${CONFLUENT_USER_NAME:""}
     confluentPassword: ${CONFLUENT_PASSWORD:""}
     confluentEnabled: ${CONFLUENT_ENABLED:false}
+    groups:
+      - topicName: capital
+        consumerCount: 1
+        groupId: status-update
+        topicHandler: status-update-handler
+        commitBlockTimeMs: 5000
+        handlerTimeoutMs: 25000
+        groupingEnabled: false
+        syncRetry:
+          maxRetry: 2
+          retryIntervalMs: 1000
+
+
+jobs:
+  disbursement:
+    cronInMinutes: 300
+  sanction:
+    cronInMinutes: 400
+  status:
+    cronInMinutes: 120
+

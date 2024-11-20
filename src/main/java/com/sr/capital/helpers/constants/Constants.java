@@ -57,6 +57,8 @@ public final class Constants {
 
         public static final String UNDERWRITING_CONFIG = "underwriting_config";
 
+        public static final String PINCODE = "pincode";
+
     }
 
     public static class ServiceConstants{
@@ -102,6 +104,9 @@ public final class Constants {
         public static final String FILE_IN_PROGRESS_ERROR = "A file is already in progress. Please retry after some time.";
 
         public static final String VALID_PAN = "Pan Number is in valid format";
+
+        public static final String VALID_MOBILE_NUMBER = "Mobile Number is valid";
+
 
         public static final String INVALID_EMAIL = "The email address is invalid!";
         public static final String INVALID_MOBILE = "The mobile is invalid!";
@@ -183,7 +188,15 @@ public final class Constants {
         public static final String REFERER_HEADER = "X-Referer";
         public static final String SERVICE_SECRET_HEADER = "X-Service-Secret";
 
+        public static final String MESSAGE_HEADER = "x-message-id";
+
+        public static final String EVENT_TYPE = "event-type";
+
         public static final String TOKEN = "X-Token";
+
+        public static final String LOAN_VENDOR_NAME = "loan-vendor-name";
+
+
     }
 
 

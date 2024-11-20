@@ -2,6 +2,7 @@ package com.sr.capital.service.impl;
 
 import com.amazonaws.HttpMethod;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omunify.kafka.consumer.thread.MainConsumerThread;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.CompanySalesDetails;
@@ -14,6 +15,7 @@ import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.external.dto.request.KaleyraWebhookDto;
 import com.sr.capital.external.service.CommunicationService;
+import com.sr.capital.helpers.enums.KafkaEventTypes;
 import com.sr.capital.kyc.dto.request.DocDetailsRequest;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.dto.request.UploadFileToS3Request;
@@ -22,6 +24,7 @@ import com.sr.capital.service.*;
 import com.sr.capital.service.entityimpl.BaseCreditPartnerEntityServiceImpl;
 import com.sr.capital.service.entityimpl.WhatsAppEntityServiceImpl;
 import com.sr.capital.util.CsvUtils;
+import com.sr.capital.util.KafkaMessagePublisherUtil;
 import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
@@ -53,12 +56,12 @@ public class ExternalServiceImpl implements ExternalService {
     final LeadGenerationService leadGenerationService;
     final CommunicationService communicationService;
     final UserService userService;
+    final KafkaMessagePublisherUtil kafkaMessagePublisherUtil;
 
     final LoanStatusUpdateHandlerServiceImpl loanStatusUpdateHandlerService;
 
     @Override
     public Boolean validateRequest(String vendorToken, String vendorCode, String loanVendorName) throws InvalidVendorTokenException, InvalidVendorCodeException {
-
         return creditPartnerFactoryService.getPartnerService(loanVendorName).validateExternalRequest(vendorToken, vendorCode);
     }
 
@@ -129,10 +132,10 @@ public class ExternalServiceImpl implements ExternalService {
 
         log.info("[saveLoanStatus] webhook content : {} ", loanStatusWebhook);
 
-
         creditPartnerFactoryService.getPartnerService(loanVendorName).validateExternalRequest(vendorToken, vendorCode);
-        LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto = MapperUtils.convertValue(loanStatusWebhook, LoanStatusUpdateWebhookDto.class);
-        loanStatusUpdateHandlerService.handleStatusUpdate(loanStatusUpdateWebhookDto,loanVendorName);
+
+        kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(),kafkaMessagePublisherUtil.getKafkaMessage(MapperUtils.writeValueAsString(loanStatusWebhook), KafkaEventTypes.LOAN_STATUS_UPDATE.name(),null,null,loanVendorName));
+
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
     }

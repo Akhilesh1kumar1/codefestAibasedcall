@@ -35,7 +35,9 @@ public class PersonalAddressDetails implements Serializable {
 
         String addressType;
 
-        String address;
+        String address1;
+
+        String address2;
 
         String city;
 
@@ -43,5 +45,6 @@ public class PersonalAddressDetails implements Serializable {
 
         String pincode;
 
+        String ownershipStatus;
     }
 }

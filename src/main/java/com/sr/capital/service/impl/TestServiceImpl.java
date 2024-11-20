@@ -3,6 +3,7 @@ package com.sr.capital.service.impl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.external.dto.response.ValidateTokenResponse;
@@ -55,11 +56,14 @@ public class TestServiceImpl {
         return true;
     }
 
-    public AccessTokenResponseDto testAccessToken(String partner) {
+    public Object testAccessToken(String partner) {
+
         return creditPartnerFactoryService.getPartnerService(partner).getAccessToken(partner);
     }
 
-    public LoanStatusUpdateWebhookDto testAccessToken(String partner,String loanId) {
-        return creditPartnerFactoryService.getPartnerService(partner).getLoanDetails(partner,loanId);
+    public Object testAccessToken(String partner,String loanId) {
+        LoanMetaDataDto.ValidateLoanData validateLoanData =LoanMetaDataDto.ValidateLoanData.builder().mobileNumber("7823452312").panNumber("EBXPP9720A").build();
+        LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().loanVendorId(13l).loanVendorName(partner).loanId(loanId).validateLoanData(validateLoanData).build();
+        return  creditPartnerFactoryService.getPartnerService(partner).getLoanDetails(loanMetaDataDto);
     }
 }

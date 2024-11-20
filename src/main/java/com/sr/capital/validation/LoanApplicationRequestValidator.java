@@ -8,6 +8,7 @@ import com.sr.capital.entity.primary.BaseCreditPartner;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanOffer;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.LoanOfferService;
 import com.sr.capital.service.RequestValidator;
@@ -40,10 +41,10 @@ public class LoanApplicationRequestValidator  implements RequestValidator {
             }
         }
 
-        if(requestDto.getLoanAmountRequested()==null || requestDto.getLoanAmountRequested().equals(BigDecimal.ZERO)){
+       /* if(requestDto.getLoanAmountRequested()==null || requestDto.getLoanAmountRequested().equals(BigDecimal.ZERO)){
             requestDto.setLoanAmountRequested(BigDecimal.valueOf(500000));
             requestDto.setLoanDuration(3);
-        }
+        }*/
 
         if(requestDto.getLoanVendorId()!=null){
             if(!baseCreditPartnerEntityService.isVendorExist(requestDto.getLoanVendorId())){
@@ -58,7 +59,6 @@ public class LoanApplicationRequestValidator  implements RequestValidator {
                 }
             }
         }
-
 
 
         return (T) requestDto;

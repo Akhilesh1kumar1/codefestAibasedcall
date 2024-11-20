@@ -1,6 +1,6 @@
 package com.sr.capital.service;
 
-import com.sr.capital.helpers.enums.RequestType;
+import com.sr.capital.dto.request.ValidateMobileNumberRequestDto;
 
 public interface ValidateService {
 
@@ -8,5 +8,8 @@ public interface ValidateService {
 
 
     Boolean validateGst(String value ) throws Exception;
+
+
+    Boolean validateMobileNumberAndCreateLoanApplication(ValidateMobileNumberRequestDto validateMobileNumberRequestDto) throws Exception;
 
 }

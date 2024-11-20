@@ -126,6 +126,23 @@ public class FileUploadServiceImpl implements FileUploadService {
         return zipFilePath;
     }
 
+    @Override
+    public File downloadFile(String fileName) throws IOException {
+        File tempDir = createTempDirectory();
+        return S3Util.downloadFileFromS3(appProperties.getBucketName(),fileName,tempDir);
+    }
+
+    @Override
+    public Boolean deleteFiles(File file) {
+         try {
+             deleteDirectory(file);
+
+         }catch (Exception ex) {
+         }
+         return true;
+    }
+
+
     private String getDocExtension(String filePath) {
         int lastIndexOfDot = filePath.lastIndexOf('.');
         if (lastIndexOfDot > 0 && lastIndexOfDot < filePath.length() - 1) {
@@ -168,6 +185,8 @@ public class FileUploadServiceImpl implements FileUploadService {
         }
     }
 
+
+
     private void deleteDirectory(File directory) {
         if (directory.isDirectory()) {
             File[] files = directory.listFiles();
@@ -184,6 +203,8 @@ public class FileUploadServiceImpl implements FileUploadService {
     private File createTempDirectory() throws IOException {
         return Files.createTempDirectory("tempDir").toFile();
     }
+
+
 
     private void writeInputStreamToFile(InputStream inputStream, String filePath) throws IOException {
        try (OutputStream outputStream = new FileOutputStream(filePath)) {

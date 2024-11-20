@@ -5,12 +5,14 @@ import com.sr.capital.entity.primary.interfaces.Auditable;
 import com.sr.capital.listner.AuditEntityListener;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 
 @Data
 @MappedSuperclass
 @EntityListeners(AuditEntityListener.class)
+@FieldNameConstants
 public class LongBaseEntity implements Serializable, Auditable {
 
     @Id

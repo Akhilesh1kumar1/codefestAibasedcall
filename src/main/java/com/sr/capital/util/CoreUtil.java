@@ -7,6 +7,9 @@ import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -138,6 +141,21 @@ public class CoreUtil {
         for (int i = 8; i < 16; i++)
             lsb = (lsb << 8) | (bytes[i] & 0xff);
         return new UUID(msb, lsb);
+    }
+
+
+    public static Date convertTOdate(String dateStr,String dateFormat) {
+        try {
+            // Define the input date format
+            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+            java.util.Date parsed = format.parse(dateStr);
+
+            // Convert to java.sql.Date for MySQL compatibility
+            return new Date(parsed.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

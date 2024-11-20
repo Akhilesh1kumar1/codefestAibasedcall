@@ -1,12 +1,15 @@
 package com.sr.capital.entity.primary;
 
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.helpers.enums.LoanStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.sr.capital.helpers.constants.Constants.EntityNames.LOAN_APPLICATION;
@@ -20,6 +23,7 @@ import static com.sr.capital.helpers.constants.Constants.EntityNames.LOAN_APPLIC
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = LOAN_APPLICATION)
+@FieldNameConstants
 public class LoanApplication extends UUIDBaseEntity{
 
     @Column(name = "sr_company_id")
@@ -43,10 +47,34 @@ public class LoanApplication extends UUIDBaseEntity{
 
     @Column(name = "loan_type")
     String loanType;
+
+    @Column(name = "external_loan_id")
+    String vendorLoanId;
+
+    @Column(name = "comments")
+    String comments;
+
+    @Column(name = "external_lead_code")
+    String externalLeadCode;
+
+    @Column(name = "state")
+    String state;
+
+    @Column(name = "vendor_status")
+    String vendorStatus;
+
     public static LoanApplication mapLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto){
         LoanApplication loanApplication =LoanApplication.builder().srCompanyId(loanApplicationRequestDto.getSrCompanyId()).loanAmountRequested(loanApplicationRequestDto.getLoanAmountRequested()).loanOfferId(loanApplicationRequestDto.getLoanOfferId()).loanVendorId(loanApplicationRequestDto.getLoanVendorId()).loanDuration(loanApplicationRequestDto.getLoanDuration()).loanType(loanApplicationRequestDto.getLoanType()).loanStatus(loanApplicationRequestDto.getLoanStatus())
                 .build();
         loanApplication.setIsEnabled(true);
         return loanApplication;
+    }
+
+    public static void mapLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto,LoanApplication loanApplication){
+        loanApplication.setLoanAmountRequested(loanApplicationRequestDto.getLoanAmountRequested());
+        loanApplication.setLoanDuration(loanApplicationRequestDto.getLoanDuration());
+        loanApplication.setLoanStatus(loanApplicationRequestDto.getLoanStatus());
+        loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
+        loanApplication.getAuditData().setUpdatedBy(String.valueOf(RequestData.getUserId()));
     }
 }

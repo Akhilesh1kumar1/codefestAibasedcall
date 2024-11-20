@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Data
@@ -48,6 +49,8 @@ public class DocOrchestratorRequest {
 
     private Boolean isFileRequired;
 
+    @JsonProperty("loan_id")
+    private UUID loanId;
     public Boolean hasFile2() {
         return (this.getFile2() != null && this.getFile2().getFile() != null && this.getFile2().getFile().getSize() != 0);
     }

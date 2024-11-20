@@ -3,14 +3,19 @@ package com.sr.capital.external.dto.request;
 import com.sr.capital.helpers.enums.CommunicationChannels;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 import org.springframework.data.util.Pair;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Data
 @Builder
+@FieldNameConstants
 public class CommunicationRequestTemp {
 
     private CommunicationChannels channel;
@@ -20,6 +25,36 @@ public class CommunicationRequestTemp {
     private WhatsAppCommunicationDTO whatsAppCommunicationDto;
 
     private EmailCommunicationDTO emailCommunicationDto;
+
+    private MetaData contentMetaData;
+
+    private String templateName;
+
+    @Data
+    @Builder
+    @FieldNameConstants
+    public static class MetaData implements Serializable {
+
+        private String loanId;
+
+        private String capitalUrl;
+
+        private String vendorName;
+
+        private BigDecimal requestedLoanAmount;
+
+        private Integer requestedLoanTenure;
+
+        private BigDecimal approvedLoanAmount;
+
+        private Date disbursmentDate;
+
+        private String repaymentTerms;
+
+        private String comments;
+
+        private String invitationLink;
+    }
 
     @Data
     @Builder
@@ -36,15 +71,19 @@ public class CommunicationRequestTemp {
     @Builder
     public static class WhatsAppCommunicationDTO implements Serializable {
 
+
         private String recipientNo;
 
         private String template;
+
+        private String body;
 
         private List<String> params;
     }
 
     @Data
     @Builder
+    @FieldNameConstants
     public static class EmailCommunicationDTO implements Serializable {
 
         private String recipientEmail;
