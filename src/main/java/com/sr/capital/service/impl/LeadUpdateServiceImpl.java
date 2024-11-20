@@ -83,7 +83,7 @@ public class LeadUpdateServiceImpl {
                 }
 
             }
-            loanApplication.setLoanStatus(LoanStatus.LEAD_DOCUMENT_UPLOAD);
+            loanApplication.setLoanStatus(LoanStatus.LEAD_PROCESSING);
             loanApplicationRepository.save(loanApplication);
         }else{
             throw new CustomException("Invalid loan_id",HttpStatus.BAD_REQUEST);
