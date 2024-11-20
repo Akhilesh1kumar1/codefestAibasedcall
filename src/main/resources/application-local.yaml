@@ -257,6 +257,7 @@ kafka:
     confluentUserName: ${CONFLUENT_USER_NAME:""}
     confluentPassword: ${CONFLUENT_PASSWORD:""}
     confluentEnabled: ${CONFLUENT_ENABLED:false}
+    retryTopicConsumerCount: 0
     groups:
       - topicName: capital
         consumerCount: 1
