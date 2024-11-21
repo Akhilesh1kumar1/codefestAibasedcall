@@ -252,6 +252,8 @@ kafka:
     confluentPassword: ${CONFLUENT_PASSWORD:""}
     confluentEnabled: ${CONFLUENT_ENABLED:true}
     retryTopicConsumerCount: 0
+    shouldPublishRetriesToSameTopic: true
+    maxAttempts: 1
     groups:
       - topicName: capital
         consumerCount: 1

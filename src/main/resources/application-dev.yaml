@@ -258,8 +258,10 @@ kafka:
         commitBlockTimeMs: 5000
         handlerTimeoutMs: 25000
         groupingEnabled: false
+        shouldPublishRetriesToSameTopic: true
+        maxAttempts: 1
         syncRetry:
-          maxRetry: 2
+          maxRetry: 1
           retryIntervalMs: 1000
 
 jobs:
