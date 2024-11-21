@@ -261,7 +261,7 @@ kafka:
         groupingEnabled: false
         shouldPublishRetriesToSameTopic: true
         retryTopicConsumerCount: 0
-        maxAttempts: 1
+        maxAttempts: 2
         syncRetry:
           maxRetry: 1
           retryIntervalMs: 1000
