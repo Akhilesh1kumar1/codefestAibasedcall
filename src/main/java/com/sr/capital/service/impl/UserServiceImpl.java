@@ -117,15 +117,6 @@ public class UserServiceImpl implements UserService {
                     response.setIsMobileVerified(user.getIsMobileVerified());
                     response.setCurrentAccountAvailable(user.getCurrentAccountAvailable());
                 }catch (Exception ex){
-                 /*   EncryptionConfig encryptionConfig =new EncryptionConfig();
-                    encryptionConfig.setKey("test");
-                    AES256 aes2561 = new AES256(encryptionConfig);
-
-                    response.setFirstName(aes2561.decrypt(user.getFirstName()));
-                    response.setMobile(aes2561.decrypt(user.getMobile()));
-                    response.setPanNumber(aes2561.decrypt(user.getPanNumber()));
-                    response.setDateOfBirth(aes2561.decrypt(user.getDateOfBirth()));
-                    response.setFatherName(aes2561.decrypt(user.getFatherName()));*/
 
                 }
             }else{
@@ -170,28 +161,6 @@ public class UserServiceImpl implements UserService {
                 user.setPanNumber(aes256.decrypt(user.getPanNumber()));
                 user.setFatherName(aes256.decrypt(user.getFatherName()));
             }catch (Exception ex) {//temp code
-              /*  EncryptionConfig encryptionConfig =new EncryptionConfig();
-                encryptionConfig.setKey("test");
-                AES256 aes2561 = new AES256(encryptionConfig);
-                user.setFirstName(aes2561.decrypt(user.getFirstName()));
-                user.setMobile(aes2561.decrypt(user.getMobile()));
-                user.setEmail(aes2561.decrypt(user.getEmail()));
-                user.setLastName(aes2561.decrypt(user.getLastName()));
-                user.setMiddleName(aes2561.decrypt(user.getMiddleName()));
-                user.setDateOfBirth(aes2561.decrypt(user.getDateOfBirth()));
-                user.setPanNumber(aes2561.decrypt(user.getPanNumber()));
-
-                User user1  =userRepository.findTopBySrCompanyId(srCompanyId);
-                user1.setEmail(aes256.encrypt(user.getEmail()));
-                user1.setMobile(aes256.encrypt(user.getMobile()));
-                user1.setFirstName(aes256.encrypt(user.getFirstName()));
-                user1.setLastName(aes256.encrypt(user.getLastName()));
-                user1.setMiddleName(aes256.encrypt(user.getMiddleName()));
-                user1.setPanNumber(aes256.encrypt(user.getPanNumber()));
-                user1.setDateOfBirth(aes256.encrypt(user.getDateOfBirth()));
-                user1.setFatherName(aes256.encrypt(user.getFatherName()));
-                userRepository.save(user1);*/
-
 
             }
         }

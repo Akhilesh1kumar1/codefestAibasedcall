@@ -260,6 +260,7 @@ kafka:
         handlerTimeoutMs: 25000
         groupingEnabled: false
         shouldPublishRetriesToSameTopic: true
+        retryTopicConsumerCount: 0
         maxAttempts: 1
         syncRetry:
           maxRetry: 1
