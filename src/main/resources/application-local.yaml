@@ -258,6 +258,7 @@ kafka:
     confluentPassword: ${CONFLUENT_PASSWORD:""}
     confluentEnabled: ${CONFLUENT_ENABLED:false}
     retryTopicConsumerCount: 0
+    mainConsumerCron: 0 0 */6 * * ?
     groups:
       - topicName: capital
         consumerCount: 1

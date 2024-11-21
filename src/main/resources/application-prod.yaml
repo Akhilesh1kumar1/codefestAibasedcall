@@ -254,6 +254,7 @@ kafka:
     retryTopicConsumerCount: 0
     shouldPublishRetriesToSameTopic: true
     maxAttempts: 1
+    mainConsumerCron: 0 0 */6 * * ?
     groups:
       - topicName: capital
         consumerCount: 1

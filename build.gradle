@@ -81,10 +81,10 @@ dependencies {
 		exclude group: 'org.springframework.boot'
 	}
 
-	implementation("com.omunify:kafka-msg-consumer:1.0.4")
-	implementation('com.omunify:kafka-msg-publisher:1.0.1')
-	implementation("com.omunify:kafka-msg-common:1.0.2")
-	implementation('com.omunify:kafka-mysql-adapter:1.0.2')
+	implementation("com.omunify:kafka-msg-consumer:1.0.5")
+	implementation('com.omunify:kafka-msg-publisher:1.0.5')
+	implementation("com.omunify:kafka-msg-common:1.0.5")
+	implementation('com.omunify:kafka-mysql-adapter:1.0.5')
 
 
 	//adhoc

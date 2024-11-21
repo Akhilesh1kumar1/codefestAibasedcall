@@ -1,0 +1,1 @@
+alter table kafka_inbound_messages add column payload text ,add column topic varchar(255);
