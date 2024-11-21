@@ -175,8 +175,8 @@ public class LoanStatusUpdateHandlerServiceImpl {
             };
             List<Checkpoints> checkpoints = MapperUtils.convertValue(loanStatusUpdateWebhookDto.getCheckpoints(),tref);
 
-            loanMetaData =LoanMetaData.builder().loanId(loanApplication.getId()).checkPoints(checkpoints).externalStatus1(loanMetaData.getExternalStatus1())
-                    .externalStatus2(loanMetaData.getExternalStatus2()).externalStatus3(loanMetaData.getExternalStatus3()).leadCode(loanStatusUpdateWebhookDto.getLeadCode())
+            loanMetaData =LoanMetaData.builder().loanId(loanApplication.getId()).checkPoints(checkpoints).externalStatus1(loanStatusUpdateWebhookDto.getS1())
+                    .externalStatus2(loanStatusUpdateWebhookDto.getS2()).externalStatus3(loanStatusUpdateWebhookDto.getS3()).leadCode(loanStatusUpdateWebhookDto.getLeadCode())
                     .externalApplicationStatus(loanStatusUpdateWebhookDto.getApplicationStatus()).build();
         }else{
 

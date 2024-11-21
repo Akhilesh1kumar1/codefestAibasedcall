@@ -164,13 +164,15 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             throw new CustomException("Invalid Request. loan id is required",HttpStatus.BAD_REQUEST);
         }
 
-        if(icrmLeadRequestDto.getLoanApplicationStatusId()==null){
+        /*if(icrmLeadRequestDto.getLoanApplicationStatusId()==null){
             throw new CustomException("Invalid Request. loan application status id is required",HttpStatus.BAD_REQUEST);
-        }
+        }*/
         IcrmLoanResponseDto icrmLoanResponseDto = IcrmLoanResponseDto.builder().completeDetails(new ArrayList<>()).build();
         getLoanDetails(icrmLoanResponseDto,icrmLeadRequestDto);
-        getLoanApplicationStatusDetails(icrmLoanResponseDto,icrmLeadRequestDto);
-        getDisbursedAmount(icrmLoanResponseDto,icrmLeadRequestDto);
+         if(icrmLeadRequestDto.getLoanApplicationStatusId()!=null) {
+             getLoanApplicationStatusDetails(icrmLoanResponseDto, icrmLeadRequestDto);
+             getDisbursedAmount(icrmLoanResponseDto, icrmLeadRequestDto);
+         }
         //getDocDetails(icrmLoanResponseDto,icrmLeadRequestDto);
 
         User user =userService.getCompanyDetails(icrmLeadRequestDto.getSrCompanyId());
@@ -719,7 +721,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                         idNameMap.get(loanCompleteDetails.getLoanVendorId()),
                         loanCompleteDetails.getLoanStatus().name(),
                         loanCompleteDetails.getVendorStatus(),
-                        loanCompleteDetails.getCreditLineApprovalDate().toString(),
+                        loanCompleteDetails.getCreditLineApprovalDate()==null?"":loanCompleteDetails.getCreditLineApprovalDate().toString(),
                         loanCompleteDetails.getDisbursedDate()==null?"":""+loanCompleteDetails.getDisbursedDate(),
                         loanCompleteDetails.getAmountApproved()==null?"":""+loanCompleteDetails.getAmountApproved(),
                         loanCompleteDetails.getLoanDurationAtSanction()==null?"":""+loanCompleteDetails.getLoanDurationAtSanction(),
