@@ -65,6 +65,13 @@ public class MapperUtils {
         return objectMapper.convertValue(object, objectClass);
     }
 
+    public static <V, T> T convertValueLowerCamelCase(V object, Class<T> objectClass) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
+        return objectMapper.convertValue(object, objectClass);
+    }
+
     public static <V, T> T convertValueWithTime(V object, Class<T> objectClass) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

@@ -469,7 +469,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.REJECT_OFFER.name(),ProviderRequestTemplateType.REJECT_OFFER.name(), SanctionResponseDto.class);
 
         HttpResponse<?> restResponseEntity = null;
-        AcceptSanctionOffer acceptSanctionOffer =null;
+        String rejectOffer =null;
         try {
 
             String url = (String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), "");
@@ -488,13 +488,13 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                 ProviderResponseTemplateType.FETCH_KFS_RESPONSE.name(),loanMetaDataDto.getLoanVendorId());
 
         try {
-            acceptSanctionOffer = MapperUtils.convertValue(response.getData(),
-                    AcceptSanctionOffer.class);
+            rejectOffer = MapperUtils.convertValue(response.getData(),
+                    String.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return acceptSanctionOffer;
+        return rejectOffer;
     }
 
     private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
@@ -556,7 +556,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                 providerTemplateName, partnerInfo.getId(), true);
 
         if (template != null) {
-            requestBody = jsonPathEvaluator.evaluate(template, loanMetaDataDto.getLoanId());
+            requestBody = jsonPathEvaluator.evaluate(template, loanMetaDataDto);
         }
 
         loanMetaDataDto.setExternalRequestBody(requestBody);

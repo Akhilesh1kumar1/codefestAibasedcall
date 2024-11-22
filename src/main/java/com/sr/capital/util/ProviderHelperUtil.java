@@ -51,6 +51,8 @@ public class ProviderHelperUtil {
         }
 
          url = getUrlWithQueryparam(url,(Map<String, Object>) params.get(ProviderUrlConfigTypes.PATH_VARIABLE.name()), (Map<String, Object>) params.get(ProviderUrlConfigTypes.QUERY_PARAM.name()));
+
+        log.info("request body is {} ",requestBody);
         if (method != null && !method.isBlank()) {
 
             switch (method.toLowerCase()){

@@ -5,8 +5,10 @@ import com.sr.capital.dto.request.UpdateSanctionOfferDto;
 import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.response.SanctionDto;
 import com.sr.capital.entity.mongo.SanctionDetails;
+import com.sr.capital.entity.mongo.kyc.child.SanctionMetaDataDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
+import com.sr.capital.external.flexi.dto.response.AcceptSanctionOffer;
 import com.sr.capital.external.flexi.dto.response.KfsResponseDto;
 import com.sr.capital.external.flexi.dto.response.SanctionResponseDto;
 import com.sr.capital.external.flexi.enums.FlexiStatus;
@@ -22,7 +24,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -41,7 +45,7 @@ public class SanctionServiceImpl {
             LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
                     .loanId(loanApplication.getVendorLoanId()).internalLoanId(loanApplicationId).loanVendorName(loanVendorName).build();
 
-            if(1==1){
+            if(1==2){
                 return buildDummyDto(loanMetaDataDto);
             }
 
@@ -133,7 +137,7 @@ public class SanctionServiceImpl {
         return sanctionDto;
     }
 
-    public Boolean acceptOffer(UpdateSanctionOfferDto acceptSanctionOffer){
+    public Boolean updateOffer(UpdateSanctionOfferDto acceptSanctionOffer){
 
         LoanApplication loanApplication = loanApplicationRepository.findById(acceptSanctionOffer.getLoanId()).orElse(null);
         if(loanApplication!=null){
@@ -142,18 +146,20 @@ public class SanctionServiceImpl {
             if(loanApplicationStatus!=null) {
 
                 LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
-                        .loanId(loanApplication.getVendorLoanId()).internalLoanId(acceptSanctionOffer.getLoanId()).loanVendorName(acceptSanctionOffer.getLoanVendorName()).sanctionCode(loanApplicationStatus.getSanctionCode()).rejectReason(acceptSanctionOffer.getReason()).build();
+                        .loanId(loanApplication.getVendorLoanId()).internalLoanId(acceptSanctionOffer.getLoanId()).loanVendorName(acceptSanctionOffer.getLoanVendorName()).sanctionCode(loanApplicationStatus.getSanctionCode()).rejectReason(acceptSanctionOffer.getReason()).remarks(acceptSanctionOffer.getRemarks()).build();
 
                 if(acceptSanctionOffer.getAcceptOffer()) {
 
-                  //  AcceptSanctionOffer acceptSanctionOffer1 = (AcceptSanctionOffer) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).acceptOffer(loanMetaDataDto);
+                    AcceptSanctionOffer acceptSanctionOffer1 = (AcceptSanctionOffer) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).acceptOffer(loanMetaDataDto);
 
-                    loanApplication.setLoanStatus(LoanStatus.LOAN_VERIFICATION);
+                    if(acceptSanctionOffer1.getSuccess()) {
+                        loanApplication.setLoanStatus(LoanStatus.LOAN_VERIFICATION);
 
-                    loanApplicationStatus.setVendorStatus(LoanStatus.APPROVED.name());
+                        loanApplicationStatus.setVendorStatus(LoanStatus.APPROVED.name());
+                    }
 
                 }else{
-                   // AcceptSanctionOffer acceptSanctionOffer1 = (AcceptSanctionOffer) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).rejectSanctionOffer(loanMetaDataDto);
+                     creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).rejectSanctionOffer(loanMetaDataDto);
 
                     loanApplication.setLoanStatus(LoanStatus.LOAN_DECLINE);
 
@@ -174,11 +180,16 @@ public class SanctionServiceImpl {
             LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanMetaDataDto.getInternalLoanId());
             if(loanApplicationStatus==null) {
                 sanctionDto = fetchAndSaveSanctionDetailsFromPartner(loanMetaDataDto);
+                loanMetaDataDto.setSanctionDto(sanctionDto);
+                buildLoanApplicationStatus(loanMetaDataDto);
             }else{
                 SanctionDetails sanctionDetails = sanctionRepository.findBySrCompanyIdAndVendorSanctionCode(loanMetaDataDto.getSrCompanyId(), loanApplicationStatus.getSanctionCode());
                 if(sanctionDetails!=null){
-                    SanctionDto.PartnerIntegrationProject partnerIntegrationProject = MapperUtils.convertValue(sanctionDetails.getSanctionDetails(),SanctionDto.PartnerIntegrationProject.class);
-                    sanctionDto =SanctionDto.builder().partnerIntegrationProject(partnerIntegrationProject).build();
+                   /* SanctionDto.PartnerIntegrationProject partnerIntegrationProject = MapperUtils.convertValue(sanctionDetails.getSanctionDetails(),SanctionDto.PartnerIntegrationProject.class);
+                    SanctionDto.PostSanctionConditionArray postSanctionConditionArray = MapperUtils.convertValue(sanctionDetails.getSanctionDetails(),SanctionDto.PostSanctionConditionArray.class);
+                    sanctionDto =SanctionDto.builder().partnerIntegrationProject(partnerIntegrationProject).postSanctionConditionsArray(postSanctionConditionArray.getPostSanctionConditionsArray()).build();
+              */
+                sanctionDto = MapperUtils.convertValueLowerCamelCase(sanctionDetails.getSanctionDetails(),SanctionDto.class);
                 }
             }
         } catch (IOException e) {
@@ -188,7 +199,6 @@ public class SanctionServiceImpl {
         if(sanctionDto!=null){
             loanMetaDataDto.setVendorStatus(FlexiStatus.APPROVED.name());
             loanMetaDataDto.setSanctionDto(sanctionDto);
-            buildLoanApplicationStatus(loanMetaDataDto);
 
         }
 
@@ -200,8 +210,20 @@ public class SanctionServiceImpl {
         SanctionResponseDto sanctionResponseDto = (SanctionResponseDto) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).fetchSanctionDetails(loanMetaDataDto);
 
        if(sanctionResponseDto!=null && sanctionResponseDto.getSuccess()) {
-           SanctionDetails sanctionDetails =SanctionDetails.builder().sanctionDetails(sanctionResponseDto.getData())
-           .srCompanyId(loanMetaDataDto.getSrCompanyId()).vendorSanctionCode(sanctionResponseDto.getData().getPartnerIntegrationProject().getSanction_code()).loanId(loanMetaDataDto.getInternalLoanId()).build();
+
+           SanctionMetaDataDetails.PartnerIntegrationProject sanctionData = MapperUtils.convertValue(sanctionResponseDto.getData().getPartnerIntegrationProject(),SanctionMetaDataDetails.PartnerIntegrationProject.class);
+
+           SanctionMetaDataDetails metaDataDetails = SanctionMetaDataDetails.builder().partnerIntegrationProject(sanctionData).postSanctionConditionsArray(sanctionResponseDto.getData().getPostSanctionConditionsArray()).build();
+           loanMetaDataDto.setSanctionCode(sanctionData.getSanction_code());
+           SanctionDetails sanctionDetails =  sanctionRepository.findBySrCompanyIdAndVendorSanctionCode(loanMetaDataDto.getSrCompanyId(), loanMetaDataDto.getSanctionCode());
+           if(sanctionDetails==null) {
+
+               sanctionDetails = SanctionDetails.builder().sanctionDetails(metaDataDetails)
+                       .srCompanyId(loanMetaDataDto.getSrCompanyId()).vendorSanctionCode(sanctionResponseDto.getData().getPartnerIntegrationProject().getSanction_code()).loanId(loanMetaDataDto.getInternalLoanId()).build();
+           }else{
+               sanctionDetails.setSanctionDetails(metaDataDetails);
+               sanctionDetails.setLastModifiedAt(LocalDateTime.now());
+           }
            sanctionRepository.save(sanctionDetails);
            SanctionDto.PartnerIntegrationProject partnerIntegrationProject = MapperUtils.convertValue(sanctionResponseDto.getData().getPartnerIntegrationProject(),SanctionDto.PartnerIntegrationProject.class);
            return SanctionDto.builder().partnerIntegrationProject(partnerIntegrationProject).postSanctionConditionsArray(sanctionResponseDto.getData().getPostSanctionConditionsArray()).build();
@@ -217,16 +239,32 @@ public class SanctionServiceImpl {
                     totalDisbursementAmount.add(BigDecimal.valueOf(disbursementAccount.getDisbursedAmount()));
                 }
             });*/
-          LoanApplicationStatus  loanApplicationStatus = LoanApplicationStatus.builder().loanId(loanMetaDataDto.getInternalLoanId())
+
+        LoanApplicationStatus  loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanMetaDataDto.getInternalLoanId());
+
+        if(loanApplicationStatus==null) {
+            loanApplicationStatus = LoanApplicationStatus.builder().loanId(loanMetaDataDto.getInternalLoanId())
                     .vendorLoanId(loanMetaDataDto.getLoanId()).vendorStatus(loanMetaDataDto.getVendorStatus())
                     .comment("Loan Sanctioned")
-                    .loanAmountApproved(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanAmount().replaceAll(",",""))))
-                    .interestRate(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getAnnualRateOfInterest().replaceAll("%","")))
-                    .interestAmountAtSanction(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalInterest().replaceAll(",",""))))
+                    .loanAmountApproved(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanAmount().replaceAll(",", ""))))
+                    .interestRate(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getAnnualRateOfInterest().replaceAll("%", "")))
+                    .interestAmountAtSanction(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalInterest().replaceAll(",", ""))))
                     .loanDuration(Integer.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanRepaymentPeriod())).
-                    totalDisbursedAmount(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getDisbursalAmount().replaceAll(",",""))))
-                    .sanctionCode(loanMetaDataDto.getSanctionCode()).totalRecoverableAmount(BigDecimal.valueOf(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalRepayable().replaceAll(",","")))).build();
-            loanApplicationStatusEntityService.saveLoanApplicationStatus(loanApplicationStatus);
+                    totalDisbursedAmount(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getDisbursalAmount().replaceAll(",", ""))))
+                    .sanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code()).totalRecoverableAmount(BigDecimal.valueOf(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalRepayable().replaceAll(",", ""))))
+                    .totalAmountRecovered(BigDecimal.ZERO).build();
+        }else{
+            loanApplicationStatus.setLoanAmountApproved(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanAmount().replaceAll(",", ""))));
+            loanApplicationStatus.setInterestRate(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getAnnualRateOfInterest().replaceAll("%", "")));
+            loanApplicationStatus.setInterestAmountAtSanction(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalInterest().replaceAll(",", ""))));
+            loanApplicationStatus.setLoanDuration(Integer.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanRepaymentPeriod()));
+            loanApplicationStatus.setTotalDisbursedAmount(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getDisbursalAmount().replaceAll(",", ""))));
+            loanApplicationStatus.setSanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code());
+            loanApplicationStatus.setTotalRecoverableAmount(BigDecimal.valueOf(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalRepayable().replaceAll(",", ""))));
+            loanApplicationStatus.setSanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code());
+         }
+
+        loanApplicationStatusEntityService.saveLoanApplicationStatus(loanApplicationStatus);
 
         return loanApplicationStatus;
     }

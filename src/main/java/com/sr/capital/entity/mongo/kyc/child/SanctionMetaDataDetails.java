@@ -1,33 +1,27 @@
-package com.sr.capital.dto.response;
+package com.sr.capital.entity.mongo.kyc.child;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import com.sr.capital.dto.response.SanctionDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Builder
-@NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AllArgsConstructor
-public class SanctionDto {
+@NoArgsConstructor
+public class SanctionMetaDataDetails {
 
     PartnerIntegrationProject partnerIntegrationProject;
     private List<String> postSanctionConditionsArray;
 
-    @lombok.Data
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PostSanctionConditionArray{
-        private List<String> postSanctionConditionsArray;
-    }
+
     @lombok.Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Builder

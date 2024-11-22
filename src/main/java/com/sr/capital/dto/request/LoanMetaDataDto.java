@@ -1,5 +1,7 @@
 package com.sr.capital.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.sr.capital.dto.response.DisbursementDetailsResponseDto;
 import com.sr.capital.dto.response.SanctionDto;
 import com.sr.capital.external.common.request.DocumentUploadRequestDto;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Builder
 @FieldNameConstants
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoanMetaDataDto {
 
     String loanVendorName;
@@ -66,6 +69,8 @@ public class LoanMetaDataDto {
     String vendorStatus;
 
     String rejectReason;
+
+    String remarks;
     @Data
     @FieldDefaults(level=AccessLevel.PRIVATE)
     @Builder
