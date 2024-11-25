@@ -29,7 +29,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -87,7 +86,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
-            //sendCommunication(loanApplication,loanVendorName);
+            sendCommunication(loanApplication,loanVendorName);
            /* switch (loanApplication.getLoanStatus()){
 
                 case LEAD_PROCESSING:
@@ -127,10 +126,10 @@ public class LoanStatusUpdateHandlerServiceImpl {
                 templateName = CommunicationTemplateNames.PROCESSING_STAGE.getTemplateName();
                 subject = "Your Loan Application is Being Processed!";
             }
-            case DISBURSED -> {templateName =CommunicationTemplateNames.LOAN_DISBURSED.getTemplateName();
+            case LOAN_DISBURSED -> {templateName =CommunicationTemplateNames.LOAN_DISBURSED.getTemplateName();
                 subject = "Congratulations—Your Loan Has Been Disbursed!";
             }
-            case LOAN_OFFER_GENERATED -> {
+            case LOAN_GENERATE -> {
                 templateName = CommunicationTemplateNames.OFFER_GENERATION.getTemplateName();
                 subject = "Your Loan Offer is Ready—Review and Accept!";
             }
@@ -138,11 +137,16 @@ public class LoanStatusUpdateHandlerServiceImpl {
                 templateName = CommunicationTemplateNames.LEAD_REJECTED.getTemplateName();
                 subject = "Update on Your Loan Application";
             }
+
+            case LEAD_DOCUMENT_UPLOAD -> {
+                templateName = CommunicationTemplateNames.DOCUMENT_PENDING.getTemplateName();
+                subject = "Complete Your Document Submission in Just a Few Clicks!";
+            }
         }
         if(templateName!=null) {
             CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder().loanId(loanApplication.getId().toString())
                     .requestedLoanAmount(loanApplication.getLoanAmountRequested()).vendorName(vendorName)
-                    .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).build();
+                    .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).state(loanApplication.getState()).resourcesFaqLink("").build();
 
             LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanApplication.getId());
             if(loanApplicationStatus!=null){
@@ -160,7 +164,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
                 CommunicationRequestTemp.EmailCommunicationDTO emailCommunicationDTO = CommunicationRequestTemp.EmailCommunicationDTO.builder()
                         .recipientEmail(user.getEmail()).recipientName(user.getFirstName()).subject(subject).build();
 
-                CommunicationRequestTemp communicationRequestTemp = CommunicationRequestTemp.builder().contentMetaData(metaData).emailCommunicationDto(emailCommunicationDTO).build();
+                CommunicationRequestTemp communicationRequestTemp = CommunicationRequestTemp.builder().contentMetaData(metaData).emailCommunicationDto(emailCommunicationDTO).templateName(templateName).build();
 
                 communicationService.sendCommunicationForLoan(communicationRequestTemp);
             }

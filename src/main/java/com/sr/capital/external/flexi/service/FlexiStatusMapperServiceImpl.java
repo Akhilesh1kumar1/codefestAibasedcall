@@ -96,7 +96,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.PENDING_DOCUMENT, LoanStatus.LEAD_DOCUMENT_UPLOAD);
                     currentStateFound =true;
-                } else {
+                } else  if ("PENDING".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.DOCUMENT_VERIFICATION, LoanStatus.LEAD_PROCESSING);
                     currentStateFound =true;
                 }

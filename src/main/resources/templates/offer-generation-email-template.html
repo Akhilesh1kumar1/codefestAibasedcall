@@ -9,7 +9,7 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="supported-color-schemes" content="light dark" />
     <meta name="description" content="Dear Saahil, your order has been shipped and will reach you by dd/mm/yy." />
-    <title>Complete Your Loan Application in Just a Few Clicks!</title>
+    <title> Your Loan Offer is Ready—Review and Accept!</title>
     <style type="text/css">
         body {
           margin: 0;
@@ -55,7 +55,7 @@
                                 <tbody>
                                 <tr style="background-color: #e7edff">
                                     <td style="padding-left: 20px; padding-right: 50px">
-                                        <p style=" color: #6148dc; letter-spacing: -0.5px; font-size: 20px; font-weight: 500; ">Complete Your Loan Application in Just a Few Clicks!</p>
+                                        <p style=" color: #6148dc; letter-spacing: -0.5px; font-size: 20px; font-weight: 500; "> Your Loan Offer is Ready—Review and Accept!</p>
                                     </td>
                                     <td>
                                         <img src="https://kr-shipmultichannel-mum.s3-ap-south-1.amazonaws.com/upload-file/email-templates/seller/Group_713@2x.png" width="94" height="90" style=" object-fit: contain; float: right; padding: 30px; " />
@@ -79,24 +79,21 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td style="text-align: left; padding: 0.5em 1em 2em">
-                                                    <p style="margin-bottom: 1.5rem;">
-                                                        We noticed that your loan application (Application ID: <span th:text="${loanId}"></span>) is currently incomplete, having paused at the
-                                                        <span th:text="${state}"></span> step. We understand that your time is valuable, and we want to make the process as seamless as possible for you.
+                                                <td style="text-align: center; padding: 0.5em 1em 2em">
+                                                    <p style="text-align: left; margin-bottom: 2rem">
+                                                        Exciting news! A loan offer has been generated for your application (Application ID:
+                                                        <span th:text="${loanId}"></span>). Please take a moment to review the offer and accept it.
+                                                        Once accepted, the final step will be signing the agreement, after which your loan amount will be disbursed.
                                                     </p>
-                                                    <p style="margin-bottom: 1.5rem;">
-                                                        To resume and complete your application, click the button below:
+                                                    <p style="text-align: left; margin-bottom: 2rem">
+                                                        Visit your Seller Panel to review and accept the offer here:
+                                                        <a th:href="${capitalUrl}" role="button"
+                                                           style="text-decoration: none; background-color: #6f57e9; width: 150px; font-size: 14px; padding: 12px; color: white; border: 1px solid #6f57e9b3; border-radius: 8px;"
+                                                           target="_blank">Review Offer</a>
                                                     </p>
-                                                    <div style="text-align: center; margin-bottom: 2rem;">
-                                                        <a th:href="${capitalUrl}"
-                                                           style="text-decoration: none; background-color: #6f57e9; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; display: inline-block;"
-                                                           target="_blank">
-                                                            Resume Application
-                                                        </a>
-                                                    </div>
-                                                    <p style="margin-bottom: 1.5rem;">
-                                                        Completing your application will bring you closer to securing the financial support you need. Should you have any questions or require assistance, please feel free to contact your Capital Advisor at
-                                                        <b>capital@shiprocket.com</b> or call us directly at <b>9911675924</b>.
+                                                    <p style="text-align: left; margin-bottom: 2rem">
+                                                        If you have any questions or require assistance, please contact your Capital Advisor at
+                                                        <b>capital@shiprocket.com</b> or call us at <b>9911675924</b>.
                                                     </p>
                                                 </td>
                                             </tr>
@@ -105,7 +102,7 @@
                                     </td>
                                 </tr>
 
-
+                                </tbody>
                             </table>
                         </td>
                     </tr>

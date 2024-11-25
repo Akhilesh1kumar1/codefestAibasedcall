@@ -67,48 +67,37 @@
                     </tr>
                     <tr>
                         <td>
-                            <table style=" background-color: white; width: 100%; color: #000000de; font-size: 16px; ">
+                            <table style="background-color: white; width: 100%; color: #000000de; font-size: 16px;">
                                 <tbody>
                                 <tr>
-                                    <td>
-                                        <table style="background-color: white; width: 100%; color: #000000de; font-size: 16px;">
-                                            <tbody>
-                                            <tr>
-                                                <td style="padding: 2em 1em 1em 1.25em">
-                                                    <span style="font-weight: 500">Hello <span th:text="${userName}" />,</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="text-align: left; padding: 0.5em 1em 2em">
-                                                    <p style="margin-bottom: 1.5rem;">
-                                                        We noticed that your loan application (Application ID: <span th:text="${loanId}"></span>) is currently incomplete, having paused at the
-                                                        <span th:text="${state}"></span> step. We understand that your time is valuable, and we want to make the process as seamless as possible for you.
-                                                    </p>
-                                                    <p style="margin-bottom: 1.5rem;">
-                                                        To resume and complete your application, click the button below:
-                                                    </p>
-                                                    <div style="text-align: center; margin-bottom: 2rem;">
-                                                        <a th:href="${capitalUrl}"
-                                                           style="text-decoration: none; background-color: #6f57e9; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; display: inline-block;"
-                                                           target="_blank">
-                                                            Resume Application
-                                                        </a>
-                                                    </div>
-                                                    <p style="margin-bottom: 1.5rem;">
-                                                        Completing your application will bring you closer to securing the financial support you need. Should you have any questions or require assistance, please feel free to contact your Capital Advisor at
-                                                        <b>capital@shiprocket.com</b> or call us directly at <b>9911675924</b>.
-                                                    </p>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                    <td style="padding: 2em 1em 1em 1.25em">
+                                        <span style="font-weight: 500">Hello <span th:text="${userName}" />,</span>
                                     </td>
                                 </tr>
-
-
+                                <tr>
+                                    <td style="text-align: center; padding: 0.5em 1em 2em">
+                                        <p style="text-align: left; margin-bottom: 2rem">
+                                            We noticed that your loan application (Application ID:
+                                            <span th:text="${loanId}"></span>) is currently incomplete because your document upload is pending.
+                                            We understand that your time is valuable, and we want to make the process as seamless as possible for you.
+                                        </p>
+                                        <p style="text-align: left; margin-bottom: 2rem">
+                                            To resume and complete your document submission,
+                                            <a th:href="${capitalUrl}" role="button" style="text-decoration: none; background-color: #6f57e9; width: 150px; font-size: 14px; padding: 12px; color: white; border: 1px solid #6f57e9b3; border-radius: 8px;" target="_blank">
+                                                please click here:
+                                            </a>
+                                        </p>
+                                        <p style="text-align: left; margin-bottom: 2rem">
+                                            Uploading your documents will bring you closer to securing the financial support you need. Should you have any questions or require assistance, please feel free to contact your Capital Advisor at
+                                            <b>capital@shiprocket.com</b> or call us directly at <b>9911675924</b>.
+                                        </p>
+                                    </td>
+                                </tr>
+                                </tbody>
                             </table>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <div style=" background: #e6fff2 0% 0% no-repeat padding-box; border-radius: 8px; font: 400 14px Arial; padding: 20px; height: 9.5rem; border-spacing: 10px; background-image: url('https://sr-cdn-1.shiprocket.in/img/sr/common/email-templates/seller/Group+2141%402x.png'); background-size: 100%; ">

@@ -278,3 +278,5 @@ jobs:
     cronInMinutes: 400
   status:
     cronInMinutes: 120
+  communication:
+    scheduledTime: 0 0 1 * * ?

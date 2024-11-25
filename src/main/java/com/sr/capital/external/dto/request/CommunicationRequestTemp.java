@@ -54,6 +54,10 @@ public class CommunicationRequestTemp {
         private String comments;
 
         private String invitationLink;
+
+        private String state;
+
+        private String resourcesFaqLink;
     }
 
     @Data
