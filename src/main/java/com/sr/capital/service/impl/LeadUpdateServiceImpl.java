@@ -3,6 +3,7 @@ package com.sr.capital.service.impl;
 import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.UpdateLeadRequestDto;
+import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
@@ -49,7 +50,7 @@ public class LeadUpdateServiceImpl {
         com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto updateLeadDto =null;
         LoanApplication loanApplication = loanApplicationRepository.findById(updateLeadRequestDto.getLoanId()).orElse(null);
         if(loanApplication!=null) {
-            User user = userService.getCompanyDetails(Long.valueOf(tenantId));
+            UserDetails user = userService.getCompanyDetailsWithoutEncryption(Long.valueOf(tenantId));
 
             updateLeadDto = com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto.builder().leadCode(String.valueOf(loanApplication.getExternalLeadCode()))
 
@@ -93,7 +94,7 @@ public class LeadUpdateServiceImpl {
 
 
 
-    private void buildBusinessDetails(KycDocDetails<?> doc, com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto createLeadRequestDto, User user,String externalLoanCode) {
+    private void buildBusinessDetails(KycDocDetails<?> doc, com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto createLeadRequestDto, UserDetails user,String externalLoanCode) {
         BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) doc.getDetails();
         com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto.LoanBusiness loanBusiness = com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto.LoanBusiness.builder().loanCode(externalLoanCode).legalStatus(doc.getKycType().getClientType())
                 .addressLine1(aes256.decrypt(businessAddressDetails.getAddress1()))
@@ -141,9 +142,9 @@ public class LeadUpdateServiceImpl {
         createLeadRequestDto.getLoanApplication().setLoanBusinessPartners(loanBusinessPartnerList);
     }
 
-    private void validateAndBuildPersonalDetails(KycDocDetails<?> doc, User user, com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto updateLeadRequestDto, Long loanVendorId,String externalLoanCode) throws CustomException {
+    private void validateAndBuildPersonalDetails(KycDocDetails<?> doc, UserDetails user, com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto updateLeadRequestDto, Long loanVendorId,String externalLoanCode) throws CustomException {
         updateLeadRequestDto.setFirstName(user.getFirstName());
-        updateLeadRequestDto.setMobileNo(user.getMobile());
+        updateLeadRequestDto.setMobileNo(user.getMobileNumber());
         updateLeadRequestDto.setEmail(user.getEmail());
         updateLeadRequestDto.setLastName(user.getLastName());
         PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) doc.getDetails();

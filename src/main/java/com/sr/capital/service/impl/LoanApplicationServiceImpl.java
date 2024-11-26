@@ -226,7 +226,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     private CreateLeadRequestDto validateAndBuildRequestDto(String tenantId, LoanApplicationResponseDto loanApplicationResponseDto) throws CustomException {
 
-        User user = userService.getCompanyDetails(Long.valueOf(tenantId));
+        UserDetails user = userService.getCompanyDetailsWithoutEncryption(Long.valueOf(tenantId));
 
         CreateLeadRequestDto createLeadRequestDto = CreateLeadRequestDto.builder().clientLoanId(String.valueOf(loanApplicationResponseDto.getId()))
                 .customerCategory("self_employed").
@@ -300,7 +300,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         createLeadRequestDto.setDisbursementAccounts(disbursementAccounts);
     }
 
-    private void buildBusinessDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto,User user) {
+    private void buildBusinessDetails(KycDocDetails<?> doc, CreateLeadRequestDto createLeadRequestDto,UserDetails user) {
         BusinessAddressDetails businessAddressDetails = (BusinessAddressDetails) doc.getDetails();
         CreateLeadRequestDto.LoanBusiness loanBusiness = CreateLeadRequestDto.LoanBusiness.builder().legalStatus(doc.getKycType().getClientType())
                 .addressLine1(aes256.decrypt(businessAddressDetails.getAddress1()))
@@ -348,9 +348,9 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         createLeadRequestDto.getLoanApplication().setLoanBusinessPartners(loanBusinessPartnerList);
     }
 
-    private void validateAndBuildPersonalDetails(KycDocDetails<?> doc, User user, CreateLeadRequestDto createLeadRequestDto,Long loanVendorId) throws CustomException {
+    private void validateAndBuildPersonalDetails(KycDocDetails<?> doc, UserDetails user, CreateLeadRequestDto createLeadRequestDto,Long loanVendorId) throws CustomException {
         createLeadRequestDto.setFirstName(user.getFirstName());
-        createLeadRequestDto.setMobileNumber(user.getMobile());
+        createLeadRequestDto.setMobileNumber(user.getMobileNumber());
         createLeadRequestDto.setEmail(user.getEmail());
         createLeadRequestDto.setLastName(user.getLastName());
         createLeadRequestDto.setFatherName(user.getFatherName());

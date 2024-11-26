@@ -1,6 +1,7 @@
 package com.sr.capital.jobs;
 
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.external.dto.request.CommunicationRequestTemp;
@@ -91,7 +92,7 @@ public class CommunicationJob {
                         .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).state(loanApplication.getState()).build();
 
 
-                User user =  userService.getCompanyDetails(loanApplication.getSrCompanyId());
+                UserDetails user =  userService.getCompanyDetailsWithoutEncryption(loanApplication.getSrCompanyId());
 
                 if(user!=null) {
 

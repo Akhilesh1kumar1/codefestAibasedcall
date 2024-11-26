@@ -5,6 +5,7 @@ import com.omunify.restutil.exceptions.InvalidResourceException;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
+import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.entity.mongo.LoanMetaData;
 import com.sr.capital.entity.mongo.kyc.child.Checkpoints;
 import com.sr.capital.entity.primary.LoanApplication;
@@ -156,7 +157,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
                 }
             }
 
-            User user =  userService.getCompanyDetails(loanApplication.getSrCompanyId());
+            UserDetails user =  userService.getCompanyDetailsWithoutEncryption(loanApplication.getSrCompanyId());
             if(user!=null) {
                 CommunicationRequestTemp.EmailCommunicationDTO emailCommunicationDTO = CommunicationRequestTemp.EmailCommunicationDTO.builder()
                         .recipientEmail(user.getEmail()).recipientName(user.getFirstName()).subject(subject).build();
