@@ -182,6 +182,14 @@ public class UserServiceImpl implements UserService {
                 userDetails.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
                 userDetails.setPanNumber(aes256.decrypt(user.getPanNumber()));
                 userDetails.setFatherName(aes256.decrypt(user.getFatherName()));
+                userDetails.setCurrentAccountAvailable(user.getCurrentAccountAvailable());
+                userDetails.setComments(user.getComments());
+                userDetails.setIsAccepted(user.getIsAccepted());
+                userDetails.setEntityType(user.getEntityType());
+                userDetails.setCompanyName(user.getCompanyName());
+                userDetails.setGender(user.getGender());
+                userDetails.setIsMobileNumberVerified(user.getIsMobileVerified());
+                userDetails.setCurrentAccountAvailable(user.getCurrentAccountAvailable());
             }catch (Exception ex) {//temp code
 
             }
