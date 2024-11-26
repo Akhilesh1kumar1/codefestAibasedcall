@@ -48,6 +48,7 @@ public class UserProgressServiceImpl {
             userProgressResponseDto.setLoanVendorId(loanApplication1.getLoanVendorId());
 
             switch (loanApplication1.getLoanStatus()){
+                case LEAD_DUPLICATE -> currentState = Screens.MOBILE_VERIFICATION.name();
                 case LEAD_INITIATED -> currentState = Screens.LOAN_DETAILS.name();
                 case LEAD_VERIFIED ->currentState = PERSONAL_DETAILS.name();
                 case LEAD_IN_PROGRESS -> {
@@ -66,7 +67,7 @@ public class UserProgressServiceImpl {
 
                             userProgressResponseDto.setCheckpoints(MapperUtils.convertValue(loanMetaData.getCheckPoints(), tref));
                         }catch (Exception ex){
-                            
+
                         }
                     }
 
