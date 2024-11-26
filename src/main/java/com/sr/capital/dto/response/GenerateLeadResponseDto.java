@@ -31,4 +31,14 @@ public class GenerateLeadResponseDto {
     Long loanVendorPartnerId;
 
     UUID loanApplicationId;
+
+    String utmSource;
+
+    String utmMedium;
+
+    String utmCampaign;
+
+    String utmTerm;
+
+    String utmContent;
 }

@@ -231,7 +231,11 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                     .loanVendorPartnerId(lead.getLoanVendorPartnerId())
                     .leadId(lead.getId())
                     .createdAt(lead.getCreatedAt()).mobileNumber(lead.getMobileNumber())
-                    .updatedAt(lead.getLastModifiedAt()).userName(lead.getUserName()).leadSource(lead.getLeadSource())
+                    .updatedAt(lead.getLastModifiedAt()).userName(lead.getUserName()).leadSource(lead.getLeadSource()).utmMedium(lead.getUtmMedium())
+                    .utmContent(lead.getUtmContent())
+                    .utmCampaign(lead.getUtmCampaign())
+                    .utmTerm(lead.getUtmTerm())
+                    .utmSource(lead.getUtmSource())
                     .build();
 
             User user = userService.getCompanyDetails(lead.getSrCompanyId());
@@ -654,7 +658,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
              CSVWriter csvWriter = new CSVWriter(writer)) {
 
             // Write CSV header
-            String[] header = {"srCompanyId", "companyName", "brandName","mobileNumber", "amount", "duration in months", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt"};
+            String[] header = {"srCompanyId", "companyName", "brandName","mobileNumber", "amount", "duration in months", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt","utmSource","utmMedium","utmCampaign","utmTerm","utmContent"};
             csvWriter.writeNext(header);
 
             // Write CSV rows
@@ -673,7 +677,12 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                         lead.getRemarks(),
                         lead.getLoanVendorPartnerId()!=null?lead.getLoanVendorPartnerId().toString():"",
                         lead.getCreatedAt().toString(),
-                        lead.getUpdatedAt().toString()
+                        lead.getUpdatedAt().toString(),
+                        lead.getUtmSource(),
+                        lead.getUtmMedium(),
+                        lead.getUtmCampaign(),
+                        lead.getUtmTerm(),
+                        lead.getUtmContent()
                 };
                 csvWriter.writeNext(row);
             }

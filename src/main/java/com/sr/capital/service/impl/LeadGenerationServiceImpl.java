@@ -52,7 +52,11 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         }
         addUserIfEmpty(RequestData.getUserId(), token);
         Lead lead =Lead.builder().srCompanyId(generateLeadRequestDto.getSrCompanyId()!=null? generateLeadRequestDto.getSrCompanyId() : Long.valueOf(RequestData.getTenantId())).amount(generateLeadRequestDto.getAmount()).duration(generateLeadRequestDto.getDuration()).leadSource(generateLeadRequestDto.getLeadSource()).status(LeadStatus.LEAD_START).userName(generateLeadRequestDto.getUserName())
-                .mobileNumber(generateLeadRequestDto.getMobileNumber()).build();
+                .mobileNumber(generateLeadRequestDto.getMobileNumber()).utmContent(generateLeadRequestDto.getUtmContent())
+                .utmCampaign(generateLeadRequestDto.getUtmCampaign())
+                .utmMedium(generateLeadRequestDto.getUtmMedium())
+                .utmSource(generateLeadRequestDto.getUtmSource())
+                .utmTerm(generateLeadRequestDto.getUtmTerm()).build();
         lead.setLastModifiedBy(String.valueOf(RequestData.getUserId()));
         lead.setCreatedBy(String.valueOf(RequestData.getUserId()));
         leadGenerationRepository.save(lead);
@@ -65,7 +69,12 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
         List<GenerateLeadResponseDto> responseDtos =new ArrayList<>();
         leadList.forEach(lead -> {
             responseDtos.add(GenerateLeadResponseDto.builder().status(lead.getStatus()).amount(lead.getAmount()).duration(lead.getDuration()).id(lead.getId()).tier(lead.getTier()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())
-                    .remarks(lead.getRemarks()).loanVendorPartnerId(lead.getLoanVendorPartnerId()).build());
+                    .remarks(lead.getRemarks()).loanVendorPartnerId(lead.getLoanVendorPartnerId())
+                    .utmMedium(lead.getUtmMedium())
+                    .utmContent(lead.getUtmContent())
+                    .utmCampaign(lead.getUtmCampaign())
+                    .utmTerm(lead.getUtmTerm())
+                    .utmSource(lead.getUtmSource()).build());
         });
         return responseDtos;
     }
