@@ -83,7 +83,7 @@ public class CommunicationJob {
 
         try {
 
-            String subject = "Complete Your Loan Application in Just a Few Clicks!";
+            String subject = "Complete your Loan Application in Just a Few Clicks!";
             String templateName = CommunicationTemplateNames.REMINDER_EMAIL.getTemplateName();
             loanApplicationList.forEach(loanApplication -> {
                 CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder().loanId(loanApplication.getId().toString())

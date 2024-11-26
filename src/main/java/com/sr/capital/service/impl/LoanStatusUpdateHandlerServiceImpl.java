@@ -13,10 +13,7 @@ import com.sr.capital.entity.primary.LoanDisbursed;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.external.dto.request.CommunicationRequestTemp;
 import com.sr.capital.external.service.CommunicationService;
-import com.sr.capital.helpers.enums.CommunicationTemplateNames;
-import com.sr.capital.helpers.enums.DocType;
-import com.sr.capital.helpers.enums.LoanStatus;
-import com.sr.capital.helpers.enums.Screens;
+import com.sr.capital.helpers.enums.*;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.UserService;
 import com.sr.capital.service.entityimpl.*;
@@ -124,29 +121,29 @@ public class LoanStatusUpdateHandlerServiceImpl {
         switch (loanApplication.getLoanStatus()){
             case LEAD_PROCESSING -> {
                 templateName = CommunicationTemplateNames.PROCESSING_STAGE.getTemplateName();
-                subject = "Your Loan Application is Being Processed!";
+                subject = "Your Loan Request is being processed";
             }
             case LOAN_DISBURSED -> {templateName =CommunicationTemplateNames.LOAN_DISBURSED.getTemplateName();
-                subject = "Congratulations—Your Loan Has Been Disbursed!";
+                subject = "Congratulations- Your Loan has been Disbursed";
             }
             case LOAN_GENERATE -> {
                 templateName = CommunicationTemplateNames.OFFER_GENERATION.getTemplateName();
-                subject = "Your Loan Offer is Ready—Review and Accept!";
+                subject = "Your loan offer is ready- Review And Accept";
             }
             case LEAD_REJECTED -> {
                 templateName = CommunicationTemplateNames.LEAD_REJECTED.getTemplateName();
-                subject = "Update on Your Loan Application";
+                subject = "Update on your Loan Application";
             }
 
             case LEAD_DOCUMENT_UPLOAD -> {
                 templateName = CommunicationTemplateNames.DOCUMENT_PENDING.getTemplateName();
-                subject = "Complete Your Document Submission in Just a Few Clicks!";
+                subject = "Your Loan Application Needs a Final Step";
             }
         }
         if(templateName!=null) {
             CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder().loanId(loanApplication.getId().toString())
                     .requestedLoanAmount(loanApplication.getLoanAmountRequested()).vendorName(vendorName)
-                    .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).state(loanApplication.getState()).resourcesFaqLink("").build();
+                    .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).state(loanApplication.getState()).resourcesFaqLink("").vendorName(LoanVendorName.FLEXI.getLoanVendorName()).build();
 
             LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanApplication.getId());
             if(loanApplicationStatus!=null){

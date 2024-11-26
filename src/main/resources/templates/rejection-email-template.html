@@ -70,29 +70,49 @@
                             <table style="background-color: white; width: 100%; color: #000000de; font-size: 16px;">
                                 <tbody>
                                 <tr>
-                                    <td style="padding: 2em 1em 1em 1.25em">
-                                        <span style="font-weight: 500">Hello <span th:text="${userName}"></span>,</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; padding: 0.5em 1em 2em">
-                                        <p style="text-align: left; margin-bottom: 2rem">
-                                            Thank you for completing your loan application (Application ID: <span th:text="${applicationId}"></span>).
-                                            After careful review, we regret to inform you that we are unable to proceed with your application at this time.
-                                        </p>
-                                        <p style="text-align: left; margin-bottom: 2rem">
-                                            <b>Reason for Rejection:</b><br />
-                                            <span th:text="${rejectionReason}"></span>
-                                        </p>
-                                        <p style="text-align: left; margin-bottom: 2rem">
-                                            We understand that this may be disappointing, but we are committed to supporting you in the future.
-                                            To help improve your eligibility, we recommend reviewing our tips and resources here:
-                                            <a href="${resourcesFaqLink}" style="color: #1a73e8; text-decoration: none;">Resources/FAQs</a>.
-                                        </p>
-                                        <p style="text-align: left; margin-bottom: 2rem">
-                                            If you have any questions or would like further guidance, please feel free to contact your Capital Advisor at
-                                            <b>capital@shiprocket.com</b> or call us at <b>9911675924</b>.
-                                        </p>
+                                    <td>
+                                        <table style="background-color: white; width: 100%; color: #000000de; font-size: 16px;">
+                                            <tbody>
+                                            <tr>
+                                                <td style="padding: 2em 1em 1em 1.25em;">
+                                                    <span style="font-weight: 500">Hey <span th:text="${userName}" />,</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: center; padding: 0.5em 1em 2em;">
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        Thank you for applying for a loan with us
+                                                        Application ID: <span th:text="${loanId}" />.
+                                                    </p>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        After a detailed review, we regret to inform you that we cannot proceed with your application at this moment.
+                                                    </p>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        <b>Reason for Rejection:</b><br />
+                                                        <span th:text="${comments}" />
+                                                    </p>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        We understand this might not be the news you were hoping for. However, <b>don’t worry—we’ve got other lenders lined up for you. Our team will contact you soon with more options!</b>
+                                                    </p>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        In the meantime, explore our tips and resources to improve your loan eligibility here:
+                                                        <a th:href="${resourcesFaqLink}" style="color: #6f57e9;" target="_blank">[Link to Resources/FAQs]</a>
+                                                    </p>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        <b>Need Assistance?</b><br />
+                                                        Our team is ready to support you. Reach out to your dedicated Capital Advisor at:
+                                                    </p>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        📧 <b>capital@shiprocket.com</b><br />
+                                                        📞 <b>9911675924</b>
+                                                    </p>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        We’re here to assist you every step of the way!
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -114,8 +134,8 @@
                         <td style=" background-color: white; color: #000000de; padding: 20px; ">
                             <div style="opacity: 0.67; font-size: 12px; margin-bottom: 24px">Get answers to all your queries by visiting the ShiprocketSupport Center. We're here to help!</div>
                             <div style="font-size: 14px; margin-bottom: 0">
-                                <div style="margin-bottom: 5px">Happy shipping!</div>
-                                <div style="font-weight: bold">Team Capital</div>
+                                <div style="margin-bottom: 5px">Best regards,</div>
+                                <div style="font-weight: bold">Shiprocket Capital Team</div>
                             </div>
                         </td>
                     </tr>

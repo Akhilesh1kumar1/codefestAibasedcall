@@ -9,7 +9,7 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="supported-color-schemes" content="light dark" />
     <meta name="description" content="Dear Saahil, your order has been shipped and will reach you by dd/mm/yy." />
-    <title>Your Loan Application is Being Processed!</title>
+    <title>Your Loan Request is being processed</title>
     <style type="text/css">
         body {
           margin: 0;
@@ -55,7 +55,7 @@
                                 <tbody>
                                 <tr style="background-color: #e7edff">
                                     <td style="padding-left: 20px; padding-right: 50px">
-                                        <p style=" color: #6148dc; letter-spacing: -0.5px; font-size: 20px; font-weight: 500; ">Your Loan Application is Being Processed!</p>
+                                        <p style=" color: #6148dc; letter-spacing: -0.5px; font-size: 20px; font-weight: 500; ">Your Loan Request is being processed</p>
                                     </td>
                                     <td>
                                         <img src="https://kr-shipmultichannel-mum.s3-ap-south-1.amazonaws.com/upload-file/email-templates/seller/Group_713@2x.png" width="94" height="90" style=" object-fit: contain; float: right; padding: 30px; " />
@@ -75,29 +75,33 @@
                                             <tbody>
                                             <tr>
                                                 <td style="padding: 2em 1em 1em 1.25em">
-                                                    <span style="font-weight: 500">Hello <span th:text="${userName}" />,</span>
+                                                    <span style="font-weight: 500">Hey <span th:text="${userName}" />,</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td style="text-align: center; padding: 0.5em 1em 2em">
-                                                    <p style="text-align: left; margin-bottom: 2rem">
-                                                        Your loan application (Application ID: <span th:text="${loanId}"></span>) has been successfully submitted,
-                                                        and all documents have been received. It’s now in the processing stage, where
-                                                        <span th:text="${vendorName}"></span> is reviewing the details to generate a pre-qualified offer.
-                                                        This step may take 1-2 days.
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        We’ve received your loan application (<b>Application ID: (<span th:text="${loanId}" />) </b>) and all the required documents. It’s now under review by <b></b><span th:text="${lenderName}" /> </b>to ensure you get the best possible offer.
                                                     </p>
-                                                    <p style="text-align: left; margin-bottom: 2rem">
-                                                        Here’s a quick reminder of the loan details you provided:<br/>
-                                                        <b>Requested Loan Amount:</b> <span th:text="${requestedLoanAmount}"></span><br/>
-                                                        <b>Requested Tenure:</b> <span th:text="${requestedLoanTenure}"></span>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        Here’s a quick look at the details you shared:
+                                                        <br />
+                                                        <b>Loan Amount:</b> <span th:text="${requestedLoanAmount}" />
+                                                        <br />
+                                                        <b>Loan Tenure:</b> <span th:text="${requestedLoanTenure}" />
                                                     </p>
-                                                    <p style="text-align: left; margin-bottom: 2rem">
-                                                        You will be notified as soon as your loan offer is ready. Thank you for your patience
-                                                        as we ensure the best loan solution for your needs.
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        The review process usually takes <b>1-2 days</b>, and we’ll notify you as soon as your offer is ready.
                                                     </p>
-                                                    <p style="text-align: left; margin-bottom: 2rem">
-                                                        If you have any questions or need assistance, please contact your Capital Advisor at
-                                                        <b>capital@shiprocket.com</b> or call us at <b>9911675924</b>.
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        If you have any questions or need help, reach out to us at:
+                                                        <br />
+                                                        📧 <a href="mailto:capital@shiprocket.com">capital@shiprocket.com</a>
+                                                        <br />
+                                                        📞 <b>9911675924</b>
+                                                    </p>
+                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        Thank you for trusting us to support your business growth!
                                                     </p>
                                                 </td>
                                             </tr>
@@ -123,8 +127,8 @@
                         <td style=" background-color: white; color: #000000de; padding: 20px; ">
                             <div style="opacity: 0.67; font-size: 12px; margin-bottom: 24px">Get answers to all your queries by visiting the ShiprocketSupport Center. We're here to help!</div>
                             <div style="font-size: 14px; margin-bottom: 0">
-                                <div style="margin-bottom: 5px">Happy shipping!</div>
-                                <div style="font-weight: bold">Team Capital</div>
+                                <div style="margin-bottom: 5px">Best regards,</div>
+                                <div style="font-weight: bold">Shiprocket Capital Team</div>
                             </div>
                         </td>
                     </tr>
