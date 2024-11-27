@@ -67,12 +67,12 @@ public class LeadUpdateServiceImpl {
                     for (KycDocDetails<?> doc : docDetails) {
                         if (doc.getDocType() == DocType.PERSONAL_ADDRESS) {
                             log.info("[buildRequestDto] personal doc {} ", doc);
-                            validateAndBuildPersonalDetails(doc, user, updateLeadDto, updateLeadRequestDto.getLoanVendorId(), loanApplication.getExternalLeadCode());
+                            validateAndBuildPersonalDetails(doc, user, updateLeadDto, updateLeadRequestDto.getLoanVendorId(), loanApplication.getVendorLoanId());
 
                         } else if (doc.getDocType() == DocType.BUSINESS_ADDRESS) {
                             log.info("[buildRequestDto] business doc {} ", doc);
 
-                            buildBusinessDetails(doc, updateLeadDto, user,loanApplication.getExternalLeadCode());
+                            buildBusinessDetails(doc, updateLeadDto, user,loanApplication.getVendorLoanId());
                         } else if (doc.getDocType() == DocType.BANK_CHEQUE) {
 
                             log.info("[buildRequestDto] bank cheque {} ", doc);
