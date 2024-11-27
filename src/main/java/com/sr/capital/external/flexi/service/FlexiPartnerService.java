@@ -381,7 +381,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
     @Override
     public Object updateLead(String partner, UpdateLeadRequestDto requestDto) {
-        String responseDto;
+        CreateLeadResponseDto responseDto;
 
         updateCustomInfoForUpdateLead(requestDto);
         Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
@@ -421,7 +421,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
         try {
             responseDto = MapperUtils.convertValue(response.getData(),
-                    String.class);
+                    CreateLeadResponseDto.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

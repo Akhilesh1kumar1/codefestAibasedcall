@@ -4,6 +4,7 @@ import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.UpdateLeadRequestDto;
 import com.sr.capital.dto.request.UserDetails;
+import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
@@ -41,7 +42,7 @@ public class LeadUpdateServiceImpl {
     final CreditPartnerFactoryService creditPartnerFactoryService;
     public Boolean updateLeadDetails(UpdateLeadRequestDto updateLeadRequestDto) throws CustomException {
 
-        String responseDto = (String) creditPartnerFactoryService.getPartnerService(updateLeadRequestDto.getLoanVendorName()).updateLead(updateLeadRequestDto.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(), updateLeadRequestDto));
+        CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(updateLeadRequestDto.getLoanVendorName()).updateLead(updateLeadRequestDto.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(), updateLeadRequestDto));
         return  true;
     }
 
