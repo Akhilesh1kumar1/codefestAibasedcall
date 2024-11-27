@@ -62,6 +62,8 @@ public class DocumentSyncHelperServiceImpl {
                             log.info("[syncDocumentToVendor] report meta data {} ",reportMetaData);
 
                             for (String image : kycDocDetails.getImages()) {
+                                if(image==null)
+                                    continue;
                                 try (InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), image)) {
                                     if (inputStream != null) {
                                         String documentType = (String) reportMetaData.getMetaData().get("document_type");
@@ -105,12 +107,14 @@ public class DocumentSyncHelperServiceImpl {
                             }
 
                             try {
-                                S3Util.deleteObjectFromS3(appProperties.getBucketName(), kycDocDetails.getImages().get(0));
-                                kycDocDetails.setImages(null);
-                                if(RequestData.getUserId()==null){
-                                    RequestData.setUserId(-1l);
+                                if(kycDocDetails.getImages().get(0)!=null) {
+                                    S3Util.deleteObjectFromS3(appProperties.getBucketName(), kycDocDetails.getImages().get(0));
+                                    kycDocDetails.setImages(null);
+                                    if (RequestData.getUserId() == null) {
+                                        RequestData.setUserId(-1l);
+                                    }
+                                    kycDocDetailsManager.saveKycDocDetails(kycDocDetails);
                                 }
-                                kycDocDetailsManager.saveKycDocDetails(kycDocDetails);
                             } catch (IncompatibleDetailsException e) {
                                 // throw new RuntimeException(e);
                                 log.info("error in document save ");

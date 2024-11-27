@@ -19,10 +19,13 @@ import java.util.List;
 public class ReportMetaDataConstructor implements EntityConstructor {
     @Override
     public <T> T constructEntity(DocOrchestratorRequest request, T entity)  {
-        List<String> images = new ArrayList<>();
-        images.add(request.getFile1().getFileName());
-        if(request.hasFile2()){
-            images.add(request.getFile2().getFileName());
+        List<String> images = null;
+        if(request.getFile1()!=null && request.getFile1().getFileName()!=null) {
+            images =new ArrayList<>();
+            images.add(request.getFile1().getFileName());
+            if (request.hasFile2()) {
+                images.add(request.getFile2().getFileName());
+            }
         }
 
         ReportMetaData reportMetaData =ReportMetaData.builder().metaData(request.getDocDetails()).build();
