@@ -8,6 +8,11 @@ import com.sr.capital.helpers.enums.Screens;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @Service
 public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
@@ -75,14 +80,32 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
         switch (Checkpoint.valueOf(checkpoint.getCheckpoint())) {
             case PERSONAL_DETAILS:
                 if ("ERRORED".equalsIgnoreCase(state)) {
+                    Map<String,String> tempFieldsMap =new HashMap<>();
+                    buildPerosnalDetailsFieldMap(tempFieldsMap);
                     setInternalState(dto, Screens.PERSONAL_DETAILS, LoanStatus.LEAD_IN_PROGRESS);
+                    if(checkpoint.getMeta()!=null && !CollectionUtils.isEmpty(checkpoint.getMeta().getFields())){
+                        List<String> fields = new ArrayList<>();
+                        checkpoint.getMeta().getFields().forEach(k->{
+                            fields.add(tempFieldsMap.getOrDefault(k.toLowerCase(),k));
+                        });
+                        checkpoint.getMeta().setFields(fields);
+                    }
                     currentStateFound =true;
                 }
 
                 break;
             case BUSINESS_DETAILS:
                 if ("ERRORED".equalsIgnoreCase(state)) {
+                    Map<String,String> tempFieldsMap =new HashMap<>();
+                    buildBusinessDetailsFieldMap(tempFieldsMap);
                     setInternalState(dto, Screens.BUSINESS_DETAILS, LoanStatus.LEAD_IN_PROGRESS);
+                    if(checkpoint.getMeta()!=null && !CollectionUtils.isEmpty(checkpoint.getMeta().getFields())){
+                        List<String> fields = new ArrayList<>();
+                        checkpoint.getMeta().getFields().forEach(k->{
+                            fields.add(tempFieldsMap.getOrDefault(k.toLowerCase(),k));
+                        });
+                        checkpoint.getMeta().setFields(fields);
+                    }
                     currentStateFound =true;
                 }
                 break;
@@ -114,6 +137,24 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 break;
         }
         return  currentStateFound;
+    }
+
+    private void buildPerosnalDetailsFieldMap(Map<String, String> tempFieldsMap) {
+
+        tempFieldsMap.put("address_building","address");
+        tempFieldsMap.put("address_area","address");
+        tempFieldsMap.put("pan_no","pan_number");
+        tempFieldsMap.put("name","name");
+        tempFieldsMap.put("address_pincode","pincode");
+
+    }
+
+    private void buildBusinessDetailsFieldMap(Map<String, String> tempFieldsMap) {
+
+        tempFieldsMap.put("address_building","businessAddress");
+        tempFieldsMap.put("address_area","businessAddress");
+        tempFieldsMap.put("address_pin_code","companyPincode");
+
     }
 
     private void setInternalState(LoanStatusUpdateWebhookDto dto, Screens screen, LoanStatus status) {

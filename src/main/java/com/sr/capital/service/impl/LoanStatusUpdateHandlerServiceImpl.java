@@ -191,6 +191,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanMetaData.setExternalStatus2(loanStatusUpdateWebhookDto.getS2());
             loanMetaData.setExternalStatus3(loanStatusUpdateWebhookDto.getS3());
             loanMetaData.setExternalApplicationStatus(loanStatusUpdateWebhookDto.getApplicationStatus());
+            loanMetaData.setLastModifiedAt(LocalDateTime.now());
         }
         loanMetaDataEntityService.saveLoanMetaData(loanMetaData);
 
