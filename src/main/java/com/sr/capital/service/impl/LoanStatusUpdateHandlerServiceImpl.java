@@ -251,18 +251,26 @@ public class LoanStatusUpdateHandlerServiceImpl {
     public LoanApplication updateLoanState(UUID id , DocType type) {
         LoanStatus loanStatus = LoanStatus.LEAD_IN_PROGRESS;
         String state = "PERSONAL_DETAILS";
-
-        switch (type){
-            case PERSONAL_ADDRESS -> state = Screens.PERSONAL_DETAILS.name();
+        LoanApplication loanApplication =loanApplicationRepository.findById(id).orElse(null);
+        if(loanApplication!=null && (loanApplication.getLoanStatus()!=loanStatus || loanApplication.getState()!=state || loanApplication.getVendorLoanId()!=null)){
+            switch (type){
+            case PERSONAL_ADDRESS -> {
+                if(loanApplication.getVendorLoanId()==null) {
+                    state = Screens.PERSONAL_DETAILS.name();
+                }else{
+                    state = Screens.BUSINESS_DETAILS.name();
+                }
+            }
             case BUSINESS_ADDRESS -> state =Screens.BUSINESS_DETAILS.name();
             default -> {
                 state = "DOCUMENT_UPLOAD";
                 loanStatus = LoanStatus.LEAD_DOCUMENT_UPLOAD;
             }
-        }
 
-        LoanApplication loanApplication =loanApplicationRepository.findById(id).orElse(null);
-        if(loanApplication!=null && (loanApplication.getLoanStatus()!=loanStatus || loanApplication.getState()!=state)){
+          }
+
+
+
             loanApplication.setLoanStatus(loanStatus);
             loanApplication.setState(state);
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());

@@ -32,6 +32,9 @@ public class UserProgressResponseDto {
 
     private List<Checkpoint> checkpoints;
 
+    @Builder.Default
+    private Boolean showErrorOnPersonalDetails =false;
+
     @lombok.Data
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)

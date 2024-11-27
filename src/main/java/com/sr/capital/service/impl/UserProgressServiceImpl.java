@@ -54,8 +54,12 @@ public class UserProgressServiceImpl {
                 case LEAD_IN_PROGRESS -> {
                     currentState =loanApplication1.getState();
 
-                    if(loanApplication1.getVendorLoanId()==null && (loanApplication1.getState()!=null && loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name()))){
+                    if(loanApplication1.getVendorLoanId()==null ) {
+                        if ((loanApplication1.getState() != null && loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name()))) {
                             currentState = Screens.BUSINESS_DETAILS.name();
+                        }
+                    }else if(loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name())){
+                        userProgressResponseDto.setShowErrorOnPersonalDetails(true);
                     }
 
                     LoanMetaData loanMetaData = loanMetaDataEntityService.getLoanMetaDataDetails(loanApplication1.getId());
