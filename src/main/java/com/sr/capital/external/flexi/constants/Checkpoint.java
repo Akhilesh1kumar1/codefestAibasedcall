@@ -24,5 +24,15 @@ public enum Checkpoint {
     LOAN_SANCTION,
     PHYSICAL_NACH,
     UNDERWRITING,
-    SANCTION_ACCEPTED
+    SANCTION_ACCEPTED;
+
+    public static boolean isValuePresent(String value) {
+        try {
+            Checkpoint.valueOf(value); // Throws exception if value is invalid
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
 }

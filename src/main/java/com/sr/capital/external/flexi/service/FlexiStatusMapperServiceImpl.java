@@ -46,9 +46,11 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
     private void handleInProgressStatus(LoanStatusUpdateWebhookDto dto) {
         if (!CollectionUtils.isEmpty(dto.getCheckpoints())) {
             for (LoanStatusUpdateWebhookDto.Checkpoint checkpoint : dto.getCheckpoints()) {
-                Boolean currentStateFound = processCheckpoint(dto, checkpoint);
-                if (currentStateFound)
-                    return;
+                if(Checkpoint.isValuePresent(checkpoint.getCheckpoint())) {
+                    Boolean currentStateFound = processCheckpoint(dto, checkpoint);
+                    if (currentStateFound)
+                        return;
+                }
             }
         }
     }

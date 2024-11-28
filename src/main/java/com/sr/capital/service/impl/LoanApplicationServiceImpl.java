@@ -196,8 +196,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         if(loanApplication!=null){
             LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().loanVendorId(loanApplication.getLoanVendorId())
                     .loanId(loanApplication.getVendorLoanId()).srCompanyId(loanApplication.getSrCompanyId()).loanVendorName(syncDocumentToVendor.getLoanVendorName()).build();
-
             documentSyncHelperService.syncDocumentToVendor(loanMetaDataDto);
+            loanApplication.setLoanStatus(LoanStatus.LEAD_PROCESSING);
+            loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
+            loanApplicationRepository.save(loanApplication);
         }
 
         return SyncDocumentResponseDto.builder().loanId(syncDocumentToVendor.getLoanId()).build();
