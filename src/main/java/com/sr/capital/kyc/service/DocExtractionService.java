@@ -249,6 +249,7 @@ public class DocExtractionService {
             case AADHAR:
             case GST:
             case EPAN:
+            case TRADE_CERTIFICATE:
                 return ReportMetaData.class;
             case BUSINESS_ADDRESS:
                 return BusinessAddressDetails.class;

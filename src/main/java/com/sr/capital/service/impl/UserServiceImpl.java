@@ -168,6 +168,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDetails getCompanyDetailsWithoutEncryption(Long srCompanyId) {
+        User user= userRepository.findTopBySrCompanyId(srCompanyId);
+        UserDetails userDetails = null;
+        if(user!=null) {
+            userDetails =new UserDetails();
+            try {
+                userDetails.setFirstName(aes256.decrypt(user.getFirstName()));
+                userDetails.setMobileNumber(aes256.decrypt(user.getMobile()));
+                userDetails.setEmail(aes256.decrypt(user.getEmail()));
+                userDetails.setLastName(aes256.decrypt(user.getLastName()));
+                userDetails.setMiddleName(aes256.decrypt(user.getMiddleName()));
+                userDetails.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
+                userDetails.setPanNumber(aes256.decrypt(user.getPanNumber()));
+                userDetails.setFatherName(aes256.decrypt(user.getFatherName()));
+                userDetails.setCurrentAccountAvailable(user.getCurrentAccountAvailable());
+                userDetails.setComments(user.getComments());
+                userDetails.setIsAccepted(user.getIsAccepted());
+                userDetails.setEntityType(user.getEntityType());
+                userDetails.setCompanyName(user.getCompanyName());
+                userDetails.setGender(user.getGender());
+                userDetails.setIsMobileNumberVerified(user.getIsMobileVerified());
+                userDetails.setCurrentAccountAvailable(user.getCurrentAccountAvailable());
+            }catch (Exception ex) {//temp code
+
+            }
+        }
+        return userDetails;
+    }
+
+    @Override
     public ValidateMobileResponse validateMobileNumber(String mobileNumber) {
         return null;
     }

@@ -7,6 +7,7 @@ import com.sr.capital.config.db.CommonJdbcUtill;
 import com.sr.capital.dto.request.GenerateLeadRequestDto;
 import com.sr.capital.dto.request.IcrmLeadDetailsRequestDto;
 import com.sr.capital.dto.request.IcrmLoanRequestDto;
+import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.dto.response.*;
 import com.sr.capital.dto.response.event.Action;
 import com.sr.capital.dto.response.event.Event;
@@ -175,10 +176,10 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
          }
         //getDocDetails(icrmLoanResponseDto,icrmLeadRequestDto);
 
-        User user =userService.getCompanyDetails(icrmLeadRequestDto.getSrCompanyId());
+        UserDetails user =userService.getCompanyDetailsWithoutEncryption(icrmLeadRequestDto.getSrCompanyId());
          if(user!=null){
              icrmLoanResponseDto.getCompleteDetails().get(0).setEmailId(user.getEmail());
-             icrmLoanResponseDto.getCompleteDetails().get(0).setMobileNumber(user.getMobile());
+             icrmLoanResponseDto.getCompleteDetails().get(0).setMobileNumber(user.getMobileNumber());
              icrmLoanResponseDto.getCompleteDetails().get(0).setUserName(user.getFirstName());
          }
 
@@ -199,8 +200,8 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     @Override
     public GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
         if(generateLeadRequestDto.getStatus().equals(LeadStatus.NOT_CONNECTED)) {
-           User user = userService.getCompanyDetails(generateLeadRequestDto.getSrCompanyId());
-           KaleyraResponse response = communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobile(), List.of(user.getFirstName()), appProperties.getKaleyraWhatsappSellerNotConnectedTemplateName()));
+           UserDetails user = userService.getCompanyDetailsWithoutEncryption(generateLeadRequestDto.getSrCompanyId());
+           KaleyraResponse response = communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobileNumber(), List.of(user.getFirstName()), appProperties.getKaleyraWhatsappSellerNotConnectedTemplateName()));
            if(response!=null && CollectionUtils.isNotEmpty(response.getData())){
                response.getData().forEach(data->{
                    WhatsappApiLog whatsappApiLog= WhatsappApiLog.builder().messageId(data.getId()).remarks(data.getStatus()).internalId(generateLeadRequestDto.getLeadId()).eventType("lead").srCompanyId(generateLeadRequestDto.getSrCompanyId()).build();
@@ -231,10 +232,14 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                     .loanVendorPartnerId(lead.getLoanVendorPartnerId())
                     .leadId(lead.getId())
                     .createdAt(lead.getCreatedAt()).mobileNumber(lead.getMobileNumber())
-                    .updatedAt(lead.getLastModifiedAt()).userName(lead.getUserName()).leadSource(lead.getLeadSource())
+                    .updatedAt(lead.getLastModifiedAt()).userName(lead.getUserName()).leadSource(lead.getLeadSource()).utmMedium(lead.getUtmMedium())
+                    .utmContent(lead.getUtmContent())
+                    .utmCampaign(lead.getUtmCampaign())
+                    .utmTerm(lead.getUtmTerm())
+                    .utmSource(lead.getUtmSource())
                     .build();
 
-            User user = userService.getCompanyDetails(lead.getSrCompanyId());
+            UserDetails user = userService.getCompanyDetailsWithoutEncryption(lead.getSrCompanyId());
             if(user!=null){
                 leadDto.setCompanyName(user.getCompanyName());
             }
@@ -419,7 +424,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     private IcrmLoanResponseDto buildLeadResponse(IcrmLoanResponseDto icrmLoanResponseDto, List<Map<String, Object>> listRecords) {
        // IcrmLoanResponseDto icrmLoanResponseDto = IcrmLoanResponseDto.builder().completeDetails(new ArrayList<>()).build();
         icrmLoanResponseDto.setCompleteDetails(new ArrayList<>());
-        Map<Long,User> userMap =new HashMap<>();
+        Map<Long,UserDetails> userMap =new HashMap<>();
         for(int i=0;i<listRecords.size();i++) {
             Map<String, Object> orderMap = listRecords.get(i);
             IcrmLoanCompleteDetails icrmLoanCompleteDetails = buildCompleteDetails(orderMap);
@@ -428,7 +433,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
              if(userMap.containsKey(icrmLoanCompleteDetails.getSrCompanyId())){
                  icrmLoanCompleteDetails.setCompanyName(userMap.get(icrmLoanCompleteDetails.getSrCompanyId()).getCompanyName());
              }else{
-                 User user =userService.getCompanyDetails(icrmLoanCompleteDetails.getSrCompanyId());
+                 UserDetails user =userService.getCompanyDetailsWithoutEncryption(icrmLoanCompleteDetails.getSrCompanyId());
                  if(user!=null){
                      userMap.put(icrmLoanCompleteDetails.getSrCompanyId(),user);
                      icrmLoanCompleteDetails.setCompanyName(user.getCompanyName());
@@ -443,7 +448,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     private IcrmLoanResponseDto buildLoanResponse(IcrmLoanResponseDto icrmLoanResponseDto, List<Object[]> loanDetailsDtos) {
         // IcrmLoanResponseDto icrmLoanResponseDto = IcrmLoanResponseDto.builder().completeDetails(new ArrayList<>()).build();
         icrmLoanResponseDto.setCompleteDetails(new ArrayList<>());
-        Map<Long,User> userMap =new HashMap<>();
+        Map<Long,UserDetails> userMap =new HashMap<>();
         for(int i=0;i<loanDetailsDtos.size();i++) {
              Object[] loanDetailsDto = loanDetailsDtos.get(i);
              IcrmLoanCompleteDetails icrmLoanCompleteDetails = buildCompleteDetails(loanDetailsDto);
@@ -452,7 +457,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             if(userMap.containsKey(icrmLoanCompleteDetails.getSrCompanyId())){
                 icrmLoanCompleteDetails.setCompanyName(userMap.get(icrmLoanCompleteDetails.getSrCompanyId()).getCompanyName());
             }else{
-                User user =userService.getCompanyDetails(icrmLoanCompleteDetails.getSrCompanyId());
+                UserDetails user =userService.getCompanyDetailsWithoutEncryption(icrmLoanCompleteDetails.getSrCompanyId());
                 if(user!=null){
                     userMap.put(icrmLoanCompleteDetails.getSrCompanyId(),user);
                     icrmLoanCompleteDetails.setCompanyName(user.getCompanyName());
@@ -654,7 +659,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
              CSVWriter csvWriter = new CSVWriter(writer)) {
 
             // Write CSV header
-            String[] header = {"srCompanyId", "companyName", "brandName","mobileNumber", "amount", "duration in months", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt"};
+            String[] header = {"srCompanyId", "companyName", "brandName","mobileNumber", "amount", "duration in months", "status", "loanApplicationId", "tier", "leadSource", "remarks", "loanVendorPartnerId","createdAt","updatedAt","utmSource","utmMedium","utmCampaign","utmTerm","utmContent"};
             csvWriter.writeNext(header);
 
             // Write CSV rows
@@ -673,7 +678,12 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                         lead.getRemarks(),
                         lead.getLoanVendorPartnerId()!=null?lead.getLoanVendorPartnerId().toString():"",
                         lead.getCreatedAt().toString(),
-                        lead.getUpdatedAt().toString()
+                        lead.getUpdatedAt().toString(),
+                        lead.getUtmSource(),
+                        lead.getUtmMedium(),
+                        lead.getUtmCampaign(),
+                        lead.getUtmTerm(),
+                        lead.getUtmContent()
                 };
                 csvWriter.writeNext(row);
             }

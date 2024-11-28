@@ -44,6 +44,8 @@ public class LoanApplicationResponseDto extends BasesResponse {
 
     String state;
 
+    String externalLoanId;
+
     public static LoanApplicationResponseDto mapLoanApplicationResponse(LoanApplication loanApplication){
         LoanApplicationResponseDto responseDto =new LoanApplicationResponseDto();
         responseDto.setCreatedAt(loanApplication.getAuditData().getCreatedAt());
@@ -55,6 +57,7 @@ public class LoanApplicationResponseDto extends BasesResponse {
         responseDto.setLoanDuration(loanApplication.getLoanDuration());
         responseDto.setComments(loanApplication.getComments());
         responseDto.setState(loanApplication.getState());
+        responseDto.setExternalLoanId(loanApplication.getVendorLoanId());
        return responseDto;
     }
 }

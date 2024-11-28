@@ -6,7 +6,8 @@ public enum CommunicationTemplateNames {
     REMINDER_EMAIL("reminder-email-template"),
     PROCESSING_STAGE("processing-stage-email-template"),
     OFFER_GENERATION("offer-generation-email-template"),
-    LOAN_DISBURSED("loan-disbursed");
+    LOAN_DISBURSED("loan-disbursed"),
+    DOCUMENT_PENDING("document-pending-template");
 
     private String templateName;
     CommunicationTemplateNames(String s) {

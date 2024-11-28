@@ -185,6 +185,7 @@ public class FetchDocDetailsResponseConstructor implements ResponseConstructor {
             case AADHAR:
             case GST:
             case EPAN:
+            case TRADE_CERTIFICATE:
                 return (T) kycDocDetails.getDetails();
             case PERSONAL_ADDRESS:
                 PersonalAddressDetails personalAddressDetails = (PersonalAddressDetails) kycDocDetails.getDetails();

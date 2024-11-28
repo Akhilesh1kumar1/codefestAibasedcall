@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omunify.kafka.consumer.thread.MainConsumerThread;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
+import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.dto.response.CompanySalesDetails;
 import com.sr.capital.dto.response.LoanOfferDetails;
 import com.sr.capital.dto.response.MonthlySalesDetails;
@@ -116,9 +117,9 @@ public class ExternalServiceImpl implements ExternalService {
             }
 
             if (whatsappApiLog.getEventType().equalsIgnoreCase("lead")) {
-                User user = userService.getCompanyDetails(whatsappApiLog.getSrCompanyId());
+                UserDetails user = userService.getCompanyDetailsWithoutEncryption(whatsappApiLog.getSrCompanyId());
                 if (user != null) {
-                    communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobile(), new ArrayList<>(), appProperties.getKaleyraWhatsappSellerThanksTemplateName()));
+                    communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobileNumber(), new ArrayList<>(), appProperties.getKaleyraWhatsappSellerThanksTemplateName()));
                 }
             }
         }

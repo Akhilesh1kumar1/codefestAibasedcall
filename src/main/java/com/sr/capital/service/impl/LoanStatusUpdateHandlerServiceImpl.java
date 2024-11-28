@@ -5,6 +5,7 @@ import com.omunify.restutil.exceptions.InvalidResourceException;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
+import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.entity.mongo.LoanMetaData;
 import com.sr.capital.entity.mongo.kyc.child.Checkpoints;
 import com.sr.capital.entity.primary.LoanApplication;
@@ -13,10 +14,7 @@ import com.sr.capital.entity.primary.LoanDisbursed;
 import com.sr.capital.entity.primary.User;
 import com.sr.capital.external.dto.request.CommunicationRequestTemp;
 import com.sr.capital.external.service.CommunicationService;
-import com.sr.capital.helpers.enums.CommunicationTemplateNames;
-import com.sr.capital.helpers.enums.DocType;
-import com.sr.capital.helpers.enums.LoanStatus;
-import com.sr.capital.helpers.enums.Screens;
+import com.sr.capital.helpers.enums.*;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.UserService;
 import com.sr.capital.service.entityimpl.*;
@@ -29,7 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -87,7 +84,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
-            //sendCommunication(loanApplication,loanVendorName);
+            sendCommunication(loanApplication,loanVendorName);
            /* switch (loanApplication.getLoanStatus()){
 
                 case LEAD_PROCESSING:
@@ -125,24 +122,29 @@ public class LoanStatusUpdateHandlerServiceImpl {
         switch (loanApplication.getLoanStatus()){
             case LEAD_PROCESSING -> {
                 templateName = CommunicationTemplateNames.PROCESSING_STAGE.getTemplateName();
-                subject = "Your Loan Application is Being Processed!";
+                subject = "Your Loan Request is being processed";
             }
-            case DISBURSED -> {templateName =CommunicationTemplateNames.LOAN_DISBURSED.getTemplateName();
-                subject = "Congratulations—Your Loan Has Been Disbursed!";
+            case LOAN_DISBURSED -> {templateName =CommunicationTemplateNames.LOAN_DISBURSED.getTemplateName();
+                subject = "Congratulations- Your Loan has been Disbursed";
             }
-            case LOAN_OFFER_GENERATED -> {
+            case LOAN_GENERATE -> {
                 templateName = CommunicationTemplateNames.OFFER_GENERATION.getTemplateName();
-                subject = "Your Loan Offer is Ready—Review and Accept!";
+                subject = "Your loan offer is ready- Review And Accept";
             }
             case LEAD_REJECTED -> {
                 templateName = CommunicationTemplateNames.LEAD_REJECTED.getTemplateName();
-                subject = "Update on Your Loan Application";
+                subject = "Update on your Loan Application";
+            }
+
+            case LEAD_DOCUMENT_UPLOAD -> {
+                templateName = CommunicationTemplateNames.DOCUMENT_PENDING.getTemplateName();
+                subject = "Your Loan Application Needs a Final Step";
             }
         }
         if(templateName!=null) {
             CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder().loanId(loanApplication.getId().toString())
                     .requestedLoanAmount(loanApplication.getLoanAmountRequested()).vendorName(vendorName)
-                    .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).build();
+                    .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).state(loanApplication.getState()).resourcesFaqLink("").vendorName(LoanVendorName.FLEXI.getLoanVendorName()).build();
 
             LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanApplication.getId());
             if(loanApplicationStatus!=null){
@@ -150,17 +152,20 @@ public class LoanStatusUpdateHandlerServiceImpl {
                 List<LoanDisbursed> loanDisbursedList = loanDistributionService.getLoanDisbursedDetailsByStatusId(loanApplicationStatus.getId());
                 if(CollectionUtils.isNotEmpty(loanDisbursedList)){
                     metaData.setDisbursmentDate(loanDisbursedList.get(0).getDisbursedDate());
+                    metaData.setMonthlyEmi(loanDisbursedList.get(0).getEmiAmount());
+                    metaData.setDisbursmentTenure(loanDisbursedList.get(0).getDurationAtDisbursal());
+                    metaData.setDisbursmentInterest(loanDisbursedList.get(0).getInterestRateAtDisbursal());
                     metaData.setInvitationLink("");
                     metaData.setRepaymentTerms("");
                 }
             }
 
-            User user =  userService.getCompanyDetails(loanApplication.getSrCompanyId());
+            UserDetails user =  userService.getCompanyDetailsWithoutEncryption(loanApplication.getSrCompanyId());
             if(user!=null) {
                 CommunicationRequestTemp.EmailCommunicationDTO emailCommunicationDTO = CommunicationRequestTemp.EmailCommunicationDTO.builder()
                         .recipientEmail(user.getEmail()).recipientName(user.getFirstName()).subject(subject).build();
 
-                CommunicationRequestTemp communicationRequestTemp = CommunicationRequestTemp.builder().contentMetaData(metaData).emailCommunicationDto(emailCommunicationDTO).build();
+                CommunicationRequestTemp communicationRequestTemp = CommunicationRequestTemp.builder().contentMetaData(metaData).emailCommunicationDto(emailCommunicationDTO).templateName(templateName).build();
 
                 communicationService.sendCommunicationForLoan(communicationRequestTemp);
             }
@@ -189,6 +194,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanMetaData.setExternalStatus2(loanStatusUpdateWebhookDto.getS2());
             loanMetaData.setExternalStatus3(loanStatusUpdateWebhookDto.getS3());
             loanMetaData.setExternalApplicationStatus(loanStatusUpdateWebhookDto.getApplicationStatus());
+            loanMetaData.setLastModifiedAt(LocalDateTime.now());
         }
         loanMetaDataEntityService.saveLoanMetaData(loanMetaData);
 
@@ -248,18 +254,26 @@ public class LoanStatusUpdateHandlerServiceImpl {
     public LoanApplication updateLoanState(UUID id , DocType type) {
         LoanStatus loanStatus = LoanStatus.LEAD_IN_PROGRESS;
         String state = "PERSONAL_DETAILS";
-
-        switch (type){
-            case PERSONAL_ADDRESS -> state = Screens.PERSONAL_DETAILS.name();
+        LoanApplication loanApplication =loanApplicationRepository.findById(id).orElse(null);
+        if(loanApplication!=null && (loanApplication.getLoanStatus()!=loanStatus || loanApplication.getState()!=state || loanApplication.getVendorLoanId()!=null)){
+            switch (type){
+            case PERSONAL_ADDRESS -> {
+                if(loanApplication.getVendorLoanId()==null) {
+                    state = Screens.PERSONAL_DETAILS.name();
+                }else{
+                    state = Screens.BUSINESS_DETAILS.name();
+                }
+            }
             case BUSINESS_ADDRESS -> state =Screens.BUSINESS_DETAILS.name();
             default -> {
                 state = "DOCUMENT_UPLOAD";
                 loanStatus = LoanStatus.LEAD_DOCUMENT_UPLOAD;
             }
-        }
 
-        LoanApplication loanApplication =loanApplicationRepository.findById(id).orElse(null);
-        if(loanApplication!=null && (loanApplication.getLoanStatus()!=loanStatus || loanApplication.getState()!=state)){
+          }
+
+
+
             loanApplication.setLoanStatus(loanStatus);
             loanApplication.setState(state);
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());

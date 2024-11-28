@@ -48,13 +48,18 @@ public class UserProgressServiceImpl {
             userProgressResponseDto.setLoanVendorId(loanApplication1.getLoanVendorId());
 
             switch (loanApplication1.getLoanStatus()){
+                case LEAD_DUPLICATE -> currentState = Screens.MOBILE_VERIFICATION.name();
                 case LEAD_INITIATED -> currentState = Screens.LOAN_DETAILS.name();
                 case LEAD_VERIFIED ->currentState = PERSONAL_DETAILS.name();
                 case LEAD_IN_PROGRESS -> {
                     currentState =loanApplication1.getState();
 
-                    if(loanApplication1.getVendorLoanId()==null && (loanApplication1.getState()!=null && loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name()))){
+                    if(loanApplication1.getVendorLoanId()==null ) {
+                        if ((loanApplication1.getState() != null && loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name()))) {
                             currentState = Screens.BUSINESS_DETAILS.name();
+                        }
+                    }else if(loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name())){
+                        userProgressResponseDto.setShowErrorOnPersonalDetails(true);
                     }
 
                     LoanMetaData loanMetaData = loanMetaDataEntityService.getLoanMetaDataDetails(loanApplication1.getId());
@@ -66,7 +71,7 @@ public class UserProgressServiceImpl {
 
                             userProgressResponseDto.setCheckpoints(MapperUtils.convertValue(loanMetaData.getCheckPoints(), tref));
                         }catch (Exception ex){
-                            
+
                         }
                     }
 

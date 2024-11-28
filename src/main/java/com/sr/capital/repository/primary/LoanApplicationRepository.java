@@ -52,4 +52,10 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
     )*/
     Page<LoanApplication> findByLoanStatusAndAuditDataCreatedAtBetween(LoanStatus loanStatus, LocalDateTime startDate,LocalDateTime endDate, Pageable pageable);
 
+
+    @Query(value = "SELECT la FROM loan_application la WHERE la.created_at BETWEEN :startDate AND :endDate AND la.loan_status IN :loanStatuses ",nativeQuery = true)
+    Page<LoanApplication> findAllByDateRangeAndStatusList(@Param("startDate") LocalDateTime startDate,
+                                             @Param("endDate") LocalDateTime endDate,@Param("loanStatuses") List<LoanStatus> loanStatuses,
+                                             Pageable pageable);
+
 }

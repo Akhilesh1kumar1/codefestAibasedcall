@@ -23,4 +23,7 @@ public interface UserService {
     ValidateMobileResponse validateMobileNumber(String mobileNumber);
 
     UserProgressResponseDto getCompanyCompanyProgressState();
+
+    UserDetails getCompanyDetailsWithoutEncryption(Long srCompanyId) ;
+
 }

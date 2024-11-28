@@ -40,4 +40,14 @@ public class Lead extends BaseDoc {
 
     String mobileNumber;
 
+    String utmSource;
+
+    String utmMedium;
+
+    String utmCampaign;
+
+    String utmTerm;
+
+    String utmContent;
+
 }

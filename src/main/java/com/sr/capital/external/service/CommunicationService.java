@@ -274,6 +274,12 @@ public class CommunicationService {
         context.setVariable(CommunicationRequestTemp.MetaData.Fields.repaymentTerms,communicationRequest.getContentMetaData().getRepaymentTerms());
         context.setVariable(CommunicationRequestTemp.MetaData.Fields.requestedLoanAmount,communicationRequest.getContentMetaData().getRequestedLoanAmount());
         context.setVariable(CommunicationRequestTemp.MetaData.Fields.requestedLoanTenure,communicationRequest.getContentMetaData().getRequestedLoanTenure());
+        context.setVariable(CommunicationRequestTemp.MetaData.Fields.state,communicationRequest.getContentMetaData().getState());
+        context.setVariable(CommunicationRequestTemp.MetaData.Fields.resourcesFaqLink,communicationRequest.getContentMetaData().getResourcesFaqLink());
+        context.setVariable(CommunicationRequestTemp.MetaData.Fields.disbursmentInterest,communicationRequest.getContentMetaData().getDisbursmentInterest());
+        context.setVariable(CommunicationRequestTemp.MetaData.Fields.disbursmentTenure,communicationRequest.getContentMetaData().getDisbursmentTenure());
+        context.setVariable(CommunicationRequestTemp.MetaData.Fields.monthlyEmi,communicationRequest.getContentMetaData().getMonthlyEmi());
+
         return context;
     }
 

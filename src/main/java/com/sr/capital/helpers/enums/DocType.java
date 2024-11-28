@@ -61,7 +61,8 @@ public enum DocType {
     WATER_BILL("water_bill"),
     SALE_DEED("sale_deed"),
     LANDLINE_BILL("landline_bill"),
-    EPAN("epan");
+    EPAN("epan"),
+    TRADE_CERTIFICATE("trade_certificate");
 
     final String type;
 
