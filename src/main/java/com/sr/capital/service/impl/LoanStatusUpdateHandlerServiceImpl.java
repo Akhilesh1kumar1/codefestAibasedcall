@@ -152,6 +152,9 @@ public class LoanStatusUpdateHandlerServiceImpl {
                 List<LoanDisbursed> loanDisbursedList = loanDistributionService.getLoanDisbursedDetailsByStatusId(loanApplicationStatus.getId());
                 if(CollectionUtils.isNotEmpty(loanDisbursedList)){
                     metaData.setDisbursmentDate(loanDisbursedList.get(0).getDisbursedDate());
+                    metaData.setMonthlyEmi(loanDisbursedList.get(0).getEmiAmount());
+                    metaData.setDisbursmentTenure(loanDisbursedList.get(0).getDurationAtDisbursal());
+                    metaData.setDisbursmentInterest(loanDisbursedList.get(0).getInterestRateAtDisbursal());
                     metaData.setInvitationLink("");
                     metaData.setRepaymentTerms("");
                 }
