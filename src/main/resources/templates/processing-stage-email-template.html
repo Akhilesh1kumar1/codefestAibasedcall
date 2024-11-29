@@ -81,14 +81,14 @@
                                             <tr>
                                                 <td style="text-align: center; padding: 0.5em 1em 2em">
                                                     <p style="text-align: left; margin-bottom: 2rem;">
-                                                        We’ve received your loan application (<b>Application ID: (<span th:text="${loanId}" />) </b>) and all the required documents. It’s now under review by <b></b><span th:text="${lenderName}" /> </b>to ensure you get the best possible offer.
+                                                        We’ve received your loan application (<b>Application ID:<span th:text="${loanId}" /></b>) and all the required documents. It’s now under review by <b></b><span th:text="${vendorName}" /> </b>to ensure you get the best possible offer.
                                                     </p>
                                                     <p style="text-align: left; margin-bottom: 2rem;">
                                                         Here’s a quick look at the details you shared:
                                                         <br />
-                                                        <b>Loan Amount:</b> <span th:text="${requestedLoanAmount}" />
+                                                        <b>Loan Amount:</b> Rs. <span th:text="${requestedLoanAmount}" />
                                                         <br />
-                                                        <b>Loan Tenure:</b> <span th:text="${requestedLoanTenure}" />
+                                                        <b>Loan Tenure:</b> <span th:text="${requestedLoanTenure}" /> Months
                                                     </p>
                                                     <p style="text-align: left; margin-bottom: 2rem;">
                                                         The review process usually takes <b>1-2 days</b>, and we’ll notify you as soon as your offer is ready.

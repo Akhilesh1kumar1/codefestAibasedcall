@@ -9,7 +9,7 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="supported-color-schemes" content="light dark" />
     <meta name="description" content="Dear Saahil, your order has been shipped and will reach you by dd/mm/yy." />
-    <title>Congratulations- Your Loan has been Disbursed</title>
+    <title><b>Congratulations-</b> Your Loan has been Disbursed</title>
     <style type="text/css">
         body {
           margin: 0;
@@ -82,7 +82,7 @@
                                                 <td style="text-align: center; padding: 0.5em 1em 2em">
                                                     <p style="text-align: left; margin-bottom: 2rem;">
                                                         Congratulations! We’re thrilled to let you know that your loan
-                                                        <b>Application ID: <span th:text="${loanId}"/></b> has been successfully disbursed, and the funds are now available in your account.
+                                                        <b>(Application ID: <span th:text="${loanId}"/></b>) has been successfully disbursed, and the funds are now available in your account.
                                                     </p>
                                                     <p style="text-align: left; margin-bottom: 2rem;">
                                                         We’re excited to have supported you in securing the financial backing needed to fuel your business growth.
@@ -91,16 +91,17 @@
                                                         Below are the key details of your loan:
                                                     </p>
                                                     <ul style="text-align: left; margin-bottom: 2rem; padding-left: 20px;">
-                                                        <li><b>Loan Amount:</b> <span th:text="${approvedLoanAmount}"/></li>
+                                                        <li><b>Loan Amount:</b> Rs.<span th:text="${approvedLoanAmount}"/></li>
+                                                        <li><b>Loan Tenure:</b> <span th:text="${disbursmentTenure}"/> Months</li>
+                                                        <li><b>Loan Rate of Interest:</b> <span th:text="${disbursmentInterest}"/> </li>
+                                                        <li><b>Monthly EMI:</b> Rs.<span th:text="${monthlyEmi}"/></li>
                                                         <li><b>Disbursement Date:</b> <span th:text="${disbursmentDate}"/></li>
-                                                        <li><b>Repayment Terms:</b> <span th:text="${repaymentTerms}"/></li>
                                                     </ul>
                                                     <p style="text-align: left; margin-bottom: 2rem;">
-                                                        If you have any questions about your loan terms, repayment schedule, or need assistance with anything else, feel free to reach out to your Capital Advisor at:
-                                                    </p>
-                                                    <p style="text-align: left; margin-bottom: 2rem;">
+                                                        If you have any questions about your loan terms, repayment schedule, or need assistance with anything else, feel free to reach out to your Capital Advisor at:</br>
                                                         📧 <b>capital@shiprocket.com</b><br />
                                                         📞 <b>9911675924</b>
+
                                                     </p>
                                                     <p style="text-align: left; margin-bottom: 2rem;">
                                                         We’re here to help you every step of the way and ensure your loan works seamlessly for your success!

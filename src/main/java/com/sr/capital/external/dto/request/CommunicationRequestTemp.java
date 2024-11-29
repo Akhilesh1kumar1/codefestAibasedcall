@@ -58,6 +58,12 @@ public class CommunicationRequestTemp {
         private String state;
 
         private String resourcesFaqLink;
+
+        private Integer disbursmentTenure;
+
+        private Double disbursmentInterest;
+
+        private BigDecimal monthlyEmi;
     }
 
     @Data
