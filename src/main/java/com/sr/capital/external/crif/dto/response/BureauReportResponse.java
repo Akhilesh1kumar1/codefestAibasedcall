@@ -15,4 +15,5 @@ public class BureauReportResponse<T> implements Serializable {
 
     // TODO :: will update this when receive the data
     private T result;
+    private String status;
 }

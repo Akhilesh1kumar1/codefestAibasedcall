@@ -64,6 +64,11 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         String requestPayload = StringUtils.toPipeSeparatedString(bureauInitiatePayloadRequest);
 
+        log.info("OrderId :{} requestPayload: {}", orderId, requestPayload);
+        header.keySet().forEach(log::info);
+        header.values().forEach(v -> v.forEach(log::info));
+        log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
+
         BureauInitiateResponse bureauInitiateResponse = null;
         CompletableFuture<BureauInitiateResponse> response = CompletableFuture.completedFuture(
                 webClientUtil.makeExternalCall(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage1Endpoint(),
@@ -73,8 +78,15 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         );
 
         try {
+            log.info(response.get().getStatus());
             bureauInitiateResponse = response.get();
         } catch (InterruptedException | ExecutionException e) {
+            try {
+                log.error("error :: {}", e);
+                log.error("error while converting {}", response.get());
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException(ex);
+            }
             throw new RuntimeException(e);
         }
 
@@ -229,6 +241,11 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         String orderId = header.get(Constant.ORDER_ID).get(0);
 
+        log.info("OrderId :{} requestPayload: {}", orderId, requestPayload);
+        header.keySet().forEach(log::info);
+        header.values().forEach(v -> v.forEach(log::info));
+        log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
+
         CompletableFuture<BureauQuestionnaireResponse> completableFuture = CompletableFuture.completedFuture(
                 webClientUtil.makeExternalCall(ServiceName.FLEXI, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
                         HttpMethod.POST,
@@ -238,8 +255,15 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         BureauQuestionnaireResponse bureauQuestionnaireResponse = null;
         try {
+            log.info(completableFuture.get().getStatus());
             bureauQuestionnaireResponse = completableFuture.get();
         } catch (InterruptedException | ExecutionException e) {
+            try {
+                log.error("error :: {}", e);
+                log.error("error while converting {}", completableFuture.get());
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException(ex);
+            }
             throw new RuntimeException(e);
         }
 
@@ -272,6 +296,11 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         String orderId = header.get(Constant.ORDER_ID).get(0);
 
+        log.info("OrderId :{} requestPayload: {}", orderId, requestPayload);
+        header.keySet().forEach(log::info);
+        header.values().forEach(v -> v.forEach(log::info));
+        log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
+
         CompletableFuture<BureauReportResponse> completableFuture = CompletableFuture.completedFuture(
                 webClientUtil.makeExternalCall(ServiceName.FLEXI, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
                         HttpMethod.POST,
@@ -281,21 +310,34 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         BureauReportResponse bureauReportResponse = null;
         try {
+            log.info(completableFuture.get().getStatus());
             bureauReportResponse = completableFuture.get();
         } catch (InterruptedException | ExecutionException e) {
+            try {
+                log.error("error :: {}", e);
+                log.error("error while converting {}", completableFuture.get());
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException(ex);
+            }
             throw new RuntimeException(e);
         }
 
         //TODO ::  Save into db
+
+        BureauQuestionnaireModel bureauQuestionnaireModel = BureauQuestionnaireModel.builder()
+                        .orderId(bureauReportPayloadRequest.getOrderId())
+                                .reportId(bureauReportPayloadRequest.getReportId())
+                                        .result(bureauReportResponse.getResult()).build();
+        bureauQuestionnaireModelRepo.save(bureauQuestionnaireModel);
 
         return bureauReportResponse;
     }
 
     private void setDummyData(BureauReportPayloadRequest bureauReportPayloadRequest) {
         bureauReportPayloadRequest.setAccessCode(getAccessCode());
-        bureauReportPayloadRequest.setOrderId("ATest0114");
-        bureauReportPayloadRequest.setReportId("CCR220808CR373632334");
-        bureauReportPayloadRequest.setRedirectURL("https://cir.crifhighmark.com/Inquiry/B2B/secureService.action");
+//        bureauReportPayloadRequest.setOrderId("ATest0114");
+//        bureauReportPayloadRequest.setReportId("CCR220808CR373632334");
+//        bureauReportPayloadRequest.setRedirectURL("https://cir.crifhighmark.com/Inquiry/B2B/secureService.action");
 
     }
 
