@@ -469,7 +469,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.REJECT_OFFER.name(),ProviderRequestTemplateType.REJECT_OFFER.name(), SanctionResponseDto.class);
 
         HttpResponse<?> restResponseEntity = null;
-        String rejectOffer =null;
+        RejectSanctionResponseDto rejectOffer =null;
         try {
 
             String url = (String) loanMetaDataDto.getParams().getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), "");
@@ -489,7 +489,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
         try {
             rejectOffer = MapperUtils.convertValue(response.getData(),
-                    String.class);
+                    RejectSanctionResponseDto.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

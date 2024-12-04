@@ -19,6 +19,7 @@ import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.entityimpl.LoanApplicationStatusEntityServiceImpl;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SanctionServiceImpl {
 
     final LoanApplicationStatusEntityServiceImpl loanApplicationStatusEntityService;
@@ -227,8 +229,12 @@ public class SanctionServiceImpl {
            sanctionRepository.save(sanctionDetails);
            SanctionDto.PartnerIntegrationProject partnerIntegrationProject = MapperUtils.convertValue(sanctionResponseDto.getData().getPartnerIntegrationProject(),SanctionDto.PartnerIntegrationProject.class);
            return SanctionDto.builder().partnerIntegrationProject(partnerIntegrationProject).postSanctionConditionsArray(sanctionResponseDto.getData().getPostSanctionConditionsArray()).build();
+       }else {
+           log.info("invalid response from flexi {} ",sanctionResponseDto);
        }
-       return null;
+        log.info(" response from flexi {} ",sanctionResponseDto);
+
+        return null;
     }
 
     private LoanApplicationStatus buildLoanApplicationStatus(LoanMetaDataDto loanMetaDataDto) {
