@@ -24,7 +24,7 @@ public class CrifController {
     }
 
     //REFACTORED & REVISITED
-    @PostMapping(value = "/crif/stage1", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/crif/stage1")
     public ResponseEntity<?> crifStage1(
     ) throws Exception {
 

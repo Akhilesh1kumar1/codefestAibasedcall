@@ -201,10 +201,14 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest = BureauQuestionnairePayloadRequest
                 .builder()
                 .reportFlag("N")
-                .reportId(bureauInitiateResponse.getReportId())
-                .accessCode(bureauInitiateResponse.getAccessCode())
-                .orderId(bureauInitiateResponse.getOrderId())
-                .redirectURL(bureauInitiateResponse.getRedirectUrl())
+                .reportId(bureauInitiateResponse.getReportId() != null ?
+                        bureauInitiateResponse.getReportId() : "CCR220808CR373632334")
+                .accessCode(bureauInitiateResponse.getAccessCode() != null ?
+                        bureauInitiateResponse.getAccessCode(): getAccessCode())
+                .orderId(bureauInitiateResponse.getOrderId() != null ?
+                        bureauInitiateResponse.getOrderId() : getOrderId())
+                .redirectURL(bureauInitiateResponse.getRedirectUrl() != null ?
+                        bureauInitiateResponse.getRedirectUrl() : "https://cir.crifhighmark.com/Inquiry/B2B/secureService.action")
                 .paymentFlag("N")
                 .build();
 
