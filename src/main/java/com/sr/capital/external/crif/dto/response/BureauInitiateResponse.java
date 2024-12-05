@@ -24,6 +24,8 @@ public class BureauInitiateResponse<T> implements Serializable {
 
     private T result;
 
+    private T data;
+
     private String completedAt;
 
     private String createdAt;

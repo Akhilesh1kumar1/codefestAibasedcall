@@ -78,8 +78,10 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         );
 
         try {
-            log.info(response.get().getStatus());
             bureauInitiateResponse = response.get();
+            log.info("tatus {} , reportId {}, orderId {}, result {}, data {}", bureauInitiateResponse.getStatus(),
+                    bureauInitiateResponse.getReportId(), bureauInitiateResponse.getOrderId(),
+                    bureauInitiateResponse.getResult(), bureauInitiateResponse.getData());
         } catch (InterruptedException | ExecutionException e) {
             try {
                 log.error("error :: {}", e);
@@ -255,8 +257,12 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         BureauQuestionnaireResponse bureauQuestionnaireResponse = null;
         try {
-            log.info(completableFuture.get().getStatus());
             bureauQuestionnaireResponse = completableFuture.get();
+            log.info("status {} , reportId {}, orderId {}, result {}, redirectUrl {}, Question {}, buttonBehavior {}, optionList {}",
+                    bureauQuestionnaireResponse.getStatus(),
+                    bureauQuestionnaireResponse.getReportId(), bureauQuestionnaireResponse.getOrderId(),
+                    bureauQuestionnaireResponse.getResult(), bureauQuestionnaireResponse.getRedirectUrl(), bureauQuestionnaireResponse.getQuestion(),
+                    bureauQuestionnaireResponse.getButtonBehavior(), bureauQuestionnaireResponse.getOptionList());
         } catch (InterruptedException | ExecutionException e) {
             try {
                 log.error("error :: {}", e);
@@ -310,8 +316,10 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         BureauReportResponse bureauReportResponse = null;
         try {
-            log.info(completableFuture.get().getStatus());
             bureauReportResponse = completableFuture.get();
+            log.info("status {} , result {}",
+                    bureauReportResponse.getStatus(),
+                    bureauReportResponse.getResult());
         } catch (InterruptedException | ExecutionException e) {
             try {
                 log.error("error :: {}", e);
