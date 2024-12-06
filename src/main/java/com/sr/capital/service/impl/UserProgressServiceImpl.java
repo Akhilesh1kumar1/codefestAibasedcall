@@ -33,7 +33,7 @@ public class UserProgressServiceImpl {
 
     public UserProgressResponseDto getUserProgress(String tenantId){
 
-        List<LoanApplication> loanApplication = loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+        List<LoanApplication> loanApplication = loanApplicationRepository.findByCompanyIdOrderByCreatedAtAsc(Long.valueOf(RequestData.getTenantId()));
         String currentState = Screens.MOBILE_VERIFICATION.name();
         UserProgressResponseDto userProgressResponseDto =UserProgressResponseDto.builder().build();
         if(CollectionUtils.isNotEmpty(loanApplication)){
