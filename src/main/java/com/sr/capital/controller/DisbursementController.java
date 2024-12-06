@@ -27,7 +27,7 @@ public class DisbursementController {
 
     final DisbursementServiceImpl disbursementService;
     @GetMapping("")
-    public GenericResponse<List<DisbursementDetailsResponseDto>> getSanctionDetails(@RequestParam(name = "loan_application_id") UUID loanApplicationId, @RequestParam(name = "loan_vendor_name") String loanVendorName) throws Exception {
+    public GenericResponse<List<DisbursementDetailsResponseDto>> getSanctionDetails(@RequestParam(name = "loan_id") UUID loanApplicationId, @RequestParam(name = "loan_vendor_name") String loanVendorName) throws Exception {
 
         return ResponseBuilderUtil.getResponse(disbursementService.getDisbursmentDetails(loanApplicationId,loanVendorName), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
