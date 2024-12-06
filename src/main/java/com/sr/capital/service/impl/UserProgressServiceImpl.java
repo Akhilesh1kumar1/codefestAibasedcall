@@ -83,6 +83,7 @@ public class UserProgressServiceImpl {
                 case LOAN_OFFER_DECLINED -> currentState =Screens.LOAN_SANCTION_DECLINED.name();
                 case LOAN_VERIFICATION -> currentState =Screens.E_SIGN.name();
                 case LOAN_ACCEPTED, LOAN_DISBURSED -> currentState =Screens.LOAN_DISBURSED.name();
+                case LOAN_DECLINE,LEAD_DECLINE -> currentState =Screens.SELLER_DECLINE.name();
 
             }
 
