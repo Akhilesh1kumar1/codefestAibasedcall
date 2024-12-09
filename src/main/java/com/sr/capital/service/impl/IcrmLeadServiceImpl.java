@@ -201,13 +201,13 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     public GenerateLeadResponseDto updateLead(GenerateLeadRequestDto generateLeadRequestDto) throws CustomException {
         if(generateLeadRequestDto.getStatus().equals(LeadStatus.NOT_CONNECTED)) {
            UserDetails user = userService.getCompanyDetailsWithoutEncryption(generateLeadRequestDto.getSrCompanyId());
-           KaleyraResponse response = communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobileNumber(), List.of(user.getFirstName()), appProperties.getKaleyraWhatsappSellerNotConnectedTemplateName()));
+         /*  KaleyraResponse response = communicationService.sendCommunication(communicationService.getCommunicationRequestForSellerNotConnectedViadWhatsApp(user.getMobileNumber(), List.of(user.getFirstName()), appProperties.getKaleyraWhatsappSellerNotConnectedTemplateName()));
            if(response!=null && CollectionUtils.isNotEmpty(response.getData())){
                response.getData().forEach(data->{
                    WhatsappApiLog whatsappApiLog= WhatsappApiLog.builder().messageId(data.getId()).remarks(data.getStatus()).internalId(generateLeadRequestDto.getLeadId()).eventType("lead").srCompanyId(generateLeadRequestDto.getSrCompanyId()).build();
                    whatsAppEntityService.saveWhatsAppApiLog(whatsappApiLog);
                });
-           }
+           }*/
 
             communicationService.sendEmail(communicationService.getCommunicationRequestForSellerNotConnect(user.getEmail(),user.getFirstName()));
 
