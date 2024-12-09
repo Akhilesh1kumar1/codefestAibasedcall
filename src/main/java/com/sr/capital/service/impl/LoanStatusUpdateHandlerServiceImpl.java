@@ -273,15 +273,23 @@ public class LoanStatusUpdateHandlerServiceImpl {
         String state = "PERSONAL_DETAILS";
         LoanApplication loanApplication =loanApplicationRepository.findById(id).orElse(null);
         if(loanApplication!=null && (loanApplication.getLoanStatus()!=loanStatus || loanApplication.getState()!=state || loanApplication.getVendorLoanId()!=null)){
+
+
+
             switch (type){
             case PERSONAL_ADDRESS -> {
                 if(loanApplication.getVendorLoanId()==null) {
                     state = Screens.PERSONAL_DETAILS.name();
                 }else{
                     state = Screens.BUSINESS_DETAILS.name();
+                    loanStatus = LoanStatus.UPDATE_LEAD_IN_PROGRESS;
                 }
             }
-            case BUSINESS_ADDRESS -> state =Screens.BUSINESS_DETAILS.name();
+            case BUSINESS_ADDRESS -> {
+                state =Screens.BUSINESS_DETAILS.name();
+                if(loanApplication.getVendorLoanId()!=null)
+                    loanStatus = LoanStatus.UPDATE_LEAD_IN_PROGRESS;
+            }
             default -> {
                 state = "DOCUMENT_UPLOAD";
                 loanStatus = LoanStatus.LEAD_DOCUMENT_UPLOAD;

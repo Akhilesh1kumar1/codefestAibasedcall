@@ -69,7 +69,10 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
     }
 
     private void handleApprovedStatus(LoanStatusUpdateWebhookDto dto) {
-        if (LoanStatus.LOAN_VERIFICATION.name().equalsIgnoreCase(dto.getInternalCurrentStatus())) {
+        if(LoanStatus.LEAD_PROCESSING.name().equalsIgnoreCase(dto.getInternalCurrentStatus())){
+            dto.setInternalStatus(LoanStatus.LOAN_GENERATE.name());
+        }
+        else if (LoanStatus.LOAN_VERIFICATION.name().equalsIgnoreCase(dto.getInternalCurrentStatus())) {
             dto.setInternalStatus(LoanStatus.LOAN_ACCEPTED.name());
         } else {
             dto.setInternalStatus(LoanStatus.LOAN_VERIFICATION.name());
@@ -84,7 +87,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     Map<String,String> tempFieldsMap =new HashMap<>();
                     buildPerosnalDetailsFieldMap(tempFieldsMap);
-                    setInternalState(dto, Screens.PERSONAL_DETAILS, LoanStatus.LEAD_IN_PROGRESS);
+                    setInternalState(dto, Screens.PERSONAL_DETAILS, LoanStatus.UPDATE_LEAD_IN_PROGRESS);
                     if(checkpoint.getMeta()!=null && !CollectionUtils.isEmpty(checkpoint.getMeta().getFields())){
                         List<String> fields = new ArrayList<>();
                         checkpoint.getMeta().getFields().forEach(k->{
@@ -100,7 +103,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     Map<String,String> tempFieldsMap =new HashMap<>();
                     buildBusinessDetailsFieldMap(tempFieldsMap);
-                    setInternalState(dto, Screens.BUSINESS_DETAILS, LoanStatus.LEAD_IN_PROGRESS);
+                    setInternalState(dto, Screens.BUSINESS_DETAILS, LoanStatus.UPDATE_LEAD_IN_PROGRESS);
                     if(checkpoint.getMeta()!=null && !CollectionUtils.isEmpty(checkpoint.getMeta().getFields())){
                         List<String> fields = new ArrayList<>();
                         checkpoint.getMeta().getFields().forEach(k->{
