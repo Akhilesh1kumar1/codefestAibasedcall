@@ -58,7 +58,28 @@ public class UserProgressServiceImpl {
                         if ((loanApplication1.getState() != null && loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name()))) {
                             currentState = Screens.BUSINESS_DETAILS.name();
                         }
-                    }else if(loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name())){
+                    }/*else if(loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name())){
+                        userProgressResponseDto.setShowErrorOnPersonalDetails(true);
+                    }
+
+                    LoanMetaData loanMetaData = loanMetaDataEntityService.getLoanMetaDataDetails(loanApplication1.getId());
+
+                    if(loanMetaData!=null && CollectionUtils.isNotEmpty(loanMetaData.getCheckPoints())){
+                        TypeReference<List<UserProgressResponseDto.Checkpoint>> tref =new TypeReference<List<UserProgressResponseDto.Checkpoint>>() {
+                        };
+                        try {
+
+                            userProgressResponseDto.setCheckpoints(MapperUtils.convertValue(loanMetaData.getCheckPoints(), tref));
+                        }catch (Exception ex){
+
+                        }
+                    }*/
+
+                }
+                case UPDATE_LEAD_IN_PROGRESS -> {
+                    currentState =loanApplication1.getState();
+
+                    if(loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name())){
                         userProgressResponseDto.setShowErrorOnPersonalDetails(true);
                     }
 
@@ -74,7 +95,6 @@ public class UserProgressServiceImpl {
 
                         }
                     }
-
                 }
                 case LEAD_REJECTED -> currentState = Screens.LEAD_REJECTION.name();
                 case LEAD_DOCUMENT_UPLOAD -> currentState =Screens.PENDING_DOCUMENT.name();
