@@ -20,8 +20,8 @@ public class ConfigServiceImpl implements ConfigService {
     final FeatureDetailRepository featureDetailRepository;
     @Override
     public FeatureDetails getCompanyWithFeature() {
-        FeatureDetails featureDetails = featureDetailRepository.findBySrCompanyId(Long.parseLong(RequestData.getTenantId()));
-        return featureDetails;
+        return featureDetailRepository.findBySrCompanyId(Long.parseLong(RequestData.getTenantId()));
+
     }
 
     @Override
