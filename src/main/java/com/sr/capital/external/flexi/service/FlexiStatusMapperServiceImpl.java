@@ -58,9 +58,9 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
     private void handleNotApprovedStatus(LoanStatusUpdateWebhookDto dto) {
         String currentStatus = dto.getInternalCurrentStatus();
         if (LoanStatus.LEAD_DOCUMENT_UPLOAD.name().equalsIgnoreCase(currentStatus) ||
-                LoanStatus.LEAD_IN_PROGRESS.name().equalsIgnoreCase(currentStatus)) {
+                LoanStatus.LEAD_IN_PROGRESS.name().equalsIgnoreCase(currentStatus) ||  LoanStatus.LEAD_REJECTED.name().equalsIgnoreCase(currentStatus)) {
             dto.setInternalStatus(LoanStatus.LEAD_REJECTED.name());
-        } else if(LoanStatus.LOAN_GENERATE.name().equalsIgnoreCase(currentStatus)){
+        } else if(LoanStatus.LOAN_GENERATE.name().equalsIgnoreCase(currentStatus) || LoanStatus.LOAN_DECLINE.name().equalsIgnoreCase(currentStatus)){
             dto.setInternalStatus(LoanStatus.LOAN_DECLINE.name());
         }else{
             dto.setInternalStatus(LoanStatus.LEAD_DECLINE.name());
@@ -72,11 +72,11 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
         if(LoanStatus.LEAD_PROCESSING.name().equalsIgnoreCase(dto.getInternalCurrentStatus())){
             dto.setInternalStatus(LoanStatus.LOAN_GENERATE.name());
         }
-        else if (LoanStatus.LOAN_VERIFICATION.name().equalsIgnoreCase(dto.getInternalCurrentStatus())) {
+       /* else if (LoanStatus.LOAN_VERIFICATION.name().equalsIgnoreCase(dto.getInternalCurrentStatus())) {
             dto.setInternalStatus(LoanStatus.LOAN_ACCEPTED.name());
         } else {
             dto.setInternalStatus(LoanStatus.LOAN_VERIFICATION.name());
-        }
+        }*/
     }
 
     private Boolean processCheckpoint(LoanStatusUpdateWebhookDto dto, LoanStatusUpdateWebhookDto.Checkpoint checkpoint) {
