@@ -1,14 +1,12 @@
 package com.sr.capital.controller;
 
 
-
+import com.sr.capital.dto.request.FeatureDetailRequestDto;
 import com.sr.capital.entity.mongo.FeatureDetails;
 import com.sr.capital.service.ConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -23,6 +21,17 @@ public class ConfigController {
     public FeatureDetails getFeatureDetails(){
         return configService.getCompanyWithFeature();
     }
+
+    @PostMapping("/save")
+    public FeatureDetails saveFeatureDetails(@RequestBody FeatureDetailRequestDto featureDetailRequestDto){
+        return configService.saveCompanyWithFeature(featureDetailRequestDto);
+    }
+
+    @PutMapping("/update")
+    public FeatureDetails updateFeatureDetails(@RequestBody FeatureDetailRequestDto featureDetailRequestDto){
+        return configService.updateCompanyWithFeature(featureDetailRequestDto);
+    }
+
 
 
 

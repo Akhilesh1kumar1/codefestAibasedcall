@@ -16,7 +16,7 @@ import java.util.List;
 public class FeatureDetails extends BaseDoc {
 
     @Indexed(unique = false,name = "srCompanyId")
-    String srCompanyId;
+    Long srCompanyId;
 
     List<String> feature;
 }
