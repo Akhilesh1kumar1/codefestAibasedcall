@@ -87,19 +87,21 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
-            sendCommunication(loanApplication,loanVendorName);
+            if(!loanStatusUpdateWebhookDto.getInternalStatus().equalsIgnoreCase(loanStatusUpdateWebhookDto.getInternalCurrentStatus())) {
 
-            switch (loanApplication.getLoanStatus()) {
-                case LOAN_DISBURSED:
-                    // used to save disbursement fetchAndSaveDisbursementDetails
-                    try {
-                        disbursementService.getDisbursmentDetails(loanApplication.getId(), loanVendorName);
-                    } catch (IOException e) {
-                        log.error("Error wile saving Disbursement Details {}", String.valueOf(e));
-                        //Todo :: if required uncomment for disturb execution.
+                switch (loanApplication.getLoanStatus()) {
+                    case LOAN_DISBURSED:
+                        // used to save disbursement fetchAndSaveDisbursementDetails
+                        try {
+                            disbursementService.getDisbursmentDetails(loanApplication.getId(), loanVendorName);
+                        } catch (IOException e) {
+                            log.error("Error wile saving Disbursement Details {}", String.valueOf(e));
+                            //Todo :: if required uncomment for disturb execution.
 //                        throw new RuntimeException(e);
-                    }
-                    break;
+                        }
+                        break;
+                }
+                sendCommunication(loanApplication, loanVendorName);
             }
 
                 /*switch (loanApplication.getLoanStatus()){
