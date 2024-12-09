@@ -87,9 +87,8 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
-            if(loanStatusUpdateWebhookDto.getInternalStatus()!=loanStatusUpdateWebhookDto.getInternalCurrentStatus()) {
+            if(!loanStatusUpdateWebhookDto.getInternalStatus().equalsIgnoreCase(loanStatusUpdateWebhookDto.getInternalCurrentStatus())) {
 
-                sendCommunication(loanApplication, loanVendorName);
                 switch (loanApplication.getLoanStatus()) {
                     case LOAN_DISBURSED:
                         // used to save disbursement fetchAndSaveDisbursementDetails
@@ -102,6 +101,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
                         }
                         break;
                 }
+                sendCommunication(loanApplication, loanVendorName);
             }
 
                 /*switch (loanApplication.getLoanStatus()){
