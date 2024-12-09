@@ -33,7 +33,7 @@ public class UserProgressServiceImpl {
 
     public UserProgressResponseDto getUserProgress(String tenantId){
 
-        List<LoanApplication> loanApplication = loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+        List<LoanApplication> loanApplication = loanApplicationRepository.findByCompanyIdOrderByCreatedAtAsc(Long.valueOf(RequestData.getTenantId()));
         String currentState = Screens.MOBILE_VERIFICATION.name();
         UserProgressResponseDto userProgressResponseDto =UserProgressResponseDto.builder().build();
         if(CollectionUtils.isNotEmpty(loanApplication)){
@@ -83,6 +83,7 @@ public class UserProgressServiceImpl {
                 case LOAN_OFFER_DECLINED -> currentState =Screens.LOAN_SANCTION_DECLINED.name();
                 case LOAN_VERIFICATION -> currentState =Screens.E_SIGN.name();
                 case LOAN_ACCEPTED, LOAN_DISBURSED -> currentState =Screens.LOAN_DISBURSED.name();
+                case LOAN_DECLINE,LEAD_DECLINE -> currentState =Screens.SELLER_DECLINE.name();
 
             }
 

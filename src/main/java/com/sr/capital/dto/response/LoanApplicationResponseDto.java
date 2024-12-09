@@ -58,6 +58,7 @@ public class LoanApplicationResponseDto extends BasesResponse {
         responseDto.setComments(loanApplication.getComments());
         responseDto.setState(loanApplication.getState());
         responseDto.setExternalLoanId(loanApplication.getVendorLoanId());
+        responseDto.setLoanType(loanApplication.getLoanType());
        return responseDto;
     }
 }

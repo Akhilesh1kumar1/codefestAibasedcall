@@ -6,6 +6,7 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.request.UserDetails;
+import com.sr.capital.dto.response.DisbursementDetailsResponseDto;
 import com.sr.capital.entity.mongo.LoanMetaData;
 import com.sr.capital.entity.mongo.kyc.child.Checkpoints;
 import com.sr.capital.entity.primary.LoanApplication;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,6 +46,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
     final StatusMapperServiceStrategy statusMapperServiceStrategy;
     final LoanMetaDataEntityServiceImpl loanMetaDataEntityService;
     final CommunicationService communicationService;
+    final DisbursementServiceImpl disbursementService;
     final AppProperties appProperties;
     final UserService userService;
 
@@ -85,14 +88,28 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
             sendCommunication(loanApplication,loanVendorName);
-           /* switch (loanApplication.getLoanStatus()){
 
-                case LEAD_PROCESSING:
-                    loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
-                    //updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
+            switch (loanApplication.getLoanStatus()) {
+                case LOAN_DISBURSED:
+                    // used to save disbursement fetchAndSaveDisbursementDetails
+                    try {
+                        disbursementService.getDisbursmentDetails(loanApplication.getId(), loanVendorName);
+                    } catch (IOException e) {
+                        log.error("Error wile saving Disbursement Details {}", String.valueOf(e));
+                        //Todo :: if required uncomment for disturb execution.
+//                        throw new RuntimeException(e);
+                    }
                     break;
+            }
 
-                case DISBURSED:
+                /*switch (loanApplication.getLoanStatus()){
+
+//                case LEAD_PROCESSING:
+//                    loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
+//                    //updateLoanApplicationStatus(loanStatusUpdateWebhookDto,loanApplication);
+//                    break;
+
+                case LOAN_DISBURSED:
                     loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
                    // saveDisbursementDetails(loanStatusUpdateWebhookDto,loanApplication);
                     break;

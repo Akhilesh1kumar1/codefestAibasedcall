@@ -41,15 +41,15 @@ public class SanctionServiceImpl {
     final SanctionRepository sanctionRepository;
     final LoanApplicationRepository loanApplicationRepository;
 
-    public SanctionDto getSanctionDetails(UUID loanApplicationId,String loanVendorName){
+    public SanctionDto getSanctionDetails(UUID loanApplicationId,String loanVendorName) {
         LoanApplication loanApplication = loanApplicationRepository.findById(loanApplicationId).orElse(null);
         if(loanApplication!=null){
             LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
                     .loanId(loanApplication.getVendorLoanId()).internalLoanId(loanApplicationId).loanVendorName(loanVendorName).build();
 
-            if(1==2){
-                return buildDummyDto(loanMetaDataDto);
-            }
+//            if(1==2){
+//                return buildDummyDto(loanMetaDataDto);
+//            }
 
             SanctionDto sanctionDto = fetchAndSaveSanctionDetails(loanMetaDataDto);
             if(sanctionDto!=null){
