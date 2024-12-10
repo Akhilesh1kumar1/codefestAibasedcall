@@ -7,6 +7,7 @@ import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.service.CrifPartnerService;
 import com.sr.capital.util.Base64Util;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,14 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Validated
 @RequestMapping("/api/crif")
+@RequiredArgsConstructor
 public class CrifController {
 
     final CrifPartnerService crifPartnerService;
-
-    public CrifController(CrifPartnerService crifPartnerService) {
-        this.crifPartnerService = crifPartnerService;
-    }
-
 
     @PostMapping(value = "/initiate")
     public ResponseEntity<?> crifStage1(@RequestBody BureauInitiatePayloadRequest bureauInitiatePayloadRequest

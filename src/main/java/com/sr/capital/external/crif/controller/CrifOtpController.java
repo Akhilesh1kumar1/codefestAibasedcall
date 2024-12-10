@@ -13,6 +13,7 @@ import com.sr.capital.service.VerificationService;
 import com.sr.capital.service.impl.VerificationUtilService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +27,12 @@ import static com.sr.capital.helpers.constants.Constants.MessageConstants.VALID_
 @RestController
 @Validated
 @RequestMapping("/api/crif")
+@RequiredArgsConstructor
 public class CrifOtpController {
 
     private final CrifPartnerService crifPartnerService;
     private final CrifOtpService crifOtpService;
     private final VerificationService verificationService;
-
-    public CrifOtpController(CrifPartnerService crifPartnerService, CrifOtpService crifOtpService, VerificationService verificationService) {
-        this.crifPartnerService = crifPartnerService;
-        this.crifOtpService = crifOtpService;
-        this.verificationService = verificationService;
-    }
 
     @PostMapping(value = "/generate-otp")
     public GenericResponse<?> crifGenerateOtp( @RequestBody CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws Exception {

@@ -2,16 +2,15 @@ package com.sr.capital.external.crif.util;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.external.crif.dto.request.AccessCodeDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@RequiredArgsConstructor
 public class StringUtils {
-
-    @Autowired
-    AppProperties appProperties;
 
     // Generic method to create a pipe-separated string for any object
     public static <T> String toPipeSeparatedString(T obj) {

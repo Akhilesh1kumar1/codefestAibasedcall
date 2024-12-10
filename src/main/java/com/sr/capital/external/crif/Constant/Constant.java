@@ -24,4 +24,6 @@ public class Constant {
     public static final String STAGE = "STAGE";
     public static final String STAGE_2 = "STAGE_2";
     public static final String STAGE_3 = "STAGE_3";
+    public static final String ASIA_KOLKATA = "Asia/Kolkata";
+
 }

@@ -12,6 +12,7 @@ import com.sr.capital.external.crif.util.CrifVerificationUtils;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.util.MapperUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,17 +25,12 @@ import static com.sr.capital.external.crif.Constant.Constant.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CrifOtpServiceImpl implements CrifOtpService {
 
     private final CrifUserModelRepo crifUserModelRepo;
     private final CrifVerificationUtils crifVerificationUtils;
     private final CrifPartnerService crifPartnerService;
-
-    public CrifOtpServiceImpl(CrifUserModelRepo crifUserModelRepo, CrifVerificationUtils crifVerificationUtils, CrifPartnerService crifPartnerService) {
-        this.crifUserModelRepo = crifUserModelRepo;
-        this.crifVerificationUtils = crifVerificationUtils;
-        this.crifPartnerService = crifPartnerService;
-    }
 
     @Override
     public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException {

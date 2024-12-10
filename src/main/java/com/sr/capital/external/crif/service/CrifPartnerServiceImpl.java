@@ -1,6 +1,7 @@
 package com.sr.capital.external.crif.service;
 
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.entity.mongo.crif.BureauInitiateModel;
 import com.sr.capital.entity.mongo.crif.BureauQuestionnaireModel;
 import com.sr.capital.entity.mongo.crif.CrifReport;
@@ -9,9 +10,11 @@ import com.sr.capital.external.crif.dto.request.*;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
+import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.util.StatusCode;
 import com.sr.capital.external.crif.util.StringUtils;
+import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.repository.mongo.BureauInitiateModelRepo;
 import com.sr.capital.repository.mongo.BureauQuestionnaireModelRepo;
@@ -19,7 +22,10 @@ import com.sr.capital.repository.mongo.CrifReportRepo;
 import com.sr.capital.util.Base64Util;
 import com.sr.capital.util.ProviderConfigUtil;
 import com.sr.capital.util.WebClientUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +36,14 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CrifPartnerServiceImpl implements CrifPartnerService {
 
     private final WebClientUtil webClientUtil;
@@ -43,17 +51,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final BureauInitiateModelRepo bureauInitiateModelRepo;
     private final BureauQuestionnaireModelRepo bureauQuestionnaireModelRepo;
     private final CrifReportRepo crifReportRepo;
-
-
-    public CrifPartnerServiceImpl(ProviderConfigUtil providerConfigUtil, WebClientUtil webClientUtil,
-                                  AppProperties appProperties, BureauInitiateModelRepo bureauInitiateModelRepo,
-                                  BureauQuestionnaireModelRepo bureauQuestionnaireModelRepo, CrifReportRepo crifReportRepo) {
-        this.webClientUtil = webClientUtil;
-        this.appProperties = appProperties;
-        this.bureauInitiateModelRepo = bureauInitiateModelRepo;
-        this.bureauQuestionnaireModelRepo = bureauQuestionnaireModelRepo;
-        this.crifReportRepo = crifReportRepo;
-    }
+    private final RedissonClient redissonClient;
 
     @Override
     public Map<String, Object> initiateBureau(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) {
@@ -107,6 +105,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     @Override
     public BureauQuestionnaireResponse initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) {
 
+        CrifResponse crifResponse = CrifResponse.builder().build();
 
 //        setDummyData(bureauInitiatePayloadRequest);
         updateStaticData(bureauInitiatePayloadRequest);
@@ -218,18 +217,30 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     @Override
     public String getAccessCode() {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
-        Date now = new Date();
-        String timestamp = sdf.format(now);
+        RMapCache<String, String> crifAccessToken = redissonClient
+                .getMapCache(Constants.RedisKeys.CRIF_ACCESS_TOKEN);
 
-        AccessCodeDto.AccessCodeDtoBuilder accessCodeDtoBuilder = AccessCodeDto.builder().userId(appProperties.getCrifUser())
-                .customerId(appProperties.getCrifCustomerId())
-                .productCode(appProperties.getCrifProductCode())
-                .password(appProperties.getCrifPassword())
-                .dateTimeStamp(timestamp);
-        String pipeSeparatedString = StringUtils.toPipeSeparatedString(accessCodeDtoBuilder);
-        return Base64Util.encode(pipeSeparatedString.substring(0, pipeSeparatedString.length() - 1));
+        String key = crifAccessToken.get(Constants.RedisKeys.CRIF_ACCESS_TOKEN);
+        if (key != null) {
+        return key;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+            sdf.setTimeZone(TimeZone.getTimeZone(ASIA_KOLKATA));
+            Date now = new Date();
+            String timestamp = sdf.format(now);
+
+            AccessCodeDto.AccessCodeDtoBuilder accessCodeDtoBuilder = AccessCodeDto.builder().userId(appProperties.getCrifUser())
+                    .customerId(appProperties.getCrifCustomerId())
+                    .productCode(appProperties.getCrifProductCode())
+                    .password(appProperties.getCrifPassword())
+                    .dateTimeStamp(timestamp);
+            String pipeSeparatedString = StringUtils.toPipeSeparatedString(accessCodeDtoBuilder);
+
+            String encode = Base64Util.encode(pipeSeparatedString.substring(0, pipeSeparatedString.length() - 1));
+            crifAccessToken.put(Constants.RedisKeys.CRIF_ACCESS_TOKEN, encode, 25, TimeUnit.MINUTES);
+            return encode;
+        }
     }
 
     private HttpHeaders getHeaderForInitiateBureau(String orderId) {
