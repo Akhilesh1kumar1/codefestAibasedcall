@@ -1,6 +1,7 @@
 package com.sr.capital.external.crif.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
@@ -12,10 +13,13 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BureauInitiateResponse<T> implements Serializable {
 
+    @JsonProperty("redirectURL")
     private String redirectURL;
 
+    @JsonProperty("orderId")
     private String orderId;
 
+    @JsonProperty("reportId")
     private String reportId;
 
     private String accessCode;
@@ -37,7 +41,7 @@ public class BureauInitiateResponse<T> implements Serializable {
     @Override
     public String toString() {
         return "BureauInitiateResponse{" +
-                "redirectUrl='" + redirectURL + '\'' +
+                "redirectURL='" + redirectURL + '\'' +
                 ", orderId='" + orderId + '\'' +
                 ", reportId='" + reportId + '\'' +
                 ", accessCode='" + accessCode + '\'' +
