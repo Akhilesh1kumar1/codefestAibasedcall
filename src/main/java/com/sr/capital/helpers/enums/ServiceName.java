@@ -14,7 +14,8 @@ public enum ServiceName {
     VELOCITY("velocity"),
     GETVENTAGE("getventage"),
     KARZA("karza"),
-    FLEXI("flexi");
+    FLEXI("flexi"),
+    CRIF("crif");
 
     final String name;
     ServiceName(String name) {

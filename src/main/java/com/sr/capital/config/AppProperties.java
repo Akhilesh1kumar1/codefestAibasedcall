@@ -329,4 +329,46 @@ public class AppProperties {
     @Value("${app.web-url}")
     private String capitalWebUrl;
 
+    // CRIF Credential
+//
+//    @Value("${external.crif.account.id}")
+//    private String CrifAccountId;
+//
+//    @Value("${external.crif.api.key}")
+//    private String CrifApiKey;
+//
+//    @Value("${external.crif.enabled}")
+//    private Boolean CrifEnabled;
+//
+//    @Value("${external.crif.vendor-token}")
+//    private String CrifVendorToken;
+//
+//    @Value("${external.crif.vendor-code}")
+//    private String CrifVendorCode;
+
+    @Value("${external.crif.access-code.user}")
+    private String CrifUser;
+    @Value("${external.crif.access-code.password}")
+    private String CrifPassword;
+    @Value("${external.crif.access-code.app-id}")
+    private String CrifAppId;
+    @Value("${external.crif.access-code.company-name}")
+    private String CrifCompanyName;
+    @Value("${external.crif.access-code.customer-id}")
+    private String CrifCustomerId;
+
+    @Value("${external.crif.access-code.product-code}")
+    private String CrifProductCode;
+
+    //CRIF EXTERNAL API
+
+    @Value("${external.crif.base.uri}")
+    private String CrifBaseUri;
+
+    @Value("${external.crif.api.endpoint.extract.stage1.url}")
+    private String CrifExtractStage1Endpoint;
+
+    @Value("${external.crif.api.endpoint.extract.stage2.url}")
+    private String CrifExtractStage2Endpoint;
+
 }
