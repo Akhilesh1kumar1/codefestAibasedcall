@@ -3,17 +3,29 @@ package com.sr.capital.external.crif.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
 @Data
 //@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-//@Builder
+@Builder
 public class BureauReportResponse<T> implements Serializable {
 
 
-    // TODO :: will update this when receive the data
+    @Field("result")
     private T result;
+
+    @Field("report_id")
+    private String reportId;
+
+    @Field("order_id")
+    private String orderId;
+
+    @Field("status_desc")
+    private String statusDesc;
+
+    @Field("status")
     private String status;
 }

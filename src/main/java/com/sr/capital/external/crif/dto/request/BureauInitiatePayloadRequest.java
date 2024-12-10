@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Builder
 public class BureauInitiatePayloadRequest {
 
     @NotNull(message = "firstName can not be null")
@@ -22,20 +24,19 @@ public class BureauInitiatePayloadRequest {
     String lastName;
     String gender;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    @NotNull(message = "DOB can not be null")
+//    @NotNull(message = "DOB can not be null")
     String DOB;
     Integer ageAsOnToday;
     String maritalStatus;
     @NotNull(message = "phone1 can not be null")
-    String mob1;
+    String mobile;
     Integer mob2;
     Integer mob3;
-    @NotNull(message = " can not be null")
-    String email1;
+//    @NotNull(message = " can not be null")
+    String email;
     String email2;
 
-    // TODO :: Need to create custom Annotation to mark any of field is reqiured
-    @NotNull(message = "pan can not be null")
+//    @NotNull(message = "pan can not be null")
     String pan;
     String dl;
     String voterId;
@@ -47,18 +48,18 @@ public class BureauInitiatePayloadRequest {
     String fatherName;
     String motherName;
     String spouseName;
-    @NotNull(message = "address1 can not be null")
+//    @NotNull(message = "address1 can not be null")
     String address1;
-    @NotNull(message = "village1can not be null")
+//    @NotNull(message = "village1can not be null")
     String village1;
-    @NotNull(message = "city1 can not be null")
+//    @NotNull(message = "city1 can not be null")
     String city1;
-    @NotNull(message = "state11 can not be null")
+//    @NotNull(message = "state11 can not be null")
     String state1;
 
-    @NotNull(message = "pin1 can not be null")
+//    @NotNull(message = "pin1 can not be null")
     String pin1;
-    @NotNull(message = "country1 can not be null")
+//    @NotNull(message = "country1 can not be null")
     String country1;
 
     String address2;
@@ -67,11 +68,11 @@ public class BureauInitiatePayloadRequest {
     String state112;
     String pin2;
     String country2;
-    @NotNull(message = "customerId can not be null")
+//    @NotNull(message = "customerId can not be null")
     String customerId;
-    @NotNull(message = "productId can not be null")
+//    @NotNull(message = "productId can not be null")
     String productId;
-    @NotNull(message = "consent can not be null")
+//    @NotNull(message = "consent can not be null")
     String consent;
     String nrega;
     String ckyc;

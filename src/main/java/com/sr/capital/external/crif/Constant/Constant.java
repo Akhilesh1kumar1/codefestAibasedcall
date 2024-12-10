@@ -15,4 +15,13 @@ public class Constant {
     public static final String ACCEPT = "Accept";
     public static final String REQUEST_TYPE = "requestType";
     public static final String AUTHORIZATION= "Authorization";
+
+    public static final String PAN = "PAN";
+    public static final String PASSPORT = "PASSPORT";
+    public static final String VOTER_ID = "VOTER_ID";
+    public static final String DRIVING_LICENSE = "DRIVING_LICENSE";
+    public static final String DATA = "DATA";
+    public static final String STAGE = "STAGE";
+    public static final String STAGE_2 = "STAGE_2";
+    public static final String STAGE_3 = "STAGE_3";
 }

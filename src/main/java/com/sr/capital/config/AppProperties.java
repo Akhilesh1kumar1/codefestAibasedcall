@@ -368,7 +368,7 @@ public class AppProperties {
     @Value("${external.crif.api.endpoint.extract.stage1.url}")
     private String CrifExtractStage1Endpoint;
 
-    @Value("${external.crif.api.endpoint.extract.stage1.url}")
+    @Value("${external.crif.api.endpoint.extract.stage2.url}")
     private String CrifExtractStage2Endpoint;
 
 }
