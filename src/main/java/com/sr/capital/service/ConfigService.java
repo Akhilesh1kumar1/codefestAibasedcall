@@ -1,14 +1,15 @@
 package com.sr.capital.service;
 
 import com.sr.capital.dto.request.FeatureDetailRequestDto;
-import com.sr.capital.entity.mongo.FeatureDetails;
+import com.sr.capital.dto.response.FeatureDetailResponseDto;
+
 
 
 public interface ConfigService {
 
-    public FeatureDetails getCompanyWithFeature();
+    FeatureDetailResponseDto getCompanyWithFeature();
 
-    public FeatureDetails saveCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto);
+    FeatureDetailResponseDto saveCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto);
 
-    public FeatureDetails updateCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto);
+    FeatureDetailResponseDto updateCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto);
 }

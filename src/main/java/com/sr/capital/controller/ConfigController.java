@@ -1,12 +1,17 @@
 package com.sr.capital.controller;
 
 
+import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.FeatureDetailRequestDto;
-import com.sr.capital.entity.mongo.FeatureDetails;
+import com.sr.capital.dto.response.FeatureDetailResponseDto;
 import com.sr.capital.service.ConfigService;
+import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 
 
 @RestController
@@ -17,22 +22,20 @@ public class ConfigController {
 
     final ConfigService configService;
 
-    @GetMapping("/get")
-    public FeatureDetails getFeatureDetails(){
-        return configService.getCompanyWithFeature();
+    @GetMapping("")
+    public GenericResponse<FeatureDetailResponseDto> getFeatureDetails(){
+        return ResponseBuilderUtil.getResponse(configService.getCompanyWithFeature(),SUCCESS,
+                "", HttpStatus.SC_OK);
     }
 
-    @PostMapping("/save")
-    public FeatureDetails saveFeatureDetails(@RequestBody FeatureDetailRequestDto featureDetailRequestDto){
-        return configService.saveCompanyWithFeature(featureDetailRequestDto);
+    @PostMapping("")
+    public GenericResponse<FeatureDetailResponseDto> saveFeatureDetails(@RequestBody FeatureDetailRequestDto featureDetailRequestDto){
+        return ResponseBuilderUtil.getResponse(configService.saveCompanyWithFeature(featureDetailRequestDto),SUCCESS,"",HttpStatus.SC_OK);
     }
 
-    @PutMapping("/update")
-    public FeatureDetails updateFeatureDetails(@RequestBody FeatureDetailRequestDto featureDetailRequestDto){
-        return configService.updateCompanyWithFeature(featureDetailRequestDto);
+    @PutMapping("")
+    public GenericResponse<FeatureDetailResponseDto> updateFeatureDetails(@RequestBody FeatureDetailRequestDto featureDetailRequestDto){
+        return ResponseBuilderUtil.getResponse(configService.updateCompanyWithFeature(featureDetailRequestDto),SUCCESS,"",HttpStatus.SC_OK);
     }
-
-
-
 
 }

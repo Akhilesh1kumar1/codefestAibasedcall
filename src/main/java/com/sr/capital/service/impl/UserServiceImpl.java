@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public InternalTokenUserDetailsResponse getUserDetailsUsingInternalToken(String token) {
         InternalTokenUserDetailsResponse response = shiprocketClient.getUserDetailsUsingInternalToken(token);
-        //RequestData.getTenantId()
 
         if(response.getCompanyId()!=null){
             User user = userRepository.findTopBySrCompanyId(Long.valueOf(response.getCompanyId()));

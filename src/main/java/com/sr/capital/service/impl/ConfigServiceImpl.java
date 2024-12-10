@@ -2,15 +2,16 @@ package com.sr.capital.service.impl;
 
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.FeatureDetailRequestDto;
+import com.sr.capital.dto.response.FeatureDetailResponseDto;
 import com.sr.capital.entity.mongo.FeatureDetails;
 import com.sr.capital.repository.mongo.FeatureDetailRepository;
 import com.sr.capital.service.ConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -18,34 +19,51 @@ import java.util.Optional;
 public class ConfigServiceImpl implements ConfigService {
 
     final FeatureDetailRepository featureDetailRepository;
-    @Override
-    public FeatureDetails getCompanyWithFeature() {
-        return featureDetailRepository.findBySrCompanyId(Long.parseLong(RequestData.getTenantId()));
 
+    @Override
+    public FeatureDetailResponseDto getCompanyWithFeature() {
+        FeatureDetails featureDetails = featureDetailRepository.findBySrCompanyId(Long.parseLong(RequestData.getTenantId()));
+        return FeatureDetailResponseDto.builder()
+                .srCompanyId(featureDetails.getSrCompanyId())
+                .feature(featureDetails.getFeature())
+                .build();
     }
 
     @Override
-    public FeatureDetails saveCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto){
+    public FeatureDetailResponseDto saveCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto){
         FeatureDetails featureDetails = featureDetailRepository.findBySrCompanyId(Long.parseLong(RequestData.getTenantId()));
-        featureDetails.setFeature(featureDetailRequestDto.getFeature());
+        List<String> cleanedFeatures = featureDetailRequestDto.getFeature().stream()
+                .filter(feature -> feature != null && !feature.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+        featureDetails.setFeature(cleanedFeatures);
         featureDetailRepository.save(featureDetails);
-        return featureDetails;
+        return FeatureDetailResponseDto.builder()
+                .srCompanyId(featureDetails.getSrCompanyId())
+                .feature(featureDetails.getFeature())
+                .build();
     }
 
     @Override
-    public FeatureDetails updateCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto){
+    public FeatureDetailResponseDto updateCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto){
         FeatureDetails featureDetails = featureDetailRepository.findBySrCompanyId(Long.parseLong(RequestData.getTenantId()));
-        List<String> newFeatures = featureDetailRequestDto.getFeature();
-        List<String> existingFeatures = Optional.ofNullable(featureDetails.getFeature())
-                .orElseGet(ArrayList::new);
-        existingFeatures.addAll(
-                newFeatures.stream()
-                        .filter(feature -> feature != null && !feature.isBlank())
-                        .toList()
-        );
+
+        List<String> existingFeatures = Optional.ofNullable(featureDetails.getFeature()).orElseGet(ArrayList::new);
+        Set<String> existingFeatureSet = new HashSet<>(existingFeatures);
+
+        List<String> newFeatures = Optional.ofNullable(featureDetailRequestDto.getFeature()).orElseGet(Collections::emptyList);
+
+        newFeatures.stream()
+                .filter(feature -> feature != null && !feature.isBlank() && existingFeatureSet.add(feature))
+                .forEach(existingFeatures::add);
+
         featureDetails.setFeature(existingFeatures);
         featureDetails = featureDetailRepository.save(featureDetails);
-        return featureDetails;
+
+        return FeatureDetailResponseDto.builder()
+                .srCompanyId(featureDetails.getSrCompanyId())
+                .feature(featureDetails.getFeature())
+                .build();
     }
 
 }
