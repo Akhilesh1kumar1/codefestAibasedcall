@@ -15,7 +15,7 @@ import java.util.Map;
 public interface CrifPartnerService {
 
 
-    BureauQuestionnaireResponse initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest);
+    BureauQuestionnaireResponse initiateBureauAndGetQuestionnaire(BureauInitiatePayloadRequest bureauInitiatePayloadRequest);
 
     String getAccessCode();
 
@@ -25,6 +25,11 @@ public interface CrifPartnerService {
 
     BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest);
 
-    Map<String, Object> initiateBureau(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel);
+    Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel);
+
+    Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest);
+
+    Object verify(BureauInitiateResponse bureauInitiateResponse);
+
 }
 

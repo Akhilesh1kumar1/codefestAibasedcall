@@ -14,4 +14,6 @@ public interface CrifOtpService {
     CrifResponse generateOtp(CrifGenerateOtpRequestModel bureauInitiatePayloadRequest) throws IOException;
 
     CrifResponse verifyOtp(@Valid CrifVerifyOtpRequestModels crifGenerateOtpRequestModel);
+
+    void updateOtpStatus(String mobile);
 }

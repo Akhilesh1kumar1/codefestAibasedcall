@@ -2,8 +2,8 @@ package com.sr.capital.external.crif.service;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.entity.mongo.crif.BureauInitiateModel;
-import com.sr.capital.entity.mongo.crif.BureauQuestionnaireModel;
 import com.sr.capital.entity.mongo.crif.CrifReport;
+import com.sr.capital.entity.mongo.crif.CrifUserModel;
 import com.sr.capital.external.crif.Constant.Constant;
 import com.sr.capital.external.crif.dto.request.*;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
@@ -12,30 +12,32 @@ import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.util.StatusCode;
 import com.sr.capital.external.crif.util.StringUtils;
+import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.repository.mongo.BureauInitiateModelRepo;
 import com.sr.capital.repository.mongo.BureauQuestionnaireModelRepo;
 import com.sr.capital.repository.mongo.CrifReportRepo;
 import com.sr.capital.util.Base64Util;
-import com.sr.capital.util.ProviderConfigUtil;
 import com.sr.capital.util.WebClientUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
+import static com.sr.capital.external.crif.util.StatusCode.S01;
+import static com.sr.capital.external.crif.util.StatusCode.S10;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CrifPartnerServiceImpl implements CrifPartnerService {
 
     private final WebClientUtil webClientUtil;
@@ -43,20 +45,36 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final BureauInitiateModelRepo bureauInitiateModelRepo;
     private final BureauQuestionnaireModelRepo bureauQuestionnaireModelRepo;
     private final CrifReportRepo crifReportRepo;
+    private final RedissonClient redissonClient;
 
+    @Override
+    public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) {
 
-    public CrifPartnerServiceImpl(ProviderConfigUtil providerConfigUtil, WebClientUtil webClientUtil,
-                                  AppProperties appProperties, BureauInitiateModelRepo bureauInitiateModelRepo,
-                                  BureauQuestionnaireModelRepo bureauQuestionnaireModelRepo, CrifReportRepo crifReportRepo) {
-        this.webClientUtil = webClientUtil;
-        this.appProperties = appProperties;
-        this.bureauInitiateModelRepo = bureauInitiateModelRepo;
-        this.bureauQuestionnaireModelRepo = bureauQuestionnaireModelRepo;
-        this.crifReportRepo = crifReportRepo;
+        BureauQuestionnaireResponse bureauQuestionnaireResponse = initiateBureauAndGetQuestionnaire(bureauInitiatePayloadRequest);
+
+        if (bureauQuestionnaireResponse != null && isAuthorizedForReport(bureauQuestionnaireResponse.getStatus())) {
+            return getReport(bureauQuestionnaireResponse);
+        }
+
+        return bureauQuestionnaireResponse;
     }
 
     @Override
-    public Map<String, Object> initiateBureau(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) {
+    public Object verify(BureauInitiateResponse bureauInitiateResponse) {
+        BureauQuestionnaireResponse questionnaire = getQuestionnaire(bureauInitiateResponse);
+        if (questionnaire != null && isAuthorizedForReport(questionnaire.getStatus())) {
+            return getReport(questionnaire);
+        }
+        return questionnaire;
+    }
+
+
+
+    boolean isAuthorizedForReport(String status) {
+        return status != null && (status.equals(S01.name()) || status.equals(S10.name()));
+    }
+    @Override
+    public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) {
         BureauInitiatePayloadRequest bureauInitiatePayloadRequest = BureauInitiatePayloadRequest.builder()
                 .firstName(crifGenerateOtpRequestModel.getFirstName())
                 .lastName(crifGenerateOtpRequestModel.getLastName())
@@ -65,9 +83,9 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         setDocTypeValue(bureauInitiatePayloadRequest, crifGenerateOtpRequestModel.getDocType(), crifGenerateOtpRequestModel.getDocValue());
 
-        BureauQuestionnaireResponse bureauQuestionnaireResponse = initiateBureau(bureauInitiatePayloadRequest);
-        if (bureauQuestionnaireResponse != null && (bureauQuestionnaireResponse.getStatus().equals("S01") ||
-                bureauQuestionnaireResponse.getStatus().equals("S10"))) {
+        BureauQuestionnaireResponse bureauQuestionnaireResponse = initiateBureauAndGetQuestionnaire(bureauInitiatePayloadRequest);
+
+        if (bureauQuestionnaireResponse != null && isAuthorizedForReport(bureauQuestionnaireResponse.getStatus())) {
             return new HashMap<>(){{put(DATA, getReport(bureauQuestionnaireResponse)); put(STAGE, STAGE_3);}};
         }
         return new HashMap<>(){{put(DATA, bureauQuestionnaireResponse); put(STAGE, STAGE_2);}};
@@ -105,47 +123,27 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public BureauQuestionnaireResponse initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) {
+    public BureauQuestionnaireResponse initiateBureauAndGetQuestionnaire(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) {
 
-
-//        setDummyData(bureauInitiatePayloadRequest);
         updateStaticData(bureauInitiatePayloadRequest);
-        String orderId = getOrderId();
-        HttpHeaders header = getHeaderForInitiateBureau(orderId);
 
         String requestPayload = StringUtils.toPipeSeparatedString(bureauInitiatePayloadRequest);
 
-        log.info("OrderId :{} requestPayload: {}", orderId, requestPayload);
-        header.keySet().forEach(log::info);
-        header.values().forEach(v -> v.forEach(log::info));
-        log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
+        String orderId = getOrderId();
 
-        BureauInitiateResponse bureauInitiateResponse = null;
-        CompletableFuture<BureauInitiateResponse> response = CompletableFuture.completedFuture(
-                webClientUtil.makeExternalCall(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage1Endpoint(),
-                        HttpMethod.POST,
-                        header, null,
-                        requestPayload, BureauInitiateResponse.class)
-        );
+        HttpHeaders header = getHeaderForInitiateBureau(orderId);
 
-        try {
-            bureauInitiateResponse = response.get();
-            log.info("tatus {} , reportId {}, orderId {}, result {}, data {}", bureauInitiateResponse.getStatus(),
-                    bureauInitiateResponse.getReportId(), bureauInitiateResponse.getOrderId(),
-                    bureauInitiateResponse.getResult(), bureauInitiateResponse.getData());
-        } catch (InterruptedException | ExecutionException e) {
-            try {
-                log.error("error :: {}", e);
-                log.error("error while converting {}", response.get());
-            } catch (InterruptedException | ExecutionException ex) {
-                throw new RuntimeException(ex);
-            }
-            throw new RuntimeException(e);
-        }
+        BureauInitiateResponse bureauInitiateResponse = authenticateBureau(bureauInitiatePayloadRequest, requestPayload,
+                orderId, header);
+
 
         BureauQuestionnaireResponse questionnaire = null;
 
         if (bureauInitiateResponse != null) {
+            log.info("status {} , reportId {}, orderId {}, data {}", bureauInitiateResponse.getStatus(),
+                    bureauInitiateResponse.getReportId(), bureauInitiateResponse.getOrderId(),
+                    bureauInitiateResponse.getData());
+
             saveInitiateData(bureauInitiateResponse, requestPayload, header);
 
             String statusCode = bureauInitiateResponse.getStatus();
@@ -163,15 +161,30 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
        return questionnaire;
     }
 
+    private BureauInitiateResponse authenticateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest, String requestPayload, String orderId, HttpHeaders header) {
+        //        setDummyData(bureauInitiatePayloadRequest);
+
+
+        log.info("OrderId :{} requestPayload: {}", orderId, requestPayload);
+        header.keySet().forEach(log::info);
+        header.values().forEach(v -> v.forEach(log::info));
+        log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
+
+        return webClientUtil.makeExternalCallBlocking(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage1Endpoint(),
+                        HttpMethod.POST, ServiceName.CRIF.getName(),
+                header, null,
+                        requestPayload, BureauInitiateResponse.class);
+    }
+
     private void saveInitiateData(BureauInitiateResponse bureauInitiateResponse, String requestPayload, HttpHeaders header) {
-        BureauInitiateModel<Object> bureauInitiateModel = BureauInitiateModel.builder()
+        BureauInitiateModel bureauInitiateModel = BureauInitiateModel.builder()
                 .redirectUrl(bureauInitiateResponse.getRedirectURL())
-                .statusCode(bureauInitiateResponse.getStatus())
+                .initStatus(bureauInitiateResponse.getStatus())
                 .orderId(bureauInitiateResponse.getOrderId())
                 .reportId(bureauInitiateResponse.getReportId())
                 .requestHeader(getHeadersAsString(header))
                 .requestPayload(requestPayload)
-                .details(bureauInitiateResponse.toString())
+                .initResponse(bureauInitiateResponse.toString())
                 .build();
 
         bureauInitiateModelRepo.save(bureauInitiateModel);
@@ -218,18 +231,30 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     @Override
     public String getAccessCode() {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
-        Date now = new Date();
-        String timestamp = sdf.format(now);
+        RMapCache<String, String> crifAccessToken = redissonClient
+                .getMapCache(Constants.RedisKeys.CRIF_ACCESS_TOKEN);
 
-        AccessCodeDto.AccessCodeDtoBuilder accessCodeDtoBuilder = AccessCodeDto.builder().userId(appProperties.getCrifUser())
-                .customerId(appProperties.getCrifCustomerId())
-                .productCode(appProperties.getCrifProductCode())
-                .password(appProperties.getCrifPassword())
-                .dateTimeStamp(timestamp);
-        String pipeSeparatedString = StringUtils.toPipeSeparatedString(accessCodeDtoBuilder);
-        return Base64Util.encode(pipeSeparatedString.substring(0, pipeSeparatedString.length() - 1));
+        String key = crifAccessToken.get(Constants.RedisKeys.CRIF_ACCESS_TOKEN);
+        if (key != null) {
+        return key;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+            sdf.setTimeZone(TimeZone.getTimeZone(ASIA_KOLKATA));
+            Date now = new Date();
+            String timestamp = sdf.format(now);
+
+            AccessCodeDto.AccessCodeDtoBuilder accessCodeDtoBuilder = AccessCodeDto.builder().userId(appProperties.getCrifUser())
+                    .customerId(appProperties.getCrifCustomerId())
+                    .productCode(appProperties.getCrifProductCode())
+                    .password(appProperties.getCrifPassword())
+                    .dateTimeStamp(timestamp);
+            String pipeSeparatedString = StringUtils.toPipeSeparatedString(accessCodeDtoBuilder);
+
+            String encode = Base64Util.encode(pipeSeparatedString.substring(0, pipeSeparatedString.length() - 1));
+            crifAccessToken.put(Constants.RedisKeys.CRIF_ACCESS_TOKEN, encode, 25, TimeUnit.MINUTES);
+            return encode;
+        }
     }
 
     private HttpHeaders getHeaderForInitiateBureau(String orderId) {
@@ -264,7 +289,18 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
     @Override
     public BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse) {
-        BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest = BureauQuestionnairePayloadRequest
+
+        BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest = updateStaticData(bureauInitiateResponse);
+
+        if (bureauQuestionnairePayloadRequest != null && bureauInitiateResponse.getUserAnswer() != null) {
+            bureauQuestionnairePayloadRequest.setUserAnswer(bureauInitiateResponse.getUserAnswer());
+        }
+
+            return authenticateQuestion(bureauQuestionnairePayloadRequest);
+    }
+
+    private BureauQuestionnairePayloadRequest updateStaticData(BureauInitiateResponse bureauInitiateResponse) {
+        return BureauQuestionnairePayloadRequest
                 .builder()
                 .reportFlag("N")
                 .reportId(bureauInitiateResponse.getReportId() != null ?
@@ -277,12 +313,6 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                         bureauInitiateResponse.getRedirectURL() : "https://cir.crifhighmark.com/Inquiry/B2B/secureService.action")
                 .paymentFlag("N")
                 .build();
-
-        if (bureauInitiateResponse.getUserAnswer() != null) {
-            bureauQuestionnairePayloadRequest.setUserAnswer(bureauInitiateResponse.getUserAnswer());
-        }
-
-        return authenticateQuestion(bureauQuestionnairePayloadRequest);
     }
 
     private void updateStaticData(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) {
@@ -322,46 +352,34 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         header.values().forEach(v -> v.forEach(log::info));
         log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
 
-        CompletableFuture<BureauQuestionnaireResponse> completableFuture = CompletableFuture.completedFuture(
-                webClientUtil.makeExternalCall(ServiceName.FLEXI, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
-                        HttpMethod.POST,
-                        header, null,
-                        requestPayload, BureauQuestionnaireResponse.class)
-        );
+        BureauQuestionnaireResponse bureauQuestionnaireResponse = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
+                HttpMethod.POST, ServiceName.CRIF.getName(),
+                header, null,
+                requestPayload, BureauQuestionnaireResponse.class);
 
-        BureauQuestionnaireResponse bureauQuestionnaireResponse = null;
-        try {
-            bureauQuestionnaireResponse = completableFuture.get();
-            log.info("status {} , reportId {}, orderId {}, result {}, redirectUrl {}, Question {}, buttonBehavior {}, optionList {}",
-                    bureauQuestionnaireResponse.getStatus(),
-                    bureauQuestionnaireResponse.getReportId(), bureauQuestionnaireResponse.getOrderId(),
-                    bureauQuestionnaireResponse.getResult(), bureauQuestionnaireResponse.getRedirectURL(), bureauQuestionnaireResponse.getQuestion(),
-                    bureauQuestionnaireResponse.getButtonBehavior(), bureauQuestionnaireResponse.getOptionList());
-        } catch (InterruptedException | ExecutionException e) {
-            try {
-                log.error("error :: {}", e);
-                log.error("error while converting {}", completableFuture.get());
-            } catch (InterruptedException | ExecutionException ex) {
-                throw new RuntimeException(ex);
-            }
-            throw new RuntimeException(e);
-        }
+
 
         if (bureauQuestionnaireResponse != null) {
-            BureauQuestionnaireModel bureauQuestionnaireModel = BureauQuestionnaireModel.builder()
-                    .accessCode(bureauQuestionnaireResponse.getAccessCode())
-                    .reportId(bureauQuestionnaireResponse.getReportId())
-                    .question(bureauQuestionnaireResponse.getQuestion())
-                    .redirectUrl(bureauQuestionnaireResponse.getRedirectURL())
-                    .orderId(bureauQuestionnaireResponse.getOrderId())
-                    .optionList(bureauQuestionnaireResponse.getOptionList())
-                    .buttonBehavior(bureauQuestionnaireResponse.getButtonBehavior())
-                    .status(bureauQuestionnaireResponse.getStatus())
-                    .statusDesc(bureauQuestionnaireResponse.getStatusDesc())
-                    .completedAt(bureauQuestionnaireResponse.getCompletedAt())
-                    .result(bureauQuestionnaireResponse.toString()).build();
-
-            bureauQuestionnaireModelRepo.save(bureauQuestionnaireModel);
+            log.info("status {} , reportId {}, orderId {}, redirectUrl {}, Question {}, buttonBehavior {}, optionList {}",
+                    bureauQuestionnaireResponse.getStatus(),
+                    bureauQuestionnaireResponse.getReportId(), bureauQuestionnaireResponse.getOrderId(),
+                    bureauQuestionnaireResponse.getRedirectURL(), bureauQuestionnaireResponse.getQuestion(),
+                    bureauQuestionnaireResponse.getButtonBehavior(), bureauQuestionnaireResponse.getOptionList());
+            Optional<BureauInitiateModel> optional = bureauInitiateModelRepo.
+                    findByReportIdAndOrderId(bureauQuestionnaireResponse.getReportId(),
+                    bureauQuestionnaireResponse.getOrderId());
+            if (optional.isPresent()) {
+                BureauInitiateModel bureauInitiateModel = optional.get();
+                BureauInitiateModel bureauQuestionnaireModel = bureauInitiateModel.toBuilder()
+                        .question(bureauQuestionnaireResponse.getQuestion())
+                        .optionList(bureauQuestionnaireResponse.getOptionList())
+                        .buttonBehavior(bureauQuestionnaireResponse.getButtonBehavior())
+                        .questionnaireStatus(bureauQuestionnaireResponse.getStatus())
+                        .statusDesc(bureauQuestionnaireResponse.getStatusDesc())
+                        .completedAt(bureauQuestionnaireResponse.getCompletedAt())
+                        .questionnaireResponse(bureauQuestionnaireResponse.toString()).build();
+                bureauInitiateModelRepo.save(bureauQuestionnaireModel);
+            }
         }
         return bureauQuestionnaireResponse;
     }
@@ -387,27 +405,13 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         header.values().forEach(v -> v.forEach(log::info));
         log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
 
-        CompletableFuture<Object> completableFuture = CompletableFuture.completedFuture(
-                webClientUtil.makeExternalCall(ServiceName.FLEXI, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
-                        HttpMethod.POST,
+        Object bureauReportResponse = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
+                        HttpMethod.POST, ServiceName.CRIF.getName(),
                         header, null,
-                        requestPayload, Object.class)
-        );
+                        requestPayload, Object.class);
 
-        Object bureauReportResponse = null;
-        try {
-            bureauReportResponse = completableFuture.get();
+
             log.info("response {} ", bureauReportResponse);
-        } catch (InterruptedException | ExecutionException e) {
-            try {
-                log.error("error :: {}", e);
-                log.error("error while converting {}", completableFuture.get());
-            } catch (InterruptedException | ExecutionException ex) {
-                throw new RuntimeException(ex);
-            }
-            throw new RuntimeException(e);
-        }
-
 
         CrifReport crifReport = CrifReport.builder()
                 .orderId(bureauReportPayloadRequest.getOrderId())

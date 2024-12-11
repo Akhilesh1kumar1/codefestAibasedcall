@@ -19,12 +19,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CrifVerificationUtils {
 
-//    private final AppProperties appProperties;
-//
-//    private final VerificationEntityServiceImpl verificationManager;
-//
-//    private final CommunicationService communicationService;
-
     private final VerificationService verificationService;
 
     private final AES256 aes256;

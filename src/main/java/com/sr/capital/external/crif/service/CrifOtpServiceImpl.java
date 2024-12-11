@@ -5,6 +5,7 @@ import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
 import com.sr.capital.entity.mongo.crif.CrifUserModel;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.external.crif.Constant.Constant;
 import com.sr.capital.external.crif.dto.request.CrifGenerateOtpRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.dto.response.CrifResponse;
@@ -12,33 +13,29 @@ import com.sr.capital.external.crif.util.CrifVerificationUtils;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.util.MapperUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CrifOtpServiceImpl implements CrifOtpService {
 
     private final CrifUserModelRepo crifUserModelRepo;
     private final CrifVerificationUtils crifVerificationUtils;
     private final CrifPartnerService crifPartnerService;
 
-    public CrifOtpServiceImpl(CrifUserModelRepo crifUserModelRepo, CrifVerificationUtils crifVerificationUtils, CrifPartnerService crifPartnerService) {
-        this.crifUserModelRepo = crifUserModelRepo;
-        this.crifVerificationUtils = crifVerificationUtils;
-        this.crifPartnerService = crifPartnerService;
-    }
-
     @Override
     public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException {
         CrifResponse crifResponse  = CrifResponse.builder().build();
+
         Optional<CrifUserModel> optional = crifUserModelRepo.findByMobile(crifGenerateOtpRequestModel.getMobile());
         CrifUserModel crifUserModel;
         if (optional.isPresent()) {
@@ -66,13 +63,14 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         } else {
             CrifVerifyOtpRequestModels crifVerifyOtpRequestModels = MapperUtils.convertValue(crifGenerateOtpRequestModel,
                     CrifVerifyOtpRequestModels.class);
-            Map<String, Object> res = crifPartnerService.initiateBureau(crifVerifyOtpRequestModels);
+            Map<String, Object> res = crifPartnerService.initiateBureauAndGetQuestionnaire(crifVerifyOtpRequestModels);
             setResponse(crifResponse, res);
             return crifResponse;
         }
 
         if (verificationOrchestratorRequest != null && verificationOrchestratorRequest.getVerificationEntity() != null) {
             crifResponse.setToken(verificationOrchestratorRequest.getVerificationEntity().getId());
+            crifResponse.setStatus(Constant.OTP_VERIFICATION_PENDING);
         }
 
         return crifResponse;
@@ -84,6 +82,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                 case STAGE_2 -> crifResponse.setQuestionnaireResponse(data.get(DATA));
                 case STAGE_3 -> crifResponse.setReport(data.get(DATA));
             }
+            crifResponse.setStatus(String.valueOf(data.get(STAGE)));
         }
     }
 
@@ -102,7 +101,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                 optional.get().setIsOtpVerified(true);
                 crifUserModelRepo.save(optional.get());
 
-                Map<String, Object> map = crifPartnerService.initiateBureau(crifGenerateOtpRequestModel);
+                Map<String, Object> map = crifPartnerService.initiateBureauAndGetQuestionnaire(crifGenerateOtpRequestModel);
 
                 setResponse(crifResponse, map);
 
@@ -110,5 +109,14 @@ public class CrifOtpServiceImpl implements CrifOtpService {
             }
         }
         return crifResponse;
+    }
+
+    @Override
+    public void updateOtpStatus(String mobile) {
+        Optional<CrifUserModel> optional = crifUserModelRepo.findByMobile(mobile);
+        if (optional.isPresent()) {
+            optional.get().setIsOtpVerified(false);
+            crifUserModelRepo.save(optional.get());
+        }
     }
 }

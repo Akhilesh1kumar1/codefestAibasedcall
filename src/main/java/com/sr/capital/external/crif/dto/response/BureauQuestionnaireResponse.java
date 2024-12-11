@@ -1,36 +1,41 @@
 package com.sr.capital.external.crif.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-//@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-//@Builder
+public class BureauQuestionnaireResponse implements Serializable {
 
-public class BureauQuestionnaireResponse<T> implements Serializable {
-
+    @JsonProperty("redirectURL")
     private String redirectURL;
 
+    @JsonProperty("orderId")
     private String orderId;
 
+    @JsonProperty("reportId")
     private String reportId;
 
     private String accessCode;
 
+    @JsonProperty("statusDesc")
     private String statusDesc;
 
     private String status;
 
     private String question;
 
+    @JsonProperty("optionList")
     private String optionList;
 
+    @JsonProperty("buttonBehavior")
     private String buttonBehavior;
-
-    private T result;
 
     @Override
     public String toString() {
@@ -44,7 +49,6 @@ public class BureauQuestionnaireResponse<T> implements Serializable {
                 ", question='" + question + '\'' +
                 ", optionList='" + optionList + '\'' +
                 ", buttonBehavior='" + buttonBehavior + '\'' +
-                ", result=" + result +
                 ", completedAt='" + completedAt + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';
