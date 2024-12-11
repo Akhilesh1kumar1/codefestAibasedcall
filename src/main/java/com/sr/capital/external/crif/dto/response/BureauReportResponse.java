@@ -13,11 +13,11 @@ import java.io.Serializable;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public class BureauReportResponse<T> implements Serializable {
+public class BureauReportResponse implements Serializable {
 
 
     @Field("result")
-    private T result;
+    private Object result;
 
     @Field("report_id")
     private String reportId;

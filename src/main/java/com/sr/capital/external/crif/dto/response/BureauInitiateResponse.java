@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BureauInitiateResponse<T> implements Serializable {
+public class BureauInitiateResponse implements Serializable {
 
     @JsonProperty("redirectURL")
     private String redirectURL;
@@ -30,9 +30,7 @@ public class BureauInitiateResponse<T> implements Serializable {
 
     private String userAnswer;
 
-    private T result;
-
-    private T data;
+    private Object data;
 
     private String completedAt;
 
@@ -47,7 +45,6 @@ public class BureauInitiateResponse<T> implements Serializable {
                 ", accessCode='" + accessCode + '\'' +
                 ", statusDesc='" + statusDesc + '\'' +
                 ", status='" + status + '\'' +
-                ", result=" + result +
                 ", data=" + data +
                 ", completedAt='" + completedAt + '\'' +
                 ", createdAt='" + createdAt + '\'' +
