@@ -12,7 +12,6 @@ import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.Pincode;
-import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;

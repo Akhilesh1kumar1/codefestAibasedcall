@@ -42,4 +42,14 @@ public class LoanApplicationRequestDto extends BaseRequest {
 
     @Builder.Default
     Boolean createLoanAtVendor=false;
+
+    String utmSource;
+
+    String utmMedium;
+
+    String utmCampaign;
+
+    String utmTerm;
+
+    String utmContent;
 }
