@@ -109,6 +109,7 @@ public class UserServiceImpl implements UserService {
                     response.setIsAccepted(user.getIsAccepted());
                     response.setEntityType(user.getEntityType());
                     response.setFirstName(aes256.decrypt(user.getFirstName()));
+                    response.setEmail(aes256.decrypt(user.getEmail()));
                     response.setMobile(aes256.decrypt(user.getMobile()));
                     response.setPanNumber(aes256.decrypt(user.getPanNumber()));
                     response.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
