@@ -318,4 +318,4 @@ aes:
 
 is:
   encryption:
-    enabled: ${IS_ENCRYPTION_ENABLED:false}
+    enabled: ${IS_ENCRYPTION_ENABLED:true}
