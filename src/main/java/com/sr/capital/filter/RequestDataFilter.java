@@ -7,6 +7,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class RequestDataFilter implements Filter {
     @Autowired
     AuthenticatorService authenticatorService;
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(jakarta.servlet.FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
     }
 
@@ -47,6 +48,7 @@ public class RequestDataFilter implements Filter {
         Filter.super.destroy();
     }
 
+    @SneakyThrows
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;

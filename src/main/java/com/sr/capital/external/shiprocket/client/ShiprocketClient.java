@@ -13,7 +13,6 @@ import com.sr.capital.external.shiprocket.dto.response.KycResponse;
 import com.sr.capital.util.LoggerUtil;
 import com.sr.capital.util.WebClientUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -38,8 +37,8 @@ public class ShiprocketClient {
 
     public ValidateTokenResponse validateToken(String token) throws UnirestException, CustomException {
 
-        Map<String, String> headers = getHeaders(token);
-
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         if(token==null){
             throw new CustomException("Invalid Request",HttpStatus.UNAUTHORIZED);
         }
@@ -48,22 +47,23 @@ public class ShiprocketClient {
 
         ValidateTokenRequest request = ValidateTokenRequest.builder().token(token).validateTokenRequest(1).build();
 
-        HttpResponse<ValidateTokenResponse> validateTokenResponse = getInstance().withHeaders(headers).post(url,
-                request, ValidateTokenResponse.class);
+       /* HttpResponse<ValidateTokenResponse> validateTokenResponse = getInstance().withHeaders(headers).post(url,
+                request, ValidateTokenResponse.class);*/
 
-        if ((validateTokenResponse.getStatus() != SC_OK && validateTokenResponse.getBody() == null)
-                || !validateTokenResponse.getBody().getCode()
+        ValidateTokenResponse validateTokenResponse = webClientUtil.makeExternalCallBlocking(SHIPROCKET,url,null,HttpMethod.POST,"",headers,null,request,
+                ValidateTokenResponse.class);
+
+        if (validateTokenResponse!=null && !validateTokenResponse.getCode()
                         .equalsIgnoreCase(String.valueOf(org.apache.http.HttpStatus.SC_OK))) {
-            loggerUtil.error("Received response: " + validateTokenResponse.getBody() + " with status code: "
-                    + validateTokenResponse.getStatus() + " while validating token");
+            loggerUtil.error("Received response: " + validateTokenResponse + " with status code: "
+                    + validateTokenResponse.getCode() + " while validating token");
             throw new CustomException(
-                    String.format("Received response: %s with status code: %s while validating token ",
-                            validateTokenResponse.getBody(),
-                            validateTokenResponse.getStatus()),
+                    String.format("Received response: with status code: %s while validating token ",
+                            validateTokenResponse.getCode()),
                     HttpStatus.UNAUTHORIZED);
         }
 
-        return validateTokenResponse.getBody();
+        return validateTokenResponse;
     }
 
     private Map<String, String> getHeaders(String token) {
