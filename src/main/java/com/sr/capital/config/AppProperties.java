@@ -371,13 +371,13 @@ public class AppProperties {
     @Value("${external.crif.api.endpoint.extract.stage2.url}")
     private String CrifExtractStage2Endpoint;
 
-    @Value("${AES_SECRET_KEY}")
+    @Value("${aes.secret.key}")
     private String aesSecretKey;
 
-    @Value("${IS_ENCRYPTION_ENABLED}")
+    @Value("${is.encryption.enabled}")
     private String isEncryptionEnabled;
 
-    @Value("${AES_IV_KEY}")
+    @Value("${aes.iv.key}")
     private String aesIVKey;
 
 }

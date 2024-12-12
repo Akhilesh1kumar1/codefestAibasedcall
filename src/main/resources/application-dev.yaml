@@ -304,3 +304,14 @@ jobs:
     cronInMinutes: 120
   communication:
     scheduledTime: 0 0 1 * * ?
+
+
+aes:
+  secret:
+    key: ${AES_SECRET_KEY:JEh8UFIwa0BUQCFAIyQmKg==}
+  iv:
+    key: ${AES_IV_KEY:JEh8UFIwa0BUQCQh}
+
+is:
+  encryption:
+    enabled: ${IS_ENCRYPTION_ENABLED:false}
