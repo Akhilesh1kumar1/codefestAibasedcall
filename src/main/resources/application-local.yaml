@@ -53,7 +53,7 @@ spring:
     import: optional:file:.env[.properties]
 
 app:
-  cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173
+  cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173,http://localhost:5371
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
   web-url: ${WEB_URL:https://multichannel-appstore-qa.kartrocket.com/capital/home}
@@ -74,7 +74,7 @@ app:
     sinfini:
       enabled: true
       baseUri: ${SINFINI_BASE_URI:http://alerts.sinfini.com/api/v3/index.php}
-      apiKey: ${SINFINI_API_KEY:Afa8f859f3f8af5f9bd92c9e8db94bd39}
+      apiKey: ${SINFINI_API_KEY}
       sms:
         method: ${SINFING_SMS_METHOD:sms}
         sender: ${SINFINI_SMS_SENDER:SHPRKT}
@@ -83,7 +83,7 @@ app:
       enabled: false
       baseUri: ${KALEYRA_BASE_URI:https://api.kaleyra.io/v1}
       senderId: ${KALEYRA_SENDER_ID:HXIN1724808889IN}
-      apiKey: ${KALEYRA_API_KEY:Aca6d903762f7aa22e3b1d392059be7cd}
+      apiKey: ${KALEYRA_API_KEY}
       fromNo: ${KALEYRA_FROM_NO:917217894979}
       endpoints:
         send-messages: "/messages"
@@ -96,7 +96,7 @@ app:
     netcore:
       enabled: true
       baseUri: ${NETCORE_BASE_URI:https://emailapi.netcorecloud.net}
-      apiKey: ${NETCORE_API_KEY:f8fb86901e186aa15a07e22a3de6b022}
+      apiKey: ${NETCORE_API_KEY}
       fromEmail: "info@mail.shiprocket.in"
       fromName: "Shiprocket"
       endpoints:
@@ -238,11 +238,11 @@ external:
       uri: https://test.crifhighmark.com
     access-code:
       user: ${CRIF_USER:user_shiprocket}
-      password: ${CRIF_PASSWORD:302FB43B0FAC8C27ED717C69FD51E29F24A69E79}
-      company-Name: ${CRIF_COMPANY_NAME:SHIPROCKET PRIVATE LIMITED}
-      customer-id: ${CRIF_CUSTOMER_ID:DTC0000345}
-      app-id: ${CRIF_APP_ID:s4^$E9?*V7T^ty#*d^&F!@w1&}
-      product-code: ${CRIF_PRODUCT_CODE:BBC_CONSUMER_SCORE#85#2.0}
+      password: ${CRIF_PASSWORD}
+      company-Name: ${CRIF_COMPANY_NAME}
+      customer-id: ${CRIF_CUSTOMER_ID}
+      app-id: ${CRIF_APP_ID}
+      product-code: ${CRIF_PRODUCT_CODE}
 karza:
   async:
     response:
@@ -313,9 +313,9 @@ jobs:
 
 aes:
   secret:
-    key: ${AES_SECRET_KEY:JEh8UFIwa0BUQCFAIyQmKg==}
+    key: ${AES_SECRET_KEY}
   iv:
-    key: ${AES_IV_KEY:JEh8UFIwa0BUQCQh}
+    key: ${AES_IV_KEY}
 
 is:
   encryption:
