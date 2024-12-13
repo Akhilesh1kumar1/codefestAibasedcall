@@ -74,7 +74,7 @@ app:
     sinfini:
       enabled: true
       baseUri: ${SINFINI_BASE_URI:http://alerts.sinfini.com/api/v3/index.php}
-      apiKey: ${SINFINI_API_KEY}
+      apiKey: ${SINFINI_API_KEY:Afa8f859f3f8af5f9bd92c9e8db94bd39}
       sms:
         method: ${SINFING_SMS_METHOD:sms}
         sender: ${SINFINI_SMS_SENDER:SHPRKT}
@@ -82,8 +82,8 @@ app:
     kaleyra:
       enabled: false
       baseUri: ${KALEYRA_BASE_URI:https://api.kaleyra.io/v1}
-      senderId: ${KALEYRA_SENDER_ID}
-      apiKey: ${KALEYRA_API_KEY}
+      senderId: ${KALEYRA_SENDER_ID:HXIN1724808889IN}
+      apiKey: ${KALEYRA_API_KEY:Aca6d903762f7aa22e3b1d392059be7cd}
       fromNo: ${KALEYRA_FROM_NO:917217894979}
       endpoints:
         send-messages: "/messages"
@@ -96,7 +96,7 @@ app:
     netcore:
       enabled: true
       baseUri: ${NETCORE_BASE_URI:https://emailapi.netcorecloud.net}
-      apiKey: ${NETCORE_API_KEY}
+      apiKey: ${NETCORE_API_KEY:f8fb86901e186aa15a07e22a3de6b022}
       fromEmail: "info@mail.shiprocket.in"
       fromName: "Shiprocket"
       endpoints:
@@ -123,11 +123,11 @@ app:
       vendor-token: ${KLUB_VENDOR_TOKEN:test}
       vendor-code: ${KLUB_VENDOR_CODE:test}
     common:
-      vendor-token: ${COMMON_VENDOR_TOKEN}
-      vendor-code: ${COMMON_VENDOR_CODE}
+      vendor-token: ${COMMON_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
+      vendor-code: ${COMMON_VENDOR_CODE:8908f14a7-9fbc-4f07-3f18-2917063B8c}
     flexi:
-      vendor-token: ${FLEXI_VENDOR_TOKEN}
-      vendor-code: ${FLEXI_VENDOR_CODE}
+      vendor-token: ${FLEXI_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
+      vendor-code: ${FLEXI_VENDOR_CODE:8908f14a7-9fbc-4f07-3f18-2917063B8c}
       redirection-url: ${FLEXI_REDIRECTION_URL:https://ops.flexiloans.net/sanction/accept/%s}
 
 aws:
@@ -237,12 +237,12 @@ external:
     base:
       uri: https://test.crifhighmark.com
     access-code:
-      user: ${CRIF_USER}
-      password: ${CRIF_PASSWORD}
-      company-Name: ${CRIF_COMPANY_NAME}
-      customer-id: ${CRIF_CUSTOMER_ID}
-      app-id: ${CRIF_APP_ID}
-      product-code: ${CRIF_PRODUCT_CODE}
+      user: ${CRIF_USER:user_shiprocket}
+      password: ${CRIF_PASSWORD:302FB43B0FAC8C27ED717C69FD51E29F24A69E79}
+      company-Name: ${CRIF_COMPANY_NAME:SHIPROCKET PRIVATE LIMITED}
+      customer-id: ${CRIF_CUSTOMER_ID:DTC0000345}
+      app-id: ${CRIF_APP_ID:s4^$E9?*V7T^ty#*d^&F!@w1&}
+      product-code: ${CRIF_PRODUCT_CODE:BBC_CONSUMER_SCORE#85#2.0}
 karza:
   async:
     response:
@@ -257,7 +257,7 @@ allowed:
       score: '2'
 
 encryption:
-  key: ${ENCRYPTION_KEY}
+  key: ${ENCRYPTION_KEY:dev-testing}
 
 kafka:
   basePath: KAFKA_BASE_PATH
@@ -308,9 +308,9 @@ jobs:
 
 aes:
   secret:
-    key: ${AES_SECRET_KEY}
+    key: ${AES_SECRET_KEY:JEh8UFIwa0BUQCFAIyQmKg==}
   iv:
-    key: ${AES_IV_KEY}
+    key: ${AES_IV_KEY:JEh8UFIwa0BUQCQh}
 
 is:
   encryption:
