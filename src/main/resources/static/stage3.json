@@ -1,0 +1,170 @@
+{
+  "B2C-REPORT": {
+    "HEADER-SEGMENT": {
+      "DATE-OF-REQUEST": "09-12-2024",
+      "PREPARED-FOR": "  ",
+      "PREPARED-FOR-ID": "DTC0000345",
+      "DATE-OF-ISSUE": "09-12-2024",
+      "REPORT-ID": "CCR241209CR380672751",
+      "BATCH-ID": "323261099241209",
+      "STATUS": "SUCCESS",
+      "PRODUCT-TYPE": "BBC CONSUMER SCORE",
+      "PRODUCT-VER": "2.0"
+    },
+    "REQUEST-DATA": {
+      "APPLICANT-SEGMENT": {
+        "FIRST-NAME": "T",
+        "MIDDLE-NAME": "",
+        "LAST-NAME": "KANNAN",
+        "GENDER": "",
+        "APPLICANT-ID": "",
+        "DOB": {
+          "DOB-DT": "",
+          "AGE": "",
+          "AGE-AS-ON": ""
+        },
+        "IDS": [],
+        "ADDRESSES": [
+          {
+            "TYPE": "D08",
+            "ADDRESSTEXT": "",
+            "CITY": "",
+            "LOCALITY": "",
+            "STATE": "",
+            "PIN": "",
+            "COUNTRY": ""
+          }
+        ],
+        "PHONES": [
+          {
+            "TYPE": "P01",
+            "VALUE": "6673196819"
+          }
+        ],
+        "EMAILS": [
+          {
+            "EMAIL": "abc@abc.com"
+          }
+        ],
+        "ACCOUNT-NUMBER": ""
+      },
+      "APPLICATION-SEGMENT": {
+        "INQUIRY-UNIQUE-REF-NO": "",
+        "CREDIT-RPT-ID": null,
+        "CREDIT-RPT-TRN-DT-TM": "",
+        "CREDIT-INQ-PURPS-TYPE": null,
+        "CREDIT-INQUIRY-STAGE": null,
+        "CLIENT-CONTRIBUTOR-ID": "",
+        "BRANCH-ID": null,
+        "APPLICATION-ID": null,
+        "ACNT-OPEN-DT": null,
+        "LOAN-AMT": null,
+        "LTV": "",
+        "TERM": "",
+        "LOAN-TYPE": ""
+      }
+    },
+    "REQUEST-STATUS": null,
+    "REPORT-DATA": {
+      "STANDARD-DATA": {
+        "DEMOGS": {
+          "VARIATIONS": []
+        },
+        "EMPLOYMENT-DETAILS": [],
+        "TRADELINES": [],
+        "INQUIRY-HISTORY": [
+          {
+            "LENDER-NAME": "ADANI CAPITAL PRIVATE LIMITED",
+            "LENDER-TYPE": "",
+            "INQUIRY-DT": "06-12-2023",
+            "OWNERSHIP-TYPE": "PRIMARY",
+            "CREDIT-INQ-PURPS-TYPE": "Housing Loan",
+            "CREDIT-INQUIRY-STAGE": "",
+            "AMOUNT": "2,00,000",
+            "LOAN-TYPE": ""
+          }
+        ],
+        "SCORE": []
+      },
+      "REQUESTED-SERVICES": null,
+      "ACCOUNTS-SUMMARY": {
+        "PRIMARY-ACCOUNTS-SUMMARY": {
+          "NUMBER-OF-ACCOUNTS": "0",
+          "ACTIVE-ACCOUNTS": "0",
+          "OVERDUE-ACCOUNTS": "0",
+          "SECURED-ACCOUNTS": "0",
+          "UNSECURED-ACCOUNTS": "0",
+          "UNTAGGED-ACCOUNTS": "0",
+          "TOTAL-CURRENT-BALANCE": "0.0",
+          "CURRENT-BALANCE-SECURED": "0.0",
+          "CURRENT-BALANCE-UNSECURED": "0.0",
+          "TOTAL-SANCTIONED-AMT": "0.0",
+          "TOTAL-DISBURSED-AMT": "0.0",
+          "TOTAL-AMT-OVERDUE": "0"
+        },
+        "SECONDARY-ACCOUNTS-SUMMARY": {
+          "NUMBER-OF-ACCOUNTS": "0",
+          "ACTIVE-ACCOUNTS": "0",
+          "OVERDUE-ACCOUNTS": "0",
+          "SECURED-ACCOUNTS": "0.0",
+          "UNSECURED-ACCOUNTS": "0",
+          "UNTAGGED-ACCOUNTS": "0",
+          "TOTAL-CURRENT-BALANCE": "0.0",
+          "TOTAL-SANCTIONED-AMT": "0.0",
+          "TOTAL-DISBURSED-AMT": "0.0",
+          "TOTAL-AMT-OVERDUE": "0"
+        },
+        "MFI-GROUP-ACCOUNTS-SUMMARY": {
+          "NUMBER-OF-ACCOUNTS": "0",
+          "ACTIVE-ACCOUNTS": "0",
+          "OVERDUE-ACCOUNTS": "0",
+          "CLOSED-ACCOUNTS": "0",
+          "NO-OF-OTHER-MFIS": "0",
+          "NO-OF-OWN-MFIS": "0",
+          "TOTAL-OWN-CURRENT-BALANCE": "0.0",
+          "TOTAL-OWN-INSTALLMENT-AMT": "0",
+          "TOTAL-OWN-DISBURSED-AMT": "0.0",
+          "TOTAL-OWN-OVERDUE-AMT": "0.0",
+          "TOTAL-OTHER-CURRENT-BALANCE": "0.0",
+          "TOTAL-OTHER-INSTALLMENT-AMT": "0",
+          "TOTAL-OTHER-DISBURSED-AMT": "0.0",
+          "TOTAL-OTHER-OVERDUE-AMT": "0.0",
+          "MAX-WORST-DELINQUENCY": "0"
+        },
+        "ADDITIONAL-SUMMARY": [
+          {
+            "ATTR-NAME": "NUM-GRANTORS",
+            "ATTR-VALUE": "0"
+          },
+          {
+            "ATTR-NAME": "NUM-GRANTORS-ACTIVE",
+            "ATTR-VALUE": "0"
+          },
+          {
+            "ATTR-NAME": "NUM-GRANTORS-DELINQ",
+            "ATTR-VALUE": "0"
+          },
+          {
+            "ATTR-NAME": "NUM-GRANTORS-ONLY-PRIMARY",
+            "ATTR-VALUE": "0"
+          },
+          {
+            "ATTR-NAME": "NUM-GRANTORS-ONLY-SECONDARY",
+            "ATTR-VALUE": "0"
+          }
+        ],
+        "PERFORM-ATTRIBUTES": []
+      },
+      "TRENDS": {
+        "NAME": "",
+        "DATES": "",
+        "VALUES": "",
+        "RESERVED1": "",
+        "RESERVED2": "",
+        "RESERVED3": "",
+        "DESCRIPTION": ""
+      },
+      "ALERTS": []
+    }
+  }
+}
