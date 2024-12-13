@@ -1,0 +1,21 @@
+package com.sr.capital;
+
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+public class CommonConstant {
+    public static final String ALGORITHM = "AES";
+    public static final int KEY_SIZE = 256; // AES-256
+    public static final String AES_CBC_PADDING = "AES/CBC/PKCS5Padding";
+    public static final RequestMatcher EXCLUDE_FROM_DECRYPTION = new OrRequestMatcher(
+            new AntPathRequestMatcher("/*/health/**"),
+            new AntPathRequestMatcher("/*/cache/**"),
+            new AntPathRequestMatcher("/**/external/**"),
+            new AntPathRequestMatcher("/*/api/v1/kyc/doc/upload_and_extract"),
+            new AntPathRequestMatcher("/**/icrm/**")
+
+    );
+    public static final String TRUE = "true";
+
+}
