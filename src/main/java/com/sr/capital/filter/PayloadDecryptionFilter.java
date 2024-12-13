@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
-import static com.sr.capital.util.AESUtil.decrypt;
-import static com.sr.capital.util.AESUtil.getIvValue;
+import static com.sr.capital.util.AESUtil.*;
 
 @Configuration
 @Order(2)
@@ -52,7 +51,7 @@ public class PayloadDecryptionFilter implements Filter {
 
     private String decryptRequest(HttpServletRequest request, String iv) throws IOException {
         String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-        return decrypt(body.replace("@", "/"), appProperties.getAesSecretKey(), iv, appProperties.getAesIVKey());
+        return decrypt(removeExtraQuotes(body.replace("@", "/")), appProperties.getAesSecretKey(), iv, appProperties.getAesIVKey());
     }
 
     private static class CustomHttpServletRequestWrapper extends HttpServletRequestWrapper {

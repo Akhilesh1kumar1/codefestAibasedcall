@@ -89,4 +89,20 @@ public class AESUtil {
         }
 
     }
+
+    public static String removeExtraQuotes(String input) {
+        int start = 0;
+        int end = 0;
+        if (input != null && input.length() >= 2) {
+            end = input.length();
+            if (input.charAt(0) == '\"') {
+                start = 1;
+            }
+            if (input.charAt(input.length() -1) == '\"') {
+                end = input.length() - 1;
+            }
+            input = input.substring(start, end);
+        }
+        return input;
+    }
 }
