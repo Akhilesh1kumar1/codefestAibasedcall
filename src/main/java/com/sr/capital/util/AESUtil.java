@@ -77,13 +77,7 @@ public class AESUtil {
         String requestId = httpRequest.getHeader("request-id");
 
         if (requestId == null) {
-            // If 'request-id' is not present, return an error response
-            try {
-                httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing 'request-id' header");
-                return null;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            return "1234";
         } else {
             return requestId.substring(requestId.length() - 4);
         }
