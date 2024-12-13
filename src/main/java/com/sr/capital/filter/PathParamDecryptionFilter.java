@@ -7,13 +7,15 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import java.io.IOException;
 
 import static com.sr.capital.util.AESUtil.decrypt;
 
-@Component
+@Configuration
+@Order(3)
 public class PathParamDecryptionFilter implements Filter {
 
     @Autowired

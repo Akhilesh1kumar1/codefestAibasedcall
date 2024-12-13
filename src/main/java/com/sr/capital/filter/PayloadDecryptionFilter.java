@@ -6,7 +6,8 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
 import static com.sr.capital.util.AESUtil.decrypt;
 import static com.sr.capital.util.AESUtil.getIvValue;
 
-@Component
+@Configuration
+@Order(2)
 public class PayloadDecryptionFilter implements Filter {
 
     @Autowired
