@@ -38,25 +38,22 @@ public class CrifOtpServiceImpl implements CrifOtpService {
 
         Optional<CrifUserModel> optional = crifUserModelRepo.findByMobile(crifGenerateOtpRequestModel.getMobile());
         CrifUserModel crifUserModel;
-        if (optional.isPresent()) {
-            crifUserModel = optional.get();
-        } else {
-            crifUserModel = CrifUserModel.builder()
-                    .firstName(crifGenerateOtpRequestModel.getFirstName())
-                    .lastName(crifGenerateOtpRequestModel.getLastName())
-                    .email(crifGenerateOtpRequestModel.getEmail())
-                    .documentType(crifGenerateOtpRequestModel.getDocType())
-                    .documentValue(crifGenerateOtpRequestModel.getDocValue())
-                    .mobile(crifGenerateOtpRequestModel.getMobile())
-                    .isOtpVerified(false)
-                    .build();
-            crifUserModelRepo.save(crifUserModel);
-        }
+        crifUserModel = optional.orElseGet(() -> CrifUserModel.builder()
+                .firstName(crifGenerateOtpRequestModel.getFirstName())
+                .lastName(crifGenerateOtpRequestModel.getLastName())
+                .email(crifGenerateOtpRequestModel.getEmail())
+                .documentType(crifGenerateOtpRequestModel.getDocType())
+                .documentValue(crifGenerateOtpRequestModel.getDocValue())
+                .mobile(crifGenerateOtpRequestModel.getMobile())
+                .isOtpVerified(false)
+                .build());
         VerificationOrchestratorRequest verificationOrchestratorRequest = null;
 
         if (!crifUserModel.getIsOtpVerified()) {
             try {
                 verificationOrchestratorRequest = crifVerificationUtils.sendOtp(crifUserModel);
+                crifUserModel.setVerificationToken(verificationOrchestratorRequest.getVerificationEntity().getId());
+                crifUserModelRepo.save(crifUserModel);
             } catch (CustomException e) {
                 throw new RuntimeException("Error while sending the otp {} ", e);
             }
@@ -92,20 +89,26 @@ public class CrifOtpServiceImpl implements CrifOtpService {
 
         Optional<CrifUserModel> optional = crifUserModelRepo.findByMobile(crifGenerateOtpRequestModel.getMobile());
         if (optional.isPresent()) {
-            VerifyOtpRequest verifyOtpRequest = new VerifyOtpRequest();
-            verifyOtpRequest.setVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
-            verifyOtpRequest.setOtp(crifGenerateOtpRequestModel.getOtp());
-            Boolean isVerified = crifVerificationUtils.verifyOtp(verifyOtpRequest);
+            CrifUserModel crifUserModel = optional.get();
+            if (crifUserModel.getVerificationToken().equals(crifGenerateOtpRequestModel.getVerificationToken())) {
 
-            if (isVerified != null && isVerified) {
-                optional.get().setIsOtpVerified(true);
-                crifUserModelRepo.save(optional.get());
+                VerifyOtpRequest verifyOtpRequest = new VerifyOtpRequest();
+                verifyOtpRequest.setVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
+                verifyOtpRequest.setOtp(crifGenerateOtpRequestModel.getOtp());
+                Boolean isVerified = crifVerificationUtils.verifyOtp(verifyOtpRequest);
 
-                Map<String, Object> map = crifPartnerService.initiateBureauAndGetQuestionnaire(crifGenerateOtpRequestModel);
+                if (isVerified != null && isVerified) {
+                    crifUserModel.setIsOtpVerified(true);
+                    crifUserModelRepo.save(crifUserModel);
 
-                setResponse(crifResponse, map);
+                    Map<String, Object> map = crifPartnerService.initiateBureauAndGetQuestionnaire(crifGenerateOtpRequestModel);
 
-                return crifResponse;
+                    setResponse(crifResponse, map);
+
+                    return crifResponse;
+                }
+            } else {
+                crifResponse.setStatus("Otp validation failed");
             }
         }
         return crifResponse;

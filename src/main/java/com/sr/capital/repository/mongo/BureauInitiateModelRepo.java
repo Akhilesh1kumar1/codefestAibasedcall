@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface BureauInitiateModelRepo extends MongoRepository<BureauInitiateModel, String> {
 
     Optional<BureauInitiateModel> findByReportIdAndOrderId(String reportId, String orderId);
+    Optional<BureauInitiateModel> findByMobile(String mobile);
 }

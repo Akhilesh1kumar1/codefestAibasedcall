@@ -17,6 +17,9 @@ public class BureauInitiateModel extends BaseDoc {
     @Field("report_id")
     private String reportId;
 
+    @Field("mobile")
+    private String mobile;
+
     @Field("order_id")
     private String orderId;
 

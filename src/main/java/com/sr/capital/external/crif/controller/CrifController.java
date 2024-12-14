@@ -2,6 +2,7 @@ package com.sr.capital.external.crif.controller;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.entity.mongo.crif.CrifUserModel;
+import com.sr.capital.external.crif.Constant.CrifDocumentType;
 import com.sr.capital.external.crif.dto.request.BureauInitiatePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
@@ -62,6 +64,12 @@ public class CrifController {
         String accessCode = crifPartnerService.getAccessCode();
 
         return new ResponseEntity<>(new String[]{accessCode, Base64Util.decode(accessCode)}, HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping(value = "/get-doc-type")
+    public GenericResponse<?> getDocType() throws Exception {
+        return ResponseBuilderUtil.getResponse(crifPartnerService.getDocType()
+                ,SUCCESS, REQUEST_SUCCESS, 200);
     }
 
 

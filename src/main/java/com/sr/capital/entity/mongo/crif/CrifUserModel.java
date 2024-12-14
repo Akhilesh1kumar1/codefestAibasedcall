@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
@@ -33,6 +35,9 @@ public class CrifUserModel extends BaseDoc {
 
     @Field("is_otp_verified")
     private Boolean isOtpVerified;
+
+    @Field("verification_token")
+    private UUID verificationToken;
 
 
 
