@@ -1,6 +1,7 @@
 package com.sr.capital.external.crif.service;
 
 
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
 import com.sr.capital.entity.mongo.crif.CrifUserModel;
@@ -9,6 +10,7 @@ import com.sr.capital.external.crif.Constant.Constant;
 import com.sr.capital.external.crif.dto.request.CrifGenerateOtpRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.dto.response.CrifResponse;
+import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.util.MapperUtils;
@@ -29,6 +31,7 @@ import static com.sr.capital.external.crif.Constant.Constant.*;
 public class CrifOtpServiceImpl implements CrifOtpService {
 
     private final CrifUserModelRepo crifUserModelRepo;
+    private final CrifUserModelHelper crifUserModelHelper;
     private final CrifVerificationUtils crifVerificationUtils;
     private final CrifPartnerService crifPartnerService;
 
@@ -36,17 +39,9 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException {
         CrifResponse crifResponse  = CrifResponse.builder().build();
 
-        Optional<CrifUserModel> optional = crifUserModelRepo.findByMobile(crifGenerateOtpRequestModel.getMobile());
+        Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
         CrifUserModel crifUserModel;
-        crifUserModel = optional.orElseGet(() -> CrifUserModel.builder()
-                .firstName(crifGenerateOtpRequestModel.getFirstName())
-                .lastName(crifGenerateOtpRequestModel.getLastName())
-                .email(crifGenerateOtpRequestModel.getEmail())
-                .documentType(crifGenerateOtpRequestModel.getDocType())
-                .documentValue(crifGenerateOtpRequestModel.getDocValue())
-                .mobile(crifGenerateOtpRequestModel.getMobile())
-                .isOtpVerified(false)
-                .build());
+        crifUserModel = optional.orElseGet(() -> getCrifUserModelInstance(crifGenerateOtpRequestModel));
         VerificationOrchestratorRequest verificationOrchestratorRequest = null;
 
         if (!crifUserModel.getIsOtpVerified()) {
@@ -73,6 +68,35 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         return crifResponse;
     }
 
+    private CrifUserModel getCrifUserModelInstance(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) {
+        CrifUserModel.CrifUserModelBuilder builder = CrifUserModel.builder()
+                .firstName(crifGenerateOtpRequestModel.getFirstName())
+                .lastName(crifGenerateOtpRequestModel.getLastName())
+                .email(crifGenerateOtpRequestModel.getEmail())
+                .documentType(crifGenerateOtpRequestModel.getDocType())
+                .documentValue(crifGenerateOtpRequestModel.getDocValue())
+                .mobile(crifGenerateOtpRequestModel.getMobile())
+                .srCompanyId(RequestData.getTenantId())
+                .isOtpVerified(false);
+
+        if (crifGenerateOtpRequestModel.getUtmSource() != null) {
+            builder.utmSource(crifGenerateOtpRequestModel.getUtmSource());
+        }
+        if (crifGenerateOtpRequestModel.getUtmMedium() != null) {
+            builder.utmMedium(crifGenerateOtpRequestModel.getUtmMedium());
+        }
+        if (crifGenerateOtpRequestModel.getUtmCampaign() != null) {
+            builder.utmCampaign(crifGenerateOtpRequestModel.getUtmCampaign());
+        }
+        if (crifGenerateOtpRequestModel.getUtmTerm() != null) {
+            builder.utmTerm(crifGenerateOtpRequestModel.getUtmTerm());
+        }
+        if (crifGenerateOtpRequestModel.getUtmContent() != null) {
+            builder.utmContent(crifGenerateOtpRequestModel.getUtmContent());
+        }
+        return builder.build();
+    }
+
     private void setResponse(CrifResponse crifResponse, Map<String, Object> data) {
         if (data != null && !data.isEmpty() && data.containsKey(STAGE)) {
             switch (String.valueOf(data.get(STAGE))) {
@@ -87,7 +111,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     public CrifResponse verifyOtp(@Valid CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) {
         CrifResponse crifResponse = CrifResponse.builder().build();
 
-        Optional<CrifUserModel> optional = crifUserModelRepo.findByMobile(crifGenerateOtpRequestModel.getMobile());
+        Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
         if (optional.isPresent()) {
             CrifUserModel crifUserModel = optional.get();
             if (crifUserModel.getVerificationToken().equals(crifGenerateOtpRequestModel.getVerificationToken())) {
@@ -116,7 +140,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
 
     @Override
     public void updateOtpStatus(String mobile) {
-        Optional<CrifUserModel> optional = crifUserModelRepo.findByMobile(mobile);
+        Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(mobile);
         if (optional.isPresent()) {
             optional.get().setIsOtpVerified(false);
             crifUserModelRepo.save(optional.get());

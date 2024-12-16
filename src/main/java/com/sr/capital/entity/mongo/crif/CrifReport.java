@@ -1,5 +1,6 @@
 package com.sr.capital.entity.mongo.crif;
 
+import com.sr.capital.config.EncryptField;
 import com.sr.capital.entity.mongo.kyc.BaseDoc;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.List;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-@Document(collection = "b2c_reports")
+@Document(collection = "crif_reports")
 @Getter
 public class CrifReport extends BaseDoc {
 
@@ -25,6 +26,7 @@ public class CrifReport extends BaseDoc {
     private String reportId;
 
     @Field("mobile")
+    @EncryptField
     private String mobile;
 
     @Field("order_id")
@@ -39,5 +41,7 @@ public class CrifReport extends BaseDoc {
     @Field("status")
     private String status;
 
+    @Field("sr_company_id")
+    private String srCompanyId;
 
 }

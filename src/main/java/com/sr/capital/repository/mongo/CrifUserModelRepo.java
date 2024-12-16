@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface CrifUserModelRepo extends MongoRepository<CrifUserModel, String> {
 
     Optional<CrifUserModel> findByMobile(String mobile);
+
 }

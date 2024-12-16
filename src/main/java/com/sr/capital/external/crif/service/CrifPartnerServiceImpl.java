@@ -1,6 +1,7 @@
 package com.sr.capital.external.crif.service;
 
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.crif.BureauInitiateModel;
 import com.sr.capital.entity.mongo.crif.CrifReport;
 import com.sr.capital.external.crif.Constant.Constant;
@@ -10,12 +11,12 @@ import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
+import com.sr.capital.external.crif.util.CrifReportModelHelper;
 import com.sr.capital.external.crif.util.StatusCode;
 import com.sr.capital.external.crif.util.StringUtils;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.repository.mongo.BureauInitiateModelRepo;
-import com.sr.capital.repository.mongo.BureauQuestionnaireModelRepo;
 import com.sr.capital.repository.mongo.CrifReportRepo;
 import com.sr.capital.util.Base64Util;
 import com.sr.capital.util.WebClientUtil;
@@ -45,8 +46,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final WebClientUtil webClientUtil;
     private final AppProperties appProperties;
     private final BureauInitiateModelRepo bureauInitiateModelRepo;
-    private final BureauQuestionnaireModelRepo bureauQuestionnaireModelRepo;
     private final CrifReportRepo crifReportRepo;
+    private final CrifReportModelHelper crifReportModelHelper;
     private final RedissonClient redissonClient;
 
     @Override
@@ -62,8 +63,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public List<CrifDocumentType> getDocType() {
-        return CrifDocumentType.getAllDocumentTypes();
+    public Map<String, String> getDocType() {
+        return CrifDocumentType.getAllDocumentTypes().stream().collect(Collectors.toMap(CrifDocumentType::getDisplayName, CrifDocumentType::name));
     }
 
     @Override
@@ -82,7 +83,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
     @Override
     public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) {
-        Optional<CrifReport> optional = crifReportRepo.findByMobile(crifGenerateOtpRequestModel.getMobile());
+        Optional<CrifReport> optional = crifReportModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
         if (optional.isPresent() && isOldRequest(optional.get().getValidTill())) {
             return getStoredReport(optional.get());
         }
@@ -235,6 +236,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 .requestHeader(getHeadersAsString(header))
                 .requestPayload(requestPayload)
                 .mobile(bureauInitiatePayloadRequest.getMobile())
+                .srCompanyId(RequestData.getTenantId())
                 .initResponse(bureauInitiateResponse.toString())
                 .build();
 
@@ -422,7 +424,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     bureauQuestionnaireResponse.getOrderId());
             if (optional.isPresent()) {
                 BureauInitiateModel bureauInitiateModel = optional.get();
-                BureauInitiateModel bureauQuestionnaireModel = bureauInitiateModel.toBuilder()
+                BureauInitiateModel bureauInitiateModel1 = bureauInitiateModel.toBuilder()
                         .question(bureauQuestionnaireResponse.getQuestion())
                         .optionList(bureauQuestionnaireResponse.getOptionList())
                         .buttonBehavior(bureauQuestionnaireResponse.getButtonBehavior())
@@ -430,7 +432,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                         .statusDesc(bureauQuestionnaireResponse.getStatusDesc())
                         .completedAt(bureauQuestionnaireResponse.getCompletedAt())
                         .questionnaireResponse(bureauQuestionnaireResponse.toString()).build();
-                bureauInitiateModelRepo.save(bureauQuestionnaireModel);
+                bureauInitiateModelRepo.save(bureauInitiateModel1);
             }
         }
         return bureauQuestionnaireResponse;
@@ -470,6 +472,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 .orderId(bureauReportPayloadRequest.getOrderId())
                 .result(bureauReportResponse)
                 .reportId(bureauReportPayloadRequest.getReportId())
+                .srCompanyId(RequestData.getTenantId())
                 .mobile(mobile)
                 .validTill(StringUtils.getTimeAfterSixMonths())
                 .build();
