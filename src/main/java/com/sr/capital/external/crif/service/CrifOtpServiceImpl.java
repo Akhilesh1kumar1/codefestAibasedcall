@@ -146,4 +146,9 @@ public class CrifOtpServiceImpl implements CrifOtpService {
             crifUserModelRepo.save(optional.get());
         }
     }
+
+    @Override
+    public Object getUserDetails() {
+        return crifUserModelRepo.findByCreatedBy(String.valueOf(RequestData.getUserId()));
+    }
 }

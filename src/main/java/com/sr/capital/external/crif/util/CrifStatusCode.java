@@ -1,6 +1,6 @@
 package com.sr.capital.external.crif.util;
 
-public enum StatusCode {
+public enum CrifStatusCode {
     S00("Transaction Error in inquiry"),
     S01("User Authentication Successful"),
     S02("User Authentication Failure"),
@@ -16,7 +16,7 @@ public enum StatusCode {
     UNAUTHORIZED("Authentication failure");
     private final String description;
 
-    StatusCode(String description) {
+    CrifStatusCode(String description) {
         this.description = description;
     }
 
@@ -24,8 +24,8 @@ public enum StatusCode {
         return description;
     }
 
-    public static StatusCode fromCode(String code) {
-        for (StatusCode status : values()) {
+    public static CrifStatusCode fromCode(String code) {
+        for (CrifStatusCode status : values()) {
             if (status.name().equalsIgnoreCase(code)) {
                 return status;
             }

@@ -16,4 +16,6 @@ public interface CrifOtpService {
     CrifResponse verifyOtp(@Valid CrifVerifyOtpRequestModels crifGenerateOtpRequestModel);
 
     void updateOtpStatus(String mobile);
+
+    Object getUserDetails();
 }

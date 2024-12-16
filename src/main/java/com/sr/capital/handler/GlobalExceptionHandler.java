@@ -1,10 +1,11 @@
-package com.sr.capital.exception.handler;
+package com.sr.capital.handler;
 
 import com.omunify.core.exceptions.CustomException;
 import com.omunify.core.model.ErrorResponse;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.ExceptionsTranslator;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.external.crif.exeception.CRIFApiException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     @ResponseBody
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<GenericResponse<?>> handleException(final CustomException exception) {
         return exceptionsTranslator.getResponseEntityForCustomException(exception, RequestData.getCorrelationId(),
                 REQUEST_FAILED);
@@ -49,6 +51,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<GenericResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
         return new ResponseEntity<>(getGenericResponse(exception), HttpStatus.BAD_REQUEST);
+    }
+    @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ExceptionHandler(CRIFApiException.class)
+    public ResponseEntity<GenericResponse> handleCRIFApiException(final MethodArgumentNotValidException exception) {
+        return new ResponseEntity<>(getGenericResponse(exception), HttpStatus.ACCEPTED);
     }
 
     @ExceptionHandler(Exception.class)

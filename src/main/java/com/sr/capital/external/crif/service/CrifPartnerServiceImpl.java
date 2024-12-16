@@ -12,7 +12,7 @@ import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.util.CrifReportModelHelper;
-import com.sr.capital.external.crif.util.StatusCode;
+import com.sr.capital.external.crif.util.CrifStatusCode;
 import com.sr.capital.external.crif.util.StringUtils;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ServiceName;
@@ -34,8 +34,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
-import static com.sr.capital.external.crif.util.StatusCode.S01;
-import static com.sr.capital.external.crif.util.StatusCode.S10;
+import static com.sr.capital.external.crif.util.CrifStatusCode.S01;
+import static com.sr.capital.external.crif.util.CrifStatusCode.S10;
 import static com.sr.capital.external.crif.util.StringUtils.FORMATTER;
 
 @Service
@@ -198,15 +198,17 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             saveInitiateData(bureauInitiatePayloadRequest, bureauInitiateResponse, requestPayload, header);
 
             String statusCode = bureauInitiateResponse.getStatus();
-            if (!statusCode.equals(StatusCode.S06.name())) {
+            if (!statusCode.equals(CrifStatusCode.S06.name())) {
                 throw new CRIFApiException("External API returned an error",
                         statusCode,
-                        statusCode.equals("401") ? StatusCode.UNAUTHORIZED.getDescription() :
-                                StatusCode.fromCode(statusCode).getDescription());
+                        statusCode.equals("401") ? CrifStatusCode.UNAUTHORIZED.getDescription() :
+                                CrifStatusCode.fromCode(statusCode).getDescription());
             } else {
                 //get Questions List
                 questionnaire = getQuestionnaire(bureauInitiateResponse);
             }
+        } else {
+            throw new CRIFApiException("External API returned null");
         }
 
        return questionnaire;
@@ -418,23 +420,32 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     bureauQuestionnaireResponse.getStatus(),
                     bureauQuestionnaireResponse.getReportId(), bureauQuestionnaireResponse.getOrderId(),
                     bureauQuestionnaireResponse.getRedirectURL(), bureauQuestionnaireResponse.getQuestion(),
-                    bureauQuestionnaireResponse.getButtonBehavior(), bureauQuestionnaireResponse.getOptionList());
+                    bureauQuestionnaireResponse.getButtonBehaviour(), bureauQuestionnaireResponse.getOptionList());
             Optional<BureauInitiateModel> optional = bureauInitiateModelRepo.
                     findByReportIdAndOrderId(bureauQuestionnaireResponse.getReportId(),
                     bureauQuestionnaireResponse.getOrderId());
             if (optional.isPresent()) {
                 BureauInitiateModel bureauInitiateModel = optional.get();
-                BureauInitiateModel bureauInitiateModel1 = bureauInitiateModel.toBuilder()
-                        .question(bureauQuestionnaireResponse.getQuestion())
-                        .optionList(bureauQuestionnaireResponse.getOptionList())
-                        .buttonBehavior(bureauQuestionnaireResponse.getButtonBehavior())
-                        .questionnaireStatus(bureauQuestionnaireResponse.getStatus())
-                        .statusDesc(bureauQuestionnaireResponse.getStatusDesc())
-                        .completedAt(bureauQuestionnaireResponse.getCompletedAt())
-                        .questionnaireResponse(bureauQuestionnaireResponse.toString()).build();
-                bureauInitiateModelRepo.save(bureauInitiateModel1);
+                bureauInitiateModel.setQuestion(bureauQuestionnaireResponse.getQuestion());
+                bureauInitiateModel.setOptionList(bureauQuestionnaireResponse.getOptionList());
+                bureauInitiateModel.setButtonBehavior(bureauQuestionnaireResponse.getButtonBehaviour());
+                bureauInitiateModel.setQuestionnaireStatus(bureauQuestionnaireResponse.getStatus());
+                bureauInitiateModel.setStatusDesc(bureauQuestionnaireResponse.getStatusDesc());
+                bureauInitiateModel.setCompletedAt(bureauQuestionnaireResponse.getCompletedAt());
+                bureauInitiateModel.setQuestionnaireResponse(bureauQuestionnaireResponse.toString());
+                bureauInitiateModelRepo.save(bureauInitiateModel);
             }
+            String statusCode = bureauQuestionnaireResponse.getStatus();
+            if (statusCode.equals(CrifStatusCode.S08.name())) {
+                throw new CRIFApiException("External API returned an error",
+                        statusCode,
+                        statusCode.equals("401") ? CrifStatusCode.UNAUTHORIZED.getDescription() :
+                                CrifStatusCode.fromCode(statusCode).getDescription());
+            }
+        } else {
+            throw new CRIFApiException("External API returned null");
         }
+
         return bureauQuestionnaireResponse;
     }
 
@@ -464,26 +475,29 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                         header, null,
                         requestPayload, Object.class);
 
-
+        if (bureauReportResponse != null) {
             log.info("response {} ", bureauReportResponse);
 
             String mobile = getMobileNumberByOrderIdAndReportId(orderId, bureauReportPayloadRequest.getReportId());
-        CrifReport crifReport = CrifReport.builder()
-                .orderId(bureauReportPayloadRequest.getOrderId())
-                .result(bureauReportResponse)
-                .reportId(bureauReportPayloadRequest.getReportId())
-                .srCompanyId(RequestData.getTenantId())
-                .mobile(mobile)
-                .validTill(StringUtils.getTimeAfterSixMonths())
-                .build();
-        
-        crifReportRepo.save(crifReport);
+            CrifReport crifReport = CrifReport.builder()
+                    .orderId(bureauReportPayloadRequest.getOrderId())
+                    .result(bureauReportResponse)
+                    .reportId(bureauReportPayloadRequest.getReportId())
+                    .srCompanyId(RequestData.getTenantId())
+                    .mobile(mobile)
+                    .validTill(StringUtils.getTimeAfterSixMonths())
+                    .build();
 
-        return BureauReportResponse.builder()
-                .result(crifReport.getResult())
-                .orderId(crifReport.getOrderId())
-                .reportId(crifReport.getReportId())
-                .build();
+            crifReportRepo.save(crifReport);
+
+            return BureauReportResponse.builder()
+                    .result(crifReport.getResult())
+                    .orderId(crifReport.getOrderId())
+                    .reportId(crifReport.getReportId())
+                    .build();
+        } else {
+            throw new CRIFApiException("External API returned null");
+        }
     }
 
     private String getMobileNumberByOrderIdAndReportId(String orderId, String reportId) {

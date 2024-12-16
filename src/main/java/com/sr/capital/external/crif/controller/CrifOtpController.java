@@ -44,7 +44,14 @@ public class CrifOtpController {
         crifOtpService.updateOtpStatus(mobile);
 
         return ResponseBuilderUtil.getResponse(null,
-                SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);    }
+                SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
+
+    @GetMapping(value = "/user-details")
+    public GenericResponse<?> getUserDetails() throws Exception {
+        return ResponseBuilderUtil.getResponse(crifOtpService.getUserDetails()
+                ,SUCCESS, REQUEST_SUCCESS, 200);
+    }
 
 
 }

@@ -10,12 +10,10 @@ public class CRIFApiException extends RuntimeException {
         this.errorDetails = errorDetails;
     }
 
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public String getErrorDetails() {
-        return errorDetails;
+    public CRIFApiException(String message) {
+        super(message);
+        this.statusCode = "";
+        this.errorDetails = "";
     }
 
     @Override

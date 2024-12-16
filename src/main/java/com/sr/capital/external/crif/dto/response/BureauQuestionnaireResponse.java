@@ -31,11 +31,11 @@ public class BureauQuestionnaireResponse implements Serializable {
 
     private String question;
 
-    @JsonProperty("optionList")
+    @JsonProperty("optionsList")
     private String optionList;
 
-    @JsonProperty("buttonBehavior")
-    private String buttonBehavior;
+    @JsonProperty("buttonbehaviour")
+    private String buttonBehaviour;
 
     @Override
     public String toString() {
@@ -48,7 +48,7 @@ public class BureauQuestionnaireResponse implements Serializable {
                 ", status='" + status + '\'' +
                 ", question='" + question + '\'' +
                 ", optionList='" + optionList + '\'' +
-                ", buttonBehavior='" + buttonBehavior + '\'' +
+                ", buttonBehavior='" + buttonBehaviour + '\'' +
                 ", completedAt='" + completedAt + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';

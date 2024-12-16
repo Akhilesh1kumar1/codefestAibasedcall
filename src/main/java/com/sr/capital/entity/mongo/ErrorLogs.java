@@ -14,7 +14,7 @@ public class ErrorLogs extends BaseDoc {
 
     Long srCompanyId;
 
-    Long vendorId;
+    String serviceName;
 
     Object request;
 
@@ -23,4 +23,6 @@ public class ErrorLogs extends BaseDoc {
     String statusCode;
 
     String groupName;
+
+    String header;
 }
