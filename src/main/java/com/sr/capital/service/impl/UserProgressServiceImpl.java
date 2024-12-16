@@ -33,7 +33,7 @@ public class UserProgressServiceImpl {
 
     public UserProgressResponseDto getUserProgress(String tenantId){
 
-        List<LoanApplication> loanApplication = loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+        List<LoanApplication> loanApplication = loanApplicationRepository.findByCompanyIdOrderByCreatedAtAsc(Long.valueOf(RequestData.getTenantId()));
         String currentState = Screens.MOBILE_VERIFICATION.name();
         UserProgressResponseDto userProgressResponseDto =UserProgressResponseDto.builder().build();
         if(CollectionUtils.isNotEmpty(loanApplication)){
@@ -58,7 +58,28 @@ public class UserProgressServiceImpl {
                         if ((loanApplication1.getState() != null && loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name()))) {
                             currentState = Screens.BUSINESS_DETAILS.name();
                         }
-                    }else if(loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name())){
+                    }/*else if(loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name())){
+                        userProgressResponseDto.setShowErrorOnPersonalDetails(true);
+                    }
+
+                    LoanMetaData loanMetaData = loanMetaDataEntityService.getLoanMetaDataDetails(loanApplication1.getId());
+
+                    if(loanMetaData!=null && CollectionUtils.isNotEmpty(loanMetaData.getCheckPoints())){
+                        TypeReference<List<UserProgressResponseDto.Checkpoint>> tref =new TypeReference<List<UserProgressResponseDto.Checkpoint>>() {
+                        };
+                        try {
+
+                            userProgressResponseDto.setCheckpoints(MapperUtils.convertValue(loanMetaData.getCheckPoints(), tref));
+                        }catch (Exception ex){
+
+                        }
+                    }*/
+
+                }
+                case UPDATE_LEAD_IN_PROGRESS -> {
+                    currentState =loanApplication1.getState();
+
+                    if(loanApplication1.getState().equalsIgnoreCase(PERSONAL_DETAILS.name())){
                         userProgressResponseDto.setShowErrorOnPersonalDetails(true);
                     }
 
@@ -74,7 +95,6 @@ public class UserProgressServiceImpl {
 
                         }
                     }
-
                 }
                 case LEAD_REJECTED -> currentState = Screens.LEAD_REJECTION.name();
                 case LEAD_DOCUMENT_UPLOAD -> currentState =Screens.PENDING_DOCUMENT.name();
@@ -83,6 +103,7 @@ public class UserProgressServiceImpl {
                 case LOAN_OFFER_DECLINED -> currentState =Screens.LOAN_SANCTION_DECLINED.name();
                 case LOAN_VERIFICATION -> currentState =Screens.E_SIGN.name();
                 case LOAN_ACCEPTED, LOAN_DISBURSED -> currentState =Screens.LOAN_DISBURSED.name();
+                case LOAN_DECLINE,LEAD_DECLINE -> currentState =Screens.SELLER_DECLINE.name();
 
             }
 

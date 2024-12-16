@@ -12,7 +12,6 @@ import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.Pincode;
-import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
@@ -103,7 +102,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loanApplicationResponseDtos.add(LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication));
             }
         }else{
-            List<LoanApplication> loanApplications =loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+            List<LoanApplication> loanApplications =loanApplicationRepository.findByCompanyIdOrderByCreatedAtAsc(Long.valueOf(RequestData.getTenantId()));
             if(CollectionUtils.isNotEmpty(loanApplications))
                  loanApplications.forEach(loanApplication -> {
                      loanApplicationResponseDtos.add(LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication));
@@ -164,7 +163,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loanApplicationResponseDto = LoanApplicationResponseDto.mapLoanApplicationResponse(loan);
             }
         }else{
-            List<LoanApplication> loanApplications =loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+            List<LoanApplication> loanApplications =loanApplicationRepository.findByCompanyIdOrderByCreatedAtAsc(Long.valueOf(RequestData.getTenantId()));
             if(CollectionUtils.isNotEmpty(loanApplications))
                 for(LoanApplication loanApplication:loanApplications) {
                     if(loanApplication.getLoanStatus().equals(LoanStatus.LEAD_VERIFIED)) {
