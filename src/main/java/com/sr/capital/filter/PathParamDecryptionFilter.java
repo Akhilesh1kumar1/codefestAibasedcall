@@ -6,6 +6,7 @@ import com.sr.capital.util.AESUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import jodd.net.HttpMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -28,7 +29,7 @@ public class PathParamDecryptionFilter implements Filter {
 
         if (request instanceof HttpServletRequest httpRequest && appProperties.getIsEncryptionEnabled().equals(CommonConstant.TRUE)) {
 
-            if(!CommonConstant.EXCLUDE_FROM_DECRYPTION.matches(httpRequest)) {
+            if(!CommonConstant.EXCLUDE_FROM_DECRYPTION.matches(httpRequest) && httpRequest.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
                 // Get the URI and decrypt path parameters if present
                 String decryptedPath = decryptPath(httpRequest.getRequestURI(), request, response);
 

@@ -5,6 +5,7 @@ import com.sr.capital.config.AppProperties;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import jodd.net.HttpMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -31,7 +32,7 @@ public class PayloadDecryptionFilter implements Filter {
 
         if (request instanceof HttpServletRequest httpRequest && appProperties.getIsEncryptionEnabled().equals(CommonConstant.TRUE) ) {
 
-            if(!CommonConstant.EXCLUDE_FROM_DECRYPTION.matches(httpRequest)) {
+            if(!CommonConstant.EXCLUDE_FROM_DECRYPTION.matches(httpRequest) && httpRequest.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
                 String iv = getIvValue(request, response);
                 // Decrypt the request payload
                 String decryptedRequestBody = decryptRequest(httpRequest, iv);

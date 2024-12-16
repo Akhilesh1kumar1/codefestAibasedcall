@@ -45,7 +45,7 @@ public class StaticJsonController {
             "  \"status\": \"S11\"\n" +
             "}";
 
-    private final String stage3 = "{\n" +
+    private final String stage3_1 = "{\n" +
             "  \"B2C-REPORT\": {\n" +
             "    \"HEADER-SEGMENT\": {\n" +
             "      \"DATE-OF-REQUEST\": \"13-07-2023\",\n" +
@@ -1024,7 +1024,8 @@ public class StaticJsonController {
             "            \"SUIT-FILED-WILFUL-DEFAULT-STATUS\": null,\n" +
             "            \"WRITTEN-OFF-SETTLED-STATUS\": \"Restructured due to COVID-19\",\n" +
             "            \"WRITE-OFF-DT\": null,\n" +
-            "            \"SECURITY-DETAILS\": [\n" +
+            "            \"SECURITY-DETAILS\": [\n" ;
+            String stage3_2 =
             "              {\n" +
             "                \"SECURITY-TYPE\": null,\n" +
             "                \"OWNER-NAME\": null,\n" +
@@ -2495,7 +2496,8 @@ public class StaticJsonController {
             "            \"AMOUNT\": \"28,10,846\",\n" +
             "            \"LOAN-TYPE\": \"\"\n" +
             "          },\n" +
-            "          {\n" +
+            "          {\n" ;
+    String stage3_3 =
             "            \"LENDER-NAME\": \"MAHINDRA AND MAHINDRA FINANCIAL SERVICES LIMITED\",\n" +
             "            \"LENDER-TYPE\": \"\",\n" +
             "            \"INQUIRY-DT\": \"25-05-2023\",\n" +
@@ -3955,7 +3957,8 @@ public class StaticJsonController {
             "            \"AMOUNT\": \"10,59,031\",\n" +
             "            \"LOAN-TYPE\": \"\"\n" +
             "          },\n" +
-            "          {\n" +
+            "          {\n" ;
+    String stage3_4 =
             "            \"LENDER-NAME\": \"HDFC BANK LTD\",\n" +
             "            \"LENDER-TYPE\": \"\",\n" +
             "            \"INQUIRY-DT\": \"24-05-2023\",\n" +
@@ -5498,7 +5501,7 @@ public class StaticJsonController {
 //        String content = new String(Files.readAllBytes(stage3.getFile().toPath()));
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> reportContent = objectMapper.readValue(stage3, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> reportContent = objectMapper.readValue(stage3_1 + stage3_2 + stage3_3 + stage3_4, new TypeReference<Map<String, Object>>() {});
 
         return ResponseBuilderUtil.getResponse(
                 CrifResponse.builder()
