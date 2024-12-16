@@ -20,7 +20,9 @@ public enum Screens {
 
     E_SIGN,
 
-    LOAN_DISBURSED;
+    LOAN_DISBURSED,
+
+    SELLER_DECLINE;
 
 
 }

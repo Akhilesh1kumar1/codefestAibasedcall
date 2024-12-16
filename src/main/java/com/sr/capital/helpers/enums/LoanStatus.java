@@ -16,6 +16,8 @@ public enum LoanStatus {
             LOAN_DECLINE,
     LOAN_VERIFICATION,
             LOAN_ACCEPTED,
-    LOAN_DISBURSED;
+    LOAN_DISBURSED,
+
+    UPDATE_LEAD_IN_PROGRESS;
 
 }

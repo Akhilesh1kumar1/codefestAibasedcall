@@ -5,6 +5,7 @@ import com.sr.capital.external.common.StatusMapperInterface;
 import com.sr.capital.external.flexi.constants.Checkpoint;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.Screens;
+import com.sr.capital.util.LoggerUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -16,6 +17,8 @@ import java.util.Map;
 
 @Service
 public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
+
+    LoggerUtil loggerUtil =LoggerUtil.getLogger(FlexiStatusMapperServiceImpl.class);
     @Override
     public LoanStatusUpdateWebhookDto mapStatus(Object loanApplicationDetails) {
 
@@ -47,9 +50,12 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
         if (!CollectionUtils.isEmpty(dto.getCheckpoints())) {
             for (LoanStatusUpdateWebhookDto.Checkpoint checkpoint : dto.getCheckpoints()) {
                 if(Checkpoint.isValuePresent(checkpoint.getCheckpoint())) {
+                    loggerUtil.info("checkpoint "+checkpoint.getCheckpoint()+" state "+checkpoint.getState());
                     Boolean currentStateFound = processCheckpoint(dto, checkpoint);
-                    if (currentStateFound)
+                    if (currentStateFound) {
+                        loggerUtil.info("found final status in  checkpoint "+checkpoint.getCheckpoint()+" state "+checkpoint.getState());
                         return;
+                    }
                 }
             }
         }
@@ -58,9 +64,9 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
     private void handleNotApprovedStatus(LoanStatusUpdateWebhookDto dto) {
         String currentStatus = dto.getInternalCurrentStatus();
         if (LoanStatus.LEAD_DOCUMENT_UPLOAD.name().equalsIgnoreCase(currentStatus) ||
-                LoanStatus.LEAD_IN_PROGRESS.name().equalsIgnoreCase(currentStatus)) {
+                LoanStatus.LEAD_IN_PROGRESS.name().equalsIgnoreCase(currentStatus) ||  LoanStatus.LEAD_REJECTED.name().equalsIgnoreCase(currentStatus)) {
             dto.setInternalStatus(LoanStatus.LEAD_REJECTED.name());
-        } else if(LoanStatus.LOAN_GENERATE.name().equalsIgnoreCase(currentStatus)){
+        } else if(LoanStatus.LOAN_GENERATE.name().equalsIgnoreCase(currentStatus) || LoanStatus.LOAN_DECLINE.name().equalsIgnoreCase(currentStatus)){
             dto.setInternalStatus(LoanStatus.LOAN_DECLINE.name());
         }else{
             dto.setInternalStatus(LoanStatus.LEAD_DECLINE.name());
@@ -69,11 +75,14 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
     }
 
     private void handleApprovedStatus(LoanStatusUpdateWebhookDto dto) {
-        if (LoanStatus.LOAN_VERIFICATION.name().equalsIgnoreCase(dto.getInternalCurrentStatus())) {
+        if(LoanStatus.LEAD_PROCESSING.name().equalsIgnoreCase(dto.getInternalCurrentStatus())){
+            dto.setInternalStatus(LoanStatus.LOAN_GENERATE.name());
+        }
+       /* else if (LoanStatus.LOAN_VERIFICATION.name().equalsIgnoreCase(dto.getInternalCurrentStatus())) {
             dto.setInternalStatus(LoanStatus.LOAN_ACCEPTED.name());
         } else {
             dto.setInternalStatus(LoanStatus.LOAN_VERIFICATION.name());
-        }
+        }*/
     }
 
     private Boolean processCheckpoint(LoanStatusUpdateWebhookDto dto, LoanStatusUpdateWebhookDto.Checkpoint checkpoint) {
@@ -84,7 +93,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     Map<String,String> tempFieldsMap =new HashMap<>();
                     buildPerosnalDetailsFieldMap(tempFieldsMap);
-                    setInternalState(dto, Screens.PERSONAL_DETAILS, LoanStatus.LEAD_IN_PROGRESS);
+                    setInternalState(dto, Screens.PERSONAL_DETAILS, LoanStatus.UPDATE_LEAD_IN_PROGRESS);
                     if(checkpoint.getMeta()!=null && !CollectionUtils.isEmpty(checkpoint.getMeta().getFields())){
                         List<String> fields = new ArrayList<>();
                         checkpoint.getMeta().getFields().forEach(k->{
@@ -100,7 +109,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     Map<String,String> tempFieldsMap =new HashMap<>();
                     buildBusinessDetailsFieldMap(tempFieldsMap);
-                    setInternalState(dto, Screens.BUSINESS_DETAILS, LoanStatus.LEAD_IN_PROGRESS);
+                    setInternalState(dto, Screens.BUSINESS_DETAILS, LoanStatus.UPDATE_LEAD_IN_PROGRESS);
                     if(checkpoint.getMeta()!=null && !CollectionUtils.isEmpty(checkpoint.getMeta().getFields())){
                         List<String> fields = new ArrayList<>();
                         checkpoint.getMeta().getFields().forEach(k->{
@@ -115,6 +124,9 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.PENDING_DOCUMENT, LoanStatus.LEAD_DOCUMENT_UPLOAD);
                     currentStateFound =true;
+                }else if("SUCCESS".equalsIgnoreCase(state)){
+                    setInternalState(dto, Screens.DOCUMENT_VERIFICATION, LoanStatus.LEAD_PROCESSING);
+                    currentStateFound =true;
                 }
                 break;
             case DOCUMENTS_VERIFIED:
@@ -126,7 +138,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                     currentStateFound =true;
                 }
                 break;
-            case LOAN_APPROVED:
+           /* case LOAN_APPROVED:
                 if ("SUCCESS".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.LOAN_SANCTION, LoanStatus.LOAN_GENERATE);
                     currentStateFound =true;
@@ -134,7 +146,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                     setInternalState(dto, Screens.DOCUMENT_VERIFICATION, LoanStatus.LEAD_PROCESSING);
                     currentStateFound =true;
                 }
-                break;
+                break;*/
             default:
                 break;
         }

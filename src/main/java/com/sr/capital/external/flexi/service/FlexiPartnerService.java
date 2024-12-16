@@ -213,7 +213,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                     body.add("metadata", documentUploadRequestDto.getMetaData());
                 }
                 HttpHeaders httpHeaders =new HttpHeaders();
-                log.info("[uploadDocument] request body is {} ",body);
+                //log.info("[uploadDocument] request body is {} ",body);
                 Map<String,String> headerParams = (Map<String, String>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.HEADER.name());
                 if(headerParams!=null){
                     headerParams.forEach((k,v)->{

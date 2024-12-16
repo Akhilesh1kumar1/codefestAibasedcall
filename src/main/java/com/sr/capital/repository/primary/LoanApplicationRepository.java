@@ -21,6 +21,9 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
 
     List<LoanApplication> findBySrCompanyId(Long srCompanyId);
 
+    @Query("SELECT la from LoanApplication la where la.srCompanyId = :srCompanyId order by la.auditData.createdAt asc")
+    List<LoanApplication> findByCompanyIdOrderByCreatedAtAsc(Long srCompanyId);
+
     List<LoanApplication> findBySrCompanyIdAndLoanStatus(Long srCompanyId, LoanStatus loanStatus);
 
 
