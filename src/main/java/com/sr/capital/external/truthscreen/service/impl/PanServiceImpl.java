@@ -1,13 +1,9 @@
 package com.sr.capital.external.truthscreen.service.impl;
 
-import brave.Request;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.external.truthscreen.adapter.TruthScreenAdapter;
 import com.sr.capital.external.truthscreen.dto.request.AsyncRequestDto;
 import com.sr.capital.external.truthscreen.dto.request.IdSearchRequestDto;
-import com.sr.capital.external.truthscreen.dto.request.PanRequestDto;
 import com.sr.capital.external.truthscreen.dto.response.AsyncReponseDto;
 import com.sr.capital.external.truthscreen.dto.response.PanResponseDto;
 import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
@@ -15,10 +11,8 @@ import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.enums.TruthScreenStatus;
 import com.sr.capital.external.truthscreen.repository.TruthScreenDocTypeRepository;
 import com.sr.capital.external.truthscreen.service.PanService;
-import com.sr.capital.external.truthscreen.util.TruthScreenUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @RequiredArgsConstructor

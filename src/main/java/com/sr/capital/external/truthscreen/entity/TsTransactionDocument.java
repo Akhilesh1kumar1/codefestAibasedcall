@@ -13,7 +13,7 @@ import java.util.Map;
 @Document("ts_trans_id_details")
 @Builder
 public class TsTransactionDocument {
-    @Indexed(unique = false,name = "ts_trans_id")
+    @Indexed(unique = true,name = "ts_trans_id")
     String ts_trans_id;
     String transId;
     String status;

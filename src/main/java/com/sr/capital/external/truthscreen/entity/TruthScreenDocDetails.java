@@ -1,7 +1,6 @@
 package com.sr.capital.external.truthscreen.entity;
 
 import com.sr.capital.entity.mongo.kyc.BaseDoc;
-import com.sr.capital.external.karza.request.GstConsolidationWebhookRequest;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.enums.TruthScreenState;
 import com.sr.capital.external.truthscreen.enums.TruthScreenStatus;

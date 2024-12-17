@@ -1,6 +1,6 @@
 package com.sr.capital.external.truthscreen.entity;
 
-import com.sr.capital.entity.mongo.kyc.BaseDoc;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
