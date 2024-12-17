@@ -5,6 +5,7 @@ import com.sr.capital.external.crif.dto.request.CrifGenerateOtpRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.service.CrifOtpService;
 import com.sr.capital.external.crif.service.CrifPartnerService;
+import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.service.VerificationService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,8 @@ public class CrifOtpController {
     }
 
     @GetMapping(value = "/user-details")
-    public GenericResponse<?> getUserDetails() throws Exception {
-        return ResponseBuilderUtil.getResponse(crifOtpService.getUserDetails()
+    public GenericResponse<?> getUserDetails(@RequestHeader(name = Constants.Headers.TOKEN) String token) throws Exception {
+        return ResponseBuilderUtil.getResponse(crifOtpService.getUserDetails(token)
                 ,SUCCESS, REQUEST_SUCCESS, 200);
     }
 

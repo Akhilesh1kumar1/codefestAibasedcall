@@ -1,6 +1,7 @@
 package com.sr.capital.external.crif.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
@@ -10,9 +11,12 @@ import com.sr.capital.external.crif.Constant.Constant;
 import com.sr.capital.external.crif.dto.request.CrifGenerateOtpRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.dto.response.CrifResponse;
+import com.sr.capital.external.crif.dto.response.CrifUserDetailsResponseDto;
 import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
+import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
+import com.sr.capital.service.UserService;
 import com.sr.capital.util.MapperUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,8 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     private final CrifUserModelHelper crifUserModelHelper;
     private final CrifVerificationUtils crifVerificationUtils;
     private final CrifPartnerService crifPartnerService;
+    private final UserService userService;
+    private final ObjectMapper mapper;;
 
     @Override
     public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException {
@@ -148,7 +154,13 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     }
 
     @Override
-    public Object getUserDetails() {
-        return crifUserModelRepo.findByCreatedBy(String.valueOf(RequestData.getUserId()));
+    public Object getUserDetails(String token) {
+        CrifUserModel crifUserModel = crifUserModelRepo.findByCreatedBy(String.valueOf(RequestData.getUserId()));
+        if (crifUserModel != null) {
+            return mapper.convertValue(crifUserModel, CrifUserDetailsResponseDto.class);
+        } else {
+            InternalTokenUserDetailsResponse userDetailsUsingInternalToken = userService.getUserDetailsUsingInternalToken(token);
+            return mapper.convertValue(userDetailsUsingInternalToken, CrifUserDetailsResponseDto.class);
+        }
     }
 }

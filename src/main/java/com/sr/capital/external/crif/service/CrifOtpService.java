@@ -17,5 +17,5 @@ public interface CrifOtpService {
 
     void updateOtpStatus(String mobile);
 
-    Object getUserDetails();
+    Object getUserDetails(String token);
 }
