@@ -90,6 +90,9 @@ public class User extends LongBaseEntity{
                 .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).panNumber(userDetails.getPanNumber()).dateOfBirth(userDetails.getDateOfBirth()).fatherName(userDetails.getFatherName())
                 .gender(userDetails.getGender()).currentAccountAvailable(userDetails.getCurrentAccountAvailable()).build();
         user.setIsEnabled(true);
+        if(userDetails.getCompanyName()!=null){
+            user.setCompanyName(userDetails.getCompanyName());
+        }
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         return user;
     }
@@ -111,5 +114,8 @@ public class User extends LongBaseEntity{
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         user.setCurrentAccountAvailable(userDetails.getCurrentAccountAvailable());
+        if(userDetails.getCompanyName()!=null){
+            user.setCompanyName(userDetails.getCompanyName());
+        }
     }
 }
