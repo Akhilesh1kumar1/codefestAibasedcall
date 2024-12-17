@@ -329,4 +329,14 @@ public class AppProperties {
     @Value("${app.web-url}")
     private String capitalWebUrl;
 
+
+    //AuthBridge
+    @Value("${external.authbridge.vendor-password}")
+    private String authBridgePassword;
+
+    @Value("${external.authbridge.vendor-username")
+    private String authBridgeUsername;
+
+    @Value("${external.authbridge.base.url}")
+    private String authBridgeBaseUrl;
 }
