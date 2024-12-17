@@ -15,12 +15,14 @@ import com.sr.capital.external.crif.dto.response.CrifUserDetailsResponseDto;
 import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
+import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.service.UserService;
 import com.sr.capital.util.MapperUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -114,7 +116,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     }
 
     @Override
-    public CrifResponse verifyOtp(@Valid CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) {
+    public CrifResponse verifyOtp(@Valid CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException {
         CrifResponse crifResponse = CrifResponse.builder().build();
 
         Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
@@ -140,6 +142,8 @@ public class CrifOtpServiceImpl implements CrifOtpService {
             } else {
                 crifResponse.setStatus("Otp validation failed");
             }
+        } else {
+            throw new CustomException("User not found");
         }
         return crifResponse;
     }
@@ -154,13 +158,20 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     }
 
     @Override
-    public Object getUserDetails(String token) {
+    public CrifUserDetailsResponseDto getUserDetails(String token) {
         CrifUserModel crifUserModel = crifUserModelRepo.findByCreatedBy(String.valueOf(RequestData.getUserId()));
         if (crifUserModel != null) {
-            return mapper.convertValue(crifUserModel, CrifUserDetailsResponseDto.class);
+            return CrifUserDetailsResponseDto.builder().userId(crifUserModel.getSrCompanyId()).email(crifUserModel.getEmail())
+                    .mobile(crifUserModel.getMobile()).lastName(crifUserModel.getLastName()).firstName(crifUserModel.getFirstName())
+                    .documentType(crifUserModel.getDocumentType()).documentValue(crifUserModel.getDocumentValue()).build();
         } else {
             InternalTokenUserDetailsResponse userDetailsUsingInternalToken = userService.getUserDetailsUsingInternalToken(token);
-            return mapper.convertValue(userDetailsUsingInternalToken, CrifUserDetailsResponseDto.class);
+            if (userDetailsUsingInternalToken != null) {
+                return CrifUserDetailsResponseDto.builder().userId(userDetailsUsingInternalToken.getUserId()).email(userDetailsUsingInternalToken.getEmail())
+                        .mobile(userDetailsUsingInternalToken.getMobile()).lastName(userDetailsUsingInternalToken.getLastName()).firstName(userDetailsUsingInternalToken.getFirstName())
+                        .build();
+            }
         }
+        return null;
     }
 }
