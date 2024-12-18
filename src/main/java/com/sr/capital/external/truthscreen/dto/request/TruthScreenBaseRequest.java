@@ -1,4 +1,4 @@
-package com.sr.capital.external.truthscreen.adapter;
+package com.sr.capital.external.truthscreen.dto.request;
 
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

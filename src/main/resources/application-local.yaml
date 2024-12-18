@@ -159,6 +159,13 @@ management:
 
 ####################################### KARZA API #############################################
 external:
+  authbridge:
+    vendor-password: ${AUTHBRIDGE:India@2608}
+    vendor-username: ${AUTHBRIDGE:test@shiprocket.com}
+    base:
+      url: https://www.truthscreen.com
+    idsearch:
+      url: api/v2.2/idseach
   karza:
     enabled: false
     vendor-token: ${KARZA_VENDOR_TOKEN:test}
@@ -214,6 +221,7 @@ external:
       api:
         endpoint:
           tasks: /v3/tasks
+
 karza:
   async:
     response:
@@ -281,4 +289,5 @@ jobs:
     cronInMinutes: 120
   communication:
     scheduledTime: 0 0 1 * * ?
+
 

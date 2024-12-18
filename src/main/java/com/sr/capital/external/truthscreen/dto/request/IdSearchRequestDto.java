@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class IdSearchRequestDto {
 
-    private String docType;
+    private int docType;
     private String docNumber;
 
 }

@@ -19,8 +19,8 @@ public class IdSearchController {
 
     @PostMapping("/pan")
     public ResponseEntity<PanResponseDto> sendPanRequest(@RequestBody IdSearchRequestDto requestDTO) {
-        PanResponseDto response = panService.sendPanRequest(requestDTO);
-        return ResponseEntity.ok(response);
+        //PanResponseDto response = panService.sendPanRequest(requestDTO);
+        return null;
 
     }
 

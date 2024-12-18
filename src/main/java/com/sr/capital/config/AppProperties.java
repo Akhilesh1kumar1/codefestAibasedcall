@@ -339,4 +339,7 @@ public class AppProperties {
 
     @Value("${external.authbridge.base.url}")
     private String authBridgeBaseUrl;
+
+    @Value("${external.authbridge.idsearch.url")
+    private String authBridgeIdSearchUrl;
 }

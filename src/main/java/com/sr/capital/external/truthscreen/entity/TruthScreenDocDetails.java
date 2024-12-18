@@ -2,11 +2,11 @@ package com.sr.capital.external.truthscreen.entity;
 
 import com.sr.capital.entity.mongo.kyc.BaseDoc;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
-import com.sr.capital.external.truthscreen.enums.TruthScreenState;
 import com.sr.capital.external.truthscreen.enums.TruthScreenStatus;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -20,6 +20,7 @@ public class TruthScreenDocDetails<T> extends BaseDoc {
     private String srCompanyId;
 
     @Field("trans_id")
+    @Indexed(unique = true)
     private String transId;
 
     @Field("final_ts_trans_id")
@@ -34,8 +35,6 @@ public class TruthScreenDocDetails<T> extends BaseDoc {
     @Field("initial_status")
     TruthScreenStatus initialStatus;
 
-    @Field("state")
-    TruthScreenState state;
 
 
 }

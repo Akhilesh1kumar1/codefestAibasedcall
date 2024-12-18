@@ -2,8 +2,10 @@ package com.sr.capital.external.truthscreen.adapter;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
-import com.sr.capital.external.truthscreen.adapter.extractions.PanDetailsExtractionRequest;
-import com.sr.capital.external.truthscreen.dto.response.PanResponseDto;
+import com.sr.capital.external.truthscreen.adapter.extractions.TruthScreenPanDetailsExtractionRequest;
+import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
+import com.sr.capital.external.truthscreen.dto.response.TruthScreenBaseResponse;
+import com.sr.capital.external.truthscreen.dto.response.TruthScreenPanExtractionResponse;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.util.TruthScreenUtil;
 import com.sr.capital.external.truthscreen.util.TruthScreenUtility;
@@ -33,8 +35,10 @@ public class TruthScreenAdapter {
         TruthScreenExternalRequestMetaData requestMetaData = getRequestEndPointAndDocType(request);
 
         try{
-             String responseDataToDecrypt  = (String) webClientUtil.makeExternalCallBlocking(ServiceName.TRUTHSCREEN,appProperties.getAuthBridgeBaseUrl(),requestMetaData.getEndpoint(), HttpMethod.POST,"test",truthScreenUtil.getHeaders(),null,encryptedData,requestMetaData.getResponseClass());
-             return (U) TruthScreenUtility.decrypt(iv,responseDataToDecrypt,requestMetaData.getResponseClass());
+             String responseDataToDecrypt  = (String) webClientUtil.makeExternalCallBlocking(ServiceName.TRUTHSCREEN,
+                     appProperties.getAuthBridgeBaseUrl(),requestMetaData.getEndpoint(), HttpMethod.POST,"test",
+                     truthScreenUtil.getHeaders(),null,encryptedData,requestMetaData.getResponseClass());
+             return (U) TruthScreenUtility.decrypt(appProperties.getAuthBridgePassword(),responseDataToDecrypt,requestMetaData.getResponseClass());
         }
         catch (Exception exception){
             LoggerUtil.error(exception.getMessage());
@@ -44,11 +48,11 @@ public class TruthScreenAdapter {
     }
 
     private <T extends TruthScreenBaseRequest<?>> TruthScreenExternalRequestMetaData getRequestEndPointAndDocType(final T request) throws ServiceEndpointNotFoundException{
-        if (request instanceof PanDetailsExtractionRequest){
+        if (request instanceof TruthScreenPanDetailsExtractionRequest){
             return TruthScreenExternalRequestMetaData.builder()
-                    .endpoint(appProperties.getAuthBridgeBaseUrl()+"api/v2.2/idseach")
+                    .endpoint(appProperties.getAuthBridgeBaseUrl()+appProperties.getAuthBridgeIdSearchUrl())
                     .docType(TruthScreenDocType.PAN)
-                    .responseClass(PanResponseDto.class)
+                    .responseClass(TruthScreenPanExtractionResponse.class)
                     .build();
         }
         else {

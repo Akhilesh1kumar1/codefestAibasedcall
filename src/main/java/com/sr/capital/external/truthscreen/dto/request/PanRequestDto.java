@@ -18,7 +18,7 @@ public class PanRequestDto {
     private String transID;
     private int docType;
     private String docNumber;
-    private String isAsync;
+    private int isAsync;
 
 
 }
