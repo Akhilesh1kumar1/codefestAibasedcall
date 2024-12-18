@@ -17,20 +17,20 @@ import java.util.UUID;
 @Document("crif_user_details")
 public class CrifUserModel extends BaseDoc {
 
-    @EncryptField
+//    @EncryptField
     @Field("first_name")
     private String firstName;
 
-    @EncryptField
+//    @EncryptField
     @Field("last_name")
     private String lastName;
 
-    @EncryptField
+//    @EncryptField
     @Field("email")
     private String email;
 
     @Field("mobile")
-    @EncryptField
+//    @EncryptField
     private String mobile;
 
     @Field("doc_type")
@@ -39,7 +39,7 @@ public class CrifUserModel extends BaseDoc {
     @Field("sr_company_id")
     private String srCompanyId;
 
-    @EncryptField
+//    @EncryptField
     @Field("doc_value")
     private String documentValue;
 
