@@ -161,7 +161,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     @Override
     public IcrmLoanResponseDto getCompleteLoanDetails(IcrmLoanRequestDto icrmLeadRequestDto) throws CustomException {
 
-        if(icrmLeadRequestDto.getInternalLoanId()==null){
+        if(icrmLeadRequestDto.getInternalLoanId()==null && icrmLeadRequestDto.getLoanId()==null){
             throw new CustomException("Invalid Request. loan id is required",HttpStatus.BAD_REQUEST);
         }
 
@@ -401,7 +401,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     private void setLoanApplicationDetails(LoanApplication loanApplication, IcrmLoanResponseDto icrmLoanResponseDto) {
        IcrmLoanCompleteDetails icrmLoanCompleteDetails = IcrmLoanCompleteDetails.builder().internalLoanId(loanApplication.getInternalLoanId()).loanVendorId(loanApplication.getLoanVendorId())
-               .updatedAt(loanApplication.getAuditData().getUpdatedAt()).loanType(loanApplication.getLoanType()).loanStatus(loanApplication.getLoanStatus()).createdAt(loanApplication.getAuditData().getCreatedAt()).dateOfInitiation(loanApplication.getAuditData().getCreatedAt()).externalLoanId(loanApplication.getVendorLoanId()).vendorStatus(loanApplication.getVendorStatus()).build();
+               .updatedAt(loanApplication.getAuditData().getUpdatedAt()).loanType(loanApplication.getLoanType()).loanStatus(loanApplication.getLoanStatus().name()).createdAt(loanApplication.getAuditData().getCreatedAt()).dateOfInitiation(loanApplication.getAuditData().getCreatedAt()).externalLoanId(loanApplication.getVendorLoanId()).vendorStatus(loanApplication.getVendorStatus()).build();
        icrmLoanResponseDto.getCompleteDetails().add(icrmLoanCompleteDetails);
     }
 
@@ -593,7 +593,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         dto.setSrCompanyId(Long.valueOf(map.get("sr_company_id").toString()));
         dto.setLoanVendorId(Long.valueOf(map.get("loan_vendor_id").toString()));
         //dto.seta(new BigDecimal(map.get("la.loan_amount_requested").toString()));
-        dto.setLoanStatus(LoanStatus.valueOf(map.get("loan_status").toString()));
+        dto.setLoanStatus(map.get("loan_status").toString());
       //  dto.setLoanOfferId(UUID.fromString(map.get("la.loan_offer_id").toString()));
         dto.setLoanDurationAtSanction(Integer.valueOf(map.get("loan_duration").toString()));
         dto.setExternalLoanId(map.get("vendor_loan_id").toString());
@@ -621,7 +621,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         dto.setInternalLoanId((String) loanDetailsDto[i++]);
         dto.setSrCompanyId((Long) loanDetailsDto[i++]);
         dto.setLoanVendorId((Long) loanDetailsDto[i++]);
-        dto.setLoanStatus(LoanStatus.valueOf((String) loanDetailsDto[i++]));
+        dto.setLoanStatus(((String) loanDetailsDto[i++]));
         dto.setLoanAmountRequested(new BigDecimal(String.valueOf(loanDetailsDto[i++])));
         dto.setLoanType(String.valueOf(loanDetailsDto[i++]));
         dto.setDateOfInitiation(LocalDateTime.parse(loanDetailsDto[i++].toString(),formatter));
@@ -647,6 +647,9 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         dto.setTotalRecoverableAmount(parseBigDecimalOrNull(loanDetailsDto,i++));
         dto.setVendorStatus((String) loanDetailsDto[i++]);
         dto.setInterestAmountAtDisbursal(parseBigDecimalOrNull(loanDetailsDto,i++));
+        dto.setState((String) loanDetailsDto[i++]);
+        String finalStatus = dto.getState()!=null? dto.getLoanStatus()+","+dto.getState():dto.getLoanStatus();
+        dto.setLoanStatus(finalStatus);
         //dto.setLoanApplicationStatusUpdatedAt(LocalDateTime.parse(map.get("loanApplicationStatusUpdatedAt").toString()));
 
         return dto;
@@ -729,7 +732,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
                         tier,
                         loanCompleteDetails.getExternalLoanId(),
                         idNameMap.get(loanCompleteDetails.getLoanVendorId()),
-                        loanCompleteDetails.getLoanStatus().name(),
+                        loanCompleteDetails.getLoanStatus(),
                         loanCompleteDetails.getVendorStatus(),
                         loanCompleteDetails.getCreditLineApprovalDate()==null?"":loanCompleteDetails.getCreditLineApprovalDate().toString(),
                         loanCompleteDetails.getDisbursedDate()==null?"":""+loanCompleteDetails.getDisbursedDate(),
