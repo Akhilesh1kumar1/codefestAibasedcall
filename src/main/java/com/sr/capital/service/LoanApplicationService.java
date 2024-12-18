@@ -19,7 +19,9 @@ public interface LoanApplicationService {
 
    public LoanApplication getLoanApplicationById(UUID loanApplicationId);
 
-   public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException, IOException;
+    public LoanApplication getLoanApplicationByInternalLoanId(String loanApplicationId);
+
+    public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException, IOException;
 
    public LoanApplicationResponseDto createLoanAtVendor(CreateLoanAtVendorRequest createLoanAtVendorRequest) throws CustomException;
 
