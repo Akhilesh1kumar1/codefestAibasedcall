@@ -1,5 +1,6 @@
 package com.sr.capital.external.crif.service;
 
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.dto.request.BureauInitiatePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauQuestionnairePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
@@ -24,11 +25,11 @@ public interface CrifPartnerService {
 
     BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest);
 
-    Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel);
+    Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException;
 
-    Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest);
+    Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException;
 
-    CrifResponse verify(BureauInitiateResponse bureauInitiateResponse);
+    CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException;
 
     Map<String, String> getDocType();
 }

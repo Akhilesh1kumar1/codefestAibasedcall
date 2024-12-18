@@ -44,7 +44,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     private final ObjectMapper mapper;;
 
     @Override
-    public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException {
+    public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException {
         CrifResponse crifResponse  = CrifResponse.builder().build();
 
         Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());

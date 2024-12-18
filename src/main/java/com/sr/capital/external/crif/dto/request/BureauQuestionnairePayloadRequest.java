@@ -20,6 +20,7 @@ public class BureauQuestionnairePayloadRequest {
     String accessCode;
     String redirectURL;
     String paymentFlag;
+    String alertFlag;
     String reportFlag;
     String userAnswer;
 

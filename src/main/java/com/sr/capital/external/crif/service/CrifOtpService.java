@@ -13,7 +13,7 @@ import java.io.IOException;
 @Service
 public interface CrifOtpService {
 
-    CrifResponse generateOtp(CrifGenerateOtpRequestModel bureauInitiatePayloadRequest) throws IOException;
+    CrifResponse generateOtp(CrifGenerateOtpRequestModel bureauInitiatePayloadRequest) throws IOException, CustomException;
 
     CrifResponse verifyOtp(@Valid CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException;
 

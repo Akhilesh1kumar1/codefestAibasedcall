@@ -4,6 +4,7 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.crif.BureauInitiateModel;
 import com.sr.capital.entity.mongo.crif.CrifReport;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.Constant.Constant;
 import com.sr.capital.external.crif.Constant.CrifDocumentType;
 import com.sr.capital.external.crif.dto.request.*;
@@ -53,7 +54,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final RedissonClient redissonClient;
 
     @Override
-    public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) {
+    public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException {
 
         BureauQuestionnaireResponse bureauQuestionnaireResponse = initiateBureauAndGetQuestionnaire(bureauInitiatePayloadRequest);
 
@@ -70,7 +71,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) {
+    public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException {
         CrifResponse crifResponse = CrifResponse.builder().build();
 
         BureauQuestionnaireResponse questionnaire = getQuestionnaire(bureauInitiateResponse);
@@ -84,11 +85,14 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
 
 
-    boolean isAuthorizedForReport(String status) {
+    boolean isAuthorizedForReport(String status) throws CustomException {
+        if (status.equals(CrifStatusCode.S02.name())) {
+            throw new CustomException("You have exceed the limit");
+        }
         return status != null && (status.equals(S01.name()) || status.equals(S10.name()));
     }
     @Override
-    public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) {
+    public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException {
         Optional<CrifReport> optional = crifReportModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
         if (optional.isPresent() && isOldRequest(optional.get().getValidTill())) {
             return getStoredReport(optional.get());
@@ -367,16 +371,17 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private BureauQuestionnairePayloadRequest updateStaticData(BureauInitiateResponse bureauInitiateResponse) {
         return BureauQuestionnairePayloadRequest
                 .builder()
-                .reportFlag("N")
                 .reportId(bureauInitiateResponse.getReportId() != null ?
                         bureauInitiateResponse.getReportId() : "CCR220808CR373632334")
                 .accessCode(bureauInitiateResponse.getAccessCode() != null ?
                         bureauInitiateResponse.getAccessCode(): getAccessCode())
                 .orderId(bureauInitiateResponse.getOrderId() != null ?
                         bureauInitiateResponse.getOrderId() : getOrderId())
-                .redirectURL(bureauInitiateResponse.getRedirectURL() != null ?
+                .redirectURL(bureauInitiateResponse.getRedirectURL() != null && !bureauInitiateResponse.getRedirectURL().isEmpty()?
                         bureauInitiateResponse.getRedirectURL() : "https://cir.crifhighmark.com/Inquiry/B2B/secureService.action")
                 .paymentFlag("N")
+                .reportFlag("Y")
+                .alertFlag("N")
                 .build();
     }
 
