@@ -413,16 +413,6 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 header, null,
                 requestPayload, BureauQuestionnaireResponse.class);
 
-        // remove this code
-        if (bureauQuestionnaireResponse == null) {
-            bureauQuestionnairePayloadRequest.setPaymentFlag("Y");
-            requestPayload = StringUtils.toPipeSeparatedString(bureauQuestionnairePayloadRequest);
-            bureauQuestionnaireResponse = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF,
-                    appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
-                    HttpMethod.POST, ServiceName.CRIF.getName(),
-                    header, null,
-                    requestPayload, BureauQuestionnaireResponse.class);
-        }
 
 
         if (bureauQuestionnaireResponse != null) {

@@ -15,8 +15,8 @@ public class CrifUserModelHelper {
     private final AES256 aes256;
 
     public Optional<CrifUserModel> findByMobile(String mobile) {
-//        String encrypt = aes256.encrypt(mobile);
-        return crifUserModelRepo.findByMobile(mobile);
+        String encrypt = aes256.encrypt(mobile);
+        return crifUserModelRepo.findByMobile(encrypt);
     }
 
 

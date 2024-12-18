@@ -19,7 +19,7 @@ public class BureauInitiateModel extends BaseDoc {
     private String reportId;
 
     @Field("mobile")
-//    @EncryptField
+    @EncryptField
     private String mobile;
 
     @Field("order_id")
