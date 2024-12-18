@@ -49,7 +49,7 @@ public class IcrmLoanCompleteDetails {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime creditLineApprovalDate;
 
-   UUID internalLoanId;
+   String internalLoanId;
 
    String externalLoanId;
 

@@ -375,7 +375,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
             //icrmLoanResponseDto.getCompleteDetails().get(0).setExternalLoanId(loanApplicationStatus.getVendorLoanId());
             icrmLoanResponseDto.getCompleteDetails().get(0).setLoanDurationAtSanction(loanApplicationStatus.getLoanDuration());
             icrmLoanResponseDto.getCompleteDetails().get(0).setSanctionAmount(loanApplicationStatus.getLoanAmountApproved());
-            icrmLoanResponseDto.getCompleteDetails().get(0).setInternalLoanId(loanApplicationStatus.getLoanId());
+            //icrmLoanResponseDto.getCompleteDetails().get(0).setInternalLoanId(loanApplicationStatus.getLoanId());
             icrmLoanResponseDto.getCompleteDetails().get(0).setInterestRate(loanApplicationStatus.getInterestRate());
             icrmLoanResponseDto.getCompleteDetails().get(0).setInterestAmountAtSanction(loanApplicationStatus.getInterestAmountAtSanction());
             icrmLoanResponseDto.getCompleteDetails().get(0).setDisbursedAmount(loanApplicationStatus.getTotalDisbursedAmount());
@@ -388,7 +388,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     private void getLoanDetails(IcrmLoanResponseDto icrmLoanResponseDto, IcrmLoanRequestDto icrmLeadRequestDto) throws CustomException {
 
-        LoanApplication loanApplication = loanApplicationService.getLoanApplicationById(icrmLeadRequestDto.getLoanId());
+        LoanApplication loanApplication = loanApplicationService.getLoanApplicationByInternalLoanId(icrmLeadRequestDto.getInternalLoanId());
 
         if(loanApplication!=null){
             setLoanApplicationDetails(loanApplication, icrmLoanResponseDto);
@@ -400,7 +400,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     }
 
     private void setLoanApplicationDetails(LoanApplication loanApplication, IcrmLoanResponseDto icrmLoanResponseDto) {
-       IcrmLoanCompleteDetails icrmLoanCompleteDetails = IcrmLoanCompleteDetails.builder().internalLoanId(loanApplication.getId()).loanVendorId(loanApplication.getLoanVendorId())
+       IcrmLoanCompleteDetails icrmLoanCompleteDetails = IcrmLoanCompleteDetails.builder().internalLoanId(loanApplication.getInternalLoanId()).loanVendorId(loanApplication.getLoanVendorId())
                .updatedAt(loanApplication.getAuditData().getUpdatedAt()).loanType(loanApplication.getLoanType()).loanStatus(loanApplication.getLoanStatus()).createdAt(loanApplication.getAuditData().getCreatedAt()).dateOfInitiation(loanApplication.getAuditData().getCreatedAt()).externalLoanId(loanApplication.getVendorLoanId()).vendorStatus(loanApplication.getVendorStatus()).build();
        icrmLoanResponseDto.getCompleteDetails().add(icrmLoanCompleteDetails);
     }
@@ -589,7 +589,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     private IcrmLoanCompleteDetails buildCompleteDetails(Map<String,Object> map){
         IcrmLoanCompleteDetails dto = IcrmLoanCompleteDetails.builder().build();
 
-        dto.setInternalLoanId(CoreUtil.getUUIDID(map.get("id")));
+       // dto.setInternalLoanId(CoreUtil.getUUIDID(map.get("id")));
         dto.setSrCompanyId(Long.valueOf(map.get("sr_company_id").toString()));
         dto.setLoanVendorId(Long.valueOf(map.get("loan_vendor_id").toString()));
         //dto.seta(new BigDecimal(map.get("la.loan_amount_requested").toString()));
@@ -618,7 +618,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         int i=0;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        dto.setInternalLoanId(CoreUtil.getUUIDID(loanDetailsDto[i++]));
+        dto.setInternalLoanId((String) loanDetailsDto[i++]);
         dto.setSrCompanyId((Long) loanDetailsDto[i++]);
         dto.setLoanVendorId((Long) loanDetailsDto[i++]);
         dto.setLoanStatus(LoanStatus.valueOf((String) loanDetailsDto[i++]));

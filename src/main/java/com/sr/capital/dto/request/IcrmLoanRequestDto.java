@@ -54,4 +54,6 @@ public class IcrmLoanRequestDto {
     Boolean isTesting=false;
 
     String userEmail;
+
+    String internalLoanId;
 }
