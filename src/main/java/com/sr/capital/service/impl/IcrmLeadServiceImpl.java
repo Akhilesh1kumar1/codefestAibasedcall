@@ -161,7 +161,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
     @Override
     public IcrmLoanResponseDto getCompleteLoanDetails(IcrmLoanRequestDto icrmLeadRequestDto) throws CustomException {
 
-        if(icrmLeadRequestDto.getLoanId()==null){
+        if(icrmLeadRequestDto.getInternalLoanId()==null){
             throw new CustomException("Invalid Request. loan id is required",HttpStatus.BAD_REQUEST);
         }
 
