@@ -54,7 +54,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final RedissonClient redissonClient;
 
     @Override
-    public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException {
+    public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException {
 
         BureauQuestionnaireResponse bureauQuestionnaireResponse = initiateBureauAndGetQuestionnaire(bureauInitiatePayloadRequest);
 
@@ -71,7 +71,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException {
+    public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException, CRIFApiException {
         CrifResponse crifResponse = CrifResponse.builder().build();
 
         BureauQuestionnaireResponse questionnaire = getQuestionnaire(bureauInitiateResponse);
@@ -92,7 +92,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return status != null && (status.equals(S01.name()) || status.equals(S10.name()));
     }
     @Override
-    public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException {
+    public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException {
         Optional<CrifReport> optional = crifReportModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
         if (optional.isPresent() && isOldRequest(optional.get().getValidTill())) {
             return getStoredReport(optional.get());
@@ -131,7 +131,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return false;
     }
 
-    private BureauReportResponse getReport(BureauQuestionnaireResponse questionnaire) {
+    private BureauReportResponse getReport(BureauQuestionnaireResponse questionnaire) throws CRIFApiException {
         BureauReportPayloadRequest bureauReportPayloadRequest = BureauReportPayloadRequest.builder()
                 .reportId(questionnaire.getReportId())
                 .orderId(questionnaire.getOrderId())
@@ -184,7 +184,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public BureauQuestionnaireResponse initiateBureauAndGetQuestionnaire(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) {
+    public BureauQuestionnaireResponse initiateBureauAndGetQuestionnaire(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CRIFApiException {
 
         updateStaticData(bureauInitiatePayloadRequest);
 
@@ -357,7 +357,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
 
     @Override
-    public BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse) {
+    public BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse) throws CRIFApiException {
 
         BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest = updateStaticData(bureauInitiateResponse);
 
@@ -407,7 +407,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 //    }
 
 
-    public BureauQuestionnaireResponse authenticateQuestion(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) {
+    public BureauQuestionnaireResponse authenticateQuestion(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) throws CRIFApiException {
 
         HttpHeaders header = getHeaderForQuestionnaire(bureauQuestionnairePayloadRequest.getOrderId(),
                 bureauQuestionnairePayloadRequest.getReportId(), true);
@@ -469,13 +469,13 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest) {
+    public BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest) throws CRIFApiException {
         setDummyData(bureauReportPayloadRequest);
         updateStaticDataForReport(bureauReportPayloadRequest);
         return generateReport(bureauReportPayloadRequest);
     }
 
-    private BureauReportResponse generateReport(BureauReportPayloadRequest bureauReportPayloadRequest) {
+    private BureauReportResponse generateReport(BureauReportPayloadRequest bureauReportPayloadRequest) throws CRIFApiException {
         HttpHeaders header = getHeaderForQuestionnaire(bureauReportPayloadRequest.getOrderId(),
                 bureauReportPayloadRequest.getReportId(), false);
 

@@ -12,6 +12,7 @@ import com.sr.capital.external.crif.dto.request.CrifGenerateOtpRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.dto.response.CrifUserDetailsResponseDto;
+import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
@@ -44,7 +45,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     private final ObjectMapper mapper;;
 
     @Override
-    public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException {
+    public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException, CRIFApiException {
         CrifResponse crifResponse  = CrifResponse.builder().build();
 
         Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
@@ -116,7 +117,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     }
 
     @Override
-    public CrifResponse verifyOtp(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException {
+    public CrifResponse verifyOtp(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException {
         CrifResponse crifResponse = CrifResponse.builder().build();
 
         Optional<CrifUserModel> optional = crifUserModelRepo.findByVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());

@@ -9,6 +9,7 @@ import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.dto.response.CrifResponse;
+import com.sr.capital.external.crif.exeception.CRIFApiException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,19 +18,19 @@ import java.util.Map;
 public interface CrifPartnerService {
 
 
-    BureauQuestionnaireResponse initiateBureauAndGetQuestionnaire(BureauInitiatePayloadRequest bureauInitiatePayloadRequest);
+    BureauQuestionnaireResponse initiateBureauAndGetQuestionnaire(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CRIFApiException;
 
     String getAccessCode();
 
-    BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse);
+    BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse) throws CRIFApiException;
 
-    BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest);
+    BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest) throws CRIFApiException;
 
-    Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException;
+    Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException;
 
-    Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException;
+    Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException;
 
-    CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException;
+    CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException, CRIFApiException;
 
     Map<String, String> getDocType();
 }

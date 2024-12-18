@@ -9,7 +9,6 @@ import com.sr.capital.external.crif.exeception.CRIFApiException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,11 +51,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<GenericResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
         return new ResponseEntity<>(getGenericResponse(exception), HttpStatus.BAD_REQUEST);
     }
+
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(CRIFApiException.class)
-    public ResponseEntity<GenericResponse> handleCRIFApiException(final MethodArgumentNotValidException exception) {
-        return new ResponseEntity<>(getGenericResponse(exception), HttpStatus.ACCEPTED);
+    public ResponseEntity<GenericResponse> handleCRIFApiException(final CRIFApiException exception) {
+        return new ResponseEntity<>(getGenericResponse(HttpStatus.NOT_ACCEPTABLE.value(), exception.getErrorDetails() + " " + exception.getStatusCode()), HttpStatus.ACCEPTED);
     }
 
     @ExceptionHandler(Exception.class)
@@ -75,6 +75,16 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+
+    private static GenericResponse<Object> getGenericResponse(int status, String message) {
+        return GenericResponse.builder()
+                .status(ERROR)
+                .correlationId(RequestData.getCorrelationId())
+                .message(REQUEST_FAILED)
+                .error(ErrorResponse.ErrorResponseBuilder().message(message).build())
+                .statusCode(status)
+                .build();
+    }
     private static GenericResponse<Object> getGenericResponse(MethodArgumentNotValidException e) {
         return GenericResponse.builder()
                 .status(ERROR)

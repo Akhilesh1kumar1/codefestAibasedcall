@@ -2,12 +2,14 @@ package com.sr.capital.external.crif.controller;
 
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.entity.mongo.crif.CrifUserModel;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.Constant.CrifDocumentType;
 import com.sr.capital.external.crif.dto.request.BureauInitiatePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
+import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.service.CrifPartnerService;
 import com.sr.capital.util.Base64Util;
 import com.sr.capital.util.ResponseBuilderUtil;
@@ -40,14 +42,14 @@ public class CrifController {
     }
 
     @PostMapping(value = "/validate", consumes = "application/json", produces = "application/json")
-    public GenericResponse<?> crifStage2(@RequestBody BureauInitiateResponse bureauInitiateResponse) throws Exception {
+    public GenericResponse<?> crifStage2(@RequestBody BureauInitiateResponse bureauInitiateResponse) throws CRIFApiException, CustomException {
         return ResponseBuilderUtil.getResponse(crifPartnerService.verify(bureauInitiateResponse),
                 SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
     @PostMapping(value = "/report", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> crifStage3(@RequestBody BureauReportPayloadRequest bureauReportPayloadRequest
-    ) throws Exception {
+    ) throws CRIFApiException {
 
         BureauReportResponse report = crifPartnerService.getReport(bureauReportPayloadRequest);
         ResponseEntity<BureauReportResponse> response = new ResponseEntity<>(report, HttpStatusCode.valueOf(200));
@@ -59,7 +61,7 @@ public class CrifController {
 
 
     @PostMapping(value = "/getAccessCode")
-    public ResponseEntity<?> getAccessCode() throws Exception {
+    public ResponseEntity<?> getAccessCode() {
 
         String accessCode = crifPartnerService.getAccessCode();
 
@@ -67,7 +69,7 @@ public class CrifController {
     }
 
     @GetMapping(value = "/get-doc-type")
-    public GenericResponse<?> getDocType() throws Exception {
+    public GenericResponse<?> getDocType() {
         return ResponseBuilderUtil.getResponse(crifPartnerService.getDocType()
                 ,SUCCESS, REQUEST_SUCCESS, 200);
     }
