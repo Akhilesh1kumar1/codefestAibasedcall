@@ -196,7 +196,7 @@ new LoanDetailsDto(
     public List<Object[]> findLoanDetails(IcrmLoanRequestDto icrmLoanRequestDto) {
         // Base native query
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT la.internal_loan_id AS loanId, la.sr_company_id AS srCompanyId, la.loan_vendor_id AS loanVendorId, ");
+        sql.append("SELECT la.internal_loan_id AS internalLoanId, la.sr_company_id AS srCompanyId, la.loan_vendor_id AS loanVendorId, ");
         sql.append(" la.loan_status AS loanStatus,la.loan_amount_requested AS loanAmountRequested, ");
         sql.append("la.loan_type AS loanType,DATE_FORMAT(la.created_at,'%Y-%m-%d %H:%i:%s') as leadCreatedAt, las.loan_duration AS loanDuration,la.external_loan_id ,");
         sql.append("las.id AS loanApplicationStatusId, ");
