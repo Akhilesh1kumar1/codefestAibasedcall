@@ -388,12 +388,12 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
 
-    @Override
-    public BureauQuestionnaireResponse authenticationQuestionnaire(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) {
-        setDummyData(bureauQuestionnairePayloadRequest);
-        updateStaticData(bureauQuestionnairePayloadRequest);
-        return authenticateQuestion(bureauQuestionnairePayloadRequest);
-    }
+//    @Override
+//    public BureauQuestionnaireResponse authenticationQuestionnaire(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) {
+//        setDummyData(bureauQuestionnairePayloadRequest);
+//        updateStaticData(bureauQuestionnairePayloadRequest);
+//        return authenticateQuestion(bureauQuestionnairePayloadRequest);
+//    }
 
 
     public BureauQuestionnaireResponse authenticateQuestion(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) {

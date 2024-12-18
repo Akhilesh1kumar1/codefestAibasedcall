@@ -6,6 +6,8 @@ import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.List;
+
 @Data
 @Builder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
@@ -59,7 +61,7 @@ public class BureauInitiateModel extends BaseDoc {
     private String userAnswer;
 
     @Field("option_list")
-    private String optionList;
+    private List<String> optionList;
 
     @Field("button_behavior")
     private String buttonBehavior;

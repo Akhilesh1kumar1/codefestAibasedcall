@@ -21,8 +21,6 @@ public interface CrifPartnerService {
 
     BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse);
 
-    public BureauQuestionnaireResponse authenticationQuestionnaire(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest);
-
     BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest);
 
     Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel);
