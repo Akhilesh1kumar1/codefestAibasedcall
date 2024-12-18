@@ -87,7 +87,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
-            if(!loanStatusUpdateWebhookDto.getInternalStatus().equalsIgnoreCase(loanStatusUpdateWebhookDto.getInternalCurrentStatus()) || loanApplication.getVendorLoanId()==null) {
+            if(!loanStatusUpdateWebhookDto.getInternalStatus().equalsIgnoreCase(loanStatusUpdateWebhookDto.getInternalCurrentStatus()) || loanApplication.getVendorStatus()==null) {
 
                 switch (loanApplication.getLoanStatus()) {
                     case LOAN_DISBURSED:
@@ -162,7 +162,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
                 }
             }
             if(templateName!=null) {
-                CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder().loanId(loanApplication.getId().toString())
+                CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder().loanId(loanApplication.getInternalLoanId())
                         .requestedLoanAmount(loanApplication.getLoanAmountRequested()).vendorName(vendorName)
                         .capitalUrl(appProperties.getCapitalWebUrl()).comments(loanApplication.getComments()).requestedLoanTenure(loanApplication.getLoanDuration()).state(loanApplication.getState()).resourcesFaqLink("").vendorName(LoanVendorName.FLEXI.getLoanVendorName()).build();
 
