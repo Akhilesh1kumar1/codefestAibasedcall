@@ -116,10 +116,10 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     }
 
     @Override
-    public CrifResponse verifyOtp(@Valid CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException {
+    public CrifResponse verifyOtp(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException {
         CrifResponse crifResponse = CrifResponse.builder().build();
 
-        Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
+        Optional<CrifUserModel> optional = crifUserModelRepo.findByVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
         if (optional.isPresent()) {
             CrifUserModel crifUserModel = optional.get();
             if (crifUserModel.getVerificationToken().equals(crifGenerateOtpRequestModel.getVerificationToken())) {
@@ -132,6 +132,13 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                 if (isVerified != null && isVerified) {
                     crifUserModel.setIsOtpVerified(true);
                     crifUserModelRepo.save(crifUserModel);
+
+                    crifGenerateOtpRequestModel.setDocType(crifUserModel.getDocumentType());
+                    crifGenerateOtpRequestModel.setDocValue(crifUserModel.getDocumentValue());
+                    crifGenerateOtpRequestModel.setMobile(crifUserModel.getMobile());
+                    crifGenerateOtpRequestModel.setEmail(crifUserModel.getEmail());
+                    crifGenerateOtpRequestModel.setLastName(crifUserModel.getLastName());
+                    crifGenerateOtpRequestModel.setFirstName(crifUserModel.getFirstName());
 
                     Map<String, Object> map = crifPartnerService.initiateBureauAndGetQuestionnaire(crifGenerateOtpRequestModel);
 

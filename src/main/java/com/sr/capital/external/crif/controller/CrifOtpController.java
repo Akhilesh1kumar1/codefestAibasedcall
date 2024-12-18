@@ -31,7 +31,7 @@ public class CrifOtpController {
     }
 
     @PostMapping(value = "/verify-otp")
-    public GenericResponse<Object> verifyOtp(@Valid @RequestBody CrifVerifyOtpRequestModels request) throws Exception {
+    public GenericResponse<Object> verifyOtp(@RequestBody CrifVerifyOtpRequestModels request) throws Exception {
 
             return ResponseBuilderUtil.getResponse(crifOtpService.verifyOtp(request), SUCCESS,
                     REQUEST_SUCCESS, HttpStatus.SC_OK);
