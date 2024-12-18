@@ -87,7 +87,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
             loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
-            if(!loanStatusUpdateWebhookDto.getInternalStatus().equalsIgnoreCase(loanStatusUpdateWebhookDto.getInternalCurrentStatus())) {
+            if(!loanStatusUpdateWebhookDto.getInternalStatus().equalsIgnoreCase(loanStatusUpdateWebhookDto.getInternalCurrentStatus()) || loanApplication.getVendorLoanId()==null) {
 
                 switch (loanApplication.getLoanStatus()) {
                     case LOAN_DISBURSED:

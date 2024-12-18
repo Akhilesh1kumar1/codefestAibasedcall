@@ -64,7 +64,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         if(loanApplicationRequestDto.getLoanId()!=null){
             loanApplicationRequestDto.setLoanStatus(LoanStatus.LEAD_VERIFIED);
             loanApplication = loanApplicationRepository.findById(loanApplicationRequestDto.getLoanId()).orElse(null);
-              LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
+             LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
         }else {
             loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
             loanApplication = loanApplicationRepository.save(loanApplication);
@@ -121,6 +121,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     public LoanApplication getLoanApplicationById(UUID loanApplicationId) {
         return loanApplicationRepository.findById(loanApplicationId).orElse(null);
     }
+
+    @Override
+    public LoanApplication getLoanApplicationByInternalLoanId(String loanApplicationId) {
+        return loanApplicationRepository.findByInternalLoanId(loanApplicationId);
+
+    }
+
 
     @Override
     public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException, IOException {
