@@ -218,10 +218,14 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         //        setDummyData(bureauInitiatePayloadRequest);
 
 
-        log.info("OrderId :{} requestPayload: {}", orderId, requestPayload);
-        header.keySet().forEach(log::info);
-        header.values().forEach(v -> v.forEach(log::info));
-        log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
+        log.info("OrderId: {}, RequestPayload: {}, Headers: {}, BaseUrl: {}, EndPoint: {}",
+                orderId,
+                requestPayload,
+                header.entrySet().stream()
+                        .map(entry -> entry.getKey() + "=" + String.join(",", entry.getValue()))
+                        .collect(Collectors.joining(", ")),
+                appProperties.getCrifBaseUri(),
+                appProperties.getCrifExtractStage2Endpoint());
 
         return webClientUtil.makeExternalCallBlocking(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage1Endpoint(),
                         HttpMethod.POST, ServiceName.CRIF.getName(),
@@ -402,10 +406,14 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         String orderId = header.get(Constant.ORDER_ID).get(0);
 
-        log.info("OrderId :{} requestPayload: {}", orderId, requestPayload);
-        header.keySet().forEach(log::info);
-        header.values().forEach(v -> v.forEach(log::info));
-        log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
+        log.info("OrderId: {}, RequestPayload: {}, Headers: {}, BaseUrl: {}, EndPoint: {}",
+                orderId,
+                requestPayload,
+                header.entrySet().stream()
+                        .map(entry -> entry.getKey() + "=" + String.join(",", entry.getValue()))
+                        .collect(Collectors.joining(", ")),
+                appProperties.getCrifBaseUri(),
+                appProperties.getCrifExtractStage2Endpoint());
 
         BureauQuestionnaireResponse bureauQuestionnaireResponse = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF,
                 appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
@@ -465,10 +473,14 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         String orderId = header.get(Constant.ORDER_ID).get(0);
 
-        log.info("OrderId :{} requestPayload: {}", orderId, requestPayload);
-        header.keySet().forEach(log::info);
-        header.values().forEach(v -> v.forEach(log::info));
-        log.info("BaseUrl {}, EndPoint {}", appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint());
+        log.info("OrderId: {}, RequestPayload: {}, Headers: {}, BaseUrl: {}, EndPoint: {}",
+                orderId,
+                requestPayload,
+                header.entrySet().stream()
+                        .map(entry -> entry.getKey() + "=" + String.join(",", entry.getValue()))
+                        .collect(Collectors.joining(", ")),
+                appProperties.getCrifBaseUri(),
+                appProperties.getCrifExtractStage2Endpoint());
 
         Object bureauReportResponse = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
                         HttpMethod.POST, ServiceName.CRIF.getName(),
