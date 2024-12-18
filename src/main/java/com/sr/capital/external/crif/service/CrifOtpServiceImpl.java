@@ -19,6 +19,7 @@ import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsR
 import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.service.UserService;
+import com.sr.capital.util.CoreUtil;
 import com.sr.capital.util.MapperUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -167,8 +169,9 @@ public class CrifOtpServiceImpl implements CrifOtpService {
 
     @Override
     public CrifUserDetailsResponseDto getUserDetails(String token) {
-        CrifUserModel crifUserModel = crifUserModelRepo.findByCreatedBy(String.valueOf(RequestData.getUserId()));
-        if (crifUserModel != null) {
+        List<CrifUserModel> crifUserModelList = crifUserModelRepo.findByCreatedBy(String.valueOf(RequestData.getUserId()));
+        if (crifUserModelList != null && !crifUserModelList.isEmpty()) {
+            CrifUserModel crifUserModel = crifUserModelList.get(0);
             return CrifUserDetailsResponseDto.builder().userId(crifUserModel.getSrCompanyId()).email(crifUserModel.getEmail())
                     .mobile(crifUserModel.getMobile()).lastName(crifUserModel.getLastName()).firstName(crifUserModel.getFirstName())
                     .documentType(crifUserModel.getDocumentType()).documentValue(crifUserModel.getDocumentValue()).build();
