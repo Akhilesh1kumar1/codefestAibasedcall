@@ -105,7 +105,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         return builder.build();
     }
 
-    private void setResponse(CrifResponse crifResponse, Map<String, Object> data) {
+    public static void setResponse(CrifResponse crifResponse, Map<String, Object> data) {
         if (data != null && !data.isEmpty() && data.containsKey(STAGE)) {
             switch (String.valueOf(data.get(STAGE))) {
                 case STAGE_2 -> crifResponse.setQuestionnaireResponse(data.get(DATA));

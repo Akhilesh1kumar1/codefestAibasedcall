@@ -10,6 +10,7 @@ import com.sr.capital.external.crif.dto.request.*;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
+import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.util.CrifReportModelHelper;
 import com.sr.capital.external.crif.util.CrifStatusCode;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
+import static com.sr.capital.external.crif.service.CrifOtpServiceImpl.setResponse;
 import static com.sr.capital.external.crif.util.CrifStatusCode.S01;
 import static com.sr.capital.external.crif.util.CrifStatusCode.S10;
 import static com.sr.capital.external.crif.util.StringUtils.FORMATTER;
@@ -68,12 +70,16 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public Object verify(BureauInitiateResponse bureauInitiateResponse) {
+    public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) {
+        CrifResponse crifResponse = CrifResponse.builder().build();
+
         BureauQuestionnaireResponse questionnaire = getQuestionnaire(bureauInitiateResponse);
         if (questionnaire != null && isAuthorizedForReport(questionnaire.getStatus())) {
-            return getReport(questionnaire);
+            setResponse(crifResponse, new HashMap<>(){{put(DATA, getReport(questionnaire)); put(STAGE, STAGE_3);}});
+            return crifResponse;
         }
-        return questionnaire;
+        setResponse(crifResponse, new HashMap<>(){{put(DATA, questionnaire); put(STAGE, STAGE_2);}});
+        return crifResponse;
     }
 
 

@@ -7,6 +7,7 @@ import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
+import com.sr.capital.external.crif.dto.response.CrifResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -27,7 +28,7 @@ public interface CrifPartnerService {
 
     Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest);
 
-    Object verify(BureauInitiateResponse bureauInitiateResponse);
+    CrifResponse verify(BureauInitiateResponse bureauInitiateResponse);
 
     Map<String, String> getDocType();
 }
