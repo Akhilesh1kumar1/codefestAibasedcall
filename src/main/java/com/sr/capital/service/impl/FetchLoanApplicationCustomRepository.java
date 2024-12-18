@@ -204,7 +204,7 @@ new LoanDetailsDto(
         sql.append("DATE_FORMAT(las.created_at,'%Y-%m-%d %H:%i:%s') AS creditLineApprovalDate, la.updated_by AS approvedBy, ");
         sql.append("las.total_disbursed_amount AS disbursedAmount, ld.duration_at_disbursal AS durationAtDisbursal,ld.interest_rate_at_disbursal AS interestRateAtDisbursal ,");
         sql.append("DATE_FORMAT(ld.disbursed_date,'%Y-%m-%d') AS disbursedDate, ld.emi_amount AS emiAmount ,");
-        sql.append("las.total_recoverable_amount AS recoverableAmount, la.vendor_status AS vendorStatus ,ld.interest_amount_at_disbursal ");
+        sql.append("las.total_recoverable_amount AS recoverableAmount, la.vendor_status AS vendorStatus ,ld.interest_amount_at_disbursal ,la.state ");
         sql.append("FROM loan_application la ");
         sql.append("LEFT JOIN loan_application_status las ON la.id = las.loan_id ");
         sql.append("LEFT JOIN loan_disbursed ld ON la.id = ld.loan_id ");

@@ -60,7 +60,7 @@ public class IcrmLoanCompleteDetails {
 
    Long loanVendorId;
 
-   LoanStatus loanStatus;
+   String loanStatus;
 
    String externalLoanStatus;
 
@@ -116,6 +116,8 @@ public class IcrmLoanCompleteDetails {
     String emailId;
 
     String mobileNumber;
+
+    String state;
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
