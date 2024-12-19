@@ -33,7 +33,7 @@ public class ProviderHelperUtil {
 
     final ProviderConfigUtil providerConfigUtil;
 
-    public HttpResponse makeApiCall(Map<String,Object> params, String url, Object requestBody, Class responseClass) throws UnirestException, URISyntaxException {
+    public HttpResponse makeApiCall(Map<String,Object> parameters, String endPoint, Object body, Class responseClass) throws UnirestException, URISyntaxException {
 
         HttpResponse restResponseEntity=null;
         String method = GET;
@@ -41,33 +41,33 @@ public class ProviderHelperUtil {
         if(responseClass == null)
             responseClass = Object.class;
 
-        if(params.containsKey(METHOD)){
-            method = (String) params.get(METHOD);
-        }else if(params.containsKey(ProviderUrlConfigTypes.OTHER.name())){
-            HashMap otherParams = (HashMap) params.get(ProviderUrlConfigTypes.OTHER.name());
+        if(parameters.containsKey(METHOD)){
+            method = (String) parameters.get(METHOD);
+        }else if(parameters.containsKey(ProviderUrlConfigTypes.OTHER.name())){
+            HashMap otherParams = (HashMap) parameters.get(ProviderUrlConfigTypes.OTHER.name());
             if(otherParams.containsKey(METHOD)){
                 method = (String) otherParams.get(METHOD);
             }
         }
 
-         url = getUrlWithQueryparam(url,(Map<String, Object>) params.get(ProviderUrlConfigTypes.PATH_VARIABLE.name()), (Map<String, Object>) params.get(ProviderUrlConfigTypes.QUERY_PARAM.name()));
+         endPoint = getUrlWithQueryparam(endPoint,(Map<String, Object>) parameters.get(ProviderUrlConfigTypes.PATH_VARIABLE.name()), (Map<String, Object>) parameters.get(ProviderUrlConfigTypes.QUERY_PARAM.name()));
 
-        log.info("request body is {} ",requestBody);
+        log.info("request body is {} ",body);
         if (method != null && !method.isBlank()) {
 
             switch (method.toLowerCase()){
                 case GET:
-                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).get(url, responseClass);
+                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) parameters.get(ProviderUrlConfigTypes.HEADER.name())).get(endPoint, responseClass);
                     break;
                 case POST:
-                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).post(url, requestBody, responseClass);
+                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) parameters.get(ProviderUrlConfigTypes.HEADER.name())).post(endPoint, body, responseClass);
                     break;
                 case PUT:
-                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).logRequest(true).put(url, requestBody, responseClass);
+                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) parameters.get(ProviderUrlConfigTypes.HEADER.name())).logRequest(true).put(endPoint, body, responseClass);
 
             }
         } else {
-            restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).get(url, responseClass);
+            restResponseEntity = getInstance().withHeaders( (Map<String, String>) parameters.get(ProviderUrlConfigTypes.HEADER.name())).get(endPoint, responseClass);
 
         }
 

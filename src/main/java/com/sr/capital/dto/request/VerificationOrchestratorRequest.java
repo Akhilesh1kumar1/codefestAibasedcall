@@ -21,7 +21,7 @@ public class VerificationOrchestratorRequest {
 
     @Data
     @Builder
-    public static class RawRequest {
+    public static class  RawRequest {
         private VerificationType verificationType;
         private CallbackType callbackType;
         private Long entityId;

@@ -1,6 +1,7 @@
 package com.sr.capital.entity.mongo.kyc;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Field;
