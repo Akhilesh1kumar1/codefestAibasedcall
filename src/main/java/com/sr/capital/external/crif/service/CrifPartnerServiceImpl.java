@@ -67,7 +67,11 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
     @Override
     public Map<String, String> getDocType() {
-        return CrifDocumentType.getAllDocumentTypes().stream().collect(Collectors.toMap(CrifDocumentType::getDisplayName, CrifDocumentType::name));
+        Map<String, String> map = CrifDocumentType.getAllDocumentTypes().stream()
+                .collect(Collectors
+                        .toMap(CrifDocumentType::getDisplayName,
+                                Enum::name, (a, b) -> b, LinkedHashMap::new));
+        return map;
     }
 
     @Override

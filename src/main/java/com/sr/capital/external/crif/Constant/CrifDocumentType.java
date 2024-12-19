@@ -8,14 +8,14 @@ import java.util.List;
 @Getter
 public enum CrifDocumentType {
     PAN("Pan"),
+    UID("UID"),
     DRIVING_LICENCE("Driving Licence"),
-    VOTER("voter"),
+    VOTER("Voter"),
     PASSPORT("Passport"),
     RATION_CARD("Ration Card"),
-    UID("uid"),
-    OTHER("other"),
     NREGA("Nrega"),
-    CKYC("CKYC");
+    CKYC("CKYC"),
+    OTHER("Other");
 
     private final String displayName;
 
