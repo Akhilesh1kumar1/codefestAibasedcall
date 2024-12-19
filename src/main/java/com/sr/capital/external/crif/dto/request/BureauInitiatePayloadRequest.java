@@ -24,7 +24,6 @@ public class BureauInitiatePayloadRequest {
     String lastName;
     String gender;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-//    @NotNull(message = "DOB can not be null")
     String DOB;
     Integer ageAsOnToday;
     String maritalStatus;
@@ -32,11 +31,9 @@ public class BureauInitiatePayloadRequest {
     String mobile;
     Integer mob2;
     Integer mob3;
-//    @NotNull(message = " can not be null")
     String email;
     String email2;
 
-//    @NotNull(message = "pan can not be null")
     String pan;
     String dl;
     String voterId;
@@ -48,18 +45,12 @@ public class BureauInitiatePayloadRequest {
     String fatherName;
     String motherName;
     String spouseName;
-//    @NotNull(message = "address1 can not be null")
     String address1;
-//    @NotNull(message = "village1can not be null")
     String village1;
-//    @NotNull(message = "city1 can not be null")
     String city1;
-//    @NotNull(message = "state11 can not be null")
     String state1;
 
-//    @NotNull(message = "pin1 can not be null")
     String pin1;
-//    @NotNull(message = "country1 can not be null")
     String country1;
 
     String address2;
@@ -68,11 +59,8 @@ public class BureauInitiatePayloadRequest {
     String state112;
     String pin2;
     String country2;
-//    @NotNull(message = "customerId can not be null")
     String customerId;
-//    @NotNull(message = "productId can not be null")
     String productId;
-//    @NotNull(message = "consent can not be null")
     String consent;
     String nrega;
     String ckyc;

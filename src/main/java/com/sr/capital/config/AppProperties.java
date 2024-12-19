@@ -329,23 +329,6 @@ public class AppProperties {
     @Value("${app.web-url}")
     private String capitalWebUrl;
 
-    // CRIF Credential
-//
-//    @Value("${external.crif.account.id}")
-//    private String CrifAccountId;
-//
-//    @Value("${external.crif.api.key}")
-//    private String CrifApiKey;
-//
-//    @Value("${external.crif.enabled}")
-//    private Boolean CrifEnabled;
-//
-//    @Value("${external.crif.vendor-token}")
-//    private String CrifVendorToken;
-//
-//    @Value("${external.crif.vendor-code}")
-//    private String CrifVendorCode;
-
     @Value("${external.crif.access-code.user}")
     private String CrifUser;
     @Value("${external.crif.access-code.password}")

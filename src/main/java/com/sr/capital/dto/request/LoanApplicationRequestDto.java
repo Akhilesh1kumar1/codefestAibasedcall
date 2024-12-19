@@ -49,4 +49,6 @@ public class LoanApplicationRequestDto extends BaseRequest {
     String utmTerm;
 
     String utmContent;
+
+    String internalLoanId;
 }

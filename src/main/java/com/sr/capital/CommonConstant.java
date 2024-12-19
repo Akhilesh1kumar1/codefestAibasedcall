@@ -12,7 +12,7 @@ public class CommonConstant {
             new AntPathRequestMatcher("/*/health/**"),
             new AntPathRequestMatcher("/*/cache/**"),
             new AntPathRequestMatcher("/**/external/**"),
-            new AntPathRequestMatcher("/*/api/v1/kyc/doc/upload_and_extract"),
+            new AntPathRequestMatcher("/api/v1/kyc/doc/upload_and_extract/**"),
             new AntPathRequestMatcher("/**/icrm/**")
 
     );

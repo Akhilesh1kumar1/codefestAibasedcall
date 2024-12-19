@@ -26,10 +26,11 @@ public class AESUtil {
      * @return The encrypted string in Base64 encoding.
      * @throws Exception If encryption fails.
      */
-    public static String encrypt(String plainText, String key) throws Exception {
-        SecretKeySpec secretKey = new SecretKeySpec(Base64.getDecoder().decode(key), CommonConstant.ALGORITHM);
-        Cipher cipher = Cipher.getInstance(CommonConstant.ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+    public static String encrypt(String plainText,String secretKey, String dynamicIv, String aesIVKey) throws Exception {
+        SecretKey secretKeySpec = new SecretKeySpec(Base64.getDecoder().decode(secretKey), "AES");
+        Cipher cipher = Cipher.getInstance(CommonConstant.AES_CBC_PADDING);
+        IvParameterSpec ivParameterSpec = new IvParameterSpec((Base64Util.decode(aesIVKey) + dynamicIv).getBytes(StandardCharsets.UTF_8));
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
         byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
@@ -77,13 +78,7 @@ public class AESUtil {
         String requestId = httpRequest.getHeader("request-id");
 
         if (requestId == null) {
-            // If 'request-id' is not present, return an error response
-            try {
-                httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing 'request-id' header");
-                return null;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            return "1234";
         } else {
             return requestId.substring(requestId.length() - 4);
         }

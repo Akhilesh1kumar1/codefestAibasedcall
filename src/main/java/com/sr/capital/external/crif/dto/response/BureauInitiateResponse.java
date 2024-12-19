@@ -28,6 +28,7 @@ public class BureauInitiateResponse implements Serializable {
 
     private String status;
 
+    @JsonProperty("userAnswer")
     private String userAnswer;
 
     private Object data;

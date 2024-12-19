@@ -6,6 +6,9 @@ import com.sr.capital.util.AESUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jodd.net.HttpMethod;
+import jodd.net.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -28,13 +31,18 @@ public class PathParamDecryptionFilter implements Filter {
 
         if (request instanceof HttpServletRequest httpRequest && appProperties.getIsEncryptionEnabled().equals(CommonConstant.TRUE)) {
 
-            if(!CommonConstant.EXCLUDE_FROM_DECRYPTION.matches(httpRequest)) {
-                // Get the URI and decrypt path parameters if present
-                String decryptedPath = decryptPath(httpRequest.getRequestURI(), request, response);
+            if(!CommonConstant.EXCLUDE_FROM_DECRYPTION.matches(httpRequest) && httpRequest.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+                HttpServletRequestWrapper requestWrapper = null;
+                try {
+                    // Get the URI and decrypt path parameters if present
+                    String decryptedPath = decryptPath(httpRequest.getRequestURI(), request, response);
 
-                // Wrap the request with the modified URI
-                HttpServletRequestWrapper requestWrapper = new CustomHttpServletRequestWrapper(httpRequest, decryptedPath);
-
+                    // Wrap the request with the modified URI
+                    requestWrapper = new CustomHttpServletRequestWrapper(httpRequest, decryptedPath);
+                } catch (Exception e) {
+                    RequestDataFilter.handleErrorResponse((HttpServletResponse) response, HttpStatus.error400().status(),"Failed while description");
+                    return;
+                }
                 // Proceed with the filter chain using the modified request
                 chain.doFilter(requestWrapper, response);
                 return;

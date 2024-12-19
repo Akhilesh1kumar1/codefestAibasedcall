@@ -78,6 +78,9 @@ public class LoanApplication extends UUIDBaseEntity{
     @Column(name = "utm_content")
     String utmContent;
 
+    @Column(name = "internal_loan_id")
+    String internalLoanId;
+
     public static LoanApplication mapLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto){
         LoanApplication.LoanApplicationBuilder builder = LoanApplication.builder()
                 .srCompanyId(loanApplicationRequestDto.getSrCompanyId())
@@ -106,6 +109,8 @@ public class LoanApplication extends UUIDBaseEntity{
 
         LoanApplication loanApplication = builder.build();
         loanApplication.setIsEnabled(true);
+        if(loanApplicationRequestDto.getInternalLoanId()!=null)
+           loanApplication.setInternalLoanId(loanApplicationRequestDto.getInternalLoanId());
         return loanApplication;
     }
 

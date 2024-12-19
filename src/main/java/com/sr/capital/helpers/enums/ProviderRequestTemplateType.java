@@ -21,5 +21,9 @@ public enum ProviderRequestTemplateType {
     ACCEPT_SECTION_OFFER,
     UPDATE_LEAD,
     FETCH_KFS,
-    REJECT_OFFER;
+    REJECT_OFFER,
+
+    CRIF_STAGE_1,
+    CRIF_STAGE_2,
+    CRIF_STAGE_3;
 }

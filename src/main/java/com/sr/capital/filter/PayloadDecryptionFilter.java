@@ -5,6 +5,9 @@ import com.sr.capital.config.AppProperties;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jodd.net.HttpMethod;
+import jodd.net.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -31,14 +34,20 @@ public class PayloadDecryptionFilter implements Filter {
 
         if (request instanceof HttpServletRequest httpRequest && appProperties.getIsEncryptionEnabled().equals(CommonConstant.TRUE) ) {
 
-            if(!CommonConstant.EXCLUDE_FROM_DECRYPTION.matches(httpRequest)) {
+            if(!CommonConstant.EXCLUDE_FROM_DECRYPTION.matches(httpRequest) && httpRequest.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+                HttpServletRequestWrapper requestWrapper = null;
+                try {
                 String iv = getIvValue(request, response);
                 // Decrypt the request payload
                 String decryptedRequestBody = decryptRequest(httpRequest, iv);
 
                 // Wrap the request with the decrypted payload
-                HttpServletRequestWrapper requestWrapper = new CustomHttpServletRequestWrapper(httpRequest, decryptedRequestBody);
+                requestWrapper = new CustomHttpServletRequestWrapper(httpRequest, decryptedRequestBody);
 
+            } catch (Exception e) {
+                RequestDataFilter.handleErrorResponse((HttpServletResponse) response, HttpStatus.error400().status(),"Failed while description");
+                return;
+            }
                 // Proceed with the filter chain using the modified request
                 chain.doFilter(requestWrapper, response);
                 return;

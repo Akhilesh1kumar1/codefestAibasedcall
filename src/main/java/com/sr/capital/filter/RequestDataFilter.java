@@ -2,10 +2,12 @@ package com.sr.capital.filter;
 
 import com.omunify.interceptor.utils.ThreadContextUtil;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.service.AuthenticatorService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jodd.net.HttpStatus;
 import lombok.AccessLevel;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
@@ -50,7 +52,7 @@ public class RequestDataFilter implements Filter {
 
     @SneakyThrows
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         if (isPreflightRequest(request)) {
@@ -58,7 +60,13 @@ public class RequestDataFilter implements Filter {
             return;
         }
         if(!PUBLIC_URLS.matches(request))
-           authenticatorService.authenticateRequest(request);
+            try {
+                authenticatorService.authenticateRequest(request);
+            } catch (CustomException customException) {
+                handleErrorResponse(response, HttpStatus.error401().status(), "Authentication Failed");
+                return;
+            }
+
         if (!validateRequestHeaders(request, response)) {
             return;
         }
@@ -66,6 +74,11 @@ public class RequestDataFilter implements Filter {
         chain.doFilter(req, res);
     }
 
+    public static void handleErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\": \"" + message + "\", \"status\": " + status + "}");
+    }
     private void setRequestDataHeaders(HttpServletRequest request) {
         String correlationId = request.getHeader(CORRELATION_HEADER);
         setCorrelationId(correlationId);

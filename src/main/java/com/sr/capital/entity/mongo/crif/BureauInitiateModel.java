@@ -1,14 +1,17 @@
 package com.sr.capital.entity.mongo.crif;
 
+import com.sr.capital.config.EncryptField;
 import com.sr.capital.entity.mongo.kyc.BaseDoc;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.List;
+
 @Data
 @Builder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
-@Document("bureau-init-details")
+@Document("bureau_init_details")
 public class BureauInitiateModel extends BaseDoc {
 
     @Field("redirect_url")
@@ -16,6 +19,10 @@ public class BureauInitiateModel extends BaseDoc {
 
     @Field("report_id")
     private String reportId;
+
+    @Field("mobile")
+    @EncryptField
+    private String mobile;
 
     @Field("order_id")
     private String orderId;
@@ -25,6 +32,9 @@ public class BureauInitiateModel extends BaseDoc {
 
     @Field("status_desc")
     private String statusDesc;
+
+    @Field("sr_company_id")
+    private String srCompanyId;
 
     @Field("request_payload")
     private String requestPayload;
@@ -51,7 +61,7 @@ public class BureauInitiateModel extends BaseDoc {
     private String userAnswer;
 
     @Field("option_list")
-    private String optionList;
+    private List<String> optionList;
 
     @Field("button_behavior")
     private String buttonBehavior;

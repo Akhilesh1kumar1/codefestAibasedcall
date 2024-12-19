@@ -16,7 +16,7 @@ repositories {
 	mavenCentral()
 	maven {
 		//url 'https://o2-stage-nexus.kartrocket.in/repository/maven-releases'
-		url 'https://sr-o2-nexus.shiprocket.in/repository/maven-releases'
+		url 'https://sr-nexus.shiprocket.in/repository/maven-releases'
 	}
 	/*maven {
 		url 'https://o2prod-nexus.shiprocket.com/repository/maven-releases'

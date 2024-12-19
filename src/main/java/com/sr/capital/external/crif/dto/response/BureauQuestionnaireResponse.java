@@ -7,54 +7,51 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BureauQuestionnaireResponse implements Serializable {
 
-    @JsonProperty("redirectURL")
-    private String redirectURL;
-
-    @JsonProperty("orderId")
-    private String orderId;
+    @JsonProperty("buttonbehaviour")
+    private String buttonBehaviour;
 
     @JsonProperty("reportId")
     private String reportId;
 
-    private String accessCode;
+    @JsonProperty("question")
+    private String question;
 
     @JsonProperty("statusDesc")
     private String statusDesc;
 
+    @JsonProperty("orderId")
+    private String orderId;
+
+    @JsonProperty("optionsList")
+    private List<String> optionList;
+
+    @JsonProperty("status")
     private String status;
 
-    private String question;
-
-    @JsonProperty("optionList")
-    private String optionList;
-
-    @JsonProperty("buttonBehavior")
-    private String buttonBehavior;
-
-    @Override
-    public String toString() {
-        return "BureauQuestionnaireResponse{" +
-                "redirectUrl='" + redirectURL + '\'' +
-                ", orderId='" + orderId + '\'' +
-                ", reportId='" + reportId + '\'' +
-                ", accessCode='" + accessCode + '\'' +
-                ", statusDesc='" + statusDesc + '\'' +
-                ", status='" + status + '\'' +
-                ", question='" + question + '\'' +
-                ", optionList='" + optionList + '\'' +
-                ", buttonBehavior='" + buttonBehavior + '\'' +
-                ", completedAt='" + completedAt + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                '}';
-    }
+    @JsonProperty("redirectURL")
+    private String redirectURL;
 
     private String completedAt;
 
     private String createdAt;
+
+    @Override
+    public String toString() {
+        return "BureauQuestionnaireResponse{" +
+                "buttonBehaviour='" + buttonBehaviour + '\'' +
+                ", reportId='" + reportId + '\'' +
+                ", question='" + question + '\'' +
+                ", orderId='" + orderId + '\'' +
+                ", optionsList=" + optionList +
+                ", status='" + status + '\'' +
+                '}';
+    }
+
 }

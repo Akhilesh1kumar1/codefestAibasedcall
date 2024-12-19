@@ -5,6 +5,7 @@ import com.sr.capital.external.common.StatusMapperInterface;
 import com.sr.capital.external.flexi.constants.Checkpoint;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.Screens;
+import com.sr.capital.util.LoggerUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -16,6 +17,8 @@ import java.util.Map;
 
 @Service
 public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
+
+    LoggerUtil loggerUtil =LoggerUtil.getLogger(FlexiStatusMapperServiceImpl.class);
     @Override
     public LoanStatusUpdateWebhookDto mapStatus(Object loanApplicationDetails) {
 
@@ -47,9 +50,12 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
         if (!CollectionUtils.isEmpty(dto.getCheckpoints())) {
             for (LoanStatusUpdateWebhookDto.Checkpoint checkpoint : dto.getCheckpoints()) {
                 if(Checkpoint.isValuePresent(checkpoint.getCheckpoint())) {
+                    loggerUtil.info("checkpoint "+checkpoint.getCheckpoint()+" state "+checkpoint.getState());
                     Boolean currentStateFound = processCheckpoint(dto, checkpoint);
-                    if (currentStateFound)
+                    if (currentStateFound) {
+                        loggerUtil.info("found final status in  checkpoint "+checkpoint.getCheckpoint()+" state "+checkpoint.getState());
                         return;
+                    }
                 }
             }
         }
@@ -118,6 +124,9 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                 if ("ERRORED".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.PENDING_DOCUMENT, LoanStatus.LEAD_DOCUMENT_UPLOAD);
                     currentStateFound =true;
+                }else if("SUCCESS".equalsIgnoreCase(state)){
+                    setInternalState(dto, Screens.DOCUMENT_VERIFICATION, LoanStatus.LEAD_PROCESSING);
+                    currentStateFound =true;
                 }
                 break;
             case DOCUMENTS_VERIFIED:
@@ -129,7 +138,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                     currentStateFound =true;
                 }
                 break;
-            case LOAN_APPROVED:
+           /* case LOAN_APPROVED:
                 if ("SUCCESS".equalsIgnoreCase(state)) {
                     setInternalState(dto, Screens.LOAN_SANCTION, LoanStatus.LOAN_GENERATE);
                     currentStateFound =true;
@@ -137,7 +146,7 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
                     setInternalState(dto, Screens.DOCUMENT_VERIFICATION, LoanStatus.LEAD_PROCESSING);
                     currentStateFound =true;
                 }
-                break;
+                break;*/
             default:
                 break;
         }

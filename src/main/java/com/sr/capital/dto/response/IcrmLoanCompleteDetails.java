@@ -49,7 +49,7 @@ public class IcrmLoanCompleteDetails {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime creditLineApprovalDate;
 
-   UUID internalLoanId;
+   String internalLoanId;
 
    String externalLoanId;
 
@@ -60,7 +60,7 @@ public class IcrmLoanCompleteDetails {
 
    Long loanVendorId;
 
-   LoanStatus loanStatus;
+   String loanStatus;
 
    String externalLoanStatus;
 
@@ -116,6 +116,8 @@ public class IcrmLoanCompleteDetails {
     String emailId;
 
     String mobileNumber;
+
+    String state;
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
