@@ -25,12 +25,6 @@ import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUES
 @RestController
 public class StaticJsonController {
 
-//    @Value("classpath:static/stage2.json")
-//    private Resource stage2;
-//
-//    @Value("classpath:static/stage3.json")
-//    private Resource stage3;
-
     private final String stage2 = "{\n" +
             "  \"buttonBehaviour\": \"R\",\n" +
             "  \"reportId\": \"CCR190829CR352089576\",\n" +
@@ -5477,9 +5471,6 @@ public class StaticJsonController {
     @PostMapping("/api/stage2")
     public GenericResponse<CrifResponse> getStage1() throws IOException {
 
-//        String content = new String(Files.readAllBytes(stage2.getFile().toPath()));
-
-
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> questionnaireResponse = objectMapper.readValue(stage2, new TypeReference<Map<String, Object>>() {});
 
@@ -5497,8 +5488,6 @@ public class StaticJsonController {
 
     @PostMapping("/api/stage3")
     public GenericResponse<CrifResponse> getStage2() throws IOException {
-
-//        String content = new String(Files.readAllBytes(stage3.getFile().toPath()));
 
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> reportContent = objectMapper.readValue(stage3_1 + stage3_2 + stage3_3 + stage3_4, new TypeReference<Map<String, Object>>() {});

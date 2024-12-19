@@ -1,10 +1,6 @@
 package com.sr.capital.external.crif.util;
 
-import com.sr.capital.config.AppProperties;
-import com.sr.capital.external.crif.dto.request.AccessCodeDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -41,11 +37,6 @@ public class StringUtils {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Error accessing fields", e);
         }
-
-        // Remove the last trailing pipe if any
-//        if (result.length() > 0 && result.charAt(result.length() - 1) == '|') {
-//            result.deleteCharAt(result.length() - 1);
-//        }
 
         return result.toString();
     }

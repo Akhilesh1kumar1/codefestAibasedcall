@@ -399,13 +399,6 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
 
-//    @Override
-//    public BureauQuestionnaireResponse authenticationQuestionnaire(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) {
-//        setDummyData(bureauQuestionnairePayloadRequest);
-//        updateStaticData(bureauQuestionnairePayloadRequest);
-//        return authenticateQuestion(bureauQuestionnairePayloadRequest);
-//    }
-
 
     public BureauQuestionnaireResponse authenticateQuestion(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) throws CRIFApiException {
 
@@ -508,7 +501,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     .reportId(bureauReportPayloadRequest.getReportId())
                     .srCompanyId(RequestData.getTenantId())
                     .mobile(mobile)
-                    .validTill(StringUtils.getTimeAfterSixMonths())
+                    .validTill(StringUtils.getTimeAfterOneMonths())
                     .build();
 
             crifReportRepo.save(crifReport);

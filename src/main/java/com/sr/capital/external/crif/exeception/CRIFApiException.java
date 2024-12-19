@@ -10,13 +10,11 @@ public class CRIFApiException extends Exception {
     private final String errorDetails;
 
     public CRIFApiException(String message, String statusCode, String errorDetails) {
-//        super(message);
         this.statusCode = statusCode;
         this.errorDetails = errorDetails;
     }
 
     public CRIFApiException(String message) {
-//        super(message);
         this.statusCode = "200";
         this.errorDetails = "";
     }
