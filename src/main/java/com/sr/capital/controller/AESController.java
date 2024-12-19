@@ -15,8 +15,8 @@ public class AESController {
     private final AppProperties appProperties;
 
     @PostMapping("/encrypt")
-    public ResponseEntity<String> encryptPayload(String payload,
-                                                 String key) {
+    public ResponseEntity<String> encryptPayload(@RequestParam String key,
+                                                 @RequestBody String payload) {
         try {
             String encryptedData = AESUtil.encrypt(payload, appProperties.getAesSecretKey(), key, appProperties.getAesIVKey());
             return ResponseEntity.ok(encryptedData);
@@ -26,8 +26,8 @@ public class AESController {
     }
 
     @PostMapping("/decrypt")
-    public ResponseEntity<String> decryptPayload(String payload,
-                                                 String key) {
+    public ResponseEntity<String> decryptPayload(@RequestParam String key,
+                                                 @RequestBody String payload) {
         try {
             String decryptedData = AESUtil.decrypt(payload.replace("@", "/"), appProperties.getAesSecretKey(), key, appProperties.getAesIVKey());
 
