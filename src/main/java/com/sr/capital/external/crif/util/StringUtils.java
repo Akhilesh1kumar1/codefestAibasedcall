@@ -55,12 +55,12 @@ public class StringUtils {
      *
      * @return A string representing the date-time 6 months from now in the format "yyyy-MM-dd HH:mm:ss"
      */
-    public static String getTimeAfterSixMonths() {
+    public static String getTimeAfterOneMonths() {
         // Get the current date-time
         LocalDateTime currentTime = LocalDateTime.now();
 
         // Calculate the date-time after 6 months
-        LocalDateTime sixMonthsLater = currentTime.plusMonths(6);
+        LocalDateTime sixMonthsLater = currentTime.plusMonths(1);
 
         // Format and return the result as a string
         return sixMonthsLater.format(FORMATTER);
