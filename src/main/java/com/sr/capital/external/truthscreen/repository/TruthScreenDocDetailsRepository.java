@@ -7,11 +7,13 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface TruthScreenDocTypeRepository extends MongoRepository<TruthScreenDocDetails<?>,String> {
+import java.util.Optional;
 
-    @Query("{ 'sr_company_id': ?0, 'truth_doc_type': ?1}")
-    TruthScreenDocDetails<?> findBySrCompanyIdAndDocType(String tenantId, TruthScreenDocType docType);
+@Repository
+public interface TruthScreenDocDetailsRepository extends MongoRepository<TruthScreenDocDetails<?>,String> {
+
+    //@Query("{ 'sr_company_id': ?0, 'truth_doc_type': ?1}")
+    TruthScreenDocDetails<?> findBySrCompanyIdAndTruthScreenDocType(String srCompanyId, TruthScreenDocType truthScreenDocType);
 
 
 
