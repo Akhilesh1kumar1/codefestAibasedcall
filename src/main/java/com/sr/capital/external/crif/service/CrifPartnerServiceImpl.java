@@ -1,5 +1,6 @@
 package com.sr.capital.external.crif.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.crif.BureauInitiateModel;
@@ -52,7 +53,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final CrifReportRepo crifReportRepo;
     private final CrifReportModelHelper crifReportModelHelper;
     private final RedissonClient redissonClient;
-
+    private final ObjectMapper mapper;
     @Override
     public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException {
 
@@ -93,7 +94,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         if (status.equals(CrifStatusCode.S02.name())) {
             throw new CustomException("You have exceed the limit");
         }
-        return status != null && (status.equals(S01.name()) || status.equals(S10.name()));
+        return status.equals(S01.name()) || status.equals(S10.name());
     }
     @Override
     public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException {
@@ -423,13 +424,15 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 appProperties.getCrifBaseUri(),
                 appProperties.getCrifExtractStage2Endpoint());
 
-        BureauQuestionnaireResponse bureauQuestionnaireResponse = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF,
+        Object object = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF,
                 appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
                 HttpMethod.POST, ServiceName.CRIF.getName(),
                 header, null,
-                requestPayload, BureauQuestionnaireResponse.class);
+                requestPayload, Object.class);
 
+        BureauQuestionnaireResponse bureauQuestionnaireResponse = null;
 
+        bureauQuestionnaireResponse = mapper.convertValue(object, BureauQuestionnaireResponse.class);
 
         if (bureauQuestionnaireResponse != null) {
             log.info("status {} , reportId {}, orderId {}, redirectUrl {}, Question {}, buttonBehavior {}, optionList {}",
