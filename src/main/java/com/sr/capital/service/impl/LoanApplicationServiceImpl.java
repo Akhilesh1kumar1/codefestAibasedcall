@@ -12,7 +12,6 @@ import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.Pincode;
-import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
@@ -65,7 +64,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         if(loanApplicationRequestDto.getLoanId()!=null){
             loanApplicationRequestDto.setLoanStatus(LoanStatus.LEAD_VERIFIED);
             loanApplication = loanApplicationRepository.findById(loanApplicationRequestDto.getLoanId()).orElse(null);
-              LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
+             LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
         }else {
             loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
             loanApplication = loanApplicationRepository.save(loanApplication);
@@ -122,6 +121,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     public LoanApplication getLoanApplicationById(UUID loanApplicationId) {
         return loanApplicationRepository.findById(loanApplicationId).orElse(null);
     }
+
+    @Override
+    public LoanApplication getLoanApplicationByInternalLoanId(String loanApplicationId) {
+        return loanApplicationRepository.findByInternalLoanId(loanApplicationId);
+
+    }
+
 
     @Override
     public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException, IOException {

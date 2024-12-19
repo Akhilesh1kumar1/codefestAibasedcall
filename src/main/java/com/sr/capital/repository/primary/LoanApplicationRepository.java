@@ -61,4 +61,6 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
                                              @Param("endDate") LocalDateTime endDate,@Param("loanStatuses") List<LoanStatus> loanStatuses,
                                              Pageable pageable);
 
+    LoanApplication findByInternalLoanId(String internalLoanId);
+
 }

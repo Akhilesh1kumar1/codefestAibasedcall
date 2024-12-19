@@ -196,7 +196,7 @@ new LoanDetailsDto(
     public List<Object[]> findLoanDetails(IcrmLoanRequestDto icrmLoanRequestDto) {
         // Base native query
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT la.id AS loanId, la.sr_company_id AS srCompanyId, la.loan_vendor_id AS loanVendorId, ");
+        sql.append("SELECT la.internal_loan_id AS internalLoanId, la.sr_company_id AS srCompanyId, la.loan_vendor_id AS loanVendorId, ");
         sql.append(" la.loan_status AS loanStatus,la.loan_amount_requested AS loanAmountRequested, ");
         sql.append("la.loan_type AS loanType,DATE_FORMAT(la.created_at,'%Y-%m-%d %H:%i:%s') as leadCreatedAt, las.loan_duration AS loanDuration,la.external_loan_id ,");
         sql.append("las.id AS loanApplicationStatusId, ");
@@ -204,7 +204,7 @@ new LoanDetailsDto(
         sql.append("DATE_FORMAT(las.created_at,'%Y-%m-%d %H:%i:%s') AS creditLineApprovalDate, la.updated_by AS approvedBy, ");
         sql.append("las.total_disbursed_amount AS disbursedAmount, ld.duration_at_disbursal AS durationAtDisbursal,ld.interest_rate_at_disbursal AS interestRateAtDisbursal ,");
         sql.append("DATE_FORMAT(ld.disbursed_date,'%Y-%m-%d') AS disbursedDate, ld.emi_amount AS emiAmount ,");
-        sql.append("las.total_recoverable_amount AS recoverableAmount, la.vendor_status AS vendorStatus ,ld.interest_amount_at_disbursal ");
+        sql.append("las.total_recoverable_amount AS recoverableAmount, la.vendor_status AS vendorStatus ,ld.interest_amount_at_disbursal ,la.state ");
         sql.append("FROM loan_application la ");
         sql.append("LEFT JOIN loan_application_status las ON la.id = las.loan_id ");
         sql.append("LEFT JOIN loan_disbursed ld ON la.id = ld.loan_id ");
@@ -251,6 +251,11 @@ new LoanDetailsDto(
 
         }
 
+        if(icrmLeadRequestDto.getInternalLoanId()!=null){
+            conditions.add("la.internal_loan_id = :internalLoanId");
+
+        }
+
         // Equals condition for externalLoanIdOfVendor
         if (icrmLeadRequestDto.getExternalLoanIdOfVendor() != null) {
             conditions.add("la.external_loan_id = :externalLoanIdOfVendor");
@@ -290,6 +295,10 @@ new LoanDetailsDto(
         if(icrmLeadRequestDto.getLoanId()!=null){
             query.setParameter("loanId", icrmLeadRequestDto.getLoanId());
 
+        }
+
+        if(icrmLeadRequestDto.getInternalLoanId()!=null){
+            query.setParameter("internalLoanId",icrmLeadRequestDto.getInternalLoanId());
         }
         if (icrmLeadRequestDto.getExternalLoanIdOfVendor() != null) {
             query.setParameter("externalLoanIdOfVendor", icrmLeadRequestDto.getExternalLoanIdOfVendor());
