@@ -1,5 +1,6 @@
 package com.sr.capital.entity.primary;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.helpers.enums.LoanStatus;
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.FieldNameConstants;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -80,6 +82,12 @@ public class LoanApplication extends UUIDBaseEntity{
 
     @Column(name = "internal_loan_id")
     String internalLoanId;
+
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "loan_submitted_at")
+    private LocalDateTime loanSubmissionTime;
 
     public static LoanApplication mapLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto){
         LoanApplication.LoanApplicationBuilder builder = LoanApplication.builder()
