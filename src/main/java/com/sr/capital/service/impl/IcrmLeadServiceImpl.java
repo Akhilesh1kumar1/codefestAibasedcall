@@ -401,7 +401,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     private void setLoanApplicationDetails(LoanApplication loanApplication, IcrmLoanResponseDto icrmLoanResponseDto) {
        IcrmLoanCompleteDetails icrmLoanCompleteDetails = IcrmLoanCompleteDetails.builder().internalLoanId(loanApplication.getInternalLoanId()).loanVendorId(loanApplication.getLoanVendorId())
-               .updatedAt(loanApplication.getAuditData().getUpdatedAt()).loanType(loanApplication.getLoanType()).loanStatus(loanApplication.getLoanStatus().name()).createdAt(loanApplication.getAuditData().getCreatedAt()).dateOfInitiation(loanApplication.getAuditData().getCreatedAt()).externalLoanId(loanApplication.getVendorLoanId()).vendorStatus(loanApplication.getVendorStatus()).build();
+               .updatedAt(loanApplication.getAuditData().getUpdatedAt()).loanType(loanApplication.getLoanType()).loanStatus(loanApplication.getLoanStatus().name()).createdAt(loanApplication.getAuditData().getCreatedAt()).dateOfLeadSubmission(loanApplication.getLoanSubmissionTime()).dateOfInitiation(loanApplication.getAuditData().getCreatedAt()).externalLoanId(loanApplication.getVendorLoanId()).vendorStatus(loanApplication.getVendorStatus()).build();
        icrmLoanResponseDto.getCompleteDetails().add(icrmLoanCompleteDetails);
     }
 
