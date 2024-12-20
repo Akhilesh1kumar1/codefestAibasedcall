@@ -164,8 +164,8 @@ external:
     vendor-username: ${AUTHBRIDGE:test@shiprocket.com}
     base:
       url: https://www.truthscreen.com
-    idsearch:
-      url: api/v2.2/idseach
+    idsearch-url: /v1/apicall/nid/idsearch
+
   karza:
     enabled: false
     vendor-token: ${KARZA_VENDOR_TOKEN:test}

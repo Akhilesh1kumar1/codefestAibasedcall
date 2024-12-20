@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 class TestAuthController {
 
     final AppProperties appProperties;
-    private final TestEncryptionService encryptionService;
+    //private final TestEncryptionService encryptionService;
 
 
     @PostMapping("/encrypt")
@@ -24,14 +24,9 @@ class TestAuthController {
     }
 
     @PostMapping("/decrypt")
-    public TestEncryptRequestDto decryptResponse(@RequestBody TestDecryptRequestDto encryptedResponse) throws Exception {
+    public TestDecryptResponseDto decryptResponse(@RequestBody TestDecryptRequestDto encryptedResponse) throws Exception {
         //String iv = TruthScreenUtility.getIV();
-        TestEncryptRequestDto encryptedData = TruthScreenUtility.decrypt(appProperties.getAuthBridgePassword(),encryptedResponse.getResponseData(), TestEncryptRequestDto.class);
+        TestDecryptResponseDto encryptedData = TruthScreenUtility.decrypt(appProperties.getAuthBridgePassword(),encryptedResponse.getResponseData(), TestDecryptResponseDto.class);
         return encryptedData;
-    }
-
-    @GetMapping("/HI")
-    public String SAY(){
-        return "hoooooooo";
     }
 }

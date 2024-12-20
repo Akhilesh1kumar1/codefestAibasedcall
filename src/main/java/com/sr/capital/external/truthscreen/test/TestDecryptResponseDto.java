@@ -1,17 +1,14 @@
 package com.sr.capital.external.truthscreen.test;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+
+import java.util.Map;
+
+@Data
 public class TestDecryptResponseDto {
-    private String decryptedResponse;
+    private Map<String, Object> msg;
+    private int status;
 
-    public TestDecryptResponseDto(String decryptedResponse) {
-        this.decryptedResponse = decryptedResponse;
-    }
 
-    public String getDecryptedResponse() {
-        return decryptedResponse;
-    }
-
-    public void setDecryptedResponse(String decryptedResponse) {
-        this.decryptedResponse = decryptedResponse;
-    }
 }

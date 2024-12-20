@@ -26,7 +26,7 @@ public class TruthScreenDocDetails<T> extends BaseDoc {
     @Field("final_ts_trans_id")
     private String finalTsTransId;
 
-    @Field("truth_doc_type")
+    @Field("truth_screen_doc_type")
     private TruthScreenDocType truthScreenDocType;
 
     @Field("details")

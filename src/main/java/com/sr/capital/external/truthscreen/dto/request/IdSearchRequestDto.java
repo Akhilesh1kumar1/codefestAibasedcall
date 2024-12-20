@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class IdSearchRequestDto {
-
+    private String transId;
     private int docType;
     private String docNumber;
 

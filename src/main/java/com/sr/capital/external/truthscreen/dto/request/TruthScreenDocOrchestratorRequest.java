@@ -27,6 +27,8 @@ public class TruthScreenDocOrchestratorRequest {
     @JsonProperty("sr_company_id")
     private String srCompanyId;
 
+    private String transId;
+
     private TruthScreenBaseRequest<?> truthScreenBaseRequest;
 
     private TruthScreenBaseResponse<?> truthScreenBaseResponse;

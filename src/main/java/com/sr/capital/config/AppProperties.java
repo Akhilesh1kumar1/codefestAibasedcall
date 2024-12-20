@@ -334,12 +334,12 @@ public class AppProperties {
     @Value("${external.authbridge.vendor-password}")
     private String authBridgePassword;
 
-    @Value("${external.authbridge.vendor-username")
+    @Value("${external.authbridge.vendor-username}")
     private String authBridgeUsername;
 
     @Value("${external.authbridge.base.url}")
     private String authBridgeBaseUrl;
 
-    @Value("${external.authbridge.idsearch.url")
+    @Value("${external.authbridge.idsearch-url}")
     private String authBridgeIdSearchUrl;
 }

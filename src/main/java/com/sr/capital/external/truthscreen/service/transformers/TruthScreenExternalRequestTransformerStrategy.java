@@ -7,7 +7,12 @@ import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+
+@Service
 public class TruthScreenExternalRequestTransformerStrategy {
 
     @Autowired
@@ -24,7 +29,13 @@ public class TruthScreenExternalRequestTransformerStrategy {
                 throw new RequestTransformerNotFoundException();
         }
 
-        return requestTransformer.transformRequest(request);
+        try {
+            return requestTransformer.transformRequest(request);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchProviderException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
