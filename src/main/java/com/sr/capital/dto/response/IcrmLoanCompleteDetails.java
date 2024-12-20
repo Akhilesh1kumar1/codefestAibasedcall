@@ -118,6 +118,9 @@ public class IcrmLoanCompleteDetails {
     String mobileNumber;
 
     String state;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime dateOfLeadSubmission;
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
