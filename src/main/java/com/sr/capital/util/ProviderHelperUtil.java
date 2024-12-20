@@ -98,7 +98,7 @@ public class ProviderHelperUtil {
         }catch (Exception ex){
             log.info("request body is {} ", body);
             log.error("External Call failed cause {}  message {} ",ex.getCause(),ex.getMessage());
-            throw new CustomException("Please try again.We are facing issue in updating the details to vendor.",HttpStatus.SERVICE_UNAVAILABLE);
+            throw new CustomException("We are currently experiencing issues in updating the details with the vendor. Please try again.",HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         return restResponseEntity;
