@@ -32,8 +32,7 @@ public class ExceptionLoggingAspect {
     }
 
     @Pointcut("execution(public * com.sr.capital.util.WebClientUtil.invokeWebClient*(..)) || " +
-            "execution(public * com.sr.capital.util.WebClientUtil.makeExternalCall*(..)) || " +
-            "execution(public * com.sr.capital.util.ProviderHelperUtil.makeApiCall*(..))")
+            "execution(public * com.sr.capital.util.WebClientUtil.makeExternalCall*(..))")
     public void allExternalCallsPointcut() {}
 
     @AfterThrowing(
@@ -42,12 +41,31 @@ public class ExceptionLoggingAspect {
             throwing = "ex")
     public <T> void logException1(ServiceName serviceName, String baseUri, String endPoint, HttpMethod method, String requestId,
                                   HttpHeaders httpHeaders, Map<String, String> parameters, Object body, Exception ex) {
-    System.out.println("Exception caught: " );
 
         ErrorLogs errorLogs = ErrorLogs.builder()
                 .header(httpHeaders != null ? httpHeaders.toSingleValueMap().toString() : "")
                 .endPoint(baseUri + endPoint)
                 .serviceName(serviceName.getName())
+                .requestBody(body)
+                .requestParam(parameters != null ? parameters.toString() : "")
+                .srCompanyId(RequestData.getTenantId())
+                .errorMessage(ex.getMessage())
+                .build();
+
+        exceptionLogRepository.saveErrorLogs(errorLogs);
+    }
+
+    @Pointcut("execution(public * com.sr.capital.util.ProviderHelperUtil.makeApiCall*(..))")
+    public void makeApiCallPointcut() {}
+
+    @AfterThrowing(
+            pointcut = "makeApiCallPointcut() && " +
+                    "args(parameters, endPoint,body, ..)",
+            throwing = "ex")
+    public <T> void logExceptionForMakeApiCall(Map<String, Object> parameters, String endPoint, Object body, Exception ex) {
+        ErrorLogs errorLogs = ErrorLogs.builder()
+                .endPoint(endPoint)
+                .serviceName("makeApiCall")
                 .requestBody(body)
                 .requestParam(parameters != null ? parameters.toString() : "")
                 .srCompanyId(RequestData.getTenantId())
