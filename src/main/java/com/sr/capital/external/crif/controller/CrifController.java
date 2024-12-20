@@ -1,13 +1,10 @@
 package com.sr.capital.external.crif.controller;
 
 import com.omunify.core.model.GenericResponse;
-import com.sr.capital.entity.mongo.crif.CrifUserModel;
 import com.sr.capital.exception.custom.CustomException;
-import com.sr.capital.external.crif.Constant.CrifDocumentType;
 import com.sr.capital.external.crif.dto.request.BureauInitiatePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
-import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.service.CrifPartnerService;
@@ -19,9 +16,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
@@ -51,7 +45,7 @@ public class CrifController {
     public ResponseEntity<?> crifStage3(@RequestBody BureauReportPayloadRequest bureauReportPayloadRequest
     ) throws CRIFApiException {
 
-        BureauReportResponse report = crifPartnerService.getReport(bureauReportPayloadRequest);
+        BureauReportResponse report = crifPartnerService.getReport(bureauReportPayloadRequest, false);
         ResponseEntity<BureauReportResponse> response = new ResponseEntity<>(report, HttpStatusCode.valueOf(200));
 
         return response;

@@ -15,6 +15,7 @@ public class Constant {
     public static final String ACCEPT = "Accept";
     public static final String REQUEST_TYPE = "requestType";
     public static final String AUTHORIZATION= "Authorization";
+    public static final String UPGRADE= "UPGRADE";
 
     public static final String PAN = "PAN";
     public static final String PASSPORT = "PASSPORT";

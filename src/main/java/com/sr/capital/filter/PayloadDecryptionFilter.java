@@ -45,7 +45,7 @@ public class PayloadDecryptionFilter implements Filter {
                 requestWrapper = new CustomHttpServletRequestWrapper(httpRequest, decryptedRequestBody);
 
             } catch (Exception e) {
-                RequestDataFilter.handleErrorResponse((HttpServletResponse) response, HttpStatus.error400().status(),"Failed while description");
+                RequestDataFilter.handleErrorResponse((HttpServletResponse) response, HttpStatus.error400().status(),"Failed while decryption");
                 return;
             }
                 // Proceed with the filter chain using the modified request

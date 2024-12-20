@@ -2,7 +2,6 @@ package com.sr.capital.external.crif.service;
 
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.dto.request.BureauInitiatePayloadRequest;
-import com.sr.capital.external.crif.dto.request.BureauQuestionnairePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
@@ -24,7 +23,7 @@ public interface CrifPartnerService {
 
     BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse) throws CRIFApiException;
 
-    BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest) throws CRIFApiException;
+    BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest, boolean isRefreshRequest) throws CRIFApiException;
 
     Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException;
 
