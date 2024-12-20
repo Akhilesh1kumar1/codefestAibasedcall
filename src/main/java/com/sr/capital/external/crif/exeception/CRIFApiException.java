@@ -11,11 +11,19 @@ public class CRIFApiException extends Exception {
 
     public CRIFApiException(String message, String statusCode, String errorDetails) {
         this.statusCode = statusCode;
-        this.errorDetails = errorDetails;
+        this.errorDetails = message + " " + errorDetails;
     }
 
     public CRIFApiException(String message) {
         this.statusCode = "200";
-        this.errorDetails = "";
+        this.errorDetails = message;
+    }
+
+    @Override
+    public String toString() {
+        return "External Api failed {" +
+                "statusCode : '" + statusCode + '\'' +
+                ", errorDetails : '" + errorDetails + '\'' +
+                '}';
     }
 }

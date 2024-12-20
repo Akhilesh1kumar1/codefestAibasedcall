@@ -493,19 +493,28 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 bureauInitiateModel.setQuestionnaireResponse(bureauQuestionnaireResponse.toString());
                 bureauInitiateModelRepo.save(bureauInitiateModel);
             }
-            String statusCode = bureauQuestionnaireResponse.getStatus();
-            if (statusCode.equals(CrifStatusCode.S08.name())) {
-                throw new CRIFApiException("External API returned an error",
-                        statusCode,
-                        statusCode.equals("401") ? CrifStatusCode.UNAUTHORIZED.getDescription() :
-                                CrifStatusCode.fromCode(statusCode).getDescription());
-            }
+
+            handleExceptions(bureauQuestionnaireResponse.getStatus());
+
         } else {
             throw new CRIFApiException("External API returned null");
         }
 
         return bureauQuestionnaireResponse;
     }
+
+        private void handleExceptions(String statusCode) throws CRIFApiException {
+                CrifStatusCode crifStatusCode = CrifStatusCode.fromCode(statusCode);
+
+                switch (crifStatusCode) {
+                    case S00, S02,S03, S04, S05, S07, S08, S09:
+                        throw new CRIFApiException(crifStatusCode.getDescription() + " " + statusCode);
+
+                    case UNAUTHORIZED:
+                        throw new SecurityException(crifStatusCode.getDescription());
+                }
+
+        }
 
     @Override
     public BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest, boolean isRefreshRequest) throws CRIFApiException {
@@ -541,6 +550,10 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             log.info("response {} ", bureauReportResponse);
 
             CrifReport crifReport = saveReportData(orderId, bureauReportResponse, bureauReportPayloadRequest);
+
+            if (bureauReportResponse instanceof LinkedHashMap<?,?> map && map.containsKey("status")) {
+                handleExceptions((String) map.get("Status"));
+            }
 
             return BureauReportResponse.builder()
                     .result(crifReport.getResult())
