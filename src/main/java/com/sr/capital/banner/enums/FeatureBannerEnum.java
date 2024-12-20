@@ -5,7 +5,7 @@ import java.util.List;
 
 public enum FeatureBannerEnum {
 
-    CRIF(Arrays.asList("/banner1.jpg", "/banner2.jpg"));
+    CRIF(Arrays.asList("img/Dtdc.png", "img/professional-logistics.png", "img/track_bg.png"));
     private final List<String> bannerUrls;
 
     FeatureBannerEnum(List<String> bannerUrls) {
