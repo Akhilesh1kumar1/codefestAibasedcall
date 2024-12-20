@@ -78,4 +78,18 @@ public class TestController {
 
         return ResponseBuilderUtil.getResponse(communicationService.testCommunicationRequestForEmailVerification(emailid,userName,"https://codebeautify.org/htmlviewer"), Constants.StatusEnum.SUCCESS,"",  HttpStatus.SC_OK);
     }
+
+    //TODO ::
+    @GetMapping("/redis-set-temp-value")
+    public GenericResponse test()  {
+
+        return ResponseBuilderUtil.getResponse(communicationService.setTempValueInRadis(),Constants.StatusEnum.SUCCESS,
+                "done",  HttpStatus.SC_OK);
+    }
+    @GetMapping("/redis-set-temp-value1")
+    public GenericResponse test1()  {
+
+        return ResponseBuilderUtil.getResponse(communicationService.getTempValueInRadis(),Constants.StatusEnum.SUCCESS,
+                "done",  HttpStatus.SC_OK);
+    }
 }

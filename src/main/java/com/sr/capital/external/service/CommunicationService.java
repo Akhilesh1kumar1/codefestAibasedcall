@@ -9,7 +9,10 @@ import com.sr.capital.external.client.SinfiniClient;
 import com.sr.capital.external.dto.request.CommunicationRequest;
 import com.sr.capital.external.dto.request.CommunicationRequestTemp;
 import com.sr.capital.external.dto.request.NetCoreSendEmailRequest;
+import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.CommunicationChannels;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -17,9 +20,13 @@ import org.springframework.util.ObjectUtils;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunicationService {
@@ -38,6 +45,9 @@ public class CommunicationService {
 
     @Autowired
     private SpringTemplateEngine templateEngine;
+
+    @Autowired
+    private RedissonClient redissonClient;
     private final String INVITATION_LINK = "INVITATION_LINK";
     private final String USER_NAME = "USER_NAME";
 
@@ -408,4 +418,21 @@ public class CommunicationService {
         return netCoreSendEmailRequest;
     }
 
+    public Object setTempValueInRadis() {
+        RMapCache<String, String> crifAccessToken1 = redissonClient.getMapCache("TEST_ENV_VARIABLE_1");
+        RMapCache<String, String> crifAccessToken2 = redissonClient.getMapCache("TEST_ENV_VARIABLE_2");
+        RMapCache<String, String> crifAccessToken3 = redissonClient.getMapCache("TEST_ENV_VARIABLE_3");
+        crifAccessToken1.put("TEST_ENV_VARIABLE_1", "Env var 1", 1, TimeUnit.MINUTES);
+        crifAccessToken2.put("TEST_ENV_VARIABLE_2", "Env var 2", 1, TimeUnit.MINUTES);
+        crifAccessToken3.put("TEST_ENV_VARIABLE_3", "Env var 3", 1, TimeUnit.MINUTES);
+
+        return null;
+    }
+
+    public Object getTempValueInRadis() {
+        RMapCache<String, String> crifAccessToken1 = redissonClient.getMapCache("TEST_ENV_VARIABLE_1");
+        RMapCache<String, String> crifAccessToken2 = redissonClient.getMapCache("TEST_ENV_VARIABLE_2");
+        RMapCache<String, String> crifAccessToken3 = redissonClient.getMapCache("TEST_ENV_VARIABLE_3");
+        return Arrays.asList(crifAccessToken1.get("TEST_ENV_VARIABLE_1"), crifAccessToken2.get("TEST_ENV_VARIABLE_2"), crifAccessToken3.get("TEST_ENV_VARIABLE_3" ));
+    }
 }
