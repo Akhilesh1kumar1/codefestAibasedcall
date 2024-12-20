@@ -13,6 +13,7 @@ import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.entity.primary.LoanDisbursed;
 import com.sr.capital.entity.primary.User;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.dto.request.CommunicationRequestTemp;
 import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.helpers.enums.*;
@@ -98,6 +99,10 @@ public class LoanStatusUpdateHandlerServiceImpl {
                             log.error("Error wile saving Disbursement Details {}", String.valueOf(e));
                             //Todo :: if required uncomment for disturb execution.
 //                        throw new RuntimeException(e);
+                        } catch (CustomException e) {
+                            //throw new RuntimeException(e);
+                            log.error("Error wile saving Disbursement Details {}", String.valueOf(e));
+
                         }
                         break;
                 }
