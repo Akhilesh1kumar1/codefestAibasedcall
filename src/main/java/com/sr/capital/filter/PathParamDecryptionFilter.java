@@ -40,7 +40,7 @@ public class PathParamDecryptionFilter implements Filter {
                     // Wrap the request with the modified URI
                     requestWrapper = new CustomHttpServletRequestWrapper(httpRequest, decryptedPath);
                 } catch (Exception e) {
-                    RequestDataFilter.handleErrorResponse((HttpServletResponse) response, HttpStatus.error400().status(),"Failed while description");
+                    RequestDataFilter.handleErrorResponse((HttpServletResponse) response, HttpStatus.error400().status(),"Failed while decryption");
                     return;
                 }
                 // Proceed with the filter chain using the modified request
