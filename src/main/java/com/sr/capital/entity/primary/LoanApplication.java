@@ -87,7 +87,7 @@ public class LoanApplication extends UUIDBaseEntity{
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "loan_submitted_at")
-    private LocalDateTime loanSubmissionTIme;
+    private LocalDateTime loanSubmissionTime;
 
     public static LoanApplication mapLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto){
         LoanApplication.LoanApplicationBuilder builder = LoanApplication.builder()
