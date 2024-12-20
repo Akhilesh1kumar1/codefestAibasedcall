@@ -59,7 +59,7 @@ public class TestController {
     public GenericResponse<Object> testPartnerTemplate(
             HttpServletRequest request,
             @PathVariable(name = "partner") String partner
-    ) throws InvalidCredentialsException {
+    ) throws InvalidCredentialsException, CustomException {
         servicesHandler.validateSelfSecret(request);
         return ResponseBuilderUtil.getResponse(
                 testService.testAccessToken(partner),
