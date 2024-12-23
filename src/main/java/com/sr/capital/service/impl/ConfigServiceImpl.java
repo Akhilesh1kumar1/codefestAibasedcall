@@ -9,6 +9,7 @@ import com.sr.capital.service.ConfigService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 
 import java.util.*;
@@ -30,22 +31,27 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public FeatureDetailResponseDto saveCompanyWithFeature(FeatureDetailRequestDto featureDetailRequestDto){
-        FeatureDetails featureDetails = featureDetailRepository.findBySrCompanyId(Long.parseLong(RequestData.getTenantId()));
-        List<String> cleanedFeatures = featureDetailRequestDto.getFeature().stream()
-                .filter(feature -> feature != null && !feature.isBlank())
-                .distinct()
-                .toList();
-        if(featureDetails == null){
-            featureDetails = new FeatureDetails();
-        }
-        featureDetails.setFeature(cleanedFeatures);
-        featureDetails.setSrCompanyId(Long.parseLong(RequestData.getTenantId()));
-        featureDetails = featureDetailRepository.save(featureDetails);
+    public FeatureDetailResponseDto saveCompanyWithFeature(List<FeatureDetailRequestDto> featureDetailRequestDtoList){
 
+        if(!CollectionUtils.isEmpty(featureDetailRequestDtoList)) {
+
+            featureDetailRequestDtoList.stream().forEach(featureDetailRequestDto-> {
+
+                FeatureDetails featureDetails = featureDetailRepository.findBySrCompanyId(featureDetailRequestDto.getSrCompanyId());
+                List<String> cleanedFeatures = featureDetailRequestDto.getFeature().stream()
+                        .filter(feature -> feature != null && !feature.isBlank())
+                        .distinct()
+                        .toList();
+                if (featureDetails == null) {
+                    featureDetails = new FeatureDetails();
+                }
+                featureDetails.setFeature(cleanedFeatures);
+                featureDetails.setSrCompanyId(featureDetailRequestDto.getSrCompanyId());
+                featureDetails = featureDetailRepository.save(featureDetails);
+            });
+
+        }
         return FeatureDetailResponseDto.builder()
-                .srCompanyId(featureDetails.getSrCompanyId())
-                .feature(featureDetails.getFeature())
                 .build();
     }
 
