@@ -6,28 +6,20 @@ import com.sr.capital.exception.custom.RequestTransformerNotFoundException;
 import com.sr.capital.external.truthscreen.adapter.TruthScreenAdapter;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
+import com.sr.capital.external.truthscreen.dto.response.IdSearchResponseDto;
 import com.sr.capital.external.truthscreen.dto.response.TruthScreenBaseResponse;
-import com.sr.capital.external.truthscreen.dto.request.AsyncRequestDto;
 import com.sr.capital.external.truthscreen.dto.request.IdSearchRequestDto;
-import com.sr.capital.external.truthscreen.dto.response.AsyncReponseDto;
 import com.sr.capital.external.truthscreen.entity.PanDetails;
 import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
-import com.sr.capital.external.truthscreen.enums.TruthScreenStatus;
-import com.sr.capital.external.truthscreen.repository.PanRepository;
 import com.sr.capital.external.truthscreen.repository.TruthScreenDocDetailsRepository;
 import com.sr.capital.external.truthscreen.service.PanService;
-
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenEntityConstructorStrategy;
+import com.sr.capital.external.truthscreen.service.strategy.TruthScreenIdSearchResponseStrategy;
 import com.sr.capital.external.truthscreen.service.transformers.TruthScreenExternalRequestTransformerStrategy;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,18 +28,16 @@ public class PanServiceImpl implements PanService {
 
     private final TruthScreenAdapter truthScreenAdapter;
 
-    private final PanRepository panRepository;
-
     private final TruthScreenExternalRequestTransformerStrategy externalRequestTransformerStrategy;
 
     private final TruthScreenDocDetailsRepository truthScreenDocDetailsRepository;
 
-    @Autowired
-    private TruthScreenEntityConstructorStrategy truthEntityConstructorStrategy;
+    private final TruthScreenIdSearchResponseStrategy truthScreenIdSearchResponseStrategy;
 
+    private final TruthScreenEntityConstructorStrategy truthEntityConstructorStrategy;
 
     @Override
-    public T sendPanRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
+    public IdSearchResponseDto<?> sendPanRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
         TruthScreenDocDetails<?> truthScreenDocDetails = truthScreenDocDetailsRepository.findBySrCompanyIdAndTruthScreenDocType(RequestData.getTenantId(), TruthScreenDocType.fromValue(requestDTO.getDocType()));
         if (truthScreenDocDetails == null){
 
@@ -61,11 +51,12 @@ public class PanServiceImpl implements PanService {
             try {
                 TruthScreenBaseResponse<?> truthScreenBaseResponse = truthScreenAdapter.extractDetails(truthScreenBaseRequest);
                 truthScreenDocOrchestratorRequest.setTruthScreenBaseResponse(truthScreenBaseResponse);
-                TruthScreenDocDetails<T> truthScreenDocDetailsToBeSaved = truthEntityConstructorStrategy.constructEntity(truthScreenDocOrchestratorRequest,truthScreenDocOrchestratorRequest.getTruthScreenDocDetails(),getResponseClass(TruthScreenDocType.valueOf(String.valueOf(requestDTO.getDocType()))));
+                TruthScreenDocDetails<?> truthScreenDocDetailsToBeSaved = truthEntityConstructorStrategy.constructEntity(truthScreenDocOrchestratorRequest,truthScreenDocOrchestratorRequest.getTruthScreenDocDetails(),getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
                 truthScreenDocDetailsRepository.save(truthScreenDocDetailsToBeSaved);
-                return truthScreenDocDetailsToBeSaved.getDetails();
-                //return truthScreenBaseResponse.get();
-
+                //IdSearchResponseDto responseDto = MapperUtils.convertValue(truthScreenDocDetailsToBeSaved.getDetails(), IdSearchResponseDto.class);
+                //T responseDto = truthScreenIdSearchResponseStrategy.constructResponse(truthScreenDocOrchestratorRequest, (T) truthScreenDocDetailsToBeSaved.getDetails(),getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
+                IdSearchResponseDto<?> responseDto = truthScreenIdSearchResponseStrategy.constructResponse(truthScreenDocDetailsToBeSaved,getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
+                return responseDto;
                 //response should be that which is saved in the db not the 3rd party api
 
             } catch (Exception e) {
@@ -74,23 +65,22 @@ public class PanServiceImpl implements PanService {
 
 
         }
-        else if(truthScreenDocDetails !=null && truthScreenDocDetails.getInitialStatus() == TruthScreenStatus.VERIFIED ){
-            //return the details
-            PanDetails panDetails = panRepository.findByDocNumber(requestDTO.getDocNumber());
-            //mapping the panDEtails with panResponseDto
-            Map<String, Object> map = new HashMap<>();
-            return null;//PanResponseDto.builder().status(1).msg(map).build();
-
+        else {
+            try {
+                return truthScreenIdSearchResponseStrategy.constructResponse(truthScreenDocDetails, getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
+            }
+            catch (Exception e){
+                throw new RuntimeException(e + " While fetching data from the database");
+            }
         }
-        else if (truthScreenDocDetails != null && truthScreenDocDetails.getInitialStatus() == TruthScreenStatus.UNVERIFIED ){
-            //pick transID
-            //pick ts_trans_id
-            //call 2nd API
-            // if status == 1 and state == Compelte --> add in main db and update panDB
-            // else update in transDB
-            return null;
-        }
-        return null;
+//        else if (truthScreenDocDetails != null && truthScreenDocDetails.getInitialStatus() == TruthScreenStatus.UNVERIFIED ){
+//            //pick transID
+//            //pick ts_trans_id
+//            //call 2nd API
+//            // if status == 1 and state == Compelte --> add in main db and update panDB
+//            // else update in transDB
+//            return null;
+//        }
 
     }
 
@@ -103,8 +93,6 @@ public class PanServiceImpl implements PanService {
         }
     }
 
-        @Override
-    public AsyncReponseDto getAsyncStatus(AsyncRequestDto asyncRequestDto) {
-        return null;
-    }
+
+
 }

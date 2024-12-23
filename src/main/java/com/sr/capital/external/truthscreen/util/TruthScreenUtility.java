@@ -64,7 +64,6 @@ public class TruthScreenUtility {
             String jsonData = new String(original);
             return objectMapper.readValue(jsonData, clazz);
         } catch (Exception ex) {
-            //throw new RuntimeException(ex);
             throw new RuntimeException("Decryption failed: " + ex.getMessage(), ex);
         }
     }

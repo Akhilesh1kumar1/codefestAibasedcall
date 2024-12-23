@@ -23,9 +23,6 @@ public class TruthScreenDocDetails<T> extends BaseDoc {
     @Indexed(unique = true)
     private String transId;
 
-    @Field("final_ts_trans_id")
-    private String finalTsTransId;
-
     @Field("truth_screen_doc_type")
     private TruthScreenDocType truthScreenDocType;
 
@@ -34,7 +31,6 @@ public class TruthScreenDocDetails<T> extends BaseDoc {
 
     @Field("initial_status")
     TruthScreenStatus initialStatus;
-
 
 
 }

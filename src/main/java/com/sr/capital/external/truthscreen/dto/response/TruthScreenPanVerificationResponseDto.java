@@ -10,7 +10,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PanResponseDto {
+public class TruthScreenPanVerificationResponseDto {
 
     int status;
     Map<String, Object> msg;

@@ -87,9 +87,12 @@ public class User extends LongBaseEntity{
     public static User mapUser(UserDetails userDetails){
         User user =User.builder().srUserId(Long.valueOf(userDetails.getUserId())).
         comments(userDetails.getComments()).srCompanyId(Long.valueOf(RequestData.getTenantId()))
-                .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).companyName(userDetails.getCompanyName()).panNumber(userDetails.getPanNumber()).dateOfBirth(userDetails.getDateOfBirth()).fatherName(userDetails.getFatherName())
+                .isAccepted(userDetails.getIsAccepted()) .firstName(userDetails.getFirstName()).middleName(userDetails.getMiddleName()).lastName(userDetails.getLastName()).email(userDetails.getEmail()).mobile(userDetails.getMobileNumber()).entityType(userDetails.getEntityType()).panNumber(userDetails.getPanNumber()).dateOfBirth(userDetails.getDateOfBirth()).fatherName(userDetails.getFatherName())
                 .gender(userDetails.getGender()).currentAccountAvailable(userDetails.getCurrentAccountAvailable()).build();
         user.setIsEnabled(true);
+        if(userDetails.getCompanyName()!=null){
+            user.setCompanyName(userDetails.getCompanyName());
+        }
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         return user;
     }
@@ -103,7 +106,7 @@ public class User extends LongBaseEntity{
         user.setEmail(userDetails.getEmail());
         user.setMobile(userDetails.getMobileNumber());
         user.setEntityType(userDetails.getEntityType());
-        user.setCompanyName(userDetails.getCompanyName());
+        //user.setCompanyName(userDetails.getCompanyName());
         user.setPanNumber(userDetails.getPanNumber());
         user.setDateOfBirth(userDetails.getDateOfBirth());
         user.setFatherName(userDetails.getFatherName());
@@ -111,5 +114,8 @@ public class User extends LongBaseEntity{
         user.setIsEnabled(true);
         user.setIsMobileVerified(userDetails.getIsMobileNumberVerified());
         user.setCurrentAccountAvailable(userDetails.getCurrentAccountAvailable());
+        if(userDetails.getCompanyName()!=null){
+            user.setCompanyName(userDetails.getCompanyName());
+        }
     }
 }

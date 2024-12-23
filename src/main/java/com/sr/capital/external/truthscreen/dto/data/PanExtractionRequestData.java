@@ -8,7 +8,7 @@ import lombok.Data;
 public class PanExtractionRequestData
 {
 
-        private String transId;
+        private String transID;
         private int docType;
         private String docNumber;
 

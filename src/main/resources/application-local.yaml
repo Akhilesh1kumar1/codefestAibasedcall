@@ -221,6 +221,35 @@ external:
       api:
         endpoint:
           tasks: /v3/tasks
+  crif:
+    enabled: true
+    vendor-token: ${CRIF_VENDOR_TOKEN:test}
+    vendor-code: ${CRIF_VENDOR_CODE:test}
+    api:
+      endpoint:
+        extract:
+          stage1:
+            url: /Inquiry/do.getSecureService/DTC/initiate
+          stage2:
+            url: /Inquiry/do.getSecureService/DTC/response
+      key: 423714eb-ece1-495b-8760-c2bf9ca3bf08
+    verify:
+      retry:
+        backoff:
+          millis: '300'
+        max:
+          attempts: '3'
+    account:
+      id: 6b00817c0377/2798d29c-763c-4b83-a4a9-3f28ea6f39a5
+    base:
+      uri: https://test.crifhighmark.com
+    access-code:
+      user: ${CRIF_USER}
+      password: ${CRIF_PASSWORD}
+      company-Name: ${CRIF_COMPANY_NAME}
+      customer-id: ${CRIF_CUSTOMER_ID}
+      app-id: ${CRIF_APP_ID}
+      product-code: ${CRIF_PRODUCT_CODE}
 
 karza:
   async:
@@ -289,5 +318,16 @@ jobs:
     cronInMinutes: 120
   communication:
     scheduledTime: 0 0 1 * * ?
+
+aes:
+  secret:
+    key: ${AES_SECRET_KEY:U0h8UFIwa0BUQCFAIyQmKg==}
+  iv:
+    key: ${AES_IV_KEY:U0h8UFIwa0BUQCQh}
+
+is:
+  encryption:
+    enabled: ${IS_ENCRYPTION_ENABLED:false}
+
 
 

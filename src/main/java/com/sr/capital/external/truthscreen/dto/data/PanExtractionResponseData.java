@@ -1,21 +1,29 @@
 package com.sr.capital.external.truthscreen.dto.data;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.Map;
 
 @Data
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PanExtractionResponseData {
 
+    @JsonProperty("LastUpdate")
     private String lastUpdate;
-    private String name;
+    @JsonProperty("Name")
+    private String Name;
+    @JsonProperty("NameOnTheCard")
     private String nameOnTheCard;
+    @JsonProperty("PanHolderStatusType")
     private String panHolderStatusType;
-    private String docNumber;
+    @JsonProperty("PanNumber")
+    private String panNumber;
+    @JsonProperty("STATUS")
     private String status;
+    @JsonProperty("StatusDescription")
     private String statusDescription;
-    private int sourceId;
+    @JsonProperty("source_id")
+    private Integer sourceId;
     //The data in this class should be same as add field for PAN
 }

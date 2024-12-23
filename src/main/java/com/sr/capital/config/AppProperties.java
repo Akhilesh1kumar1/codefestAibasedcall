@@ -342,4 +342,37 @@ public class AppProperties {
 
     @Value("${external.authbridge.idsearch-url}")
     private String authBridgeIdSearchUrl;
+    @Value("${external.crif.access-code.user}")
+    private String CrifUser;
+    @Value("${external.crif.access-code.password}")
+    private String CrifPassword;
+    @Value("${external.crif.access-code.app-id}")
+    private String CrifAppId;
+    @Value("${external.crif.access-code.company-name}")
+    private String CrifCompanyName;
+    @Value("${external.crif.access-code.customer-id}")
+    private String CrifCustomerId;
+
+    @Value("${external.crif.access-code.product-code}")
+    private String CrifProductCode;
+
+    //CRIF EXTERNAL API
+
+    @Value("${external.crif.base.uri}")
+    private String CrifBaseUri;
+
+    @Value("${external.crif.api.endpoint.extract.stage1.url}")
+    private String CrifExtractStage1Endpoint;
+
+    @Value("${external.crif.api.endpoint.extract.stage2.url}")
+    private String CrifExtractStage2Endpoint;
+
+    @Value("${aes.secret.key}")
+    private String aesSecretKey;
+
+    @Value("${is.encryption.enabled}")
+    private String isEncryptionEnabled;
+
+    @Value("${aes.iv.key}")
+    private String aesIVKey;
 }

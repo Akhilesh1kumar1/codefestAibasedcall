@@ -10,8 +10,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum TruthScreenDocType {
 
-        PAN("pan", 2);
-
+        PAN("pan", 2),
+        Pan_Compliance("pan_compliance",527),
+        PAN_COMPREHENSIVE("pan_comprehensive",523);
         private final String name;
         private final int value;
 
