@@ -7,6 +7,7 @@ import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
+import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.service.CrifPartnerService;
 import com.sr.capital.util.Base64Util;
 import com.sr.capital.util.ResponseBuilderUtil;
@@ -36,14 +37,14 @@ public class CrifController {
     }
 
     @PostMapping(value = "/validate", consumes = "application/json", produces = "application/json")
-    public GenericResponse<?> crifStage2(@RequestBody BureauInitiateResponse bureauInitiateResponse) throws CRIFApiException, CustomException {
+    public GenericResponse<?> crifStage2(@RequestBody BureauInitiateResponse bureauInitiateResponse) throws CRIFApiException, CustomException, CRIFApiLimitExceededException {
         return ResponseBuilderUtil.getResponse(crifPartnerService.verify(bureauInitiateResponse),
                 SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
     @PostMapping(value = "/report", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> crifStage3(@RequestBody BureauReportPayloadRequest bureauReportPayloadRequest
-    ) throws CRIFApiException {
+    ) throws CRIFApiException, CRIFApiLimitExceededException {
 
         BureauReportResponse report = crifPartnerService.getReport(bureauReportPayloadRequest, false);
         ResponseEntity<BureauReportResponse> response = new ResponseEntity<>(report, HttpStatusCode.valueOf(200));
