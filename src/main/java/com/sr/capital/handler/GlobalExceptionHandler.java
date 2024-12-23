@@ -5,8 +5,10 @@ import com.omunify.core.model.ErrorResponse;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.ExceptionsTranslator;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
+import com.sr.capital.external.crif.service.CrifOtpServiceImpl;
 import com.sr.capital.util.ResponseBuilderUtil;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -69,9 +71,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(CRIFApiLimitExceededException.class)
     public GenericResponse<Object> handleCRIFApiLimitExceededException(final CRIFApiLimitExceededException exception) {
-        return ResponseBuilderUtil.getResponse(new HashMap<>(){{put(DATA, null); put(STAGE, LIMIT_EXCEEDED);}}
+        CrifResponse crifResponse = CrifResponse.builder().build();
+        CrifOtpServiceImpl.setResponse(crifResponse, new HashMap<>(){{put(DATA, null); put(STAGE, LIMIT_EXCEEDED);}});
+
+        return ResponseBuilderUtil.getResponse(crifResponse
                 ,SUCCESS,
-                REQUEST_SUCCESS, org.apache.http.HttpStatus.SC_OK);
+                "Limit Exceeded", org.apache.http.HttpStatus.SC_OK);
     }
 
     @ExceptionHandler(Exception.class)
