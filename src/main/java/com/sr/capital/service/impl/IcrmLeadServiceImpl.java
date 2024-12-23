@@ -401,7 +401,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
 
     private void setLoanApplicationDetails(LoanApplication loanApplication, IcrmLoanResponseDto icrmLoanResponseDto) {
        IcrmLoanCompleteDetails icrmLoanCompleteDetails = IcrmLoanCompleteDetails.builder().internalLoanId(loanApplication.getInternalLoanId()).loanVendorId(loanApplication.getLoanVendorId())
-               .updatedAt(loanApplication.getAuditData().getUpdatedAt()).loanType(loanApplication.getLoanType()).loanStatus(loanApplication.getLoanStatus().name()).createdAt(loanApplication.getAuditData().getCreatedAt()).dateOfInitiation(loanApplication.getAuditData().getCreatedAt()).externalLoanId(loanApplication.getVendorLoanId()).vendorStatus(loanApplication.getVendorStatus()).build();
+               .updatedAt(loanApplication.getAuditData().getUpdatedAt()).loanType(loanApplication.getLoanType()).loanStatus(loanApplication.getLoanStatus().name()).createdAt(loanApplication.getAuditData().getCreatedAt()).dateOfLeadSubmission(loanApplication.getLoanSubmissionTime()).dateOfInitiation(loanApplication.getAuditData().getCreatedAt()).externalLoanId(loanApplication.getVendorLoanId()).vendorStatus(loanApplication.getVendorStatus()).build();
        icrmLoanResponseDto.getCompleteDetails().add(icrmLoanCompleteDetails);
     }
 
@@ -650,6 +650,7 @@ public class IcrmLeadServiceImpl implements IcrmLeadService {
         dto.setState((String) loanDetailsDto[i++]);
         String finalStatus = dto.getState()!=null? dto.getLoanStatus()+","+dto.getState():dto.getLoanStatus();
         dto.setLoanStatus(finalStatus);
+        dto.setDateOfLeadSubmission(parseDateTimeOrNull(loanDetailsDto,i++,formatter));
         //dto.setLoanApplicationStatusUpdatedAt(LocalDateTime.parse(map.get("loanApplicationStatusUpdatedAt").toString()));
 
         return dto;

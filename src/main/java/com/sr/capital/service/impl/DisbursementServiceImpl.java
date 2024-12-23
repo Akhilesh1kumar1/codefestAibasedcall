@@ -6,6 +6,7 @@ import com.sr.capital.dto.response.DisbursementDetailsResponseDto;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
 import com.sr.capital.entity.primary.LoanDisbursed;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.flexi.dto.response.DisbursmentDetails;
 import com.sr.capital.repository.mongo.DisbursmentMongoRepository;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
@@ -40,7 +41,7 @@ public class DisbursementServiceImpl {
     static TypeReference<List<DisbursementDetailsResponseDto>> tRef = new TypeReference<List<DisbursementDetailsResponseDto>>() {
     };
 
-    public List<DisbursementDetailsResponseDto> getDisbursmentDetails(UUID loanApplicationId, String loanVendorName) throws IOException {
+    public List<DisbursementDetailsResponseDto> getDisbursmentDetails(UUID loanApplicationId, String loanVendorName) throws IOException, CustomException {
         LoanApplication loanApplication = loanApplicationRepository.findById(loanApplicationId).orElse(null);
         if (loanApplication != null) {
             LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
@@ -49,7 +50,7 @@ public class DisbursementServiceImpl {
         }
         return null;
     }
-    private List<DisbursementDetailsResponseDto> fetchAndSaveDisbursementDetails(LoanMetaDataDto loanMetaDataDto) throws IOException {
+    private List<DisbursementDetailsResponseDto> fetchAndSaveDisbursementDetails(LoanMetaDataDto loanMetaDataDto) throws IOException, CustomException {
         List<DisbursementDetailsResponseDto> disbursementDetailResponseDtos =new ArrayList<>();
 
         LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanMetaDataDto.getInternalLoanId());
@@ -84,7 +85,7 @@ public class DisbursementServiceImpl {
     }
 
 
-    private DisbursementDetailsResponseDto fetchAndSaveDisbursementDetailsFromPartner(LoanMetaDataDto loanMetaDataDto, Long statusId) throws IOException {
+    private DisbursementDetailsResponseDto fetchAndSaveDisbursementDetailsFromPartner(LoanMetaDataDto loanMetaDataDto, Long statusId) throws IOException, CustomException {
 
         DisbursmentDetails disbursementDetails = (DisbursmentDetails) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).fetchDisburmentDetails(loanMetaDataDto);
         DisbursementDetailsResponseDto disbursementDetailsResponseDto1 =null;

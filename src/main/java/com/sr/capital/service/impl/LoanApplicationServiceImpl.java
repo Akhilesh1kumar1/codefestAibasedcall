@@ -78,6 +78,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loanApplication.setLoanStatus(LoanStatus.LEAD_VERIFIED);
                 loanApplication.setVendorLoanId(responseDto.getLoanCode());
                 loanApplication.setExternalLeadCode(responseDto.getLeadCode());
+                loanApplication.setLoanSubmissionTime(LocalDateTime.now());
                 loanApplicationRepository.save(loanApplication);
 
             }
@@ -188,6 +189,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loan.setVendorLoanId(responseDto.getLoanCode());
                 loan.setExternalLeadCode(responseDto.getLeadCode());
                 loan.getAuditData().setUpdatedAt(LocalDateTime.now());
+                loan.setLoanSubmissionTime(LocalDateTime.now());
                 loanApplicationRepository.save(loan);
 
             }

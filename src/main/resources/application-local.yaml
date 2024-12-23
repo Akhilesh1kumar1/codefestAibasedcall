@@ -138,7 +138,7 @@ aws:
     url: ${CDN_URL:https://o2stage-capital-cdn.kartrocket.in}
 
 redis:
-  config: redisson-dev.yaml
+  config: redisson-local.yaml
 fileUpload:
   coolOffWindowInMinutes: ${FILE_UPLOAD_COOLOFF_WINDOW:60}
 
@@ -250,7 +250,6 @@ external:
       customer-id: ${CRIF_CUSTOMER_ID}
       app-id: ${CRIF_APP_ID}
       product-code: ${CRIF_PRODUCT_CODE}
-
 karza:
   async:
     response:

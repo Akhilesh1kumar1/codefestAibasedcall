@@ -9,7 +9,10 @@ import com.sr.capital.external.client.SinfiniClient;
 import com.sr.capital.external.dto.request.CommunicationRequest;
 import com.sr.capital.external.dto.request.CommunicationRequestTemp;
 import com.sr.capital.external.dto.request.NetCoreSendEmailRequest;
+import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.CommunicationChannels;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -17,9 +20,13 @@ import org.springframework.util.ObjectUtils;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunicationService {
@@ -38,6 +45,7 @@ public class CommunicationService {
 
     @Autowired
     private SpringTemplateEngine templateEngine;
+
     private final String INVITATION_LINK = "INVITATION_LINK";
     private final String USER_NAME = "USER_NAME";
 
@@ -407,5 +415,6 @@ public class CommunicationService {
         sendEmail(netCoreSendEmailRequest);
         return netCoreSendEmailRequest;
     }
+
 
 }

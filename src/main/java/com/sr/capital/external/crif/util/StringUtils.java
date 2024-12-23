@@ -38,6 +38,9 @@ public class StringUtils {
             throw new RuntimeException("Error accessing fields", e);
         }
 
+        if (result.charAt(result.length() - 1) == '|') {
+            return result.substring(0, result.length() - 1);
+        }
         return result.toString();
     }
 

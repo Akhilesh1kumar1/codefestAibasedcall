@@ -175,6 +175,7 @@ external:
         verify:
           gst:
             otp-url: /gst/uat/v2/gst-return-auth-advance
+            url: /v3/tasks/async/verify_with_source/ind_gst_certificate
           aadhaar:
             url: /v3/tasks/async/verify_with_source/aadhaar_lite
           pancard:

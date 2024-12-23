@@ -111,6 +111,7 @@ public class ResponseConstructorStrategy {
                     case GST:
                     case EPAN:
                     case TRADE_CERTIFICATE:
+                    case PAN_FATHER_HUSBAND:
                         responseConstructor = defaultResponseConstructor;
                          break;
                     case ITR:
