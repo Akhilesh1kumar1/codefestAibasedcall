@@ -4,9 +4,11 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.ProviderUrlConfigTypes;
 import com.sr.capital.spine.JsonPathEvaluator;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -33,7 +35,8 @@ public class ProviderHelperUtil {
 
     final ProviderConfigUtil providerConfigUtil;
 
-    public HttpResponse makeApiCall(Map<String,Object> params, String url, Object requestBody, Class responseClass) throws UnirestException, URISyntaxException {
+
+    public HttpResponse makeApiCall(Map<String,Object> parameters, String endPoint, Object body, Class responseClass) throws UnirestException, URISyntaxException, CustomException {
 
         HttpResponse restResponseEntity=null;
         String method = GET;
@@ -41,35 +44,35 @@ public class ProviderHelperUtil {
         if(responseClass == null)
             responseClass = Object.class;
 
-        if(params.containsKey(METHOD)){
-            method = (String) params.get(METHOD);
-        }else if(params.containsKey(ProviderUrlConfigTypes.OTHER.name())){
-            HashMap otherParams = (HashMap) params.get(ProviderUrlConfigTypes.OTHER.name());
+        if(parameters.containsKey(METHOD)){
+            method = (String) parameters.get(METHOD);
+        }else if(parameters.containsKey(ProviderUrlConfigTypes.OTHER.name())){
+            HashMap otherParams = (HashMap) parameters.get(ProviderUrlConfigTypes.OTHER.name());
             if(otherParams.containsKey(METHOD)){
                 method = (String) otherParams.get(METHOD);
             }
         }
 
-         url = getUrlWithQueryparam(url,(Map<String, Object>) params.get(ProviderUrlConfigTypes.PATH_VARIABLE.name()), (Map<String, Object>) params.get(ProviderUrlConfigTypes.QUERY_PARAM.name()));
+         endPoint = getUrlWithQueryparam(endPoint,(Map<String, Object>) parameters.get(ProviderUrlConfigTypes.PATH_VARIABLE.name()), (Map<String, Object>) parameters.get(ProviderUrlConfigTypes.QUERY_PARAM.name()));
 
-        log.info("request body is {} ",requestBody);
-        if (method != null && !method.isBlank()) {
+        try {
+            if (method != null && !method.isBlank()) {
 
-            switch (method.toLowerCase()){
-                case GET:
-                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).get(url, responseClass);
-                    break;
-                case POST:
-                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).post(url, requestBody, responseClass);
-                    break;
-                case PUT:
-                    restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).logRequest(true).put(url, requestBody, responseClass);
+                switch (method.toLowerCase()) {
+                    case GET:
+                        restResponseEntity = getInstance().withHeaders((Map<String, String>) parameters.get(ProviderUrlConfigTypes.HEADER.name())).get(endPoint, responseClass);
+                        break;
+                    case POST:
+                        restResponseEntity = getInstance().withHeaders((Map<String, String>) parameters.get(ProviderUrlConfigTypes.HEADER.name())).post(endPoint, body, responseClass);
+                        break;
+                    case PUT:
+                        restResponseEntity = getInstance().withHeaders((Map<String, String>) parameters.get(ProviderUrlConfigTypes.HEADER.name())).logRequest(true).put(endPoint, body, responseClass);
+
+                }
+            } else {
+                restResponseEntity = getInstance().withHeaders((Map<String, String>) parameters.get(ProviderUrlConfigTypes.HEADER.name())).get(endPoint, responseClass);
 
             }
-        } else {
-            restResponseEntity = getInstance().withHeaders( (Map<String, String>) params.get(ProviderUrlConfigTypes.HEADER.name())).get(url, responseClass);
-
-        }
 
       /*  if(restResponseEntity!=null && restResponseEntity.getStatusCode()==HttpStatus.MOVED_PERMANENTLY){
             url= restResponseEntity.getHeaders()!=null && restResponseEntity.getHeaders().getLocation()!=null ? String.valueOf(restResponseEntity.getHeaders().getLocation()) :null;
@@ -83,13 +86,19 @@ public class ProviderHelperUtil {
 
             }
         }*/
-        if(responseClass == String.class) {
-            try {
-                HashMap<String, Object> responseData =MapperUtils.readValue(restResponseEntity.getBody().toString().replaceAll("[\r\n]+", " "), HashMap.class);
-                //restResponseEntity = new ResponseEntity<>(responseData, getHeaderMap(restResponseEntity), HttpStatusCode.valueOf(restResponseEntity.getStatus()));
-            }catch(Exception ex){
-                log.info("Exception occurred while processing the the Response body");
+            if (responseClass == String.class) {
+                try {
+                    HashMap<String, Object> responseData = MapperUtils.readValue(restResponseEntity.getBody().toString().replaceAll("[\r\n]+", " "), HashMap.class);
+                    //restResponseEntity = new ResponseEntity<>(responseData, getHeaderMap(restResponseEntity), HttpStatusCode.valueOf(restResponseEntity.getStatus()));
+                } catch (Exception ex) {
+                    log.info("Exception occurred while processing the the Response body");
+                    log.info("request body is {} ", body);
+                }
             }
+        }catch (Exception ex){
+            log.info("request body is {} ", body);
+            log.error("External Call failed cause {}  message {} ",ex.getCause(),ex.getMessage());
+            throw new CustomException("We are currently experiencing issues in updating the details with the vendor. Please try again.",HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         return restResponseEntity;

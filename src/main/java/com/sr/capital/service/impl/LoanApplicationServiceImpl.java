@@ -12,7 +12,6 @@ import com.sr.capital.entity.mongo.kyc.child.BusinessAddressDetails;
 import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.Pincode;
-import com.sr.capital.entity.primary.User;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
@@ -65,7 +64,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         if(loanApplicationRequestDto.getLoanId()!=null){
             loanApplicationRequestDto.setLoanStatus(LoanStatus.LEAD_VERIFIED);
             loanApplication = loanApplicationRepository.findById(loanApplicationRequestDto.getLoanId()).orElse(null);
-              LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
+             LoanApplication.mapLoanApplication(loanApplicationRequestDto,loanApplication);
         }else {
             loanApplication = LoanApplication.mapLoanApplication(loanApplicationRequestDto);
             loanApplication = loanApplicationRepository.save(loanApplication);
@@ -79,6 +78,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loanApplication.setLoanStatus(LoanStatus.LEAD_VERIFIED);
                 loanApplication.setVendorLoanId(responseDto.getLoanCode());
                 loanApplication.setExternalLeadCode(responseDto.getLeadCode());
+                loanApplication.setLoanSubmissionTime(LocalDateTime.now());
                 loanApplicationRepository.save(loanApplication);
 
             }
@@ -103,7 +103,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loanApplicationResponseDtos.add(LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication));
             }
         }else{
-            List<LoanApplication> loanApplications =loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+            List<LoanApplication> loanApplications =loanApplicationRepository.findByCompanyIdOrderByCreatedAtAsc(Long.valueOf(RequestData.getTenantId()));
             if(CollectionUtils.isNotEmpty(loanApplications))
                  loanApplications.forEach(loanApplication -> {
                      loanApplicationResponseDtos.add(LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication));
@@ -122,6 +122,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     public LoanApplication getLoanApplicationById(UUID loanApplicationId) {
         return loanApplicationRepository.findById(loanApplicationId).orElse(null);
     }
+
+    @Override
+    public LoanApplication getLoanApplicationByInternalLoanId(String loanApplicationId) {
+        return loanApplicationRepository.findByInternalLoanId(loanApplicationId);
+
+    }
+
 
     @Override
     public PendingDocumentResponseDto fetchPendingDocuments(PendingDocumentRequestDto pendingDocumentRequestDto) throws CustomException, IOException {
@@ -164,7 +171,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loanApplicationResponseDto = LoanApplicationResponseDto.mapLoanApplicationResponse(loan);
             }
         }else{
-            List<LoanApplication> loanApplications =loanApplicationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+            List<LoanApplication> loanApplications =loanApplicationRepository.findByCompanyIdOrderByCreatedAtAsc(Long.valueOf(RequestData.getTenantId()));
             if(CollectionUtils.isNotEmpty(loanApplications))
                 for(LoanApplication loanApplication:loanApplications) {
                     if(loanApplication.getLoanStatus().equals(LoanStatus.LEAD_VERIFIED)) {
@@ -182,6 +189,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loan.setVendorLoanId(responseDto.getLoanCode());
                 loan.setExternalLeadCode(responseDto.getLeadCode());
                 loan.getAuditData().setUpdatedAt(LocalDateTime.now());
+                loan.setLoanSubmissionTime(LocalDateTime.now());
                 loanApplicationRepository.save(loan);
 
             }

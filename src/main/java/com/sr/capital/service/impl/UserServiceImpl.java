@@ -109,6 +109,7 @@ public class UserServiceImpl implements UserService {
                     response.setIsAccepted(user.getIsAccepted());
                     response.setEntityType(user.getEntityType());
                     response.setFirstName(aes256.decrypt(user.getFirstName()));
+                    response.setEmail(aes256.decrypt(user.getEmail()));
                     response.setMobile(aes256.decrypt(user.getMobile()));
                     response.setPanNumber(aes256.decrypt(user.getPanNumber()));
                     response.setDateOfBirth(aes256.decrypt(user.getDateOfBirth()));
@@ -121,9 +122,16 @@ public class UserServiceImpl implements UserService {
                 }
             }else{
                 response.setIsMobileVerified(true);
+                addUserIfEmpty(response);
             }
         }
         return response;
+    }
+
+    private void saveSellerData(InternalTokenUserDetailsResponse response) {
+        User user =User.builder().firstName(aes256.encrypt(response.getFirstName())).srUserId(Long.valueOf(response.getUserId()))
+                .srCompanyId(Long.valueOf(response.getCompanyId())).companyName(response.getCompanyName()).build();
+        userRepository.save(user);
     }
 
     private void validateUserDetails(UserDetails userDetails) throws CustomException {
@@ -209,4 +217,22 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
+    private void addUserIfEmpty(InternalTokenUserDetailsResponse userDetails) {
+            UserDetails userDetailsToSave = new UserDetails();
+            userDetailsToSave.setUserId(userDetails.getUserId());
+            userDetailsToSave.setFirstName(userDetails.getFirstName());
+            userDetailsToSave.setLastName(userDetails.getLastName());
+            userDetailsToSave.setCompanyId(Long.valueOf(userDetails.getCompanyId()));
+            userDetailsToSave.setCompanyName(userDetails.getCompanyName());
+            userDetailsToSave.setEmail(userDetails.getEmail());
+            userDetailsToSave.setMobileNumber(userDetails.getMobile());
+            userDetailsToSave.setIsMobileNumberVerified(true);
+        try {
+            saveUserDetails(userDetailsToSave);
+        } catch (CustomException e) {
+
+        }
+
+    }
 }

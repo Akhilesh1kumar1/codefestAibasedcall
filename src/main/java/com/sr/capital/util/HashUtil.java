@@ -26,6 +26,14 @@ public class HashUtil {
         return Hex.encodeHexString(sha256_HMAC.doFinal(message.getBytes("UTF-8")));
     }
 
+    public static String generateRandomId() throws NoSuchAlgorithmException, NoSuchProviderException {
+        SecureRandom sr = SecureRandom.getInstance(RNG_ALGORITHM, RNG_ALGORITHM_PROVIDER);
+        sr.setSeed(sr.generateSeed(8));
+        byte[] salt = new byte[8];
+        sr.nextBytes(salt);
+        return CoreUtil.encodeHexString(salt);
+    }
+
     public static String generateResourceHash(String resource) {
         return DigestUtils.sha256Hex(resource);
     }

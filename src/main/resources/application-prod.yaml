@@ -80,7 +80,7 @@ app:
         sender: ${SINFINI_SMS_SENDER:SHPRKT}
         templateId: ${SINFINI_SMS_TEMPLATE_ID:1107159921248118728}
     kaleyra:
-      enabled: false
+      enabled: true
       baseUri: ${KALEYRA_BASE_URI:https://api.kaleyra.io/v1}
       senderId: ${KALEYRA_SENDER_ID:HXIN1724808889IN}
       apiKey: ${KALEYRA_API_KEY:Aca6d903762f7aa22e3b1d392059be7cd}
@@ -128,7 +128,7 @@ app:
     flexi:
       vendor-token: ${FLEXI_VENDOR_TOKEN:561f14a7-9fbc-4f07-8f18-2917065430}
       vendor-code: ${FLEXI_VENDOR_CODE:551f14a7-9fbc-4f07-8f18-2917345d80}
-      redirection-url: ${FLEXI_REDIRECTION_URL:https://ops.flexiloans.net/sanction/accept/%s}
+      redirection-url: ${FLEXI_REDIRECTION_URL:https://ops.flexiloans.com/sanction/accept/%s}
 
 aws:
   region: ${AWS_REGION:test}
@@ -175,7 +175,6 @@ external:
         verify:
           gst:
             otp-url: /gst/uat/v2/gst-return-auth-advance
-            url: /v3/tasks/async/verify_with_source/ind_gst_certificate
           aadhaar:
             url: /v3/tasks/async/verify_with_source/aadhaar_lite
           pancard:
@@ -215,6 +214,35 @@ external:
       api:
         endpoint:
           tasks: /v3/tasks
+  crif:
+    enabled: true
+    vendor-token: ${CRIF_VENDOR_TOKEN:test}
+    vendor-code: ${CRIF_VENDOR_CODE:test}
+    api:
+      endpoint:
+        extract:
+          stage1:
+            url: /Inquiry/do.getSecureService/DTC/initiate
+          stage2:
+            url: /Inquiry/do.getSecureService/DTC/response
+      key: 423714eb-ece1-495b-8760-c2bf9ca3bf08
+    verify:
+      retry:
+        backoff:
+          millis: '300'
+        max:
+          attempts: '3'
+    account:
+      id: 6b00817c0377/2798d29c-763c-4b83-a4a9-3f28ea6f39a5
+    base:
+      uri: https://test.crifhighmark.com
+    access-code:
+      user: ${CRIF_USER}
+      password: ${CRIF_PASSWORD}
+      company-Name: ${CRIF_COMPANY_NAME}
+      customer-id: ${CRIF_CUSTOMER_ID}
+      app-id: ${CRIF_APP_ID}
+      product-code: ${CRIF_PRODUCT_CODE}
 karza:
   async:
     response:
@@ -280,3 +308,14 @@ jobs:
     cronInMinutes: 120
   communication:
     scheduledTime: 0 0 1 * * ?
+
+
+aes:
+  secret:
+    key: ${AES_SECRET_KEY:U0h8UFIwa0BUQCFAIyQmKg==}
+  iv:
+    key: ${AES_IV_KEY:U0h8UFIwa0BUQCQh}
+
+is:
+  encryption:
+    enabled: ${IS_ENCRYPTION_ENABLED:true}

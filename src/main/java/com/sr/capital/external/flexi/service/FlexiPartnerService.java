@@ -13,6 +13,7 @@ import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.entity.primary.BaseCreditPartner;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.external.common.GenericCreditPartnerService;
@@ -119,7 +120,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
     @Override
-    public ValidateLoanDetailsResponse validateLoanDetails(LoanMetaDataDto loanMetaDataDto) {
+    public ValidateLoanDetailsResponse validateLoanDetails(LoanMetaDataDto loanMetaDataDto) throws CustomException {
 
         ValidateLoanDetailsResponse validateLoanDetailsResponse =null;
 
@@ -155,7 +156,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
 
-    public LoanDetails getLoanDetails(LoanMetaDataDto loanMetaDataDto) {
+    public LoanDetails getLoanDetails(LoanMetaDataDto loanMetaDataDto) throws CustomException {
 
         LoanDetails loanDetails =null;
 
@@ -213,7 +214,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
                     body.add("metadata", documentUploadRequestDto.getMetaData());
                 }
                 HttpHeaders httpHeaders =new HttpHeaders();
-                log.info("[uploadDocument] request body is {} ",body);
+                //log.info("[uploadDocument] request body is {} ",body);
                 Map<String,String> headerParams = (Map<String, String>) loanMetaDataDto.getParams().get(ProviderUrlConfigTypes.HEADER.name());
                 if(headerParams!=null){
                     headerParams.forEach((k,v)->{
@@ -237,7 +238,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
     @Override
-    public Object getPendingDocuments(LoanMetaDataDto loanMetaDataDto) {
+    public Object getPendingDocuments(LoanMetaDataDto loanMetaDataDto) throws CustomException {
 
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.PENDING_DOCUMENT.name(),ProviderRequestTemplateType.PENDING_DOCUMENT.name(), PendingDocumentResponseDto.class);
         HttpResponse<?> restResponseEntity = null;
@@ -274,7 +275,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
     @Override
-    public Object fetchDisburmentDetails(LoanMetaDataDto loanMetaDataDto) {
+    public Object fetchDisburmentDetails(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.FETCH_DISBURSED_DETAILS.name(),ProviderRequestTemplateType.FETCH_DISBURSED_DETAILS.name(), DisbursmentDetails.class);
         HttpResponse<?> restResponseEntity = null;
         DisbursmentDetails disbursmentDetails =null;
@@ -305,7 +306,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
     @Override
-    public Object createLead(String partner, CreateLeadRequestDto requestDto) {
+    public Object createLead(String partner, CreateLeadRequestDto requestDto) throws CustomException {
         updateCustomInfoForCreateLead(requestDto);
        return super.createLead(partner,requestDto);
     }
@@ -313,7 +314,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
 
     @Override
-    public Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto) {
+    public Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.FETCH_SANCTIONED_OFFER.name(),ProviderRequestTemplateType.FETCH_SANCTIONED_OFFER.name(), SanctionResponseDto.class);
         HttpResponse<?> restResponseEntity = null;
         SanctionResponseDto sanctionResponseDto =null;
@@ -338,6 +339,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
             sanctionResponseDto = MapperUtils.convertValue(response.getData(),
                     SanctionResponseDto.class);
         } catch (IOException e) {
+            log.info("request body is {} ",loanMetaDataDto.getExternalRequestBody());
             throw new RuntimeException(e);
         }
 
@@ -345,7 +347,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
     @Override
-    public Object acceptOffer(LoanMetaDataDto loanMetaDataDto) {
+    public Object acceptOffer(LoanMetaDataDto loanMetaDataDto) throws CustomException {
 
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.ACCEPT_SECTION_OFFER.name(),ProviderRequestTemplateType.ACCEPT_SECTION_OFFER.name(), SanctionResponseDto.class);
 
@@ -372,6 +374,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
             acceptSanctionOffer = MapperUtils.convertValue(response.getData(),
                     AcceptSanctionOffer.class);
         } catch (IOException e) {
+            log.info("request body is {} ",loanMetaDataDto.getExternalRequestBody());
             throw new RuntimeException(e);
         }
 
@@ -380,7 +383,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
 
     @Override
-    public Object updateLead(String partner, UpdateLeadRequestDto requestDto) {
+    public Object updateLead(String partner, UpdateLeadRequestDto requestDto) throws CustomException {
         CreateLeadResponseDto responseDto;
 
         updateCustomInfoForUpdateLead(requestDto);
@@ -405,13 +408,14 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
         HttpResponse<?> restResponseEntity = null;
         try {
-            log.info("request body is {} ",requestDto);
+
             restResponseEntity = providerHelperUtil.makeApiCall(params,
                     (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
                     requestDto,
                     null);
         } catch (UnirestException | URISyntaxException e) {
             log.error(partner, e);
+            log.info("request body is {} ",requestDto);
         }
 
         GenericResponse<?> response = new GenericResponse<>();
@@ -431,7 +435,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
 
 
     @Override
-    public Object getKFS(LoanMetaDataDto loanMetaDataDto) {
+    public Object getKFS(LoanMetaDataDto loanMetaDataDto) throws CustomException {
 
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.FETCH_KFS.name(),ProviderRequestTemplateType.FETCH_KFS.name(), SanctionResponseDto.class);
 
@@ -465,7 +469,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
     }
 
     @Override
-    public Object rejectSanctionOffer(LoanMetaDataDto loanMetaDataDto) {
+    public Object rejectSanctionOffer(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         buildMetadata(loanMetaDataDto,ProviderRequestTemplateType.REJECT_OFFER.name(),ProviderRequestTemplateType.REJECT_OFFER.name(), SanctionResponseDto.class);
 
         HttpResponse<?> restResponseEntity = null;

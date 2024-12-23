@@ -8,6 +8,7 @@ import com.sr.capital.entity.mongo.SanctionDetails;
 import com.sr.capital.entity.mongo.kyc.child.SanctionMetaDataDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.LoanApplicationStatus;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.flexi.dto.response.AcceptSanctionOffer;
 import com.sr.capital.external.flexi.dto.response.KfsResponseDto;
 import com.sr.capital.external.flexi.dto.response.SanctionResponseDto;
@@ -41,15 +42,15 @@ public class SanctionServiceImpl {
     final SanctionRepository sanctionRepository;
     final LoanApplicationRepository loanApplicationRepository;
 
-    public SanctionDto getSanctionDetails(UUID loanApplicationId,String loanVendorName){
+    public SanctionDto getSanctionDetails(UUID loanApplicationId,String loanVendorName) throws CustomException {
         LoanApplication loanApplication = loanApplicationRepository.findById(loanApplicationId).orElse(null);
         if(loanApplication!=null){
             LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
                     .loanId(loanApplication.getVendorLoanId()).internalLoanId(loanApplicationId).loanVendorName(loanVendorName).build();
 
-            if(1==2){
-                return buildDummyDto(loanMetaDataDto);
-            }
+//            if(1==2){
+//                return buildDummyDto(loanMetaDataDto);
+//            }
 
             SanctionDto sanctionDto = fetchAndSaveSanctionDetails(loanMetaDataDto);
             if(sanctionDto!=null){
@@ -66,7 +67,7 @@ public class SanctionServiceImpl {
         return null;
     }
 
-    public KfsResponseDto getKfsDetails(UUID loanApplicationId,String loanVendorName){
+    public KfsResponseDto getKfsDetails(UUID loanApplicationId,String loanVendorName) throws CustomException {
 
         LoanApplication loanApplication = loanApplicationRepository.findById(loanApplicationId).orElse(null);
         KfsResponseDto kfsResponseDto =null;
@@ -139,7 +140,7 @@ public class SanctionServiceImpl {
         return sanctionDto;
     }
 
-    public Boolean updateOffer(UpdateSanctionOfferDto acceptSanctionOffer){
+    public Boolean updateOffer(UpdateSanctionOfferDto acceptSanctionOffer) throws CustomException {
 
         LoanApplication loanApplication = loanApplicationRepository.findById(acceptSanctionOffer.getLoanId()).orElse(null);
         if(loanApplication!=null){
@@ -176,7 +177,7 @@ public class SanctionServiceImpl {
         return true;
     }
 
-    private SanctionDto fetchAndSaveSanctionDetails(LoanMetaDataDto loanMetaDataDto){
+    private SanctionDto fetchAndSaveSanctionDetails(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         SanctionDto sanctionDto =null;
         try {
             LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanMetaDataDto.getInternalLoanId());
@@ -207,7 +208,7 @@ public class SanctionServiceImpl {
         return sanctionDto;
     }
 
-    private SanctionDto fetchAndSaveSanctionDetailsFromPartner(LoanMetaDataDto loanMetaDataDto) throws IOException {
+    private SanctionDto fetchAndSaveSanctionDetailsFromPartner(LoanMetaDataDto loanMetaDataDto) throws IOException, CustomException {
 
         SanctionResponseDto sanctionResponseDto = (SanctionResponseDto) creditPartnerFactoryService.getPartnerService(loanMetaDataDto.getLoanVendorName()).fetchSanctionDetails(loanMetaDataDto);
 

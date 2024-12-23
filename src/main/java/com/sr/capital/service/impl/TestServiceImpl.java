@@ -6,6 +6,7 @@ import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.response.AccessTokenResponseDto;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.dto.response.ValidateTokenResponse;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
@@ -33,7 +34,7 @@ public class TestServiceImpl {
     final ProviderHelperUtil providerHelperUtil;
     final ProviderConfigUtil providerConfigUtil;
 
-    public boolean testJsonPath(Long partnerId, Map<String,String> metaData, Map<String,Object> request) throws UnirestException, URISyntaxException, IOException {
+    public boolean testJsonPath(Long partnerId, Map<String,String> metaData, Map<String,Object> request) throws UnirestException, URISyntaxException, IOException, CustomException {
 
         Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerId,metaData, ProviderRequestTemplateType.VALIDATE_TOKEN.name());
         if (params == null ) {
@@ -56,12 +57,12 @@ public class TestServiceImpl {
         return true;
     }
 
-    public Object testAccessToken(String partner) {
+    public Object testAccessToken(String partner) throws CustomException {
 
         return creditPartnerFactoryService.getPartnerService(partner).getAccessToken(partner);
     }
 
-    public Object testAccessToken(String partner,String loanId) {
+    public Object testAccessToken(String partner,String loanId) throws CustomException {
         LoanMetaDataDto.ValidateLoanData validateLoanData =LoanMetaDataDto.ValidateLoanData.builder().mobileNumber("7823452312").panNumber("EBXPP9720A").build();
         LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().loanVendorId(13l).loanVendorName(partner).loanId(loanId).validateLoanData(validateLoanData).build();
         return  creditPartnerFactoryService.getPartnerService(partner).getLoanDetails(loanMetaDataDto);

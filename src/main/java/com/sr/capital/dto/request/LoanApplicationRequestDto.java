@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.helpers.enums.LoanStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -42,4 +39,16 @@ public class LoanApplicationRequestDto extends BaseRequest {
 
     @Builder.Default
     Boolean createLoanAtVendor=false;
+
+    String utmSource;
+
+    String utmMedium;
+
+    String utmCampaign;
+
+    String utmTerm;
+
+    String utmContent;
+
+    String internalLoanId;
 }

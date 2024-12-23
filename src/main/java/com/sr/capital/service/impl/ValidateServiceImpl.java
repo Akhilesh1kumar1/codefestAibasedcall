@@ -9,11 +9,14 @@ import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.service.LoanApplicationService;
 import com.sr.capital.service.ValidateService;
 import com.sr.capital.service.strategy.RequestValidationStrategy;
+import com.sr.capital.util.HashUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+
+import static com.sr.capital.helpers.constants.Constants.RedisKeys.GLOBAL_KEY;
 
 @Service
 @AllArgsConstructor
@@ -46,7 +49,7 @@ public class ValidateServiceImpl implements ValidateService {
         loanAllocationService.getLoanVendor(loanMetaDataDto);
         LoanApplicationRequestDto requestDto =LoanApplicationRequestDto.builder().loanAmountRequested(BigDecimal.ZERO)
                 .loanDuration(0).loanVendorId(loanMetaDataDto.getLoanVendorId()).loanVendorName(loanMetaDataDto.getLoanVendorName()).loanType("Flexi Loan")
-                .loanStatus(LoanStatus.LEAD_DUPLICATE).createLoanAtVendor(false)
+                .loanStatus(LoanStatus.LEAD_DUPLICATE).internalLoanId(GLOBAL_KEY+ HashUtil.generateRandomId()).createLoanAtVendor(false)
                 .build();
         if(validMobileNumber){
             requestDto.setLoanStatus(LoanStatus.LEAD_INITIATED);

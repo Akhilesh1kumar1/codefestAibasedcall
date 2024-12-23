@@ -14,6 +14,7 @@ import com.sr.capital.dto.response.AccessTokenResponseDto;
 import com.sr.capital.dto.response.CreateLeadResponseDto;
 import com.sr.capital.entity.mongo.CreditPartnerConfig;
 import com.sr.capital.entity.primary.BaseCreditPartner;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.exception.custom.InvalidVendorCodeException;
 import com.sr.capital.exception.custom.InvalidVendorTokenException;
 import com.sr.capital.external.common.request.DocumentUploadRequestDto;
@@ -82,7 +83,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     private WebClientUtil webClientUtil;
 
     @Override
-    public Object getAccessToken(String partner) {
+    public Object getAccessToken(String partner) throws CustomException {
         RMapCache<String, AccessTokenResponseDto> accessTokenInfo = redissonClient
                 .getMapCache(Constants.RedisKeys.ACCESS_TOKEN);
 
@@ -109,7 +110,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     }
 
     @Override
-    public Object createLead(String partner, CreateLeadRequestDto requestDto) {
+    public Object createLead(String partner, CreateLeadRequestDto requestDto) throws CustomException {
         CreateLeadResponseDto responseDto;
         Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(partner), new TypeReference<>() {});
         BaseCreditPartner partnerInfo = getPartnerInfo(partner);
@@ -129,7 +130,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
 
         HttpResponse<?> restResponseEntity = null;
         try {
-            log.info("request body is {} ",requestBody);
+           // log.info("request body is {} ",requestBody);
             restResponseEntity = providerHelperUtil.makeApiCall(params,
                     (String) params.getOrDefault(ProviderUrlConfigTypes.BASE_URL.name(), ""),
                     requestBody,
@@ -190,7 +191,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     }
 
     @Override
-    public Object getLoanDetails( LoanMetaDataDto loanMetaDataDto) {
+    public Object getLoanDetails( LoanMetaDataDto loanMetaDataDto) throws CustomException {
 
         LoanStatusUpdateWebhookDto responseDto;
         Map<String, String> metaData = MapperUtils.convertValue(getAccessToken(loanMetaDataDto.getLoanVendorName()), new TypeReference<>() {});
@@ -238,7 +239,7 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     }
 
     @Override
-    public Object validateLoanDetails(LoanMetaDataDto loanMetaDataDto) {
+    public Object validateLoanDetails(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         return null;
     }
 
@@ -248,42 +249,42 @@ public class GenericCreditPartnerService implements CreditPartnerService {
     }
 
     @Override
-    public Object getPendingDocuments(LoanMetaDataDto loanMetaDataDto) {
+    public Object getPendingDocuments(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         return null;
     }
 
     @Override
-    public Object fetchDisburmentDetails(LoanMetaDataDto loanMetaDataDto) {
+    public Object fetchDisburmentDetails(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         return null;
     }
 
     @Override
-    public Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto) {
+    public Object fetchSanctionDetails(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         return null;
     }
 
     @Override
-    public Object acceptOffer(LoanMetaDataDto loanMetaDataDto) {
+    public Object acceptOffer(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         return null;
     }
 
     @Override
-    public Object updateLead(String partner, UpdateLeadRequestDto requestDto) {
+    public Object updateLead(String partner, UpdateLeadRequestDto requestDto) throws CustomException {
         return null;
     }
 
     @Override
-    public Object getKFS(LoanMetaDataDto loanMetaDataDto) {
+    public Object getKFS(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         return null;
     }
 
     @Override
-    public Object rejectSanctionOffer(LoanMetaDataDto loanMetaDataDto) {
+    public Object rejectSanctionOffer(LoanMetaDataDto loanMetaDataDto) throws CustomException {
         return null;
     }
 
 
-    private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) {
+    private AccessTokenResponseDto getAccessTokenResponseDto(String partner, CreditPartnerConfig partnerConfig, BaseCreditPartner partnerInfo, RMapCache<String, AccessTokenResponseDto> accessTokenInfo) throws CustomException {
         AccessTokenResponseDto responseDto;
         AccessTokenRequestDto requestDto = MapperUtils.mapClass(partnerConfig, AccessTokenRequestDto.class);
         requestDto.setPartner(partner);

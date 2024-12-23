@@ -21,6 +21,9 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
 
     List<LoanApplication> findBySrCompanyId(Long srCompanyId);
 
+    @Query("SELECT la from LoanApplication la where la.srCompanyId = :srCompanyId order by la.auditData.createdAt asc")
+    List<LoanApplication> findByCompanyIdOrderByCreatedAtAsc(Long srCompanyId);
+
     List<LoanApplication> findBySrCompanyIdAndLoanStatus(Long srCompanyId, LoanStatus loanStatus);
 
 
@@ -57,5 +60,7 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
     Page<LoanApplication> findAllByDateRangeAndStatusList(@Param("startDate") LocalDateTime startDate,
                                              @Param("endDate") LocalDateTime endDate,@Param("loanStatuses") List<LoanStatus> loanStatuses,
                                              Pageable pageable);
+
+    LoanApplication findByInternalLoanId(String internalLoanId);
 
 }

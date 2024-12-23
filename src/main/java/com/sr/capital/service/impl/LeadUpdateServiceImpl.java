@@ -41,15 +41,19 @@ public class LeadUpdateServiceImpl {
     final PincodeEntityServiceImpl pincodeEntityService;
     final CreditPartnerFactoryService creditPartnerFactoryService;
     public Boolean updateLeadDetails(UpdateLeadRequestDto updateLeadRequestDto) throws CustomException {
+        LoanApplication loanApplication = loanApplicationRepository.findById(updateLeadRequestDto.getLoanId()).orElse(null);
+        if(loanApplication!=null) {
+            CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(updateLeadRequestDto.getLoanVendorName()).updateLead(updateLeadRequestDto.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(), updateLeadRequestDto,loanApplication));
 
-        CreateLeadResponseDto responseDto = (CreateLeadResponseDto) creditPartnerFactoryService.getPartnerService(updateLeadRequestDto.getLoanVendorName()).updateLead(updateLeadRequestDto.getLoanVendorName(), validateAndBuildRequestDto(RequestData.getTenantId(), updateLeadRequestDto));
+            loanApplication.setLoanStatus(LoanStatus.LEAD_PROCESSING);
+            loanApplicationRepository.save(loanApplication);
+        }
         return  true;
     }
 
-    private com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto validateAndBuildRequestDto(String tenantId, UpdateLeadRequestDto updateLeadRequestDto) throws CustomException {
+    private com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto validateAndBuildRequestDto(String tenantId, UpdateLeadRequestDto updateLeadRequestDto,LoanApplication loanApplication) throws CustomException {
 
         com.sr.capital.external.flexi.dto.request.UpdateLeadRequestDto updateLeadDto =null;
-        LoanApplication loanApplication = loanApplicationRepository.findById(updateLeadRequestDto.getLoanId()).orElse(null);
         if(loanApplication!=null) {
             UserDetails user = userService.getCompanyDetailsWithoutEncryption(Long.valueOf(tenantId));
 
@@ -85,8 +89,8 @@ public class LeadUpdateServiceImpl {
                 }
 
             }
-            loanApplication.setLoanStatus(LoanStatus.LEAD_PROCESSING);
-            loanApplicationRepository.save(loanApplication);
+          /*  loanApplication.setLoanStatus(LoanStatus.LEAD_PROCESSING);
+            loanApplicationRepository.save(loanApplication);*/
         }else{
             throw new CustomException("Invalid loan_id",HttpStatus.BAD_REQUEST);
         }

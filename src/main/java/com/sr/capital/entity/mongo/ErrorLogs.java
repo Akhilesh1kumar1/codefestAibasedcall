@@ -12,15 +12,24 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document("error_logs")
 public class ErrorLogs extends BaseDoc {
 
-    Long srCompanyId;
+    String srCompanyId;
 
-    Long vendorId;
+    String serviceName;
 
-    Object request;
+    Object requestBody;
+
+    String requestParam;
 
     Object response;
 
     String statusCode;
 
     String groupName;
+
+    String endPoint;
+
+    String header;
+
+    String errorMessage;
+    Object error;
 }

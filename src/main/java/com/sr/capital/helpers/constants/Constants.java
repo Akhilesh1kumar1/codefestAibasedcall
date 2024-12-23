@@ -166,7 +166,7 @@ public final class Constants {
     }
 
     public static class RedisKeys{
-        public static final String GLOBAL_KEY = "capital";
+        public static final String GLOBAL_KEY = "SCAP";
         public static final String BASE_CREDIT_PARTNER =  "credit_partner";
 
         public static final String BANK_DETAILS = "banks";
@@ -174,6 +174,7 @@ public final class Constants {
         public static final String ACCOUNT_TYPE =  "account_type";
 
         public static final String ACCESS_TOKEN =  "partner_access_tokens";
+        public static final String CRIF_ACCESS_TOKEN =  "crif_access_tokens";
 
     }
 

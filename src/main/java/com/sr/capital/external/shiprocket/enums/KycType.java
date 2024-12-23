@@ -45,7 +45,7 @@ public enum KycType {
 
     }, "Others"),
     LIMITED_LIABILITY_PARTNERSHIP(8,new KycDocumentType[]{}
-            ,"Limited Liability Partnership");
+            ,"Limited Liability Partnership (LLP)");
 
 
 
