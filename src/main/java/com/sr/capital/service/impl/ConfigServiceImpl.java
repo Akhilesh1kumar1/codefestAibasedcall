@@ -24,9 +24,14 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public FeatureDetailResponseDto getCompanyWithFeature() {
         FeatureDetails featureDetails = featureDetailRepository.findBySrCompanyId(Long.parseLong(RequestData.getTenantId()));
+        List<String> featureDetailsList = new ArrayList<>();
+        if(featureDetails!=null) {
+            featureDetailsList.addAll(featureDetails.getFeature());
+        }
+
         return FeatureDetailResponseDto.builder()
-                .srCompanyId(featureDetails.getSrCompanyId())
-                .feature(featureDetails.getFeature())
+                .srCompanyId(Long.valueOf(RequestData.getTenantId()))
+                .feature(featureDetailsList)
                 .build();
     }
 
