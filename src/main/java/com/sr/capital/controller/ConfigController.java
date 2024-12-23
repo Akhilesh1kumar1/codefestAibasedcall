@@ -11,6 +11,8 @@ import org.apache.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 
 
@@ -29,7 +31,7 @@ public class ConfigController {
     }
 
     @PostMapping("")
-    public GenericResponse<FeatureDetailResponseDto> saveFeatureDetails(@RequestBody FeatureDetailRequestDto featureDetailRequestDto){
+    public GenericResponse<FeatureDetailResponseDto> saveFeatureDetails(@RequestBody List<FeatureDetailRequestDto> featureDetailRequestDto){
         return ResponseBuilderUtil.getResponse(configService.saveCompanyWithFeature(featureDetailRequestDto),SUCCESS,"",HttpStatus.SC_OK);
     }
 

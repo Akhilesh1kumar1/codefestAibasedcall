@@ -138,7 +138,7 @@ aws:
     url: ${CDN_URL:https://o2stage-capital-cdn.kartrocket.in}
 
 redis:
-  config: redisson-dev.yaml
+  config: redisson-local.yaml
 fileUpload:
   coolOffWindowInMinutes: ${FILE_UPLOAD_COOLOFF_WINDOW:60}
 
@@ -319,7 +319,7 @@ aes:
 
 is:
   encryption:
-    enabled: ${IS_ENCRYPTION_ENABLED:true}
+    enabled: ${IS_ENCRYPTION_ENABLED:false}
 
 
 

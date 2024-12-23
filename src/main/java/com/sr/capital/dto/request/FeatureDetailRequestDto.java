@@ -14,5 +14,7 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class FeatureDetailRequestDto {
 
+    Long srCompanyId;
+
     List<String> feature;
 }
