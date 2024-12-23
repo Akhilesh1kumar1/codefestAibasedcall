@@ -4,6 +4,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.external.dto.response.ValidateTokenResponse;
 import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.repository.secondary.TestRepository;
 import com.sr.capital.service.impl.ServicesHandler;
@@ -11,15 +12,20 @@ import com.sr.capital.service.impl.TestServiceImpl;
 import com.sr.capital.external.shiprocket.client.ShiprocketClient;
 import com.sr.capital.external.shiprocket.dto.response.KycResponse;
 import com.sr.capital.util.ResponseBuilderUtil;
+import com.sr.capital.util.WebClientUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.InvalidCredentialsException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
+
+import static com.sr.capital.helpers.enums.ServiceName.SHIPROCKET;
 
 @RestController
 @RequestMapping("/api/v1/test")
@@ -31,6 +37,7 @@ public class TestController {
     final TestRepository testRepository;
     final ServicesHandler servicesHandler;
     final CommunicationService communicationService;
+    final WebClientUtil webClientUtil;
 
     @GetMapping()
     public GenericResponse testValidateTokenApi(@RequestParam("token") String token) throws UnirestException, CustomException {
@@ -83,13 +90,13 @@ public class TestController {
     @GetMapping("/redis-set-temp-value")
     public GenericResponse test()  {
 
-        return ResponseBuilderUtil.getResponse(communicationService.setTempValueInRadis(),Constants.StatusEnum.SUCCESS,
+        return ResponseBuilderUtil.getResponse(testService.setTempValueInRadis(),Constants.StatusEnum.SUCCESS,
                 "done",  HttpStatus.SC_OK);
     }
     @GetMapping("/redis-set-temp-value1")
     public GenericResponse test1()  {
 
-        return ResponseBuilderUtil.getResponse(communicationService.getTempValueInRadis(),Constants.StatusEnum.SUCCESS,
+        return ResponseBuilderUtil.getResponse(testService.getTempValueInRadis(),Constants.StatusEnum.SUCCESS,
                 "done",  HttpStatus.SC_OK);
     }
 }
