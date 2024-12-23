@@ -14,6 +14,7 @@ import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
+import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.util.CrifModelHelper;
 import com.sr.capital.external.crif.util.CrifStatusCode;
 import com.sr.capital.external.crif.util.StringUtils;
@@ -55,7 +56,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final RedissonClient redissonClient;
     private final ObjectMapper mapper;
     @Override
-    public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException {
+    public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
 
         BureauQuestionnaireResponse bureauQuestionnaireResponse = initiateBureauAndGetQuestionnaire(bureauInitiatePayloadRequest);
 
@@ -76,7 +77,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException, CRIFApiException {
+    public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
         CrifResponse crifResponse = CrifResponse.builder().build();
 
         BureauQuestionnaireResponse questionnaire = getQuestionnaire(bureauInitiateResponse);
@@ -97,7 +98,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return status.equals(S01.name()) || status.equals(S10.name());
     }
     @Override
-    public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException {
+    public Map<String, Object> initiateBureauAndGetQuestionnaire(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
         Optional<CrifReport> optional = crifModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
         if (optional.isPresent()) {
             if (isOldRequest(optional.get().getValidTill())) {
@@ -124,7 +125,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return new HashMap<>(){{put(DATA, bureauQuestionnaireResponse); put(STAGE, STAGE_2);}};
     }
 
-    private HashMap<String, Object> getReport(String mobile) throws CRIFApiException {
+    private HashMap<String, Object> getReport(String mobile) throws CRIFApiException, CRIFApiLimitExceededException {
         List<BureauInitiateModel> bureauInitiateModelList = crifModelHelper.
                 findByMobileNumber(mobile);
         if (bureauInitiateModelList != null && !bureauInitiateModelList.isEmpty()) {
@@ -160,7 +161,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return false;
     }
 
-    private BureauReportResponse getReport(BureauQuestionnaireResponse questionnaire, boolean isRefreshRequest) throws CRIFApiException {
+    private BureauReportResponse getReport(BureauQuestionnaireResponse questionnaire, boolean isRefreshRequest) throws CRIFApiException, CRIFApiLimitExceededException {
         BureauReportPayloadRequest bureauReportPayloadRequest = BureauReportPayloadRequest.builder()
                 .reportId(questionnaire.getReportId())
                 .orderId(questionnaire.getOrderId())
@@ -213,7 +214,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     @Override
-    public BureauQuestionnaireResponse initiateBureauAndGetQuestionnaire(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CRIFApiException {
+    public BureauQuestionnaireResponse initiateBureauAndGetQuestionnaire(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CRIFApiException, CRIFApiLimitExceededException {
 
         updateStaticData(bureauInitiatePayloadRequest);
 
@@ -401,7 +402,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
 
     @Override
-    public BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse) throws CRIFApiException {
+    public BureauQuestionnaireResponse getQuestionnaire(BureauInitiateResponse bureauInitiateResponse) throws CRIFApiException, CRIFApiLimitExceededException {
 
         BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest = updateStaticData(bureauInitiateResponse);
 
@@ -444,7 +445,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
 
 
-    public BureauQuestionnaireResponse authenticateQuestion(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) throws CRIFApiException {
+    public BureauQuestionnaireResponse authenticateQuestion(BureauQuestionnairePayloadRequest bureauQuestionnairePayloadRequest) throws CRIFApiException, CRIFApiLimitExceededException {
 
         HttpHeaders header = getHeaderForQuestionnaire(bureauQuestionnairePayloadRequest.getOrderId(),
                 bureauQuestionnairePayloadRequest.getReportId(), true, false);
@@ -503,27 +504,29 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return bureauQuestionnaireResponse;
     }
 
-        private void handleExceptions(String statusCode) throws CRIFApiException {
+        private void handleExceptions(String statusCode) throws CRIFApiException, CRIFApiLimitExceededException {
                 CrifStatusCode crifStatusCode = CrifStatusCode.fromCode(statusCode);
 
                 switch (crifStatusCode) {
-                    case S00, S02,S03, S04, S05, S07, S08, S09:
+                    case S00,S03, S04, S05, S07, S08, S09:
                         throw new CRIFApiException(crifStatusCode.getDescription() + " " + statusCode);
 
                     case UNAUTHORIZED:
                         throw new SecurityException(crifStatusCode.getDescription());
+                    case S02:
+                        throw new CRIFApiLimitExceededException(crifStatusCode.getDescription());
                 }
 
         }
 
     @Override
-    public BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest, boolean isRefreshRequest) throws CRIFApiException {
+    public BureauReportResponse getReport(BureauReportPayloadRequest bureauReportPayloadRequest, boolean isRefreshRequest) throws CRIFApiException, CRIFApiLimitExceededException {
         setDummyData(bureauReportPayloadRequest);
         updateStaticDataForReport(bureauReportPayloadRequest);
         return generateReport(bureauReportPayloadRequest, isRefreshRequest);
     }
 
-    private BureauReportResponse generateReport(BureauReportPayloadRequest bureauReportPayloadRequest, boolean isRefreshRequest) throws CRIFApiException {
+    private BureauReportResponse generateReport(BureauReportPayloadRequest bureauReportPayloadRequest, boolean isRefreshRequest) throws CRIFApiException, CRIFApiLimitExceededException {
         HttpHeaders header = getHeaderForQuestionnaire(bureauReportPayloadRequest.getOrderId(),
                 bureauReportPayloadRequest.getReportId(), false, isRefreshRequest);
 
