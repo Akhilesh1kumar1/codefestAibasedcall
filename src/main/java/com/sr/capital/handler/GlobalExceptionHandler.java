@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(CRIFApiException.class)
     public ResponseEntity<GenericResponse> handleCRIFApiException(final CRIFApiException exception) {
-        return new ResponseEntity<>(getGenericResponse(HttpStatus.NOT_ACCEPTABLE.value(), exception.getErrorDetails() + " " + exception.getStatusCode()), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(getGenericResponse(HttpStatus.NOT_ACCEPTABLE.value(), exception.getErrorDetails()), HttpStatus.ACCEPTED);
     }
 
     @ExceptionHandler(Exception.class)
