@@ -62,7 +62,8 @@ public enum DocType {
     SALE_DEED("sale_deed"),
     LANDLINE_BILL("landline_bill"),
     EPAN("epan"),
-    TRADE_CERTIFICATE("trade_certificate");
+    TRADE_CERTIFICATE("trade_certificate"),
+    PAN_FATHER_HUSBAND("pan_father_husband");
 
     final String type;
 
