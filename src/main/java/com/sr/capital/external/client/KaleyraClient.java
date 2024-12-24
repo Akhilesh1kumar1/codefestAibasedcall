@@ -61,10 +61,14 @@ public class KaleyraClient {
     public KaleyraResponse sendWhatsAppNotification(CommunicationRequestTemp.WhatsAppCommunicationDTO communicationDTO) {
         try {
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-            getMandatoryFormDataForWhatsAppCommunication(formData);
+            getMandatoryFormDataForWhatsAppCommunication(formData,communicationDTO.getIsOtpFlow());
             formData.add("to", communicationDTO.getRecipientNo());
             formData.add("template_name", communicationDTO.getTemplate());
-            formData.add("params", StringUtils.join(communicationDTO.getParams(), ","));
+            if(communicationDTO.getIsOtpFlow()){
+                formData.add("verification_code",StringUtils.join(communicationDTO.getParams(), ","));
+            }else {
+                formData.add("params", StringUtils.join(communicationDTO.getParams(), ","));
+            }
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("api-key",appProperties.getKaleyraApiKey());
@@ -108,10 +112,15 @@ public class KaleyraClient {
          return response;
     }*/
 
-    private void getMandatoryFormDataForWhatsAppCommunication(MultiValueMap<String, String> formData) {
+    private void getMandatoryFormDataForWhatsAppCommunication(MultiValueMap<String, String> formData,Boolean isOtp) {
         formData.add("from", appProperties.getKaleyraFromNo());
         formData.add("channel", appProperties.getKaleyraWhatsappChannel());
-        formData.add("type", "mediatemplate");
+
+        if(isOtp){
+            formData.add("type","authenticationtemplate");
+        }else{
+            formData.add("type", "mediatemplate");
+        }
         //TODO: Configure a callback url and then add this.
 //        formData.add("callback_url", appProperties.getKaleyraWhatsappCallbackUri());
     }

@@ -89,6 +89,9 @@ public class CommunicationRequestTemp {
         private String body;
 
         private List<String> params;
+
+        @Builder.Default
+        private Boolean isOtpFlow=false;
     }
 
     @Data
