@@ -88,7 +88,7 @@ app:
       endpoints:
         send-messages: "/messages"
       whatsapp:
-        otp-template-name: ${KALEYRA_WHATSAPP_OTP_TEMPLATE_NAME:otp_verification_srcapital}
+        otp-template-name: ${KALEYRA_WHATSAPP_OTP_TEMPLATE_NAME:sr_capital_code}
         channel: ${KALEYRA_WHATSAPP_CHANNEL:whatsapp}
         callBackUri: ${KALEYRA_CALL_BACK_URL:https://apiv2.shiprocket.in/v1/webhook/whatsapp}
         lead-not-connected-template-name: seller_notconnected_capital
