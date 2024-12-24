@@ -80,7 +80,7 @@ app:
         sender: ${SINFINI_SMS_SENDER:SHPRKT}
         templateId: ${SINFINI_SMS_TEMPLATE_ID:1107159921248118728}
     kaleyra:
-      enabled: false
+      enabled: true
       baseUri: ${KALEYRA_BASE_URI:https://api.kaleyra.io/v1}
       senderId: ${KALEYRA_SENDER_ID:HXIN1724808889IN}
       apiKey: ${KALEYRA_API_KEY:Aca6d903762f7aa22e3b1d392059be7cd}
@@ -88,7 +88,7 @@ app:
       endpoints:
         send-messages: "/messages"
       whatsapp:
-        otp-template-name: ${KALEYRA_WHATSAPP_OTP_TEMPLATE_NAME:o2_verification}
+        otp-template-name: ${KALEYRA_WHATSAPP_OTP_TEMPLATE_NAME:otp_verification_srcapital}
         channel: ${KALEYRA_WHATSAPP_CHANNEL:whatsapp}
         callBackUri: ${KALEYRA_CALL_BACK_URL:https://apiv2.shiprocket.in/v1/webhook/whatsapp}
         lead-not-connected-template-name: seller_notconnected_capital

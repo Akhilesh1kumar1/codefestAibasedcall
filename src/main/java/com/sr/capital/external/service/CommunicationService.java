@@ -75,6 +75,7 @@ public class CommunicationService {
                     if (ObjectUtils.isEmpty(communicationRequest.getWhatsAppCommunicationDto())) {
                         throw new CustomException("Communication Error");
                     }
+                    communicationRequest.getWhatsAppCommunicationDto().setIsOtpFlow(true);
                     if (appProperties.getKaleyraCommunicationEnabled()) {
                         kaleyraClient.sendWhatsAppNotification(communicationRequest.getWhatsAppCommunicationDto());
                     }
@@ -87,6 +88,7 @@ public class CommunicationService {
                         sinfiniClient.sendSmsNotification(communicationRequest.getSmsCommunicationDto());
                     }
                     if (appProperties.getKaleyraCommunicationEnabled()) {
+                        communicationRequest.getWhatsAppCommunicationDto().setIsOtpFlow(true);
                         kaleyraClient.sendWhatsAppNotification(communicationRequest.getWhatsAppCommunicationDto());
                     }
                 }
