@@ -13,18 +13,15 @@ import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.dto.response.CrifUserDetailsResponseDto;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
+import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
-import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.service.UserService;
-import com.sr.capital.util.CoreUtil;
 import com.sr.capital.util.MapperUtils;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -44,10 +41,10 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     private final CrifVerificationUtils crifVerificationUtils;
     private final CrifPartnerService crifPartnerService;
     private final UserService userService;
-    private final ObjectMapper mapper;;
+    private final ObjectMapper mapper;
 
     @Override
-    public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException, CRIFApiException {
+    public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException, CRIFApiException, CRIFApiLimitExceededException {
         CrifResponse crifResponse  = CrifResponse.builder().build();
 
         Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
@@ -119,7 +116,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     }
 
     @Override
-    public CrifResponse verifyOtp(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException {
+    public CrifResponse verifyOtp(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
         CrifResponse crifResponse = CrifResponse.builder().build();
 
         Optional<CrifUserModel> optional = crifUserModelRepo.findByVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
