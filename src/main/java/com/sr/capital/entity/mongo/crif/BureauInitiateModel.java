@@ -62,7 +62,7 @@ public class BureauInitiateModel extends BaseDoc {
     private String userAnswer;
 
     @Field("question_option_list")
-    private List<Map<String, List<String>>> optionList;
+    private List<Map<String, List<String>>> questionOptionList;
 
     @Field("button_behavior")
     private String buttonBehavior;

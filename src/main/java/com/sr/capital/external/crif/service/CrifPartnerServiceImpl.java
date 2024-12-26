@@ -504,7 +504,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             if (bureauQuestionnaireResponse.getQuestion() != null && bureauQuestionnaireResponse.getOptionList() != null) {
                 questionsOptionMap.put(bureauQuestionnaireResponse.getQuestion(), bureauQuestionnaireResponse.getOptionList());
             }
-            List<Map<String, List<String>>> optionList = bureauInitiateModel.getOptionList();
+            List<Map<String, List<String>>> optionList = bureauInitiateModel.getQuestionOptionList();
             if (!questionsOptionMap.isEmpty()) {
                 if (optionList != null) {
                     optionList.add(questionsOptionMap);
@@ -513,7 +513,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 }
             }
 
-            bureauInitiateModel.setOptionList(optionList);
+            bureauInitiateModel.setQuestionOptionList(optionList);
             bureauInitiateModel.setButtonBehavior(bureauQuestionnaireResponse.getButtonBehaviour());
             bureauInitiateModel.setQuestionnaireStatus(bureauQuestionnaireResponse.getStatus());
             bureauInitiateModel.setStatusDesc(bureauQuestionnaireResponse.getStatusDesc());
