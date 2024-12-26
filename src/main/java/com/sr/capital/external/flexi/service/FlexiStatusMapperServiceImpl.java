@@ -3,6 +3,7 @@ package com.sr.capital.external.flexi.service;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.external.common.StatusMapperInterface;
 import com.sr.capital.external.flexi.constants.Checkpoint;
+import com.sr.capital.external.flexi.dto.response.LoanDetails;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.Screens;
 import com.sr.capital.util.LoggerUtil;
@@ -175,5 +176,6 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
         dto.setInternalState(screen.name());
         dto.setInternalStatus(status.name());
     }
+
 
 }
