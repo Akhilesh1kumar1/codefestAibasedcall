@@ -5,7 +5,11 @@ import com.omunify.core.model.ErrorResponse;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.ExceptionsTranslator;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
+import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
+import com.sr.capital.external.crif.service.CrifOtpServiceImpl;
+import com.sr.capital.util.ResponseBuilderUtil;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +22,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import static com.omunify.core.util.Constants.StatusEnum.ERROR;
+import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
+import static com.sr.capital.external.crif.Constant.Constant.*;
+import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.ServiceConstants.REQUEST_FAILED;
 
 @Slf4j
@@ -56,7 +64,19 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(CRIFApiException.class)
     public ResponseEntity<GenericResponse> handleCRIFApiException(final CRIFApiException exception) {
-        return new ResponseEntity<>(getGenericResponse(HttpStatus.NOT_ACCEPTABLE.value(), exception.getErrorDetails() + " " + exception.getStatusCode()), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(getGenericResponse(HttpStatus.NOT_ACCEPTABLE.value(), exception.getErrorDetails()), HttpStatus.ACCEPTED);
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ExceptionHandler(CRIFApiLimitExceededException.class)
+    public GenericResponse<Object> handleCRIFApiLimitExceededException(final CRIFApiLimitExceededException exception) {
+        CrifResponse crifResponse = CrifResponse.builder().build();
+        CrifOtpServiceImpl.setResponse(crifResponse, new HashMap<>(){{put(DATA, null); put(STAGE, LIMIT_EXCEEDED);}});
+
+        return ResponseBuilderUtil.getResponse(crifResponse
+                ,SUCCESS,
+                "Limit Exceeded", org.apache.http.HttpStatus.SC_OK);
     }
 
     @ExceptionHandler(Exception.class)

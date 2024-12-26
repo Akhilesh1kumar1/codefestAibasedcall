@@ -25,6 +25,7 @@ public class Constant {
     public static final String STAGE = "STAGE";
     public static final String STAGE_2 = "QUESTIONS_GENERATED";
     public static final String STAGE_3 = "REPORT_GENERATED";
+    public static final String LIMIT_EXCEEDED = "LIMIT_EXCEEDED";
     public static final String ASIA_KOLKATA = "Asia/Kolkata";
 
     public static final String OTP_VERIFICATION_PENDING = "OTP_VERIFICATION_PENDING";

@@ -15,7 +15,7 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TruthScreenPanComplianceDecryptedResponseDto {
+public class TruthScreenPanComplianceDecryptedResponseDto extends TruthScreenBaseResponse{
 
     String status;
     Map<String,Object> msg;

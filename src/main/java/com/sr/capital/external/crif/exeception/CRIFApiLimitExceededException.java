@@ -5,16 +5,16 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CRIFApiException extends Exception {
+public class CRIFApiLimitExceededException extends Exception {
     private final String statusCode;
     private final String errorDetails;
 
-    public CRIFApiException(String message, String statusCode, String errorDetails) {
+    public CRIFApiLimitExceededException(String message, String statusCode, String errorDetails) {
         this.statusCode = statusCode;
         this.errorDetails = message + " " + errorDetails;
     }
 
-    public CRIFApiException(String message) {
+    public CRIFApiLimitExceededException(String message) {
         this.statusCode = "200";
         this.errorDetails = message;
     }
