@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
         validateUserDetails(userDetails);
         encryptData(userDetails);
-        User user =userRepository.findBySrUserId(Long.valueOf(userDetails.getUserId()));
+        User user =userRepository.findTopBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
        if(user==null){
            user =User.mapUser(userDetails);
        } else {
