@@ -1,5 +1,6 @@
 package com.sr.capital.external.truthscreen.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.omunify.encryption.algorithm.AES256;
@@ -22,6 +23,8 @@ public class PanComprehensiveDetails {
     private int status;
     private int statusCode;
     private boolean success;
+    @JsonProperty("tsTransID")
+    private String tsTransID;
 
     public static void encryptInfo(PanComprehensiveDetails details, AES256 aes256){
         ExtractionData.encryptData(details.getData(),aes256);

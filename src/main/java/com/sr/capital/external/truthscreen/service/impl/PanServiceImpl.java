@@ -63,7 +63,6 @@ public class PanServiceImpl implements PanService {
                 throw new RuntimeException(e + "error occured while try to get response from the adapter");
             }
 
-
         }
         else {
             try {

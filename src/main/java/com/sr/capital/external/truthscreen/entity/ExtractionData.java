@@ -56,9 +56,6 @@ public class ExtractionData {
 
     private String status;
 
-
-    private String tsTransID;
-
     public static void encryptData(ExtractionData data, AES256 aes256){
         Address.encryptAddress(data.getAddress(),aes256);
         data.setCategory(aes256.encrypt(data.getCategory()));

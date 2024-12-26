@@ -10,7 +10,6 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PanComprehensiveExtractionRequestData {
 
-
     private String transID;
     private int docType;
     private String PanNumber;
