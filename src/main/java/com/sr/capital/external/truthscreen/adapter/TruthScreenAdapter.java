@@ -47,29 +47,29 @@ public class TruthScreenAdapter {
         TruthScreenExternalRequestMetaData requestMetaData = getRequestEndPointAndDocType(request);
 
         try{
-//             Object responseObject  = webClientUtil.makeExternalCallBlocking(ServiceName.TRUTHSCREEN,
-//                     "",
-//                     requestMetaData.getEndpoint(),
-//                     HttpMethod.POST,
-//                     "",
-//                     truthScreenUtil.getHeaders(),
-//                     null,
-//                     truthScreenEncryptedRequestDto,
-//                     Object.class);
-            Object jsonResponse = "{\n" +
-                    "  \"responseData\": \"gTv4NV941WkN9qpCZPYueofW9zCmNyqwpMeuoGWGuoJHKkKF8tgXZOjnLWgdwVmgXZ1e/XEmv0j9rZct/elU+0Qd7XZaNTqK3sCSm8fUokjbYA1LLA0DxkIxcguGoc4Lw3TRItemflXozABpQNd6UjvbNXEf74loEAdhjWg7DXnqA690c2UvGjHZlBI98zLI7/tANHxHlxKKI9E3BE+oZUvJUDeY9Ahr7EDUEZ7Cf4EIH9s3pJJXZ9ZepVurvWuZw4ewMGCciQeXSiLqtErrCw8FnxnM1OD45BCLedET+WRw9T9RPwBo3TnaBUR092xiWLXoeLwSA3Ml7iJfmli7gypcKHY8Q+y99eb4fuwJAwmRxUA18riPwdRayoTfl+K++I+wzLuAKhbejJDJLBVz/2Kr7G7ANO2kRcMrK+Y1TY6LFpLn8SlP931gHf4ryc8sR0jujI05NMyMla6d8P4QPYo4+tYklQCg0LU15+Chy3NvDgdHlN/a9gNSANOJBMAgqNT7Q+clfuWhmixAJoyQLlScOhtBupuMM+fb+F+ZZQfcQv4mq5oX4NdoNHMvwCIwCIwvDn29pbjWnbwyMNRoQ9MuBN4R+IKXrTSoU2SnFR58gLrto5a+LN2k5S0H8mZsls9ASY+u9gE8xHuVIn8EmwCwtYBVRjx89yiSdUaw6xwc+ZW/ZWvq8QGkK99WI8QZ9SBBAW0skiScH/hlU6IFKBoQGZj/hPXDla918CXGsAYfqGXhIdEMo+J3PBSleaXSo5mdBV6ERMgy7NTVdZx6wWw5tbUUI5Y1bxDkHUZZdY0=:uZuk8meOzU5BZCxAyWuerg==\"\n" +
-                    "}";
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> responseMap = objectMapper.readValue(jsonResponse.toString(), Map.class);
-            // Extract the responseData field from the map
-            String responseDataToDecrypt = (String) responseMap.get("responseData");
-            return (U) TruthScreenUtility.decrypt(appProperties.getAuthBridgePassword(), responseDataToDecrypt, requestMetaData.getResponseClass());
-//            String responseStringNeedToBeDecrypted = converter(responseObject);
-//            return (U) TruthScreenUtility.decrypt(
-//                    appProperties.getAuthBridgePassword(),
-//                    responseStringNeedToBeDecrypted,
-//                    requestMetaData.getResponseClass()
-//            );
+             Object responseObject  = webClientUtil.makeExternalCallBlocking(ServiceName.TRUTHSCREEN,
+                     "",
+                     requestMetaData.getEndpoint(),
+                     HttpMethod.POST,
+                     "",
+                     truthScreenUtil.getHeaders(),
+                     null,
+                     truthScreenEncryptedRequestDto,
+                     Object.class);
+//            Object jsonResponse = "{\n" +
+//                    "  \"responseData\": \"gTv4NV941WkN9qpCZPYueofW9zCmNyqwpMeuoGWGuoJHKkKF8tgXZOjnLWgdwVmgXZ1e/XEmv0j9rZct/elU+0Qd7XZaNTqK3sCSm8fUokjbYA1LLA0DxkIxcguGoc4Lw3TRItemflXozABpQNd6UjvbNXEf74loEAdhjWg7DXnqA690c2UvGjHZlBI98zLI7/tANHxHlxKKI9E3BE+oZUvJUDeY9Ahr7EDUEZ7Cf4EIH9s3pJJXZ9ZepVurvWuZw4ewMGCciQeXSiLqtErrCw8FnxnM1OD45BCLedET+WRw9T9RPwBo3TnaBUR092xiWLXoeLwSA3Ml7iJfmli7gypcKHY8Q+y99eb4fuwJAwmRxUA18riPwdRayoTfl+K++I+wzLuAKhbejJDJLBVz/2Kr7G7ANO2kRcMrK+Y1TY6LFpLn8SlP931gHf4ryc8sR0jujI05NMyMla6d8P4QPYo4+tYklQCg0LU15+Chy3NvDgdHlN/a9gNSANOJBMAgqNT7Q+clfuWhmixAJoyQLlScOhtBupuMM+fb+F+ZZQfcQv4mq5oX4NdoNHMvwCIwCIwvDn29pbjWnbwyMNRoQ9MuBN4R+IKXrTSoU2SnFR58gLrto5a+LN2k5S0H8mZsls9ASY+u9gE8xHuVIn8EmwCwtYBVRjx89yiSdUaw6xwc+ZW/ZWvq8QGkK99WI8QZ9SBBAW0skiScH/hlU6IFKBoQGZj/hPXDla918CXGsAYfqGXhIdEMo+J3PBSleaXSo5mdBV6ERMgy7NTVdZx6wWw5tbUUI5Y1bxDkHUZZdY0=:uZuk8meOzU5BZCxAyWuerg==\"\n" +
+//                    "}";
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            Map<String, Object> responseMap = objectMapper.readValue(jsonResponse.toString(), Map.class);
+//            // Extract the responseData field from the map
+//            String responseDataToDecrypt = (String) responseMap.get("responseData");
+//            return (U) TruthScreenUtility.decrypt(appProperties.getAuthBridgePassword(), responseDataToDecrypt, requestMetaData.getResponseClass());
+            String responseStringNeedToBeDecrypted = converter(responseObject);
+            return (U) TruthScreenUtility.decrypt(
+                    appProperties.getAuthBridgePassword(),
+                    responseStringNeedToBeDecrypted,
+                    requestMetaData.getResponseClass()
+            );
         }
         catch (Exception exception){
             LoggerUtil.error(exception.getMessage());
