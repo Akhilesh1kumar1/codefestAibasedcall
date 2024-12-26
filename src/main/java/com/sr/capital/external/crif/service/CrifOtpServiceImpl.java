@@ -56,7 +56,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
             try {
                 verificationOrchestratorRequest = crifVerificationUtils.sendOtp(crifUserModel);
                 crifUserModel.setVerificationToken(verificationOrchestratorRequest.getVerificationEntity().getId());
-                crifUserModelRepo.save(crifUserModel);
+                crifUserModelHelper.save(crifUserModel);
             } catch (CustomException e) {
                 throw new RuntimeException("Error while sending the otp {} ", e);
             }
@@ -131,7 +131,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
 
                 if (isVerified != null && isVerified) {
                     crifUserModel.setIsOtpVerified(true);
-                    crifUserModelRepo.save(crifUserModel);
+                    crifUserModelHelper.save(crifUserModel);
 
                     crifGenerateOtpRequestModel.setDocType(crifUserModel.getDocumentType());
                     crifGenerateOtpRequestModel.setDocValue(crifUserModel.getDocumentValue());

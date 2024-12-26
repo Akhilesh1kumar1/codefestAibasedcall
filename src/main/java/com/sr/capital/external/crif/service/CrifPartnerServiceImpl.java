@@ -480,20 +480,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     bureauQuestionnaireResponse.getReportId(), bureauQuestionnaireResponse.getOrderId(),
                     bureauQuestionnaireResponse.getRedirectURL(), bureauQuestionnaireResponse.getQuestion(),
                     bureauQuestionnaireResponse.getButtonBehaviour(), bureauQuestionnaireResponse.getOptionList());
-            Optional<BureauInitiateModel> optional = bureauInitiateModelRepo.
-                    findByReportIdAndOrderId(bureauQuestionnaireResponse.getReportId(),
-                    bureauQuestionnaireResponse.getOrderId());
-            if (optional.isPresent()) {
-                BureauInitiateModel bureauInitiateModel = optional.get();
-                bureauInitiateModel.setQuestion(bureauQuestionnaireResponse.getQuestion());
-                bureauInitiateModel.setOptionList(bureauQuestionnaireResponse.getOptionList());
-                bureauInitiateModel.setButtonBehavior(bureauQuestionnaireResponse.getButtonBehaviour());
-                bureauInitiateModel.setQuestionnaireStatus(bureauQuestionnaireResponse.getStatus());
-                bureauInitiateModel.setStatusDesc(bureauQuestionnaireResponse.getStatusDesc());
-                bureauInitiateModel.setCompletedAt(bureauQuestionnaireResponse.getCompletedAt());
-                bureauInitiateModel.setQuestionnaireResponse(bureauQuestionnaireResponse.toString());
-                bureauInitiateModelRepo.save(bureauInitiateModel);
-            }
+
+            saveIntoDb(bureauQuestionnaireResponse);
 
             handleExceptions(bureauQuestionnaireResponse.getStatus());
 
@@ -502,6 +490,37 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         }
 
         return bureauQuestionnaireResponse;
+    }
+
+    private void saveIntoDb(BureauQuestionnaireResponse bureauQuestionnaireResponse) {
+        Optional<BureauInitiateModel> optional = bureauInitiateModelRepo.
+                findByReportIdAndOrderId(bureauQuestionnaireResponse.getReportId(),
+                        bureauQuestionnaireResponse.getOrderId());
+        if (optional.isPresent()) {
+            BureauInitiateModel bureauInitiateModel = optional.get();
+            bureauInitiateModel.setLastQuestion(bureauQuestionnaireResponse.getQuestion());
+
+            Map<String, List<String>> questionsOptionMap = new HashMap<>();
+            if (bureauQuestionnaireResponse.getQuestion() != null && bureauQuestionnaireResponse.getOptionList() != null) {
+                questionsOptionMap.put(bureauQuestionnaireResponse.getQuestion(), bureauQuestionnaireResponse.getOptionList());
+            }
+            List<Map<String, List<String>>> optionList = bureauInitiateModel.getQuestionOptionList();
+            if (!questionsOptionMap.isEmpty()) {
+                if (optionList != null) {
+                    optionList.add(questionsOptionMap);
+                } else {
+                    optionList = Collections.singletonList(questionsOptionMap);
+                }
+            }
+
+            bureauInitiateModel.setQuestionOptionList(optionList);
+            bureauInitiateModel.setButtonBehavior(bureauQuestionnaireResponse.getButtonBehaviour());
+            bureauInitiateModel.setQuestionnaireStatus(bureauQuestionnaireResponse.getStatus());
+            bureauInitiateModel.setStatusDesc(bureauQuestionnaireResponse.getStatusDesc());
+            bureauInitiateModel.setCompletedAt(bureauQuestionnaireResponse.getCompletedAt());
+            bureauInitiateModel.setQuestionnaireResponse(bureauQuestionnaireResponse.toString());
+            bureauInitiateModelRepo.save(bureauInitiateModel);
+        }
     }
 
         private void handleExceptions(String statusCode) throws CRIFApiException, CRIFApiLimitExceededException {
@@ -584,7 +603,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         crifReport.setReportId(bureauReportPayloadRequest.getReportId());
         crifReport.setSrCompanyId(RequestData.getTenantId());
         crifReport.setValidTill(StringUtils.getTimeAfterOneMonths());
-        crifReportRepo.save(crifReport);
+        crifModelHelper.save(crifReport);
         return crifReport;
     }
 
