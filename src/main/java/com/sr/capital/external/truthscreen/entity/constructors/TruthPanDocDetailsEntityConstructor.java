@@ -6,7 +6,6 @@ import com.sr.capital.external.truthscreen.dto.data.PanExtractionResponseData;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
 import com.sr.capital.external.truthscreen.entity.PanDetails;
 import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
-import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenEntityConstructor;
 import com.sr.capital.util.MapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class TruthPanDocDetailsEntityConstructor implements TruthScreenEntityCon
 
         return (T) TruthScreenDocDetails.builder()
                 .srCompanyId(RequestData.getTenantId())
-                .truthScreenDocType(TruthScreenDocType.PAN)
+                .truthScreenDocType(request.getDocType())
                 .transId(request.getTransId())
                 .details(panDetails)
                 .build();

@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
+import com.sr.capital.external.truthscreen.dto.data.PanComplianceExtractionRequestData;
+import com.sr.capital.external.truthscreen.dto.data.PanComprehensiveExtractionRequestData;
 import com.sr.capital.external.truthscreen.dto.data.PanExtractionRequestData;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenEncryptedRequestDto;
 import com.sr.capital.external.truthscreen.dto.response.TruthScreenBaseResponse;
-import com.sr.capital.external.truthscreen.dto.response.TruthScreenDecryptedResponseDto;
+import com.sr.capital.external.truthscreen.dto.response.TruthScreenPanComprehensiveDecryptedResponse;
+import com.sr.capital.external.truthscreen.dto.response.TruthScreenPanDecryptedResponseDto;
 import com.sr.capital.external.truthscreen.dummyData.DummyData;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.util.TruthScreenUtil;
@@ -43,29 +46,29 @@ public class TruthScreenAdapter {
         TruthScreenExternalRequestMetaData requestMetaData = getRequestEndPointAndDocType(request);
 
         try{
-             Object responseObject  = webClientUtil.makeExternalCallBlocking(ServiceName.TRUTHSCREEN,
-                     "",
-                     requestMetaData.getEndpoint(),
-                     HttpMethod.POST,
-                     "",
-                     truthScreenUtil.getHeaders(),
-                     null,
-                     truthScreenEncryptedRequestDto,
-                     Object.class);
-//            Object jsonResponse = "{\n" +
-//                    "  \"responseData\": \"uKDsHtdj50VxKiiRlLmJEsI9OA535aBDt5OczECYggLTKD6xo+wIPH/OSIda2P5jyuEKUvEPXOOD36jb/Xzt865jF2c6KoNGNWQ3jW0Z8qFJda4YoIkqfv78x25Ld4sSpcpuG3Zmp3Bnc5dBVTInAGWXHlEsbk3DvPYhjnivcCRX/mU84ce/Bpg6MStQw67y2ZgAFeCuvgUPZq17Yvp6EsK6Wc1+KZIWtz0SXz8q9U4hYz8IClGAgzEcicoPeqPbHaJAoaZhbK6hbhs7KXkaz/Osji6zYou4evdFMs62cj9uFYsihhDiOs2HRp3CxsrgT9NXu13M3PXpVcM2WHFKd/LzP28UUWxgAmS+/vWZchA=:xTjWyLnXk25F38zzL7MbGQ==\"\n" +
-//                    "}";
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            Map<String, Object> responseMap = objectMapper.readValue(jsonResponse.toString(), Map.class);
-//            // Extract the responseData field from the map
-//            String responseDataToDecrypt = (String) responseMap.get("responseData");
-//            return (U) TruthScreenUtility.decrypt(appProperties.getAuthBridgePassword(), responseDataToDecrypt, requestMetaData.getResponseClass());
-            String responseStringNeedToBeDecrypted = converter(responseObject);
-            return (U) TruthScreenUtility.decrypt(
-                    appProperties.getAuthBridgePassword(),
-                    responseStringNeedToBeDecrypted,
-                    requestMetaData.getResponseClass()
-            );
+//             Object responseObject  = webClientUtil.makeExternalCallBlocking(ServiceName.TRUTHSCREEN,
+//                     "",
+//                     requestMetaData.getEndpoint(),
+//                     HttpMethod.POST,
+//                     "",
+//                     truthScreenUtil.getHeaders(),
+//                     null,
+//                     truthScreenEncryptedRequestDto,
+//                     Object.class);
+            Object jsonResponse = "{\n" +
+                    "  \"responseData\": \"hPK6K8eW0LMNnBr99v7+a3p0kKGesxxqjaFNlFosmtPwTWWqiAqlZGK5QoWuhOOOnlxLDA12Keu5xSpYs3mXG0Faztt2vl4FkwFI++rdaXp1ZxX+GkHkjo+lkspN0HzBb+LiwMwlfJDVhnOWCekhOCPTIWpiS7Skln4QywFy6s9v5WXbA5M62w6pUQTTrmc5rd/MPvfe/Lvjx/RbbW3ij8Q0BlePjMs2u8YqI8YG27oeQP77n3Mby64K+JIlNdHxq1lXkpspEE44OB85Zz8hPC48aA99KeCkreF+PT7AMQHzWm1e1UA3JvV3RLmGrt6OSUfRrxiOyZCm5B/fk2diUeb65w4rHD7pZQ2W3nm8Fjg89P0qvDVDl4vyZykd/VWIeiHNWuwi6n1m6r1HpH6HHHVN6c59/G/YAVlt3x5hphE=:zmRF/jauzgJp75cdeu56Hg==\"\n" +
+                    "}";
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> responseMap = objectMapper.readValue(jsonResponse.toString(), Map.class);
+            // Extract the responseData field from the map
+            String responseDataToDecrypt = (String) responseMap.get("responseData");
+            return (U) TruthScreenUtility.decrypt(appProperties.getAuthBridgePassword(), responseDataToDecrypt, requestMetaData.getResponseClass());
+//            String responseStringNeedToBeDecrypted = converter(responseObject);
+//            return (U) TruthScreenUtility.decrypt(
+//                    appProperties.getAuthBridgePassword(),
+//                    responseStringNeedToBeDecrypted,
+//                    requestMetaData.getResponseClass()
+//            );
         }
         catch (Exception exception){
             LoggerUtil.error(exception.getMessage());
@@ -79,7 +82,21 @@ public class TruthScreenAdapter {
             return TruthScreenExternalRequestMetaData.builder()
                     .endpoint(appProperties.getAuthBridgeBaseUrl()+appProperties.getAuthBridgeIdSearchUrl())
                     .docType(TruthScreenDocType.PAN)
-                    .responseClass(TruthScreenDecryptedResponseDto.class)
+                    .responseClass(TruthScreenPanDecryptedResponseDto.class)
+                    .build();
+        }
+        else if (request.getDetails() instanceof PanComprehensiveExtractionRequestData){
+            return TruthScreenExternalRequestMetaData.builder()
+                    .endpoint(appProperties.getAuthBridgeBaseUrl()+appProperties.getAuthBridgePanComprehensiveUrl())
+                    .docType(TruthScreenDocType.PAN_COMPREHENSIVE)
+                    .responseClass(TruthScreenPanComprehensiveDecryptedResponse.class)
+                    .build();
+        }
+        else if (request.getDetails() instanceof PanComplianceExtractionRequestData){
+            return TruthScreenExternalRequestMetaData.builder()
+                    .endpoint(appProperties.getAuthBridgeBaseUrl()+appProperties.getAuthBridgePanComplianceUrl())
+                    .docType(TruthScreenDocType.PAN_COMPLIANCE)
+                    .responseClass(TruthScreenPanDecryptedResponseDto.class)
                     .build();
         }
         else {

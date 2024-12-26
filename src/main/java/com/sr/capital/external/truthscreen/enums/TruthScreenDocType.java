@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 public enum TruthScreenDocType {
 
         PAN("pan", 2),
-        Pan_Compliance("pan_compliance",527),
-        PAN_COMPREHENSIVE("pan_comprehensive",523);
+        PAN_COMPREHENSIVE("pan_comprehensive",523),
+        PAN_COMPLIANCE("pan_compliance",527);
         private final String name;
         private final int value;
 

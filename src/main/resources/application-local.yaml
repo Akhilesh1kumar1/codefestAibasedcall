@@ -165,6 +165,8 @@ external:
     base:
       url: https://www.truthscreen.com
     idsearch-url: /v1/apicall/nid/idsearch
+    pan-comprehensive-url: /v1/apicall/nid/panComprehensive
+    pan-compliance-url: /v1/apicall/nid/pan_compliance_check
 
   karza:
     enabled: false

@@ -342,6 +342,13 @@ public class AppProperties {
 
     @Value("${external.authbridge.idsearch-url}")
     private String authBridgeIdSearchUrl;
+
+    @Value("${external.authbridge.pan-comprehensive-url}")
+    private String authBridgePanComprehensiveUrl;
+
+    @Value("${external.authbridge.pan-compliance-url}")
+    private String authBridgePanComplianceUrl;
+
     @Value("${external.crif.access-code.user}")
     private String CrifUser;
     @Value("${external.crif.access-code.password}")

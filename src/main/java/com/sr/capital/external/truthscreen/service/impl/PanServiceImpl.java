@@ -9,6 +9,8 @@ import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestrato
 import com.sr.capital.external.truthscreen.dto.response.IdSearchResponseDto;
 import com.sr.capital.external.truthscreen.dto.response.TruthScreenBaseResponse;
 import com.sr.capital.external.truthscreen.dto.request.IdSearchRequestDto;
+import com.sr.capital.external.truthscreen.entity.PanComplianceDetails;
+import com.sr.capital.external.truthscreen.entity.PanComprehensiveDetails;
 import com.sr.capital.external.truthscreen.entity.PanDetails;
 import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
@@ -53,8 +55,6 @@ public class PanServiceImpl implements PanService {
                 truthScreenDocOrchestratorRequest.setTruthScreenBaseResponse(truthScreenBaseResponse);
                 TruthScreenDocDetails<?> truthScreenDocDetailsToBeSaved = truthEntityConstructorStrategy.constructEntity(truthScreenDocOrchestratorRequest,truthScreenDocOrchestratorRequest.getTruthScreenDocDetails(),getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
                 truthScreenDocDetailsRepository.save(truthScreenDocDetailsToBeSaved);
-                //IdSearchResponseDto responseDto = MapperUtils.convertValue(truthScreenDocDetailsToBeSaved.getDetails(), IdSearchResponseDto.class);
-                //T responseDto = truthScreenIdSearchResponseStrategy.constructResponse(truthScreenDocOrchestratorRequest, (T) truthScreenDocDetailsToBeSaved.getDetails(),getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
                 IdSearchResponseDto<?> responseDto = truthScreenIdSearchResponseStrategy.constructResponse(truthScreenDocDetailsToBeSaved,getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
                 return responseDto;
                 //response should be that which is saved in the db not the 3rd party api
@@ -88,6 +88,10 @@ public class PanServiceImpl implements PanService {
         switch(docType){
             case PAN:
                 return PanDetails.class;
+            case PAN_COMPREHENSIVE:
+                return PanComprehensiveDetails.class;
+            case PAN_COMPLIANCE:
+                return PanComplianceDetails.class;
             default:
                 throw new CustomException("Invalid Doc type");
         }

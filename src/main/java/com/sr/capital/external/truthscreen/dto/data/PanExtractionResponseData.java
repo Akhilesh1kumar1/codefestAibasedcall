@@ -12,7 +12,7 @@ public class PanExtractionResponseData {
     @JsonProperty("LastUpdate")
     private String lastUpdate;
     @JsonProperty("Name")
-    private String Name;
+    private String name;
     @JsonProperty("NameOnTheCard")
     private String nameOnTheCard;
     @JsonProperty("PanHolderStatusType")

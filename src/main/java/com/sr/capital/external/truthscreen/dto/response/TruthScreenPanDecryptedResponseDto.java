@@ -1,24 +1,23 @@
-package com.sr.capital.external.truthscreen.dto.request;
+package com.sr.capital.external.truthscreen.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Map;
+
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class PanRequestDto {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class TruthScreenPanDecryptedResponseDto extends TruthScreenBaseResponse{
 
-    private String transID;
-    private int docType;
-    private String docNumber;
-    private int isAsync;
-
+    String status;
+    Map<String,Object> msg;
 
 }

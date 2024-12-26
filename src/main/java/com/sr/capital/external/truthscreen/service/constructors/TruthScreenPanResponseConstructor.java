@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class TruthScreenPanResponseEntityConstructor implements TruthScreenResponseConstructor {
+public class TruthScreenPanResponseConstructor implements TruthScreenResponseConstructor {
 
     @Autowired
     private AES256 aes256;

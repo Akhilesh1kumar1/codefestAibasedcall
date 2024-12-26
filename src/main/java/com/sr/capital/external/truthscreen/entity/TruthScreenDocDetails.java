@@ -1,8 +1,8 @@
 package com.sr.capital.external.truthscreen.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sr.capital.entity.mongo.kyc.BaseDoc;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
-import com.sr.capital.external.truthscreen.enums.TruthScreenStatus;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @Document("truthscreen-doc-details")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TruthScreenDocDetails<T> extends BaseDoc {
 
     @Field("sr_company_id")
@@ -23,6 +24,9 @@ public class TruthScreenDocDetails<T> extends BaseDoc {
     @Indexed(unique = true)
     private String transId;
 
+    @Field("ts_trans_id")
+    private String tsTransId;
+
     @Field("truth_screen_doc_type")
     private TruthScreenDocType truthScreenDocType;
 
@@ -30,7 +34,7 @@ public class TruthScreenDocDetails<T> extends BaseDoc {
     private T details;
 
     @Field("initial_status")
-    TruthScreenStatus initialStatus;
+    String initialStatus;
 
 
 }
