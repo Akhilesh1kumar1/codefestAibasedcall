@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.event.AfterConvertEvent;
 public class EncryptionEventListener extends AbstractMongoEventListener<Object> {
 
     @Autowired
-    private FieldEncryptionService encryptionService;
+    private MongoFieldEncryptionService encryptionService;
 
     @Override
     public void onBeforeConvert(BeforeConvertEvent<Object> event) {

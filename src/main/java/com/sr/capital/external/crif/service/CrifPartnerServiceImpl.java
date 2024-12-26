@@ -603,7 +603,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         crifReport.setReportId(bureauReportPayloadRequest.getReportId());
         crifReport.setSrCompanyId(RequestData.getTenantId());
         crifReport.setValidTill(StringUtils.getTimeAfterOneMonths());
-        crifReportRepo.save(crifReport);
+        crifModelHelper.save(crifReport);
         return crifReport;
     }
 
