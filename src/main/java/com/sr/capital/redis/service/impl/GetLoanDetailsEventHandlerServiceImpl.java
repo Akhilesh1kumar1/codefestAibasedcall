@@ -45,7 +45,12 @@ public class GetLoanDetailsEventHandlerServiceImpl {
                 LoanDetails loanDetails = MapperUtils.convertValue(object, LoanDetails.class);
                 LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto = FlexiLoanMapper.convertToWebhookDto(loanDetails);
                 RedisTTLListenerUtil.updateStatus(expiredKey, redisEventTrackingRepo, LOAN_STATUS_UPDATE);
-                kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(),kafkaMessagePublisherUtil.getKafkaMessage(MapperUtils.writeValueAsString(loanStatusUpdateWebhookDto), LOAN_STATUS_UPDATE.name(),null,null,partner));
+                kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(),kafkaMessagePublisherUtil.
+                        getKafkaMessage(MapperUtils.writeValueAsString(loanStatusUpdateWebhookDto), LOAN_STATUS_UPDATE.name(),
+                                null,null,partner));
+                log.info("Successfully pushed in LOAN_STATUS_UPDATE queue for internalLoanId {} and partner {} ",
+                        internalLoanId, partner);
+
             }
 
         } catch (Exception e) {

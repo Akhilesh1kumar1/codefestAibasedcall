@@ -1,5 +1,7 @@
 package com.sr.capital.redis.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sr.capital.entity.mongo.kyc.BaseDoc;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Document(collection = "redis_event_tracking")
 public class RedisEventTracking extends BaseDoc {
 

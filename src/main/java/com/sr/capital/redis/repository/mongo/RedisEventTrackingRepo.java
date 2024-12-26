@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RedisEventTrackingRepo extends MongoRepository<RedisEventTracking, String> {
-    RedisEventTracking findByRedisKey(String redisKey);
     RedisEventTracking findTopByRedisKey(String redisKey);
 
 }
