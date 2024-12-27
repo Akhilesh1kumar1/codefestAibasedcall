@@ -82,8 +82,13 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         BureauQuestionnaireResponse questionnaire = getQuestionnaire(bureauInitiateResponse);
         if (questionnaire != null && isAuthorizedForReport(questionnaire.getStatus())) {
-            setResponse(crifResponse, new HashMap<>(){{put(DATA, getReport(questionnaire, false)); put(STAGE, STAGE_3);}});
-            return crifResponse;
+            BureauReportResponse report = getReport(questionnaire, false);
+            if (report != null) {
+                setResponse(crifResponse, new HashMap<>() {{
+                    put(DATA, report.getResult());
+                    put(STAGE, STAGE_3);
+                }});
+            }return crifResponse;
         }
         setResponse(crifResponse, new HashMap<>(){{put(DATA, questionnaire); put(STAGE, STAGE_2);}});
         return crifResponse;
@@ -120,7 +125,12 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         BureauQuestionnaireResponse bureauQuestionnaireResponse = initiateBureauAndGetQuestionnaire(bureauInitiatePayloadRequest);
 
         if (bureauQuestionnaireResponse != null && isAuthorizedForReport(bureauQuestionnaireResponse.getStatus())) {
-            return new HashMap<>(){{put(DATA, getReport(bureauQuestionnaireResponse, false)); put(STAGE, STAGE_3);}};
+            BureauReportResponse report = getReport(bureauQuestionnaireResponse, false);
+            if (report != null) {
+                return new HashMap<>() {{
+                    put(DATA, report); put(STAGE, STAGE_3);
+                }};
+            }
         }
         return new HashMap<>(){{put(DATA, bureauQuestionnaireResponse); put(STAGE, STAGE_2);}};
     }
@@ -134,11 +144,14 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             bureauQuestionnaireResponse.setOrderId(bureauInitiateModel.getOrderId());
             bureauQuestionnaireResponse.setReportId(bureauInitiateModel.getReportId());
             bureauQuestionnaireResponse.setRedirectURL(bureauInitiateModel.getRedirectUrl());
-            return new HashMap<>() {{
 
-                put(DATA, getReport(bureauQuestionnaireResponse, true));
-                put(STAGE, STAGE_3);
-            }};
+            BureauReportResponse report = getReport(bureauQuestionnaireResponse, true);
+            if (report != null) {
+                return new HashMap<>() {{
+                    put(DATA, report);
+                    put(STAGE, STAGE_3);
+                }};
+            }
         }
 
         return null;
@@ -283,7 +296,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             bureauInitiateModel.setOrderId(bureauInitiateResponse.getOrderId());
             bureauInitiateModel.setReportId(bureauInitiateResponse.getReportId());
             bureauInitiateModel.setRequestHeader(getHeadersAsString(header));
-            bureauInitiateModel.setRequestPayload(requestPayload);
+            bureauInitiateModel.setInitRequestPayload(requestPayload);
             bureauInitiateModel.setSrCompanyId(RequestData.getTenantId());
         } else {
             bureauInitiateModel = BureauInitiateModel.builder()
@@ -292,7 +305,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     .orderId(bureauInitiateResponse.getOrderId())
                     .reportId(bureauInitiateResponse.getReportId())
                     .requestHeader(getHeadersAsString(header))
-                    .requestPayload(requestPayload)
+                    .initRequestPayload(requestPayload)
                     .mobile(bureauInitiatePayloadRequest.getMobile())
                     .srCompanyId(RequestData.getTenantId())
                     .initResponse(bureauInitiateResponse.toString())
@@ -481,7 +494,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     bureauQuestionnaireResponse.getRedirectURL(), bureauQuestionnaireResponse.getQuestion(),
                     bureauQuestionnaireResponse.getButtonBehaviour(), bureauQuestionnaireResponse.getOptionList());
 
-            saveIntoDb(bureauQuestionnaireResponse);
+            saveQuestionnaireResponseIntoDb(bureauQuestionnaireResponse, requestPayload);
 
             handleExceptions(bureauQuestionnaireResponse.getStatus());
 
@@ -492,7 +505,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return bureauQuestionnaireResponse;
     }
 
-    private void saveIntoDb(BureauQuestionnaireResponse bureauQuestionnaireResponse) {
+    private void saveQuestionnaireResponseIntoDb(BureauQuestionnaireResponse bureauQuestionnaireResponse, String requestPayload) {
         Optional<BureauInitiateModel> optional = bureauInitiateModelRepo.
                 findByReportIdAndOrderId(bureauQuestionnaireResponse.getReportId(),
                         bureauQuestionnaireResponse.getOrderId());
@@ -514,6 +527,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             }
 
             bureauInitiateModel.setQuestionOptionList(optionList);
+            bureauInitiateModel.setQuestionnaireRequestPayload(requestPayload);
             bureauInitiateModel.setButtonBehavior(bureauQuestionnaireResponse.getButtonBehaviour());
             bureauInitiateModel.setQuestionnaireStatus(bureauQuestionnaireResponse.getStatus());
             bureauInitiateModel.setStatusDesc(bureauQuestionnaireResponse.getStatusDesc());
