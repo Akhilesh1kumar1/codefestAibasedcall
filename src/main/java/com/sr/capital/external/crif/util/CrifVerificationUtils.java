@@ -39,7 +39,7 @@ public class CrifVerificationUtils {
                                 .callbackType(CallbackType.CRIF_VERIFICATION)
                                 .verificationType(VerificationType.OTP)
                                 .entityId(RequestData.getUserId())
-                                .channel(CommunicationChannels.SMS)
+                                .channel(CommunicationChannels.SMS_WHATSAPP)
                                 .build()
                 ).tenantDetails(tenantDetails)
                 .build();
