@@ -37,8 +37,13 @@ public class BureauInitiateModel extends BaseDoc {
     @Field("sr_company_id")
     private String srCompanyId;
 
-    @Field("request_payload")
-    private String requestPayload;
+    @Field("init_request_payload")
+    @EncryptField
+    private String initRequestPayload;
+
+    @Field("questionnaire_request_payload")
+    @EncryptField
+    private String questionnaireRequestPayload;
 
     @Field("request_header")
     private String requestHeader;
