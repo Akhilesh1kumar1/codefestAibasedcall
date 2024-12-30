@@ -47,11 +47,15 @@ public class ShiprocketClient {
 
         ValidateTokenRequest request = ValidateTokenRequest.builder().token(token).validateTokenRequest(1).build();
 
-        /*HttpResponse<ValidateTokenResponse> validateTokenResponse = getInstance().withHeaders(headers).post(url,
-                request, ValidateTokenResponse.class);*/
+        HttpResponse<ValidateTokenResponse> validateTokenResponseFromSr = getInstance().withHeaders(getHeaders(token)).post(url,
+                request, ValidateTokenResponse.class);
+        ValidateTokenResponse validateTokenResponse = null;
+        if(validateTokenResponseFromSr!=null && validateTokenResponseFromSr.getBody()!=null ){
+            validateTokenResponse = validateTokenResponseFromSr.getBody();
+        }
 
-        ValidateTokenResponse validateTokenResponse = webClientUtil.makeExternalCallBlocking(SHIPROCKET,url,null,HttpMethod.POST,"",headers,null,request,
-                ValidateTokenResponse.class);
+    /*    ValidateTokenResponse validateTokenResponse = webClientUtil.makeExternalCallBlocking(SHIPROCKET,url,null,HttpMethod.POST,"",headers,null,request,
+                ValidateTokenResponse.class);*/
 
         if (validateTokenResponse!=null && !validateTokenResponse.getCode()
                         .equalsIgnoreCase(String.valueOf(org.apache.http.HttpStatus.SC_OK))) {
