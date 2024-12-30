@@ -85,7 +85,6 @@ public class LoanStatusUpdateHandlerServiceImpl {
             saveLoanMetaData(loanApplication,loanStatusUpdateWebhookDto);
             loanApplication.setComments(loanStatusUpdateWebhookDto.getS3());
             loanApplication.setLoanStatus(LoanStatus.valueOf(loanStatusUpdateWebhookDto.getInternalStatus()));
-            loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
             loanApplication.getAuditData().setUpdatedAt(LocalDateTime.now());
             loanApplication.getAuditData().setUpdatedBy("SYSTEM");
             if(!loanStatusUpdateWebhookDto.getInternalStatus().equalsIgnoreCase(loanStatusUpdateWebhookDto.getInternalCurrentStatus()) || loanApplication.getVendorStatus()==null) {
@@ -108,7 +107,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
                 }
                 sendCommunication(loanApplication, loanVendorName);
             }
-
+            loanApplication.setVendorStatus(loanStatusUpdateWebhookDto.getStatus());
                 /*switch (loanApplication.getLoanStatus()){
 
 //                case LEAD_PROCESSING:
