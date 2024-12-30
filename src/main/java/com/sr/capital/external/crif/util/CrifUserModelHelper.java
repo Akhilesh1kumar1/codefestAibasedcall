@@ -30,4 +30,14 @@ public class CrifUserModelHelper {
             throw new RuntimeException(e);
         }
     }
+
+    public Optional<CrifUserModel> findByMobileDockTypeAndDocValue(String mobile, String docType, String docValue) {
+        String encryptedMobileNumber = aes256.encrypt(mobile);
+        String encryptedDocValue = aes256.encrypt(docValue);
+        return crifUserModelRepo.findByMobileAndDocumentTypeAndDocumentValue(encryptedMobileNumber, docType, encryptedDocValue);
+    }
+
+    public void delete(CrifUserModel crifUserModel) {
+        crifUserModelRepo.delete(crifUserModel);
+    }
 }
