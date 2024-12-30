@@ -39,6 +39,9 @@ public class CrifUserModel extends BaseDoc {
     @Field("sr_company_id")
     private String srCompanyId;
 
+    @Field("consent_date")
+    private String consentDate;
+
     @EncryptField
     @Field("doc_value")
     private String documentValue;

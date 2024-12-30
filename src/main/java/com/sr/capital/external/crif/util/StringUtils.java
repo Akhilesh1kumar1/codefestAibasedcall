@@ -45,16 +45,16 @@ public class StringUtils {
     }
 
     /**
-     * Method to get the time after six months from the current time.
+     * Method to get the time after given months from the current time.
      *
-     * @return A string representing the date-time 6 months from now in the format "yyyy-MM-dd HH:mm:ss"
+     * @return A string representing the date-time given months from now in the format "yyyy-MM-dd HH:mm:ss"
      */
-    public static String getTimeAfterOneMonths() {
+    public static String getTimeAfterMonths(int month) {
         // Get the current date-time
         LocalDateTime currentTime = LocalDateTime.now();
 
-        // Calculate the date-time after 6 months
-        LocalDateTime sixMonthsLater = currentTime.plusMonths(1);
+        // Calculate the date-time after given months
+        LocalDateTime sixMonthsLater = currentTime.plusMonths(month);
 
         // Format and return the result as a string
         return sixMonthsLater.format(FORMATTER);

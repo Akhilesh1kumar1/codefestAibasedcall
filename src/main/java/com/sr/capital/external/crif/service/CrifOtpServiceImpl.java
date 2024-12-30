@@ -16,6 +16,7 @@ import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
+import com.sr.capital.external.crif.util.StringUtils;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.service.UserService;
@@ -85,6 +86,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                 .documentValue(crifGenerateOtpRequestModel.getDocValue())
                 .mobile(crifGenerateOtpRequestModel.getMobile())
                 .srCompanyId(RequestData.getTenantId())
+                .consentDate(StringUtils.getTimeAfterMonths(6))
                 .isOtpVerified(false);
 
         if (crifGenerateOtpRequestModel.getUtmSource() != null) {

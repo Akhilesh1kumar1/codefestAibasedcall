@@ -17,4 +17,6 @@ public interface CrifUserModelRepo extends MongoRepository<CrifUserModel, String
     @Query("{ 'created_by': ?0 }")
     List<CrifUserModel> findByCreatedBy(String createdBy);
 
+    Optional<CrifUserModel> findByMobileAndDocumentTypeAndDocumentValue(String encryptedMobileNumber, String docType, String encryptedDocValue);
+
 }

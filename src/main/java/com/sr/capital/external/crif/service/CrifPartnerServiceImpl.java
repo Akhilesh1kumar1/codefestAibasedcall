@@ -5,6 +5,7 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.crif.BureauInitiateModel;
 import com.sr.capital.entity.mongo.crif.CrifReport;
+import com.sr.capital.entity.mongo.crif.CrifUserModel;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.Constant.Constant;
 import com.sr.capital.external.crif.Constant.CrifDocumentType;
@@ -17,6 +18,7 @@ import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.util.CrifModelHelper;
 import com.sr.capital.external.crif.util.CrifStatusCode;
+import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.StringUtils;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ServiceName;
@@ -55,6 +57,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final CrifModelHelper crifModelHelper;
     private final RedissonClient redissonClient;
     private final ObjectMapper mapper;
+    private final CrifUserModelHelper crifUserModelHelper;
     @Override
     public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
 
@@ -74,6 +77,27 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                         .toMap(CrifDocumentType::getDisplayName,
                                 Enum::name, (a, b) -> b, LinkedHashMap::new));
         return map;
+    }
+
+    @Override
+    public void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) {
+            deleteFromCrifReport(crifConsentWithdrawalRequestModel.getMobile());
+            deleteFromCrifUserDetails(crifConsentWithdrawalRequestModel);
+    }
+
+    private void deleteFromCrifUserDetails(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) {
+        Optional<CrifUserModel> optional = crifUserModelHelper.findByMobileDockTypeAndDocValue(crifConsentWithdrawalRequestModel.getMobile(),
+                crifConsentWithdrawalRequestModel.getDocType(), crifConsentWithdrawalRequestModel.getDocValue());
+        if (optional.isPresent()) {
+            crifUserModelHelper.delete(optional.get());
+        }
+    }
+
+    private void deleteFromCrifReport(String mobile) {
+        Optional<CrifReport> optional = crifModelHelper.findByMobile(mobile);
+        if (optional.isPresent()) {
+            crifReportRepo.delete(optional.get());
+        }
     }
 
     @Override
@@ -616,7 +640,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         crifReport.setResult(bureauReportResponse);
         crifReport.setReportId(bureauReportPayloadRequest.getReportId());
         crifReport.setSrCompanyId(RequestData.getTenantId());
-        crifReport.setValidTill(StringUtils.getTimeAfterOneMonths());
+        crifReport.setValidTill(StringUtils.getTimeAfterMonths(1));
         crifModelHelper.save(crifReport);
         return crifReport;
     }
