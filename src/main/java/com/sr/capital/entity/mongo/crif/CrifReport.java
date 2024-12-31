@@ -20,6 +20,7 @@ import java.util.List;
 public class CrifReport extends BaseDoc {
 
     @Field("result")
+    @EncryptField
     private Object result;
 
     @Field("report_id")
@@ -44,4 +45,6 @@ public class CrifReport extends BaseDoc {
     @Field("sr_company_id")
     private String srCompanyId;
 
+    @Field("consent_id")
+    private String consentId;
 }

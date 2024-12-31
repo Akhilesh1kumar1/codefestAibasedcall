@@ -14,9 +14,12 @@ public interface CrifUserModelRepo extends MongoRepository<CrifUserModel, String
 
     Optional<CrifUserModel> findByMobile(String mobile);
     Optional<CrifUserModel> findByVerificationToken(UUID verificationToken);
+
+
     @Query("{ 'created_by': ?0 }")
     List<CrifUserModel> findByCreatedBy(String createdBy);
 
     Optional<CrifUserModel> findByMobileAndDocumentTypeAndDocumentValue(String encryptedMobileNumber, String docType, String encryptedDocValue);
 
+    List<CrifUserModel> findAllByConsentIdIn(List<String> consentIdList);
 }

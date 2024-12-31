@@ -29,4 +29,6 @@ public class Constant {
     public static final String ASIA_KOLKATA = "Asia/Kolkata";
 
     public static final String OTP_VERIFICATION_PENDING = "OTP_VERIFICATION_PENDING";
+    public static String MOBILE = "Mobile";
+    public static String CONSENT = "Consent";
 }

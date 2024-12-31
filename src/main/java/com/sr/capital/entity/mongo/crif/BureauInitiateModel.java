@@ -74,4 +74,7 @@ public class BureauInitiateModel extends BaseDoc {
 
     @Field("completed_at")
     private String completedAt;
+
+    @Field("consent_id")
+    private String consentId;
 }

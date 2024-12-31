@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
+import com.sr.capital.entity.mongo.crif.CrifConsentDetails;
 import com.sr.capital.entity.mongo.crif.CrifUserModel;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.Constant.Constant;
@@ -14,23 +15,26 @@ import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.dto.response.CrifUserDetailsResponseDto;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
+import com.sr.capital.external.crif.util.CrifStatus;
 import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
 import com.sr.capital.external.crif.util.StringUtils;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
+import com.sr.capital.repository.mongo.CrifConsentDetailsRepo;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.service.UserService;
 import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
+import static com.sr.capital.external.crif.util.StringUtils.FORMATTER;
 
 @Service
 @Slf4j
@@ -42,7 +46,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     private final CrifVerificationUtils crifVerificationUtils;
     private final CrifPartnerService crifPartnerService;
     private final UserService userService;
-    private final ObjectMapper mapper;
+    private final CrifConsentDetailsService crifConsentDetailsService;
 
     @Override
     public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException, CRIFApiException, CRIFApiLimitExceededException {
@@ -53,23 +57,24 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         crifUserModel = optional.orElseGet(() -> getCrifUserModelInstance(crifGenerateOtpRequestModel));
         VerificationOrchestratorRequest verificationOrchestratorRequest = null;
 
-        if (!crifUserModel.getIsOtpVerified()) {
+//        if (!crifUserModel.getIsOtpVerified()) {
             try {
                 verificationOrchestratorRequest = crifVerificationUtils.sendOtp(crifUserModel);
                 crifUserModel.setVerificationToken(verificationOrchestratorRequest.getVerificationEntity().getId());
+                crifUserModel.setIsOtpVerified(false);
                 crifUserModelHelper.save(crifUserModel);
             } catch (CustomException e) {
                 throw new RuntimeException("Error while sending the otp {} ", e);
             }
-        } else {
-            CrifVerifyOtpRequestModels crifVerifyOtpRequestModels = MapperUtils.convertValue(crifGenerateOtpRequestModel,
-                    CrifVerifyOtpRequestModels.class);
-            Map<String, Object> res = crifPartnerService.initiateBureauAndGetQuestionnaire(crifVerifyOtpRequestModels);
-            setResponse(crifResponse, res);
-            return crifResponse;
-        }
+//        } else {
+//            CrifVerifyOtpRequestModels crifVerifyOtpRequestModels = MapperUtils.convertValue(crifGenerateOtpRequestModel,
+//                    CrifVerifyOtpRequestModels.class);
+//            Map<String, Object> res = crifPartnerService.initiateBureauAndGetQuestionnaire(crifVerifyOtpRequestModels);
+//            setResponse(crifResponse, res);
+//            return crifResponse;
+//        }
 
-        if (verificationOrchestratorRequest != null && verificationOrchestratorRequest.getVerificationEntity() != null) {
+        if (verificationOrchestratorRequest.getVerificationEntity() != null) {
             crifResponse.setToken(verificationOrchestratorRequest.getVerificationEntity().getId());
             crifResponse.setStatus(Constant.OTP_VERIFICATION_PENDING);
         }
@@ -78,6 +83,9 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     }
 
     private CrifUserModel getCrifUserModelInstance(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) {
+
+        String consentId = saveAndGetConsentId();
+
         CrifUserModel.CrifUserModelBuilder builder = CrifUserModel.builder()
                 .firstName(crifGenerateOtpRequestModel.getFirstName())
                 .lastName(crifGenerateOtpRequestModel.getLastName())
@@ -86,7 +94,8 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                 .documentValue(crifGenerateOtpRequestModel.getDocValue())
                 .mobile(crifGenerateOtpRequestModel.getMobile())
                 .srCompanyId(RequestData.getTenantId())
-                .consentDate(StringUtils.getTimeAfterMonths(6))
+                .consentId(consentId)
+                .currentStatus(CrifStatus.CRIF_DETAILS_VERIFICATION.name())
                 .isOtpVerified(false);
 
         if (crifGenerateOtpRequestModel.getUtmSource() != null) {
@@ -105,6 +114,18 @@ public class CrifOtpServiceImpl implements CrifOtpService {
             builder.utmContent(crifGenerateOtpRequestModel.getUtmContent());
         }
         return builder.build();
+    }
+
+    private String saveAndGetConsentId() {
+
+        CrifConsentDetails build = CrifConsentDetails.builder()
+                .consentId(crifConsentDetailsService.getNextSequence())
+                .expiredAt(StringUtils.getTimeAfterMonths(6))
+                .consentDateHistory(Collections.singletonList(LocalDateTime.now().format(FORMATTER)))
+                .build();
+
+        crifConsentDetailsService.save(build);
+        return build.getConsentId();
     }
 
     public static void setResponse(CrifResponse crifResponse, Map<String, Object> data) {
@@ -129,7 +150,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                 VerifyOtpRequest verifyOtpRequest = new VerifyOtpRequest();
                 verifyOtpRequest.setVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
                 verifyOtpRequest.setOtp(crifGenerateOtpRequestModel.getOtp());
-                Boolean isVerified = true;//crifVerificationUtils.verifyOtp(verifyOtpRequest);
+                Boolean isVerified = crifVerificationUtils.verifyOtp(verifyOtpRequest);
 
                 if (isVerified != null && isVerified) {
                     crifUserModel.setIsOtpVerified(true);

@@ -1,5 +1,6 @@
 package com.sr.capital.external.crif.util;
 
+import com.sr.capital.entity.mongo.crif.CrifConsentDetails;
 import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.Field;

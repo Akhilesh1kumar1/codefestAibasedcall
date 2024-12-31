@@ -38,4 +38,8 @@ public class CrifModelHelper {
             throw new RuntimeException(e);
         }
     }
+
+    public List<CrifReport> findAllByConsentId(List<String> consentIdList) {
+        return crifReportRepo.findAllByConsentIdIn(consentIdList);
+    }
 }

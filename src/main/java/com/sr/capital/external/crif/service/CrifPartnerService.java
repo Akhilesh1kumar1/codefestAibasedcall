@@ -36,5 +36,7 @@ public interface CrifPartnerService {
     Map<String, String> getDocType();
 
     void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel);
+
+    void purseExpiredData();
 }
 
