@@ -23,6 +23,7 @@ public class TruthScreenPanComprehensiveResponseConstructor implements TruthScre
                 .srCompanyId(request.getSrCompanyId())
                 .docType(request.getTruthScreenDocType())
                 .responses(getDecryptedResponse(request.getDetails()))
+                .transId(request.getTransId())
                 .build();
     }
 

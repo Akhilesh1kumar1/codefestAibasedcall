@@ -1,4 +1,4 @@
-package com.sr.capital.external.truthscreen.service.transformers.impl;
+package com.sr.capital.external.truthscreen.service.transformers.interfaces;
 
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;

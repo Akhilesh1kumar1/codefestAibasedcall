@@ -29,7 +29,6 @@ public class TruthScreenPanComprehensiveEntityConstructor implements TruthScreen
                 .truthScreenDocType(request.getDocType())
                 .transId(request.getTransId())
                 .initialStatus(request.getTruthScreenBaseResponse().getStatus())
-//                .tsTransId(request.getTruthScreenBaseResponse().getTsTransID())
                 .details(panComprehensiveDetails)
                 .build();
     }

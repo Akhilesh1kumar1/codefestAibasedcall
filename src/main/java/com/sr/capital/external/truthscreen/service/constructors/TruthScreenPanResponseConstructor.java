@@ -22,6 +22,7 @@ public class TruthScreenPanResponseConstructor implements TruthScreenResponseCon
         return IdSearchResponseDto.builder()
                 .srCompanyId(request.getSrCompanyId())
                 .docType(request.getTruthScreenDocType())
+                .transId(request.getTransId())
                 .responses(getDecryptedPanDetails(request.getDetails())).build();
     }
 

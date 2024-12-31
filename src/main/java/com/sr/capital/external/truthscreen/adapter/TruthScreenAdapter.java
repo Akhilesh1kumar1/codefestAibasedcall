@@ -4,15 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.exception.custom.ServiceEndpointNotFoundException;
-import com.sr.capital.external.truthscreen.dto.data.PanComplianceExtractionRequestData;
-import com.sr.capital.external.truthscreen.dto.data.PanComprehensiveExtractionRequestData;
-import com.sr.capital.external.truthscreen.dto.data.PanExtractionRequestData;
+import com.sr.capital.external.truthscreen.dto.data.*;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenEncryptedRequestDto;
-import com.sr.capital.external.truthscreen.dto.response.TruthScreenBaseResponse;
-import com.sr.capital.external.truthscreen.dto.response.TruthScreenPanComplianceDecryptedResponseDto;
-import com.sr.capital.external.truthscreen.dto.response.TruthScreenPanComprehensiveDecryptedResponse;
-import com.sr.capital.external.truthscreen.dto.response.TruthScreenPanDecryptedResponseDto;
+import com.sr.capital.external.truthscreen.dto.response.*;
 import com.sr.capital.external.truthscreen.dummyData.DummyData;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.util.TruthScreenUtil;
@@ -57,7 +52,7 @@ public class TruthScreenAdapter {
                      truthScreenEncryptedRequestDto,
                      Object.class);
 //            Object jsonResponse = "{\n" +
-//                    "  \"responseData\": \"gTv4NV941WkN9qpCZPYueofW9zCmNyqwpMeuoGWGuoJHKkKF8tgXZOjnLWgdwVmgXZ1e/XEmv0j9rZct/elU+0Qd7XZaNTqK3sCSm8fUokjbYA1LLA0DxkIxcguGoc4Lw3TRItemflXozABpQNd6UjvbNXEf74loEAdhjWg7DXnqA690c2UvGjHZlBI98zLI7/tANHxHlxKKI9E3BE+oZUvJUDeY9Ahr7EDUEZ7Cf4EIH9s3pJJXZ9ZepVurvWuZw4ewMGCciQeXSiLqtErrCw8FnxnM1OD45BCLedET+WRw9T9RPwBo3TnaBUR092xiWLXoeLwSA3Ml7iJfmli7gypcKHY8Q+y99eb4fuwJAwmRxUA18riPwdRayoTfl+K++I+wzLuAKhbejJDJLBVz/2Kr7G7ANO2kRcMrK+Y1TY6LFpLn8SlP931gHf4ryc8sR0jujI05NMyMla6d8P4QPYo4+tYklQCg0LU15+Chy3NvDgdHlN/a9gNSANOJBMAgqNT7Q+clfuWhmixAJoyQLlScOhtBupuMM+fb+F+ZZQfcQv4mq5oX4NdoNHMvwCIwCIwvDn29pbjWnbwyMNRoQ9MuBN4R+IKXrTSoU2SnFR58gLrto5a+LN2k5S0H8mZsls9ASY+u9gE8xHuVIn8EmwCwtYBVRjx89yiSdUaw6xwc+ZW/ZWvq8QGkK99WI8QZ9SBBAW0skiScH/hlU6IFKBoQGZj/hPXDla918CXGsAYfqGXhIdEMo+J3PBSleaXSo5mdBV6ERMgy7NTVdZx6wWw5tbUUI5Y1bxDkHUZZdY0=:uZuk8meOzU5BZCxAyWuerg==\"\n" +
+//                    "  \"responseData\": \"bI7EXBg68l3NALREq/RiEAGucZYjaG1lozUW00Xa+vtU1zkoubBcIEsRObvPFuqr8xhaGJAKvAowmK6TZpOoCop/yLb5SaC4iND5s5TYvZ+tCeWE9lHSLSzyzmeevZOfeoTQyVmT3PEU3cIl9w21xs4osdyKWUjqV4LEmmnzNTA=:Oa2+iekcVYLWA0p+0S8kHw==\"\n" +
 //                    "}";
 //            ObjectMapper objectMapper = new ObjectMapper();
 //            Map<String, Object> responseMap = objectMapper.readValue(jsonResponse.toString(), Map.class);
@@ -99,8 +94,19 @@ public class TruthScreenAdapter {
                     .docType(TruthScreenDocType.PAN_COMPLIANCE)
                     .responseClass(TruthScreenPanComplianceDecryptedResponseDto.class)
                     .build();
-        }
-        else {
+        } else if (request.getDetails() instanceof PanToGstExtractionRequestData) {
+            return TruthScreenExternalRequestMetaData.builder()
+                    .endpoint(appProperties.getAuthBridgeBaseUrl()+appProperties.getAuthBridgePanToGstUrl())
+                    .docType(TruthScreenDocType.PAN_TO_GST)
+                    .responseClass(TruthScreenPanToGstDecryptedResponseDto.class)
+                    .build();
+        } else if (request.getDetails() instanceof GstinExtractionRequestData) {
+            return TruthScreenExternalRequestMetaData.builder()
+                    .endpoint(appProperties.getAuthBridgeBaseUrl()+appProperties.getAuthBridgeGstinUrl())
+                    .docType(TruthScreenDocType.GSTIN)
+                    .responseClass(TruthScreenGstinDecryptedResponseDto.class)
+                    .build();
+        } else {
             throw new ServiceEndpointNotFoundException();
         }
     }

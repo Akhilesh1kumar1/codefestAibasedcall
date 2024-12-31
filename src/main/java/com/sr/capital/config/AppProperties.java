@@ -349,6 +349,12 @@ public class AppProperties {
     @Value("${external.authbridge.pan-compliance-url}")
     private String authBridgePanComplianceUrl;
 
+    @Value("${external.authbridge.pan-to-gst-url}")
+    private String authBridgePanToGstUrl;
+
+    @Value("${external.authbridge.gstin.url")
+    private String authBridgeGstinUrl;
+
     @Value("${external.crif.access-code.user}")
     private String CrifUser;
     @Value("${external.crif.access-code.password}")

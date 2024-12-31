@@ -5,9 +5,11 @@ import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestrato
 import com.sr.capital.external.truthscreen.entity.PanComplianceDetails;
 import com.sr.capital.external.truthscreen.entity.PanComprehensiveDetails;
 import com.sr.capital.external.truthscreen.entity.PanDetails;
+import com.sr.capital.external.truthscreen.entity.PanToGstDetails;
 import com.sr.capital.external.truthscreen.entity.constructors.TruthPanDocDetailsEntityConstructor;
 import com.sr.capital.external.truthscreen.entity.constructors.TruthScreenPanComprehensiveEntityConstructor;
 import com.sr.capital.external.truthscreen.service.constructors.TruthScreenPanComplianceEntityConstructor;
+import com.sr.capital.external.truthscreen.service.constructors.TruthScreenPanToGstEntityConstructor;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenEntityConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ import java.io.IOException;
 
 @Service
 public class TruthScreenEntityConstructorStrategy {
+
+    @Autowired
+    private TruthScreenPanToGstEntityConstructor truthScreenPanToGstEntityCOnstructor;
 
     @Autowired
     private TruthScreenPanComplianceEntityConstructor truthScreenPanComplianceEntityConstructor;
@@ -35,6 +40,8 @@ public class TruthScreenEntityConstructorStrategy {
             entityConstructor = truthScreenPanComprehensiveEntityConstructor;
         } else if (responseClass.equals(PanComplianceDetails.class)) {
             entityConstructor = truthScreenPanComplianceEntityConstructor;
+        } else if (responseClass.equals(PanToGstDetails.class)) {
+            entityConstructor = truthScreenPanToGstEntityCOnstructor;
         } else {
             throw new EntityConstructorNotFoundException();
         }

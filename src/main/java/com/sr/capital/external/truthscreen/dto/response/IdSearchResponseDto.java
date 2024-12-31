@@ -19,4 +19,5 @@ public class IdSearchResponseDto<T> {
     private T responses;
     private String srCompanyId;
     private TruthScreenDocType docType;
+    private String transId;
 }

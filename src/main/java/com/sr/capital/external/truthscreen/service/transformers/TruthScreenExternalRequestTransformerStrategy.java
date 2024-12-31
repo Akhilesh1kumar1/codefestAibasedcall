@@ -5,7 +5,7 @@ import com.sr.capital.exception.custom.RequestTransformerNotFoundException;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
-import com.sr.capital.external.truthscreen.service.transformers.impl.TruthScreenExternalRequestTransformer;
+import com.sr.capital.external.truthscreen.service.transformers.interfaces.TruthScreenExternalRequestTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +14,12 @@ import java.security.NoSuchProviderException;
 
 @Service
 public class TruthScreenExternalRequestTransformerStrategy {
+
+    @Autowired
+    private TruthScreenGSTinRequestTransformer gstinRequestTransformer;
+
+    @Autowired
+    private TruthScreenPanToGstRequestTransformer panToGstRequestTransformer;
 
     @Autowired
     private TruthScreenPanComplianceRequestTransformer panComplianceRequestTransformer;
@@ -36,6 +42,9 @@ public class TruthScreenExternalRequestTransformerStrategy {
                 break;
             case PAN_COMPLIANCE:
                 requestTransformer = panComplianceRequestTransformer;
+                break;
+            case PAN_TO_GST:
+                requestTransformer = panToGstRequestTransformer;
                 break;
             default:
                 throw new RequestTransformerNotFoundException();

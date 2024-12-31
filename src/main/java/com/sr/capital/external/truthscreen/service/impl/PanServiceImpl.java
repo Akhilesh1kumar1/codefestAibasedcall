@@ -9,10 +9,7 @@ import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestrato
 import com.sr.capital.external.truthscreen.dto.response.IdSearchResponseDto;
 import com.sr.capital.external.truthscreen.dto.response.TruthScreenBaseResponse;
 import com.sr.capital.external.truthscreen.dto.request.IdSearchRequestDto;
-import com.sr.capital.external.truthscreen.entity.PanComplianceDetails;
-import com.sr.capital.external.truthscreen.entity.PanComprehensiveDetails;
-import com.sr.capital.external.truthscreen.entity.PanDetails;
-import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
+import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.repository.TruthScreenDocDetailsRepository;
 import com.sr.capital.external.truthscreen.service.PanService;
@@ -91,6 +88,10 @@ public class PanServiceImpl implements PanService {
                 return PanComprehensiveDetails.class;
             case PAN_COMPLIANCE:
                 return PanComplianceDetails.class;
+            case PAN_TO_GST:
+                return PanToGstDetails.class;
+            case GSTIN:
+                return GSTinDetails.class;
             default:
                 throw new CustomException("Invalid Doc type");
         }

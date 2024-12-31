@@ -12,7 +12,9 @@ public enum TruthScreenDocType {
 
         PAN("pan", 2),
         PAN_COMPREHENSIVE("pan_comprehensive",523),
-        PAN_COMPLIANCE("pan_compliance",527);
+        PAN_COMPLIANCE("pan_compliance",527),
+        PAN_TO_GST("pan_to_gst",455),
+        GSTIN("gstin",23);
         private final String name;
         private final int value;
 
