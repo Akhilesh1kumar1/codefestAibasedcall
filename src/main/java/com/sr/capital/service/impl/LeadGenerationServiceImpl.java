@@ -162,7 +162,7 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
     }
 
     private void addUserIfEmpty(Long userId, String token) throws CustomException {
-        if (userRepository.findBySrUserId(userId) == null) {
+        if (userRepository.findTopBySrCompanyId(Long.valueOf(RequestData.getTenantId())) == null) {
             InternalTokenUserDetailsResponse userDetails = userService
                     .getUserDetailsUsingInternalToken(token);
             UserDetails userDetailsToSave = new UserDetails();
