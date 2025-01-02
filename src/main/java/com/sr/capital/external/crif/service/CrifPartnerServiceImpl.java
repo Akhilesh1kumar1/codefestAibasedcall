@@ -88,6 +88,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     public void purgeExpiredData() {
         Pageable pageable = PageRequest.of(0, 100); // Fetch 50 records per page
         Page<CrifConsentDetails> expiredDetailsPage;
+        List<String> consentIds = new ArrayList<>();
 
         do {
             expiredDetailsPage = getExpiredDetailsForLast24Hours(pageable);
@@ -96,11 +97,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 List<CrifConsentDetails> expiredDetails = expiredDetailsPage.getContent();
                 List<String> consentIdList = expiredDetails.stream().map(CrifConsentDetails::getConsentId).toList();
 
-                // Perform delete operations
-                purgeData(consentIdList);
-//                deleteFromCrifReport(consentIdList);
-//                deleteFromCrifUserDetails(consentIdList);
-//                deleteFromBureauInitiateModel(consentIdList);
+                consentIds.addAll(consentIdList);
 
                 // Update each record's status and deletion details
                 expiredDetails.forEach(e -> {
@@ -109,12 +106,26 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     e.setDeletedAt(LocalDateTime.now().format(FORMATTER));
                 });
 
-                // Save updated records back if necessary
                 crifConsentDetailsService.saveAll(expiredDetails);
             }
 
-            pageable = expiredDetailsPage.nextPageable(); // Move to the next page
+            pageable = expiredDetailsPage.nextPageable();
         } while (expiredDetailsPage.hasNext());
+
+        if (!consentIds.isEmpty()) {
+            processInBatches(consentIds, 10);
+        }
+
+    }
+
+    public void processInBatches(List<String> consentIds, int batchSize) {
+        int totalSize = consentIds.size();
+        for (int i = 0; i < totalSize; i += batchSize) {
+            int end = Math.min(i + batchSize, totalSize);
+            List<String> batch = consentIds.subList(i, end);
+
+            purgeData(batch);
+        }
     }
 
     private void purgeData(List<String> consentIdList) {

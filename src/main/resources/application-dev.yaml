@@ -306,7 +306,8 @@ jobs:
     scheduledTime: 0 0 1 * * ?
   crif:
     purge:
-      scheduledTime: 0 0 1 * * ?
+      scheduledTime: 0 */5 * * * ?
+      expireAt: 5 MINUTES
 
 aes:
   secret:

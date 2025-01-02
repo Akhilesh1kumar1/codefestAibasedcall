@@ -311,6 +311,7 @@ jobs:
   crif:
     purge:
       scheduledTime: 0 0 1 * * ?
+      expireAt: 6 MONTHS
 
 
 aes:

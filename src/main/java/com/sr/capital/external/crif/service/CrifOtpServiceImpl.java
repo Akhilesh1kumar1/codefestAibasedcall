@@ -2,6 +2,7 @@ package com.sr.capital.external.crif.service;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
@@ -47,6 +48,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     private final CrifPartnerService crifPartnerService;
     private final UserService userService;
     private final CrifConsentDetailsService crifConsentDetailsService;
+    private final AppProperties appProperties;
 
     @Override
     public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException, CRIFApiException, CRIFApiLimitExceededException {
@@ -121,7 +123,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
 
         CrifConsentDetails build = CrifConsentDetails.builder()
                 .consentId(crifConsentDetailsService.getNextSequence())
-                .expiredAt(StringUtils.getTimeAfterMonths(6))
+                .expiredAt(StringUtils.getConsentExpireTime(appProperties.getCrifConsentExpireAt()))
                 .status(ACTIVE)
                 .consentDateHistory(Collections.singletonList(LocalDateTime.now().format(FORMATTER)))
                 .build();
