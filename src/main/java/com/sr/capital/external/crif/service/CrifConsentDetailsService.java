@@ -5,6 +5,7 @@ import com.sr.capital.entity.mongo.crif.CrifConsentDetails;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.repository.mongo.CrifConsentDetailsRepo;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,12 +44,15 @@ public class CrifConsentDetailsService {
     }
 
     public String getNextSequence() {
-        Long currentSequence = redisTemplate.opsForValue().increment(Constants.RedisKeys.CRIF_CONSENT_ID_KEY, 1);
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(Constants.RedisKeys.CRIF_CONSENT_ID_KEY);
 
-        if (currentSequence == null || currentSequence == 1) {
+        long currentSequence = atomicLong.incrementAndGet();
+
+        if (currentSequence == 1) {
             String nextConsentSequencesFromDb = getNextConsentSequencesFromDb();
-            redisTemplate.opsForValue().set(Constants.RedisKeys.CRIF_CONSENT_ID_KEY, nextConsentSequencesFromDb);
-            currentSequence = Long.valueOf(nextConsentSequencesFromDb);
+
+            atomicLong.set(Long.parseLong(nextConsentSequencesFromDb));
+            currentSequence = Long.parseLong(nextConsentSequencesFromDb);
         }
 
         return String.valueOf(currentSequence);
