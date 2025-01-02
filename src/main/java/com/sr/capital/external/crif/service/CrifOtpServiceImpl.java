@@ -50,6 +50,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
 
     @Override
     public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException, CRIFApiException, CRIFApiLimitExceededException {
+
         CrifResponse crifResponse  = CrifResponse.builder().build();
 
         Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
@@ -121,6 +122,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         CrifConsentDetails build = CrifConsentDetails.builder()
                 .consentId(crifConsentDetailsService.getNextSequence())
                 .expiredAt(StringUtils.getTimeAfterMonths(6))
+                .status(ACTIVE)
                 .consentDateHistory(Collections.singletonList(LocalDateTime.now().format(FORMATTER)))
                 .build();
 

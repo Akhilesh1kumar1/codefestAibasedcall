@@ -55,6 +55,7 @@ public class CrifPurgeJob {
     @SchedulerLock(name = "communicationJob", lockAtMostFor = "30m", lockAtLeastFor = "10m")
     public void performScheduledTask() {
 
+        log.info("cron job for crif purge data at :: " + LocalDateTime.now());
         crifPartnerService.purgeExpiredData();
     }
 }

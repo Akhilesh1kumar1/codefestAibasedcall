@@ -161,7 +161,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         // Previous day's 12 AM
         String previousDayMidnight = LocalDateTime.now().minusDays(1).withHour(0).withMinute(0).withSecond(0).format(FORMATTER);
 
-        return crifConsentDetailsService.findByExpiredAtBetween(currentTime, previousDayMidnight, pageable);
+        return crifConsentDetailsService.findByExpiredAtBetweenAndStatus(currentTime, previousDayMidnight, pageable, Constant.ACTIVE);
     }
     @Override
     public void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) throws CRIFApiException {

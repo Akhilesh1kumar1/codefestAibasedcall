@@ -12,9 +12,12 @@ import java.util.Optional;
 
 public interface CrifConsentDetailsRepo extends MongoRepository<CrifConsentDetails, String> {
 
-    @Query("{ 'expired_at': { '$lt': ?0, '$gte': ?1 } }")
-    Page<CrifConsentDetails> findByExpiredAtBetween(String currentTime, String previousDayMidnight, Pageable pageable);
+//    @Query("{ 'expired_at': { '$lt': ?0, '$gte': ?1 } }")
+//    Page<CrifConsentDetails> findByExpiredAtBetween(String currentTime, String previousDayMidnight, Pageable pageable);
 
     CrifConsentDetails findTopByOrderByConsentIdDesc();
     CrifConsentDetails findByConsentId(String consentId);
+
+    @Query("{ 'expired_at': { '$lt': ?0, '$gte': ?1 }, 'status': ?2 }")
+    Page<CrifConsentDetails> findByExpiredAtBetweenAndStatus(String currentTime, String previousDayMidnight, String status, Pageable pageable);
 }

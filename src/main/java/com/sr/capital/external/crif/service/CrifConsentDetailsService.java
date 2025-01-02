@@ -38,8 +38,8 @@ public class CrifConsentDetailsService {
         crifConsentDetailsRepo.save(crifConsentDetails);
     }
 
-    public Page<CrifConsentDetails> findByExpiredAtBetween(String currentTime, String previousDayMidnight, Pageable pageable) {
-        return crifConsentDetailsRepo.findByExpiredAtBetween(currentTime, previousDayMidnight, pageable);
+    public Page<CrifConsentDetails> findByExpiredAtBetweenAndStatus(String currentTime, String previousDayMidnight, Pageable pageable, String status) {
+        return crifConsentDetailsRepo.findByExpiredAtBetweenAndStatus(currentTime, previousDayMidnight, status, pageable);
     }
 
     public CrifConsentDetails findByConsentId(String consentId) {
