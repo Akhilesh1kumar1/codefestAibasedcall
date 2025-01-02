@@ -176,6 +176,7 @@ public final class Constants {
         public static final String ACCESS_TOKEN =  "partner_access_tokens";
         public static final String CRIF_ACCESS_TOKEN =  "crif_access_tokens";
 
+        public static final String CRIF_CONSENT_ID_KEY = "crif_consent_id";
     }
 
     public static final class Headers {

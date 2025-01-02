@@ -32,19 +32,6 @@ import java.util.logging.Logger;
 
 @Component
 public class CrifPurgeJob {
-
-    @Autowired
-    private LoanApplicationRepository loanApplicationRepository;
-    @Autowired
-    private AppProperties appProperties;
-
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CommunicationService communicationService;
-
-    @Autowired
-    private BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
     @Autowired
     private CrifPartnerService crifPartnerService;
 
@@ -53,7 +40,7 @@ public class CrifPurgeJob {
 
     @Scheduled(cron = "${jobs.crif.purge.scheduledTime}")
     @SchedulerLock(name = "communicationJob", lockAtMostFor = "30m", lockAtLeastFor = "10m")
-    public void performScheduledTask() {
+    public void performCrifPurgeScheduledTask() {
 
         log.info("cron job for crif purge data at :: " + LocalDateTime.now());
         crifPartnerService.purgeExpiredData();
