@@ -352,8 +352,11 @@ public class AppProperties {
     @Value("${external.authbridge.pan-to-gst-url}")
     private String authBridgePanToGstUrl;
 
-    @Value("${external.authbridge.gstin.url")
+    @Value("${external.authbridge.gstin-url}")
     private String authBridgeGstinUrl;
+
+    @Value("${external.authbridge.is-truth-screen-enable}")
+    private Boolean isTruthScreenEnable;
 
     @Value("${external.crif.access-code.user}")
     private String CrifUser;

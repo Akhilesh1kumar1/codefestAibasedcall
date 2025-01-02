@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PanServiceImpl implements PanService {
 
-
     private final TruthScreenAdapter truthScreenAdapter;
 
     private final TruthScreenExternalRequestTransformerStrategy externalRequestTransformerStrategy;
@@ -38,50 +37,57 @@ public class PanServiceImpl implements PanService {
     @Override
     public IdSearchResponseDto<?> sendPanRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
         TruthScreenDocDetails<?> truthScreenDocDetails = truthScreenDocDetailsRepository.findBySrCompanyIdAndTruthScreenDocType(RequestData.getTenantId(), TruthScreenDocType.fromValue(requestDTO.getDocType()));
-        if (truthScreenDocDetails == null){
 
-            TruthScreenDocOrchestratorRequest truthScreenDocOrchestratorRequest = new TruthScreenDocOrchestratorRequest();
-            truthScreenDocOrchestratorRequest.setDocType(TruthScreenDocType.fromValue(requestDTO.getDocType()));
-            truthScreenDocOrchestratorRequest.setDocNumber(requestDTO.getDocNumber());
-            truthScreenDocOrchestratorRequest.setSrCompanyId(RequestData.getTenantId());
-            TruthScreenBaseRequest<?> truthScreenBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(truthScreenDocOrchestratorRequest);
-            truthScreenDocOrchestratorRequest.setTruthScreenBaseRequest(truthScreenBaseRequest);
-
-            try {
-                TruthScreenBaseResponse<?> truthScreenBaseResponse = truthScreenAdapter.extractDetails(truthScreenBaseRequest);
-                truthScreenDocOrchestratorRequest.setTruthScreenBaseResponse(truthScreenBaseResponse);
-                TruthScreenDocDetails<?> truthScreenDocDetailsToBeSaved = truthEntityConstructorStrategy.constructEntity(truthScreenDocOrchestratorRequest,truthScreenDocOrchestratorRequest.getTruthScreenDocDetails(),getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
-                truthScreenDocDetailsRepository.save(truthScreenDocDetailsToBeSaved);
-                IdSearchResponseDto<?> responseDto = truthScreenIdSearchResponseStrategy.constructResponse(truthScreenDocDetailsToBeSaved,getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
-                return responseDto;
-                //response should be that which is saved in the db not the 3rd party api
-
-            } catch (Exception e) {
-                throw new RuntimeException(e + "error occured while try to get response from the adapter");
-            }
-
+        if (truthScreenDocDetails == null) {
+            return processNewRequest(requestDTO);
+        } else {
+            return processExistingRequest(truthScreenDocDetails, requestDTO);
         }
-        else {
-            try {
-                return truthScreenIdSearchResponseStrategy.constructResponse(truthScreenDocDetails, getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType())));
-            }
-            catch (Exception e){
-                throw new RuntimeException(e + " While fetching data from the database");
-            }
-        }
-//        else if (truthScreenDocDetails != null && truthScreenDocDetails.getInitialStatus() == TruthScreenStatus.UNVERIFIED ){
-//            //pick transID
-//            //pick ts_trans_id
-//            //call 2nd API
-//            // if status == 1 and state == Compelte --> add in main db and update panDB
-//            // else update in transDB
-//            return null;
-//        }
+    }
 
+    private IdSearchResponseDto<?> processNewRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
+        TruthScreenDocOrchestratorRequest truthScreenDocOrchestratorRequest = new TruthScreenDocOrchestratorRequest();
+        truthScreenDocOrchestratorRequest.setDocType(TruthScreenDocType.fromValue(requestDTO.getDocType()));
+        truthScreenDocOrchestratorRequest.setDocNumber(requestDTO.getDocNumber());
+        truthScreenDocOrchestratorRequest.setSrCompanyId(RequestData.getTenantId());
+
+        TruthScreenBaseRequest<?> truthScreenBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(truthScreenDocOrchestratorRequest);
+        truthScreenDocOrchestratorRequest.setTruthScreenBaseRequest(truthScreenBaseRequest);
+
+        try {
+            TruthScreenBaseResponse<?> truthScreenBaseResponse = truthScreenAdapter.extractDetails(truthScreenBaseRequest);
+            truthScreenDocOrchestratorRequest.setTruthScreenBaseResponse(truthScreenBaseResponse);
+
+            TruthScreenDocDetails<?> truthScreenDocDetailsToBeSaved = truthEntityConstructorStrategy.constructEntity(
+                    truthScreenDocOrchestratorRequest,
+                    truthScreenDocOrchestratorRequest.getTruthScreenDocDetails(),
+                    getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType()))
+            );
+
+            truthScreenDocDetailsRepository.save(truthScreenDocDetailsToBeSaved);
+
+            return truthScreenIdSearchResponseStrategy.constructResponse(
+                    truthScreenDocDetailsToBeSaved,
+                    getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType()))
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while getting response from the adapter: " + e);
+        }
+    }
+
+    private IdSearchResponseDto<?> processExistingRequest(TruthScreenDocDetails<?> truthScreenDocDetails, IdSearchRequestDto requestDTO) {
+        try {
+            return truthScreenIdSearchResponseStrategy.constructResponse(
+                    truthScreenDocDetails,
+                    getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType()))
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching data from the database: " + e);
+        }
     }
 
     private Class<?> getResponseClass(TruthScreenDocType docType) throws CustomException {
-        switch(docType){
+        switch (docType) {
             case PAN:
                 return PanDetails.class;
             case PAN_COMPREHENSIVE:
@@ -96,7 +102,4 @@ public class PanServiceImpl implements PanService {
                 throw new CustomException("Invalid Doc type");
         }
     }
-
-
-
 }

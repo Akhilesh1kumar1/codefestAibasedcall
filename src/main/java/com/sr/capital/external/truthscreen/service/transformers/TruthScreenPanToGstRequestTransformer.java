@@ -17,6 +17,7 @@ public class TruthScreenPanToGstRequestTransformer implements TruthScreenExterna
     @Override
     public <T extends TruthScreenBaseRequest<?>> T transformRequest(TruthScreenDocOrchestratorRequest request) throws NoSuchAlgorithmException, NoSuchProviderException {
         PanToGstExtractionRequestData panToGstExtractionRequestData = PanToGstExtractionRequestData.builder().trans_id(request.getSrCompanyId() + HashUtil.generateRandomId()).doc_type(String.valueOf(request.getDocType().getValue())).doc_number(request.getDocNumber()).build();
+        request.setTransId(panToGstExtractionRequestData.getTrans_id());
         return (T) TruthScreenPanToGstExtractionRequest.builder().details(panToGstExtractionRequestData).build();
     }
 }

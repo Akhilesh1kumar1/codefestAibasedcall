@@ -13,15 +13,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequiredArgsConstructor
-//:TODO :- MIGHT NEED TO CHANGE THE NAME
 @RequestMapping("/api/idsearch")
 public class IdSearchController {
 
     private final PanService panService;
 
-    //:TODO :- NEED TO REMOVE THE "PAN" ADD PATH Variables when implementing the Business APIs
-    @PostMapping("/pan")
-    public IdSearchResponseDto sendPanRequest(@RequestBody IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
+    @PostMapping
+    public IdSearchResponseDto sendRequest(@RequestBody IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
         IdSearchResponseDto response = panService.sendPanRequest(requestDTO);
         return response;
     }

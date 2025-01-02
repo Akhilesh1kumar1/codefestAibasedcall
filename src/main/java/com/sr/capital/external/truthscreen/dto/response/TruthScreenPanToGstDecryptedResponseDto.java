@@ -2,14 +2,12 @@ package com.sr.capital.external.truthscreen.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.Map;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

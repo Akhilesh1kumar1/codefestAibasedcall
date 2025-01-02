@@ -1,5 +1,6 @@
 package com.sr.capital.external.truthscreen.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.omunify.encryption.algorithm.AES256;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GSTDetails {
     private String authStatus;
     private String gstin;

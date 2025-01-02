@@ -2,12 +2,10 @@ package com.sr.capital.external.truthscreen.service.strategy;
 
 import com.sr.capital.exception.EntityConstructorNotFoundException;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
-import com.sr.capital.external.truthscreen.entity.PanComplianceDetails;
-import com.sr.capital.external.truthscreen.entity.PanComprehensiveDetails;
-import com.sr.capital.external.truthscreen.entity.PanDetails;
-import com.sr.capital.external.truthscreen.entity.PanToGstDetails;
+import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.entity.constructors.TruthPanDocDetailsEntityConstructor;
 import com.sr.capital.external.truthscreen.entity.constructors.TruthScreenPanComprehensiveEntityConstructor;
+import com.sr.capital.external.truthscreen.service.constructors.TruthScreenGstinEntityConstructor;
 import com.sr.capital.external.truthscreen.service.constructors.TruthScreenPanComplianceEntityConstructor;
 import com.sr.capital.external.truthscreen.service.constructors.TruthScreenPanToGstEntityConstructor;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenEntityConstructor;
@@ -18,6 +16,9 @@ import java.io.IOException;
 
 @Service
 public class TruthScreenEntityConstructorStrategy {
+
+    @Autowired
+    private TruthScreenGstinEntityConstructor truthScreenGstinEntityConstructor;
 
     @Autowired
     private TruthScreenPanToGstEntityConstructor truthScreenPanToGstEntityCOnstructor;
@@ -42,6 +43,8 @@ public class TruthScreenEntityConstructorStrategy {
             entityConstructor = truthScreenPanComplianceEntityConstructor;
         } else if (responseClass.equals(PanToGstDetails.class)) {
             entityConstructor = truthScreenPanToGstEntityCOnstructor;
+        } else if (responseClass.equals(GSTinDetails.class)) {
+            entityConstructor = truthScreenGstinEntityConstructor;
         } else {
             throw new EntityConstructorNotFoundException();
         }

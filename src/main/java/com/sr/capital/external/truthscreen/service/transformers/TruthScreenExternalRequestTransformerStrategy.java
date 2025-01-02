@@ -46,6 +46,9 @@ public class TruthScreenExternalRequestTransformerStrategy {
             case PAN_TO_GST:
                 requestTransformer = panToGstRequestTransformer;
                 break;
+            case GSTIN:
+                requestTransformer = gstinRequestTransformer;
+                break;
             default:
                 throw new RequestTransformerNotFoundException();
         }
