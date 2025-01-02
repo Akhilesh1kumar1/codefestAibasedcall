@@ -308,6 +308,9 @@ jobs:
     cronInMinutes: 120
   communication:
     scheduledTime: 0 0 1 * * ?
+  crif:
+    purge:
+      scheduledTime: 0 0 1 * * ?
 
 
 aes:

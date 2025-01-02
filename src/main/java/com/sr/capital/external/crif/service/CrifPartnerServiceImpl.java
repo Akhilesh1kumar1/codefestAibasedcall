@@ -85,7 +85,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return map;
     }
     @Override
-    public void purseExpiredData() {
+    public void purgeExpiredData() {
         Pageable pageable = PageRequest.of(0, 100); // Fetch 50 records per page
         Page<CrifConsentDetails> expiredDetailsPage;
 
@@ -97,9 +97,10 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 List<String> consentIdList = expiredDetails.stream().map(CrifConsentDetails::getConsentId).toList();
 
                 // Perform delete operations
-                deleteFromCrifReport(consentIdList);
-                deleteFromCrifUserDetails(consentIdList);
-                deleteFromBureauInitiateModel(consentIdList);
+                purgeData(consentIdList);
+//                deleteFromCrifReport(consentIdList);
+//                deleteFromCrifUserDetails(consentIdList);
+//                deleteFromBureauInitiateModel(consentIdList);
 
                 // Update each record's status and deletion details
                 expiredDetails.forEach(e -> {
@@ -116,6 +117,22 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         } while (expiredDetailsPage.hasNext());
     }
 
+    private void purgeData(List<String> consentIdList) {
+        List<CrifReport> crifReportList = crifModelHelper.findAllByConsentId(consentIdList);
+        List<CrifUserModel> crifUserModels = crifUserModelHelper.findAllByConsentId(consentIdList);
+        List<BureauInitiateModel> bureauInitiateModelList = bureauInitiateModelRepo.findAllByConsentIdIn(consentIdList);
+
+        if (crifReportList != null) {
+            crifReportRepo.deleteAll(crifReportList);
+        }
+        if (crifUserModels != null) {
+            crifUserModelHelper.deleteAll(crifUserModels);
+        }
+        if (bureauInitiateModelList != null) {
+            bureauInitiateModelRepo.deleteAll(bureauInitiateModelList);
+        }
+    }
+
     private void deleteFromBureauInitiateModel(List<String> consentIdList) {
         List<BureauInitiateModel> bureauInitiateModelList = bureauInitiateModelRepo.findAllByConsentIdIn(consentIdList);
         if (bureauInitiateModelList != null) {
@@ -123,12 +140,12 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         }
     }
 
-    private void deleteFromCrifUserDetails(List<String> consentIdList) {
-        List<CrifUserModel> crifUserModels = crifUserModelHelper.findAllByConsentId(consentIdList);
-        if (crifUserModels != null) {
-            crifUserModelHelper.deleteAll(crifUserModels);
-        }
-    }
+//    private void deleteFromCrifUserDetails(List<String> consentIdList) {
+//        List<CrifUserModel> crifUserModels = crifUserModelHelper.findAllByConsentId(consentIdList);
+//        if (crifUserModels != null) {
+//            crifUserModelHelper.deleteAll(crifUserModels);
+//        }
+//    }
 
     private void deleteFromCrifReport(List<String> consentIdList) {
         List<CrifReport> crifReportList = crifModelHelper.findAllByConsentId(consentIdList);
@@ -147,10 +164,9 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         return crifConsentDetailsService.findByExpiredAtBetween(currentTime, previousDayMidnight, pageable);
     }
     @Override
-    public void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) {
-            deleteFromCrifReport(crifConsentWithdrawalRequestModel.getMobile());
-        String consentId = deleteFromCrifUserDetails(crifConsentWithdrawalRequestModel);
-        deleteFromBureauInitiateModel(crifConsentWithdrawalRequestModel.getMobile());
+    public void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) throws CRIFApiException {
+        String consentId = deleteData(crifConsentWithdrawalRequestModel);
+
         CrifConsentDetails crifConsentDetails = crifConsentDetailsService.findByConsentId(consentId);
         if (crifConsentDetails != null) {
             crifConsentDetails.setExpirationMethod(CommonConstant.MANUAL);
@@ -160,29 +176,50 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         }
     }
 
-    private String deleteFromCrifUserDetails(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) {
-        Optional<CrifUserModel> optional = crifUserModelHelper.findByMobileDockTypeAndDocValue(crifConsentWithdrawalRequestModel.getMobile(),
+    private String deleteData(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) throws CRIFApiException {
+        Optional<CrifUserModel> optionalCrifUserModel = crifUserModelHelper.findByMobileDockTypeAndDocValue(crifConsentWithdrawalRequestModel.getMobile(),
                 crifConsentWithdrawalRequestModel.getDocType(), crifConsentWithdrawalRequestModel.getDocValue());
-        String consentId = "";
-        if (optional.isPresent()) {
-            consentId = optional.get().getConsentId();
-            crifUserModelHelper.delete(optional.get());
+
+        if (!optionalCrifUserModel.isPresent()) {
+            throw new CRIFApiException("Invalid data");
         }
+        Optional<CrifReport> optional = crifModelHelper.findByMobile(crifConsentWithdrawalRequestModel.getMobile());
+        List<BureauInitiateModel> optionalBureauInitiateModel = crifModelHelper.findByMobileNumber(crifConsentWithdrawalRequestModel.getMobile());
+
+
+        String consentId = optionalCrifUserModel.get().getConsentId();
+        crifUserModelHelper.delete(optionalCrifUserModel.get());
+
+        if (optionalBureauInitiateModel != null) {
+            bureauInitiateModelRepo.deleteAll(optionalBureauInitiateModel);
+        }
+
+        optional.ifPresent(crifReportRepo::delete);
+
         return consentId;
     }
 
-    private void deleteFromCrifReport(String mobile) {
-        Optional<CrifReport> optional = crifModelHelper.findByMobile(mobile);
-        if (optional.isPresent()) {
-            crifReportRepo.delete(optional.get());
-        }
-    }
-    private void deleteFromBureauInitiateModel(String mobile) {
-        List<BureauInitiateModel> optional = crifModelHelper.findByMobileNumber(mobile);
-        if (optional != null) {
-            bureauInitiateModelRepo.deleteAll(optional);
-        }
-    }
+//    private String deleteFromCrifUserDetails(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) {
+//        Optional<CrifUserModel> optional = crifUserModelHelper.findByMobileDockTypeAndDocValue(crifConsentWithdrawalRequestModel.getMobile(),
+//                crifConsentWithdrawalRequestModel.getDocType(), crifConsentWithdrawalRequestModel.getDocValue());
+//        String consentId = "";
+//        if (optional.isPresent()) {
+//            consentId = optional.get().getConsentId();
+//            crifUserModelHelper.delete(optional.get());
+//        }
+//        return consentId;
+//    }
+
+//    private void deleteFromCrifReport(String mobile) {
+//        Optional<CrifReport> optional = crifModelHelper.findByMobile(mobile);
+//        optional.ifPresent(crifReportRepo::delete);
+//    }
+//    private void deleteFromBureauInitiateModel(String mobile) {
+//        List<BureauInitiateModel> optional = crifModelHelper.findByMobileNumber(mobile);
+//        if (optional != null) {
+//            bureauInitiateModelRepo.deleteAll(optional);
+//        }
+//    }
 
     @Override
     public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
@@ -743,10 +780,30 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
      */
     private void updateConsent(String consentId) {
 
-        // Todo : not deleted because its used at many places need to set null for this table
-//        deleteFromBureauInitiateModel(Collections.singletonList(consentId));
+        deleteFromBureauInitiateModelViaSettingNull(consentId);
         deleteFromCrifReport(Collections.singletonList(consentId));
 
+    }
+
+    private void deleteFromBureauInitiateModelViaSettingNull(String consentId) {
+        List<BureauInitiateModel> bureauInitiateModelList = bureauInitiateModelRepo.findAllByConsentIdIn(Collections.singletonList(consentId));
+            if (bureauInitiateModelList != null && !bureauInitiateModelList.isEmpty()) {
+                bureauInitiateModelList.forEach(d -> {
+                    d.setLastQuestion(null);
+                    d.setInitStatus(null);
+                    d.setInitRequestPayload(null);
+                    d.setButtonBehavior(null);
+                    d.setInitResponse(null);
+                    d.setQuestionnaireRequestPayload(null);
+                    d.setQuestionnaireResponse(null);
+                    d.setQuestionnaireStatus(null);
+                    d.setQuestionOptionList(null);
+                    d.setRedirectUrl(null);
+                    d.setRequestHeader(null);
+                    d.setUserAnswer(null);
+                });
+                bureauInitiateModelRepo.saveAll(bureauInitiateModelList);
+            }
     }
 
     private Map<String, String> getMobileAndNumberByOrderIdAndReportId(String orderId, String reportId) {

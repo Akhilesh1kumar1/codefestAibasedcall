@@ -58,7 +58,7 @@ public class CrifController {
 
     @PostMapping(value = "/purge", consumes = "application/json", produces = "application/json")
     public GenericResponse<Map<String, String>> crifConsentWithdrawal(@RequestBody CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel
-    ) {
+    ) throws CRIFApiException {
 
         crifPartnerService.consentWithdrawalProcess(crifConsentWithdrawalRequestModel);
         return ResponseBuilderUtil.getResponse(null

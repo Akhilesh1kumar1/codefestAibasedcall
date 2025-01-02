@@ -43,11 +43,6 @@ public class CommunicationJob {
     @Autowired
     private CommunicationService communicationService;
 
-    @Autowired
-    private BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
-    @Autowired
-    private CrifPartnerService crifPartnerService;
-
      LoggerUtil log = LoggerUtil.getLogger(CommunicationJob.class);
 
 
@@ -80,14 +75,8 @@ public class CommunicationJob {
         if(CollectionUtils.isNotEmpty(loanApplicationList)){
             processLoanApplicationBatch(loanApplicationList);
         }
-        executePurseTaskForCrif();
     }
 
-
-
-    private void executePurseTaskForCrif() {
-        crifPartnerService.purseExpiredData();
-    }
     private void processLoanApplicationBatch(List<LoanApplication> loanApplicationList) {
 
         try {
