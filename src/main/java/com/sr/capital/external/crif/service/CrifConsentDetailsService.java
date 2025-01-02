@@ -9,7 +9,6 @@ import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +19,6 @@ public class CrifConsentDetailsService {
 
     private final CrifConsentDetailsRepo crifConsentDetailsRepo;
     private final RedissonClient redissonClient;
-    private final StringRedisTemplate redisTemplate;
 
 
 
