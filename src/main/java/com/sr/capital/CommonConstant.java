@@ -20,4 +20,7 @@ public class CommonConstant {
     );
     public static final String TRUE = "true";
 
+    public static final String AUTOMATIC = "AUTOMATIC";
+    public static final String MANUAL = "MANUAL";
+    public static final String DELETED = "DELETED";
 }

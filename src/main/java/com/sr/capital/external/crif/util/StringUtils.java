@@ -1,12 +1,14 @@
 package com.sr.capital.external.crif.util;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
+@Slf4j
 public class StringUtils {
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -58,6 +60,28 @@ public class StringUtils {
 
         // Format and return the result as a string
         return sixMonthsLater.format(FORMATTER);
+    }
+
+    public static String getConsentExpireTime(String crifConsentExpireAt) {
+        String[] parts = crifConsentExpireAt.split(" ");
+
+        long value = 0L;
+        String unit = null;
+
+        try {
+            value = Long.parseLong(parts[0]);
+            unit = parts[1];
+
+            switch (unit.toUpperCase()) {
+                case "MINUTES":
+                    return LocalDateTime.now().plusMinutes(value).format(FORMATTER);
+                case "MONTHS":
+                    return LocalDateTime.now().plusMonths(value).format(FORMATTER);
+            }
+        } catch (Exception e) {
+            log.info("error while fetching crif Consent Expire time " + e);
+        }
+        return LocalDateTime.now().plusMonths(6).format(FORMATTER);
     }
 
 }

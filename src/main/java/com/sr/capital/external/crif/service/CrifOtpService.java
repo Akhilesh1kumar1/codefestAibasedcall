@@ -17,7 +17,7 @@ public interface CrifOtpService {
 
     CrifResponse generateOtp(CrifGenerateOtpRequestModel bureauInitiatePayloadRequest) throws IOException, CustomException, CRIFApiException, CRIFApiLimitExceededException;
 
-    CrifResponse verifyOtp(@Valid CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException, CRIFApiLimitExceededException;
+    CrifResponse verifyOtp(CrifVerifyOtpRequestModels crifGenerateOtpRequestModel) throws CustomException, CRIFApiException, CRIFApiLimitExceededException;
 
     void updateOtpStatus(String mobile);
 

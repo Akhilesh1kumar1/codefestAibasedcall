@@ -35,6 +35,8 @@ public interface CrifPartnerService {
 
     Map<String, String> getDocType();
 
-    void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel);
+    void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) throws CRIFApiException;
+
+    void purgeExpiredData();
 }
 

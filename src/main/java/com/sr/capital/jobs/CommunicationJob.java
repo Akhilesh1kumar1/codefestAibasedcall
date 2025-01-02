@@ -4,6 +4,7 @@ import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.User;
+import com.sr.capital.external.crif.service.CrifPartnerService;
 import com.sr.capital.external.dto.request.CommunicationRequestTemp;
 import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.helpers.enums.CommunicationTemplateNames;
@@ -42,9 +43,6 @@ public class CommunicationJob {
     @Autowired
     private CommunicationService communicationService;
 
-    @Autowired
-    private BaseCreditPartnerEntityServiceImpl baseCreditPartnerEntityService;
-
      LoggerUtil log = LoggerUtil.getLogger(CommunicationJob.class);
 
 
@@ -78,7 +76,6 @@ public class CommunicationJob {
             processLoanApplicationBatch(loanApplicationList);
         }
     }
-
 
     private void processLoanApplicationBatch(List<LoanApplication> loanApplicationList) {
 

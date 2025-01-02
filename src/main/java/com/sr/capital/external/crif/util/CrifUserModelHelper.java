@@ -7,6 +7,7 @@ import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,5 +40,13 @@ public class CrifUserModelHelper {
 
     public void delete(CrifUserModel crifUserModel) {
         crifUserModelRepo.delete(crifUserModel);
+    }
+
+    public List<CrifUserModel> findAllByConsentId(List<String> consentIdList) {
+        return crifUserModelRepo.findAllByConsentIdIn(consentIdList);
+    }
+
+    public void deleteAll(List<CrifUserModel> crifUserModels) {
+        crifUserModelRepo.deleteAll(crifUserModels);
     }
 }
