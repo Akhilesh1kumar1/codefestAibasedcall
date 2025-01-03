@@ -39,7 +39,7 @@ public class CrifPurgeJob {
 
 
     @Scheduled(cron = "${jobs.crif.purge.scheduledTime}")
-    @SchedulerLock(name = "communicationJob", lockAtMostFor = "30m", lockAtLeastFor = "10m")
+    @SchedulerLock(name = "CrifPurgeScheduledJob", lockAtMostFor = "8m", lockAtLeastFor = "5m")
     public void performCrifPurgeScheduledTask() {
 
         log.info("cron job for crif purge data at :: " + LocalDateTime.now());
