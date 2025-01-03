@@ -29,6 +29,7 @@ import com.sr.capital.repository.mongo.BureauInitiateModelRepo;
 import com.sr.capital.repository.mongo.CrifReportRepo;
 import com.sr.capital.util.Base64Util;
 import com.sr.capital.util.WebClientUtil;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMapCache;
@@ -193,7 +194,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 crifConsentWithdrawalRequestModel.getDocType(), crifConsentWithdrawalRequestModel.getDocValue());
 
         if (!optionalCrifUserModel.isPresent()) {
-            throw new CRIFApiException(Constant.USER_NOT_FOUND_FOR_PURGE_ERROR_MESSAGE);
+            throw new ConstraintViolationException(Constant.USER_NOT_FOUND_FOR_PURGE_ERROR_MESSAGE, null);
         }
         Optional<CrifReport> optional = crifModelHelper.findByMobile(crifConsentWithdrawalRequestModel.getMobile());
         List<BureauInitiateModel> optionalBureauInitiateModel = crifModelHelper.findByMobileNumber(crifConsentWithdrawalRequestModel.getMobile());
