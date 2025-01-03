@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 public class CrifReport extends BaseDoc {
 
     @Field("result")
-//    @EncryptField
+    @EncryptField
     private Object result;
 
     @Field("report_id")

@@ -193,7 +193,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 crifConsentWithdrawalRequestModel.getDocType(), crifConsentWithdrawalRequestModel.getDocValue());
 
         if (!optionalCrifUserModel.isPresent()) {
-            throw new CRIFApiException("Invalid data");
+            throw new CRIFApiException(Constant.USER_NOT_FOUND_FOR_PURGE_ERROR_MESSAGE);
         }
         Optional<CrifReport> optional = crifModelHelper.findByMobile(crifConsentWithdrawalRequestModel.getMobile());
         List<BureauInitiateModel> optionalBureauInitiateModel = crifModelHelper.findByMobileNumber(crifConsentWithdrawalRequestModel.getMobile());
