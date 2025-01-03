@@ -30,4 +30,5 @@ public class Constant {
     public static final String ACTIVE = "ACTIVE";
     public static String MOBILE = "Mobile";
     public static String CONSENT = "Consent";
+    public static String USER_NOT_FOUND_FOR_PURGE_ERROR_MESSAGE = "Entered details don't match our records. Please re-check and try again.";
 }
