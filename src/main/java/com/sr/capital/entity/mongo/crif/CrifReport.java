@@ -7,10 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 
 @Data
 @Builder
@@ -20,7 +19,7 @@ import java.util.List;
 public class CrifReport extends BaseDoc {
 
     @Field("result")
-    @EncryptField
+//    @EncryptField
     private Object result;
 
     @Field("report_id")

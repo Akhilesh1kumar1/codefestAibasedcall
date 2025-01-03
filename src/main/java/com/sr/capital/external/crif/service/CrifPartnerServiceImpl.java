@@ -1,5 +1,6 @@
 package com.sr.capital.external.crif.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.CommonConstant;
 import com.sr.capital.config.AppProperties;
@@ -240,11 +241,13 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         if (questionnaire != null && isAuthorizedForReport(questionnaire.getStatus())) {
             BureauReportResponse report = getReport(questionnaire, false);
             if (report != null) {
+                Object reportData = StringUtils.covertToJsonString(report.getResult());
                 setResponse(crifResponse, new HashMap<>() {{
-                    put(DATA, report.getResult());
+                    put(DATA, reportData);
                     put(STAGE, STAGE_3);
                 }});
-            }return crifResponse;
+            }
+            return crifResponse;
         }
         setResponse(crifResponse, new HashMap<>(){{put(DATA, questionnaire); put(STAGE, STAGE_2);}});
         return crifResponse;
@@ -284,7 +287,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             BureauReportResponse report = getReport(bureauQuestionnaireResponse, false);
             if (report != null) {
                 return new HashMap<>() {{
-                    put(DATA, report); put(STAGE, STAGE_3);
+                    put(DATA, StringUtils.covertToJsonString(report.getResult())); put(STAGE, STAGE_3);
                 }};
             }
         }
@@ -304,7 +307,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             BureauReportResponse report = getReport(bureauQuestionnaireResponse, true);
             if (report != null) {
                 return new HashMap<>() {{
-                    put(DATA, report);
+                    put(DATA, StringUtils.covertToJsonString(report));
                     put(STAGE, STAGE_3);
                 }};
             }
@@ -316,7 +319,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private Map<String, Object> getStoredReport(CrifReport crifGenerateOtpRequestModel) {
         String consentId = crifGenerateOtpRequestModel.getConsentId();
         updateConsentHistory(consentId);
-        return new HashMap<>(){{put(DATA, crifGenerateOtpRequestModel.getResult()); put(STAGE, STAGE_3);}};
+        return new HashMap<>(){{put(DATA, StringUtils.covertToJsonString(crifGenerateOtpRequestModel.getResult())); put(STAGE, STAGE_3);}};
     }
 
     private void updateConsentHistory(String consentId) {
@@ -774,15 +777,21 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
     private CrifReport buildCrifReport(String mobile, String consent, Object bureauReportResponse,
                                        BureauReportPayloadRequest bureauReportPayloadRequest) {
-        return CrifReport.builder()
-                .mobile(mobile)
-                .consentId(consent)
-                .result(bureauReportResponse)
-                .orderId(bureauReportPayloadRequest.getOrderId())
-                .reportId(bureauReportPayloadRequest.getReportId())
-                .srCompanyId(RequestData.getTenantId())
-                .validTill(StringUtils.getTimeAfterMonths(1))
-                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            byte[] byteArrayResponse = objectMapper.writeValueAsBytes(bureauReportResponse);
+            return CrifReport.builder()
+                    .mobile(mobile)
+                    .consentId(consent)
+                    .result(Base64.getEncoder().encodeToString(byteArrayResponse))
+                    .orderId(bureauReportPayloadRequest.getOrderId())
+                    .reportId(bureauReportPayloadRequest.getReportId())
+                    .srCompanyId(RequestData.getTenantId())
+                    .validTill(StringUtils.getTimeAfterMonths(1))
+                    .build();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
