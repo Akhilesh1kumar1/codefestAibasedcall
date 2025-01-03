@@ -1,11 +1,18 @@
 package com.sr.capital.external.crif.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -84,4 +91,14 @@ public class StringUtils {
         return LocalDateTime.now().plusMonths(6).format(FORMATTER);
     }
 
+    public static Object covertToJsonString(Object data) {
+        try {
+            String json = new String(Base64.getDecoder().decode(data.toString()));
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(json, LinkedHashMap.class);
+        } catch (Exception e) {
+            log.error("Error while Converting into json");
+        }
+        return null;
+    }
 }
