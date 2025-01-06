@@ -209,7 +209,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     public void ScheduleCacheForStatusUpdate(String internalLoanId, String partner) {
 
         String key = getKeyForCache(internalLoanId, partner);
-        redissonClient.getMapCache(key).put(key, "", 2, TimeUnit.SECONDS);
+        redissonClient.getMapCache(key).put(key, true, 1, TimeUnit.MINUTES);
         saveIntoDb(internalLoanId, key, partner);
     }
 

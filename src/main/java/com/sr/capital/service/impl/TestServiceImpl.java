@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -96,7 +97,7 @@ public class TestServiceImpl {
         String partner = "flexi";
         String key = getKeyForCache(loanApplication.getInternalLoanId(), partner);
 
-        redissonClient.getMapCache(key).put(key, "", 2, TimeUnit.SECONDS);
+        redissonClient.getMapCache(key).put(key, true, 2, TimeUnit.SECONDS);
         saveIntoDb(loanApplication, key, partner);
     }
 
