@@ -308,7 +308,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             BureauReportResponse report = getReport(bureauQuestionnaireResponse, true);
             if (report != null) {
                 return new HashMap<>() {{
-                    put(DATA, StringUtils.covertToJsonString(report));
+                    put(DATA, StringUtils.covertToJsonString(report.getResult()));
                     put(STAGE, STAGE_3);
                 }};
             }
@@ -758,22 +758,33 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 getMobileAndNumberByOrderIdAndReportId(orderId, bureauReportPayloadRequest.getReportId());
 
         String mobile = mobileAndNumberByOrderIdAndReportId.get(MOBILE);
-        String consent = mobileAndNumberByOrderIdAndReportId.get(CONSENT);
+        String oldConsentId = mobileAndNumberByOrderIdAndReportId.get(CONSENT);
 
         CrifReport crifReport;
 
         if (isRefreshRequest) {
-            updateConsent(consent);
-            crifReport = buildCrifReport(mobile, consent, bureauReportResponse, bureauReportPayloadRequest);
+
+            String newConsentId = deleteOldConsentAndCreateNewConsent(oldConsentId);;
+            updateConsentDetails(oldConsentId, newConsentId);
+            crifReport = buildCrifReport(mobile, newConsentId, bureauReportResponse, bureauReportPayloadRequest);
         } else {
             Optional<CrifReport> existingReport = crifModelHelper.findByMobile(mobile);
             crifReport = existingReport.orElseGet(() ->
-                    buildCrifReport(mobile, consent , bureauReportResponse, bureauReportPayloadRequest)
+                    buildCrifReport(mobile, oldConsentId , bureauReportResponse, bureauReportPayloadRequest)
             );
         }
 
         crifModelHelper.save(crifReport);
         return crifReport;
+    }
+
+    private String deleteOldConsentAndCreateNewConsent(String consent) {
+        CrifConsentDetails consentDetails = crifConsentDetailsService.findByConsentId(consent);
+        if (consentDetails != null) {
+            consentDetails.setStatus(CommonConstant.REFRESHED);
+            crifConsentDetailsService.save(consentDetails);
+        }
+        return saveAndGetConsentId();
     }
 
     private CrifReport buildCrifReport(String mobile, String consent, Object bureauReportResponse,
@@ -797,16 +808,28 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
     /**
      * Delete old data for given consent id noe=w this consent id will treat as new id because old is deleted
-     * @param consentId
+     *
+     * @param oldConsentId
+     * @param newConsentId
      */
-    private void updateConsent(String consentId) {
-
-        deleteFromBureauInitiateModelViaSettingNull(consentId);
-        deleteFromCrifReport(Collections.singletonList(consentId));
+    private void updateConsentDetails(String oldConsentId, String newConsentId) {
+        updateUserDetails(oldConsentId, newConsentId);
+        deleteFromBureauInitiateModelViaSettingNull(oldConsentId, newConsentId);
+        deleteFromCrifReport(Collections.singletonList(oldConsentId));
 
     }
 
-    private void deleteFromBureauInitiateModelViaSettingNull(String consentId) {
+    private void updateUserDetails(String oldConsentId, String newConsentId) {
+        List<CrifUserModel> userModels = crifUserModelHelper.findAllByConsentId(Collections.singletonList(oldConsentId));
+        if (userModels != null && !userModels.isEmpty()) {
+            userModels.forEach(u -> {
+                u.setConsentId(newConsentId);
+            });
+        }
+        crifUserModelHelper.saveAll(userModels);
+    }
+
+    private void deleteFromBureauInitiateModelViaSettingNull(String consentId, String newConsentId) {
         List<BureauInitiateModel> bureauInitiateModelList = bureauInitiateModelRepo.findAllByConsentIdIn(Collections.singletonList(consentId));
             if (bureauInitiateModelList != null && !bureauInitiateModelList.isEmpty()) {
                 bureauInitiateModelList.forEach(d -> {
@@ -822,6 +845,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     d.setRedirectUrl(null);
                     d.setRequestHeader(null);
                     d.setUserAnswer(null);
+                    d.setConsentId(newConsentId);
                 });
                 bureauInitiateModelRepo.saveAll(bureauInitiateModelList);
             }
@@ -852,4 +876,17 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         bureauReportPayloadRequest.setJsonFlag("Y");
     }
 
+    @Override
+    public String saveAndGetConsentId() {
+
+        CrifConsentDetails build = CrifConsentDetails.builder()
+                .consentId(crifConsentDetailsService.getNextSequence())
+                .expiredAt(StringUtils.getConsentExpireTime(appProperties.getCrifConsentExpireAt()))
+                .status(ACTIVE)
+                .consentDateHistory(Collections.singletonList(LocalDateTime.now().format(FORMATTER)))
+                .build();
+
+        crifConsentDetailsService.save(build);
+        return build.getConsentId();
+    }
 }

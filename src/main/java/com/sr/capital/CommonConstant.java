@@ -27,4 +27,5 @@ public class CommonConstant {
     public static final String PARTNER = "%%PARTNER%%";
     public static final String KEY = "%%KEY%%";
     public static final String TIME = "%%TIME%%";
+    public static final String REFRESHED = "REFRESHED";
 }
