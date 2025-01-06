@@ -29,7 +29,9 @@ public class RedisExpiryListener {
         // Subscribe to the key event notification channel for expired keys
         String expiryChannel = "__keyevent@0__:expired"; // Replace "0" with your Redis DB index if different
         RPatternTopic topic = redissonClient.getPatternTopic(expiryChannel);
-        topic.addListener(String.class, ((pattern, channel, message) -> {
+            log.info("TTL listener is executing for key :: 1");
+
+            topic.addListener(String.class, ((pattern, channel, message) -> {
 
             log.info("TTL listener is executing for key ::" + message);
 
@@ -37,7 +39,9 @@ public class RedisExpiryListener {
                 handleKeyExpiration(message);
             }
         }));
-    }
+            log.info("TTL listener is executing for key :: 2");
+
+        }
     private void handleKeyExpiration(String expiredKey) {
         RedisTTLListenerUtil.updateStatus(expiredKey, redisEventTrackingRepo, GET_LOAN_DETAILS);
         kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(),kafkaMessagePublisherUtil.
