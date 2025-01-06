@@ -1,12 +1,11 @@
 package com.sr.capital.external.crif.service;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
-import com.sr.capital.entity.mongo.crif.CrifConsentDetails;
 import com.sr.capital.entity.mongo.crif.CrifUserModel;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.Constant.Constant;
@@ -19,23 +18,17 @@ import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.util.CrifStatus;
 import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
-import com.sr.capital.external.crif.util.StringUtils;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
-import com.sr.capital.repository.mongo.CrifConsentDetailsRepo;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.service.UserService;
-import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
-import static com.sr.capital.external.crif.util.StringUtils.FORMATTER;
 
 @Service
 @Slf4j
@@ -87,7 +80,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
 
     private CrifUserModel getCrifUserModelInstance(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) {
 
-        String consentId = saveAndGetConsentId();
+        String consentId = crifPartnerService.saveAndGetConsentId();
 
         CrifUserModel.CrifUserModelBuilder builder = CrifUserModel.builder()
                 .firstName(crifGenerateOtpRequestModel.getFirstName())
@@ -119,18 +112,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         return builder.build();
     }
 
-    private String saveAndGetConsentId() {
 
-        CrifConsentDetails build = CrifConsentDetails.builder()
-                .consentId(crifConsentDetailsService.getNextSequence())
-                .expiredAt(StringUtils.getConsentExpireTime(appProperties.getCrifConsentExpireAt()))
-                .status(ACTIVE)
-                .consentDateHistory(Collections.singletonList(LocalDateTime.now().format(FORMATTER)))
-                .build();
-
-        crifConsentDetailsService.save(build);
-        return build.getConsentId();
-    }
 
     public static void setResponse(CrifResponse crifResponse, Map<String, Object> data) {
         if (data != null && !data.isEmpty() && data.containsKey(STAGE)) {
@@ -149,32 +131,28 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         Optional<CrifUserModel> optional = crifUserModelRepo.findByVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
         if (optional.isPresent()) {
             CrifUserModel crifUserModel = optional.get();
-            if (crifUserModel.getVerificationToken().equals(crifGenerateOtpRequestModel.getVerificationToken())) {
 
-                VerifyOtpRequest verifyOtpRequest = new VerifyOtpRequest();
-                verifyOtpRequest.setVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
-                verifyOtpRequest.setOtp(crifGenerateOtpRequestModel.getOtp());
-                Boolean isVerified = crifVerificationUtils.verifyOtp(verifyOtpRequest);
+            VerifyOtpRequest verifyOtpRequest = new VerifyOtpRequest();
+            verifyOtpRequest.setVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
+            verifyOtpRequest.setOtp(crifGenerateOtpRequestModel.getOtp());
+            Boolean isVerified = crifVerificationUtils.verifyOtp(verifyOtpRequest);
 
-                if (isVerified != null && isVerified) {
-                    crifUserModel.setIsOtpVerified(true);
-                    crifUserModelHelper.save(crifUserModel);
+            if (isVerified != null && isVerified) {
+                crifUserModel.setIsOtpVerified(true);
+                crifUserModelHelper.save(crifUserModel);
 
-                    crifGenerateOtpRequestModel.setDocType(crifUserModel.getDocumentType());
-                    crifGenerateOtpRequestModel.setDocValue(crifUserModel.getDocumentValue());
-                    crifGenerateOtpRequestModel.setMobile(crifUserModel.getMobile());
-                    crifGenerateOtpRequestModel.setEmail(crifUserModel.getEmail());
-                    crifGenerateOtpRequestModel.setLastName(crifUserModel.getLastName());
-                    crifGenerateOtpRequestModel.setFirstName(crifUserModel.getFirstName());
+                crifGenerateOtpRequestModel.setDocType(crifUserModel.getDocumentType());
+                crifGenerateOtpRequestModel.setDocValue(crifUserModel.getDocumentValue());
+                crifGenerateOtpRequestModel.setMobile(crifUserModel.getMobile());
+                crifGenerateOtpRequestModel.setEmail(crifUserModel.getEmail());
+                crifGenerateOtpRequestModel.setLastName(crifUserModel.getLastName());
+                crifGenerateOtpRequestModel.setFirstName(crifUserModel.getFirstName());
 
-                    Map<String, Object> map = crifPartnerService.initiateBureauAndGetQuestionnaire(crifGenerateOtpRequestModel);
+                Map<String, Object> map = crifPartnerService.initiateBureauAndGetQuestionnaire(crifGenerateOtpRequestModel);
 
-                    setResponse(crifResponse, map);
+                setResponse(crifResponse, map);
 
-                    return crifResponse;
-                }
-            } else {
-                crifResponse.setStatus("Otp validation failed");
+                return crifResponse;
             }
         } else {
             throw new CustomException("User not found");

@@ -38,5 +38,7 @@ public interface CrifPartnerService {
     void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) throws CRIFApiException;
 
     void purgeExpiredData();
+
+    String saveAndGetConsentId();
 }
 

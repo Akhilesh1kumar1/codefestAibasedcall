@@ -2,6 +2,7 @@ package com.sr.capital.external.crif.util;
 
 import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.dto.request.TenantDetails;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;

@@ -49,4 +49,9 @@ public class CrifUserModelHelper {
     public void deleteAll(List<CrifUserModel> crifUserModels) {
         crifUserModelRepo.deleteAll(crifUserModels);
     }
+
+    public void saveAll(List<CrifUserModel> userModels) {
+        crifUserModelRepo.saveAll(userModels);
+
+    }
 }

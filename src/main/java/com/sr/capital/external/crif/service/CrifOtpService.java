@@ -1,5 +1,6 @@
 package com.sr.capital.external.crif.service;
 
+import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.dto.request.CrifGenerateOtpRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
@@ -7,7 +8,6 @@ import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.dto.response.CrifUserDetailsResponseDto;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

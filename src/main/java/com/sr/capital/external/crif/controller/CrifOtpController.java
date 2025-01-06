@@ -1,6 +1,7 @@
 package com.sr.capital.external.crif.controller;
 
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.dto.request.CrifGenerateOtpRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
