@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.Topic;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 
 import java.io.IOException;
@@ -43,23 +43,17 @@ public class RedisConfig {
     }
 
     @Bean
+    public RedisMessageListenerContainer messageListenerContainer(RedisConnectionFactory redisConnectionFactory, KeyExpirationListener keyExpirationListener) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(redisConnectionFactory);
+//      Set the keyspace notification configuration using RedisCallback
+        Topic topic = new ChannelTopic("__keyevent@0__:expired");
+        container.addMessageListener(keyExpirationListener, topic);
+        return container;
+    }
+    @Bean
     public MessageListenerAdapter listenerAdapter(KeyExpirationListener listener) {
         return new MessageListenerAdapter(listener);
     }
 
-    @Bean
-    public StringRedisTemplate redisTemplate(RedisConnectionFactory connectionFactory) {
-        StringRedisTemplate template = new StringRedisTemplate(connectionFactory);
-
-        // Set the keyspace notification configuration using RedisCallback
-        template.execute(new RedisCallback<Object>() {
-            @Override
-            public Object doInRedis(org.springframework.data.redis.connection.RedisConnection connection) {
-                connection.setConfig("notify-keyspace-events", "Ex");
-                return null;  // No result needed
-            }
-        });
-
-        return template;
-    }
 }
