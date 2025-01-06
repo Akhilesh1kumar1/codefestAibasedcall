@@ -31,16 +31,16 @@ public class RedisConfig {
         return Redisson.create(Config.fromYAML(new ClassPathResource(file).getInputStream()));
     }
 
-    @Bean
-    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
-                                                   MessageListenerAdapter listenerAdapter) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-
-        // Listen to the expired event channel for database 0
-        container.addMessageListener(listenerAdapter, new PatternTopic("__keyevent@0__:expired"));
-        return container;
-    }
+//    @Bean
+//    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
+//                                                   MessageListenerAdapter listenerAdapter) {
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//
+//        // Listen to the expired event channel for database 0
+//        container.addMessageListener(listenerAdapter, new PatternTopic("__keyevent@0__:expired"));
+//        return container;
+//    }
 
     @Bean
     public RedisMessageListenerContainer messageListenerContainer(RedisConnectionFactory redisConnectionFactory, KeyExpirationListener keyExpirationListener) {
