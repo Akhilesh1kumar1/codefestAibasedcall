@@ -68,7 +68,7 @@ public class WebClientUtil {
                                         HttpHeaders httpHeaders, Map<String, String> parameters, Object body,
                                         Class<T> responseClass) throws RequestBodyRequiredException, UnsupportedHttpMethodException {
 
-        if(httpMethodsWithBody.contains(method) && body == null){
+        if(httpMethodsWithBody.contains(method) && body == null) {
             throw new RequestBodyRequiredException();
         }
 

@@ -3,14 +3,18 @@ package com.sr.capital.service.impl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.CommonConstant;
 import com.sr.capital.dto.request.LoanMetaDataDto;
-import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
-import com.sr.capital.dto.response.AccessTokenResponseDto;
+import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.dto.response.ValidateTokenResponse;
+import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ProviderRequestTemplateType;
 import com.sr.capital.helpers.enums.ProviderResponseTemplateType;
 import com.sr.capital.helpers.enums.ProviderUrlConfigTypes;
+import com.sr.capital.redis.entity.RedisEventTracking;
+import com.sr.capital.redis.repository.mongo.RedisEventTrackingRepo;
+import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.spine.JsonPathEvaluator;
 import com.sr.capital.util.MapperUtils;
@@ -38,6 +42,8 @@ public class TestServiceImpl {
     final ProviderHelperUtil providerHelperUtil;
     final ProviderConfigUtil providerConfigUtil;
     final RedissonClient redissonClient;
+    final LoanApplicationRepository loanApplicationRepository;
+    final RedisEventTrackingRepo redisEventTrackingRepo;
 
     public boolean testJsonPath(Long partnerId, Map<String,String> metaData, Map<String,Object> request) throws UnirestException, URISyntaxException, IOException, CustomException {
 
@@ -74,14 +80,38 @@ public class TestServiceImpl {
     }
 
     public Object setTempValueInRadis() {
-        RMapCache<String, String> crifAccessToken1 = redissonClient.getMapCache("TEST_ENV_VARIABLE_1");
-        RMapCache<String, String> crifAccessToken2 = redissonClient.getMapCache("TEST_ENV_VARIABLE_2");
-        RMapCache<String, String> crifAccessToken3 = redissonClient.getMapCache("TEST_ENV_VARIABLE_3");
-        crifAccessToken1.put("TEST_ENV_VARIABLE_1", "Env var 1", 1, TimeUnit.MINUTES);
-        crifAccessToken2.put("TEST_ENV_VARIABLE_2", "Env var 2", 1, TimeUnit.MINUTES);
-        crifAccessToken3.put("TEST_ENV_VARIABLE_3", "Env var 3", 1, TimeUnit.MINUTES);
-
+//        RMapCache<String, String> crifAccessToken1 = redissonClient.getMapCache("TEST_ENV_VARIABLE_1");
+//        RMapCache<String, String> crifAccessToken2 = redissonClient.getMapCache("TEST_ENV_VARIABLE_2");
+//        RMapCache<String, String> crifAccessToken3 = redissonClient.getMapCache("TEST_ENV_VARIABLE_3");
+//        redissonClient.getMapCache(Constants.RedisKeys.LOAN_AT_VENDOR + "_" + 1234 + "$" + "flexi").put(Constants.RedisKeys.LOAN_AT_VENDOR + "_" + 1234, "Env var 1", 2, TimeUnit.SECONDS);
+//        crifAccessToken1.put("TEST_ENV_VARIABLE_1", "Env var 1", 2, TimeUnit.SECONDS);
+//        crifAccessToken2.put("TEST_ENV_VARIABLE_2", "Env var 2", 3, TimeUnit.SECONDS);
+//        crifAccessToken3.put("TEST_ENV_VARIABLE_3", "Env var 3", 4, TimeUnit.SECONDS);
+        ScheduleCacheForStatusUpdate();
         return null;
+    }
+
+    public void ScheduleCacheForStatusUpdate(){
+        LoanApplication loanApplication = loanApplicationRepository.findByInternalLoanId("SCAPf5e4849d70d56929");
+        String partner = "flexi";
+        String key = getKeyForCache(loanApplication.getInternalLoanId(), partner);
+
+        redissonClient.getMapCache(key).put(key, "", 2, TimeUnit.SECONDS);
+        saveIntoDb(loanApplication, key, partner);
+    }
+
+    private String getKeyForCache(String internalLoanId, String partner) {
+        return "%%" + Constants.RedisKeys.LOAN_AT_VENDOR + "%%" + internalLoanId + "%%" + partner + "%%";
+    }
+
+    private void saveIntoDb(LoanApplication loanApplication, String key, String partner) {
+        RedisEventTracking redisEventTracking = RedisEventTracking.builder()
+                .redisKey(key)
+                .internalLoanId(loanApplication.getInternalLoanId())
+                .partner(partner)
+                .isEventExecuted(false)
+                .build();
+        redisEventTrackingRepo.save(redisEventTracking);
     }
 
     public Object getTempValueInRadis() {
