@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.StringCodec;
+import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,21 +30,12 @@ public class RedisConfig {
 
     @Bean
     public RedissonClient redissonClient() throws IOException {
-        return Redisson.create(Config.fromYAML(new ClassPathResource(file).getInputStream()));
+        Config config =Config.fromYAML(new ClassPathResource(file).getInputStream());
+        config.setCodec(new StringCodec());
+        return Redisson.create(config);
     }
 
-//    @Bean
-//    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
-//                                                   MessageListenerAdapter listenerAdapter) {
-//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-//        container.setConnectionFactory(connectionFactory);
-//
-//        // Listen to the expired event channel for database 0
-//        container.addMessageListener(listenerAdapter, new PatternTopic("__keyevent@0__:expired"));
-//        return container;
-//    }
-
-    @Bean
+    /*@Bean
     public RedisMessageListenerContainer messageListenerContainer(RedisConnectionFactory redisConnectionFactory, KeyExpirationListener keyExpirationListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(redisConnectionFactory);
@@ -54,6 +47,6 @@ public class RedisConfig {
     @Bean
     public MessageListenerAdapter listenerAdapter(KeyExpirationListener listener) {
         return new MessageListenerAdapter(listener);
-    }
+    }*/
 
 }
