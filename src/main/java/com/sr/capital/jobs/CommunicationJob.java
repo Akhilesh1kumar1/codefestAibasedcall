@@ -59,8 +59,11 @@ public class CommunicationJob {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<LoanApplication> loanApplications;
-        List<LoanStatus> loanStatusList = new ArrayList<>();
-        loanStatusList.addAll(List.of(LoanStatus.LEAD_VERIFIED,LoanStatus.LEAD_INITIATED,LoanStatus.LEAD_IN_PROGRESS));
+        List<String> loanStatusList = new ArrayList<>();
+
+        loanStatusList.addAll(List.of(LoanStatus.LEAD_VERIFIED.name()
+                ,LoanStatus.LEAD_INITIATED.name()
+                ,LoanStatus.LEAD_IN_PROGRESS.name()));
 
         List<LoanApplication> loanApplicationList = new ArrayList<>();
 

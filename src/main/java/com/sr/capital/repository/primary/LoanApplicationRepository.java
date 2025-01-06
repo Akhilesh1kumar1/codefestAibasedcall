@@ -1,12 +1,9 @@
 package com.sr.capital.repository.primary;
 
-import com.sr.capital.dto.response.LoanApplicationStatusDto;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.helpers.enums.LoanStatus;
-import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -56,10 +53,13 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
     Page<LoanApplication> findByLoanStatusAndAuditDataCreatedAtBetween(LoanStatus loanStatus, LocalDateTime startDate,LocalDateTime endDate, Pageable pageable);
 
 
-    @Query(value = "SELECT la FROM loan_application la WHERE la.created_at BETWEEN :startDate AND :endDate AND la.loan_status IN :loanStatuses ",nativeQuery = true)
+    @Query(value = "SELECT * FROM loan_application la " +
+            "WHERE la.created_at BETWEEN :startDate AND :endDate " +
+            "AND la.loan_status IN (:loanStatuses)",
+            nativeQuery = true)
     Page<LoanApplication> findAllByDateRangeAndStatusList(@Param("startDate") LocalDateTime startDate,
-                                             @Param("endDate") LocalDateTime endDate,@Param("loanStatuses") List<LoanStatus> loanStatuses,
-                                             Pageable pageable);
+                                                          @Param("endDate") LocalDateTime endDate,@Param("loanStatuses") List<String> loanStatuses,
+                                                          Pageable pageable);
 
     LoanApplication findByInternalLoanId(String internalLoanId);
 
