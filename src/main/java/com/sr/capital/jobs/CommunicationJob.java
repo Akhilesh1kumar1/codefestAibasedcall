@@ -62,10 +62,11 @@ public class CommunicationJob {
         List<LoanStatus> loanStatusList = new ArrayList<>();
         loanStatusList.addAll(List.of(LoanStatus.LEAD_VERIFIED,LoanStatus.LEAD_INITIATED,LoanStatus.LEAD_IN_PROGRESS));
 
+        List<String> loanStatusListInString = loanStatusList.stream().map(Enum::name).toList();
         List<LoanApplication> loanApplicationList = new ArrayList<>();
 
         do {
-            loanApplications = loanApplicationRepository.findAllByDateRangeAndStatusList(startDate, endDate,loanStatusList, pageable);
+            loanApplications = loanApplicationRepository.findAllByDateRangeAndStatusList(startDate, endDate,loanStatusListInString, pageable);
             loanApplicationList.addAll(loanApplications.getContent());
 
             page++;
