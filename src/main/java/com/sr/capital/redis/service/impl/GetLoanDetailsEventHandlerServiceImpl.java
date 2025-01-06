@@ -1,6 +1,5 @@
 package com.sr.capital.redis.service.impl;
 
-import com.sr.capital.CommonConstant;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
-import static com.sr.capital.helpers.enums.KafkaEventTypes.GET_LOAN_DETAILS;
 import static com.sr.capital.helpers.enums.KafkaEventTypes.LOAN_STATUS_UPDATE;
 
 @Service
@@ -35,6 +33,7 @@ public class GetLoanDetailsEventHandlerServiceImpl {
 
     public void handleGetLoanDetails(String expiredKey) {
         try {
+            log.info("Inside handleGetLoanDetails for expiredKey :: " + expiredKey);
             String internalLoanId = expiredKey.split("%%")[2]; //getDataFromString(expiredKey, CommonConstant.INTERNAL_LOAN_ID);
             String partner = expiredKey.split("%%")[3];
             if (internalLoanId != null && !internalLoanId.isEmpty()) {

@@ -1,6 +1,5 @@
 package com.sr.capital.listner;
 
-import com.sr.capital.CommonConstant;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.KafkaEventTypes;
@@ -9,7 +8,6 @@ import com.sr.capital.redis.util.RedisTTLListenerUtil;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.util.KafkaMessagePublisherUtil;
-import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
