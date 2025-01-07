@@ -14,10 +14,11 @@ import org.springframework.stereotype.Service;
 
 import static com.sr.capital.helpers.enums.KafkaEventTypes.GET_LOAN_DETAILS;
 
-@Service
+/*@Service
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor*/
 public class RedisExpiryListener {
+    /*
     private final RedissonClient redissonClient;
 
     private final KafkaMessagePublisherUtil kafkaMessagePublisherUtil;
@@ -46,6 +47,6 @@ public class RedisExpiryListener {
         RedisTTLListenerUtil.updateStatus(expiredKey, redisEventTrackingRepo, GET_LOAN_DETAILS);
         kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(),kafkaMessagePublisherUtil.
                 getKafkaMessage(expiredKey, GET_LOAN_DETAILS.name(),null,null, null));
-    }
+    }*/
 
 }
