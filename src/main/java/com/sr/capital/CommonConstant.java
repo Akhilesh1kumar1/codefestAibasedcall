@@ -20,4 +20,12 @@ public class CommonConstant {
     );
     public static final String TRUE = "true";
 
+    public static final String AUTOMATIC = "AUTOMATIC";
+    public static final String MANUAL = "MANUAL";
+    public static final String DELETED = "DELETED";
+    public static final String INTERNAL_LOAN_ID = "%%INTERNAL_LOAN_ID%%";
+    public static final String PARTNER = "%%PARTNER%%";
+    public static final String KEY = "%%KEY%%";
+    public static final String TIME = "%%TIME%%";
+    public static final String REFRESHED = "REFRESHED";
 }

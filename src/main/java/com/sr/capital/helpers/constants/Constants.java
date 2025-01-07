@@ -1,6 +1,7 @@
 package com.sr.capital.helpers.constants;
 
 import com.sr.capital.helpers.enums.DocType;
+import org.redisson.api.RMapCache;
 
 import java.util.Map;
 import java.util.Set;
@@ -176,6 +177,8 @@ public final class Constants {
         public static final String ACCESS_TOKEN =  "partner_access_tokens";
         public static final String CRIF_ACCESS_TOKEN =  "crif_access_tokens";
 
+        public static final String CRIF_CONSENT_ID_KEY = "crif_consent_id";
+        public static final String LOAN_AT_VENDOR = "LOAN_AT_VENDOR";
     }
 
     public static final class Headers {

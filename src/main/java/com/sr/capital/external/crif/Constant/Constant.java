@@ -1,7 +1,5 @@
 package com.sr.capital.external.crif.Constant;
 
-import com.sr.capital.helpers.enums.ServiceName;
-
 public class Constant {
 
     public static final String ACCESS_TOKEN = "accessCode";
@@ -29,4 +27,8 @@ public class Constant {
     public static final String ASIA_KOLKATA = "Asia/Kolkata";
 
     public static final String OTP_VERIFICATION_PENDING = "OTP_VERIFICATION_PENDING";
+    public static final String ACTIVE = "ACTIVE";
+    public static String MOBILE = "Mobile";
+    public static String CONSENT = "Consent";
+    public static String USER_NOT_FOUND_FOR_PURGE_ERROR_MESSAGE = "Entered details don't match our records. Please re-check and try again.";
 }

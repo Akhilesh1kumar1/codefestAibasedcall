@@ -1,12 +1,21 @@
 package com.sr.capital.external.crif.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
+@Slf4j
 public class StringUtils {
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -45,19 +54,51 @@ public class StringUtils {
     }
 
     /**
-     * Method to get the time after six months from the current time.
+     * Method to get the time after given months from the current time.
      *
-     * @return A string representing the date-time 6 months from now in the format "yyyy-MM-dd HH:mm:ss"
+     * @return A string representing the date-time given months from now in the format "yyyy-MM-dd HH:mm:ss"
      */
-    public static String getTimeAfterOneMonths() {
+    public static String getTimeAfterMonths(int month) {
         // Get the current date-time
         LocalDateTime currentTime = LocalDateTime.now();
 
-        // Calculate the date-time after 6 months
-        LocalDateTime sixMonthsLater = currentTime.plusMonths(1);
+        // Calculate the date-time after given months
+        LocalDateTime sixMonthsLater = currentTime.plusMonths(month);
 
         // Format and return the result as a string
         return sixMonthsLater.format(FORMATTER);
     }
 
+    public static String getConsentExpireTime(String crifConsentExpireAt) {
+        String[] parts = crifConsentExpireAt.split(" ");
+
+        long value = 0L;
+        String unit = null;
+
+        try {
+            value = Long.parseLong(parts[0]);
+            unit = parts[1];
+
+            switch (unit.toUpperCase()) {
+                case "MINUTES":
+                    return LocalDateTime.now().plusMinutes(value).format(FORMATTER);
+                case "MONTHS":
+                    return LocalDateTime.now().plusMonths(value).format(FORMATTER);
+            }
+        } catch (Exception e) {
+            log.info("error while fetching crif Consent Expire time " + e);
+        }
+        return LocalDateTime.now().plusMonths(6).format(FORMATTER);
+    }
+
+    public static Object covertToJsonString(Object data) {
+        try {
+            String json = new String(Base64.getDecoder().decode(data.toString()));
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(json, LinkedHashMap.class);
+        } catch (Exception e) {
+            log.error("Error while Converting into json");
+        }
+        return null;
+    }
 }

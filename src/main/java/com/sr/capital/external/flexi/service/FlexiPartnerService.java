@@ -52,6 +52,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -507,7 +508,7 @@ public class FlexiPartnerService extends GenericCreditPartnerService {
         requestDto.setPartner(partner);
 
         Map<String, Object> params = providerConfigUtil.getUrlAndQueryParam(partnerInfo.getId(),
-                requestDto.getMetaData(),
+                requestDto.getMetaData() != null ? requestDto.getMetaData() : new HashMap<>(),
                 ProviderRequestTemplateType.GET_TOKEN.name());
         MultiValueMap<String,String> formdata = new LinkedMultiValueMap<>();
       formdata.add("grant_type","client_credentials");

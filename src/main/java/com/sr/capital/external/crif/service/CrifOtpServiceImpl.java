@@ -1,8 +1,9 @@
 package com.sr.capital.external.crif.service;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
 import com.sr.capital.entity.mongo.crif.CrifUserModel;
@@ -14,20 +15,18 @@ import com.sr.capital.external.crif.dto.response.CrifResponse;
 import com.sr.capital.external.crif.dto.response.CrifUserDetailsResponseDto;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
+import com.sr.capital.external.crif.util.CrifStatus;
 import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.CrifVerificationUtils;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
 import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import com.sr.capital.service.UserService;
-import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
 
@@ -41,10 +40,12 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     private final CrifVerificationUtils crifVerificationUtils;
     private final CrifPartnerService crifPartnerService;
     private final UserService userService;
-    private final ObjectMapper mapper;
+    private final CrifConsentDetailsService crifConsentDetailsService;
+    private final AppProperties appProperties;
 
     @Override
     public CrifResponse generateOtp(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws IOException, CustomException, CRIFApiException, CRIFApiLimitExceededException {
+
         CrifResponse crifResponse  = CrifResponse.builder().build();
 
         Optional<CrifUserModel> optional = crifUserModelHelper.findByMobile(crifGenerateOtpRequestModel.getMobile());
@@ -52,23 +53,24 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         crifUserModel = optional.orElseGet(() -> getCrifUserModelInstance(crifGenerateOtpRequestModel));
         VerificationOrchestratorRequest verificationOrchestratorRequest = null;
 
-        if (!crifUserModel.getIsOtpVerified()) {
+//        if (!crifUserModel.getIsOtpVerified()) {
             try {
                 verificationOrchestratorRequest = crifVerificationUtils.sendOtp(crifUserModel);
                 crifUserModel.setVerificationToken(verificationOrchestratorRequest.getVerificationEntity().getId());
-                crifUserModelRepo.save(crifUserModel);
+                crifUserModel.setIsOtpVerified(false);
+                crifUserModelHelper.save(crifUserModel);
             } catch (CustomException e) {
                 throw new RuntimeException("Error while sending the otp {} ", e);
             }
-        } else {
-            CrifVerifyOtpRequestModels crifVerifyOtpRequestModels = MapperUtils.convertValue(crifGenerateOtpRequestModel,
-                    CrifVerifyOtpRequestModels.class);
-            Map<String, Object> res = crifPartnerService.initiateBureauAndGetQuestionnaire(crifVerifyOtpRequestModels);
-            setResponse(crifResponse, res);
-            return crifResponse;
-        }
+//        } else {
+//            CrifVerifyOtpRequestModels crifVerifyOtpRequestModels = MapperUtils.convertValue(crifGenerateOtpRequestModel,
+//                    CrifVerifyOtpRequestModels.class);
+//            Map<String, Object> res = crifPartnerService.initiateBureauAndGetQuestionnaire(crifVerifyOtpRequestModels);
+//            setResponse(crifResponse, res);
+//            return crifResponse;
+//        }
 
-        if (verificationOrchestratorRequest != null && verificationOrchestratorRequest.getVerificationEntity() != null) {
+        if (verificationOrchestratorRequest.getVerificationEntity() != null) {
             crifResponse.setToken(verificationOrchestratorRequest.getVerificationEntity().getId());
             crifResponse.setStatus(Constant.OTP_VERIFICATION_PENDING);
         }
@@ -77,6 +79,9 @@ public class CrifOtpServiceImpl implements CrifOtpService {
     }
 
     private CrifUserModel getCrifUserModelInstance(CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) {
+
+        String consentId = crifPartnerService.saveAndGetConsentId();
+
         CrifUserModel.CrifUserModelBuilder builder = CrifUserModel.builder()
                 .firstName(crifGenerateOtpRequestModel.getFirstName())
                 .lastName(crifGenerateOtpRequestModel.getLastName())
@@ -85,6 +90,8 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                 .documentValue(crifGenerateOtpRequestModel.getDocValue())
                 .mobile(crifGenerateOtpRequestModel.getMobile())
                 .srCompanyId(RequestData.getTenantId())
+                .consentId(consentId)
+                .currentStatus(CrifStatus.CRIF_DETAILS_VERIFICATION.name())
                 .isOtpVerified(false);
 
         if (crifGenerateOtpRequestModel.getUtmSource() != null) {
@@ -105,6 +112,8 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         return builder.build();
     }
 
+
+
     public static void setResponse(CrifResponse crifResponse, Map<String, Object> data) {
         if (data != null && !data.isEmpty() && data.containsKey(STAGE)) {
             switch (String.valueOf(data.get(STAGE))) {
@@ -122,32 +131,28 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         Optional<CrifUserModel> optional = crifUserModelRepo.findByVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
         if (optional.isPresent()) {
             CrifUserModel crifUserModel = optional.get();
-            if (crifUserModel.getVerificationToken().equals(crifGenerateOtpRequestModel.getVerificationToken())) {
 
-                VerifyOtpRequest verifyOtpRequest = new VerifyOtpRequest();
-                verifyOtpRequest.setVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
-                verifyOtpRequest.setOtp(crifGenerateOtpRequestModel.getOtp());
-                Boolean isVerified = true;//crifVerificationUtils.verifyOtp(verifyOtpRequest);
+            VerifyOtpRequest verifyOtpRequest = new VerifyOtpRequest();
+            verifyOtpRequest.setVerificationToken(crifGenerateOtpRequestModel.getVerificationToken());
+            verifyOtpRequest.setOtp(crifGenerateOtpRequestModel.getOtp());
+            Boolean isVerified = crifVerificationUtils.verifyOtp(verifyOtpRequest);
 
-                if (isVerified != null && isVerified) {
-                    crifUserModel.setIsOtpVerified(true);
-                    crifUserModelRepo.save(crifUserModel);
+            if (isVerified != null && isVerified) {
+                crifUserModel.setIsOtpVerified(true);
+                crifUserModelHelper.save(crifUserModel);
 
-                    crifGenerateOtpRequestModel.setDocType(crifUserModel.getDocumentType());
-                    crifGenerateOtpRequestModel.setDocValue(crifUserModel.getDocumentValue());
-                    crifGenerateOtpRequestModel.setMobile(crifUserModel.getMobile());
-                    crifGenerateOtpRequestModel.setEmail(crifUserModel.getEmail());
-                    crifGenerateOtpRequestModel.setLastName(crifUserModel.getLastName());
-                    crifGenerateOtpRequestModel.setFirstName(crifUserModel.getFirstName());
+                crifGenerateOtpRequestModel.setDocType(crifUserModel.getDocumentType());
+                crifGenerateOtpRequestModel.setDocValue(crifUserModel.getDocumentValue());
+                crifGenerateOtpRequestModel.setMobile(crifUserModel.getMobile());
+                crifGenerateOtpRequestModel.setEmail(crifUserModel.getEmail());
+                crifGenerateOtpRequestModel.setLastName(crifUserModel.getLastName());
+                crifGenerateOtpRequestModel.setFirstName(crifUserModel.getFirstName());
 
-                    Map<String, Object> map = crifPartnerService.initiateBureauAndGetQuestionnaire(crifGenerateOtpRequestModel);
+                Map<String, Object> map = crifPartnerService.initiateBureauAndGetQuestionnaire(crifGenerateOtpRequestModel);
 
-                    setResponse(crifResponse, map);
+                setResponse(crifResponse, map);
 
-                    return crifResponse;
-                }
-            } else {
-                crifResponse.setStatus("Otp validation failed");
+                return crifResponse;
             }
         } else {
             throw new CustomException("User not found");

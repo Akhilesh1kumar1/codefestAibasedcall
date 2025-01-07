@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 
 @Component
-public class FieldEncryptionService {
+public class MongoFieldEncryptionService {
 
     @Autowired
     private AES256 aes256;
