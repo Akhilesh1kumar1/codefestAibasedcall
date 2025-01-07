@@ -1,5 +1,6 @@
 package com.sr.capital.redis.service.event;
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.config.RedisConfig;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.redis.repository.mongo.RedisEventTrackingRepo;
 import com.sr.capital.redis.util.RedisTTLListenerUtil;
@@ -7,16 +8,19 @@ import com.sr.capital.util.KafkaMessagePublisherUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.Redisson;
 import org.redisson.api.RPatternTopic;
 import org.redisson.api.RedissonClient;
+import org.redisson.api.listener.MessageListener;
+import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import static com.sr.capital.helpers.enums.KafkaEventTypes.GET_LOAN_DETAILS;
 
-@Service
+@Component
 @Slf4j
-@RequiredArgsConstructor
 public class RedisExpiryListener {
     private final RedissonClient redissonClient;
 
@@ -24,19 +28,34 @@ public class RedisExpiryListener {
     private final AppProperties appProperties;
     private final RedisEventTrackingRepo redisEventTrackingRepo;
 
-        @PostConstruct
-    public void listenToExpiryEvents() {
-        // Subscribe to the key event notification channel for expired keys
-        String expiryChannel = "__keyevent@0__:expired"; // Replace "0" with your Redis DB index if different
-        RPatternTopic topic = redissonClient.getPatternTopic(expiryChannel);
-        topic.addListener(String.class, ((pattern, channel, message) -> {
 
-            log.info("TTL listener is executing for key ::" + message);
+    public RedisExpiryListener(RedissonClient redissonClient, KafkaMessagePublisherUtil kafkaMessagePublisherUtil, AppProperties appProperties, RedisEventTrackingRepo redisEventTrackingRepo) {
+        this.redissonClient = redissonClient;
+        this.kafkaMessagePublisherUtil = kafkaMessagePublisherUtil;
+        this.appProperties = appProperties;
+        this.redisEventTrackingRepo = redisEventTrackingRepo;
+    }
 
-            if (message.contains(Constants.RedisKeys.LOAN_AT_VENDOR)) {
-                handleKeyExpiration(message);
+    @PostConstruct
+    public void init() {
+        setupExpirationListener();
+    }
+
+    private void setupExpirationListener() {
+        String expireChannel = "__keyevent@0__:expired"; // Channel for key expiration events
+
+        redissonClient.getTopic(expireChannel, new StringCodec()).addListener(String.class, new MessageListener<String>() {
+            @Override
+            public void onMessage(CharSequence channel, String msg) {
+
+            log.info("TTL listener is executing for key ::" + msg);
+
+            if (msg.contains(Constants.RedisKeys.LOAN_AT_VENDOR)) {
+                handleKeyExpiration(msg);
             }
-        }));
+
+            }
+        });
     }
     private void handleKeyExpiration(String expiredKey) {
         RedisTTLListenerUtil.updateStatus(expiredKey, redisEventTrackingRepo, GET_LOAN_DETAILS);
