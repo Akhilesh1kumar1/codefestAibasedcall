@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-@Component
+//@Component
 public class FetchSanctionDetails {
 
-    @Scheduled(fixedRateString = "${jobs.sanction.cronInMinutes}",initialDelay =70 , timeUnit = TimeUnit.MINUTES)
+    /*@Scheduled(fixedRateString = "${jobs.sanction.cronInMinutes}",initialDelay =70 , timeUnit = TimeUnit.MINUTES)
     @SchedulerLock(name = "fetchSanctionDetails", lockAtMostFor = "30m", lockAtLeastFor = "10m")
     public void performScheduledTask() {
         System.out.println("Executing scheduled task");
-    }
+    }*/
 }
