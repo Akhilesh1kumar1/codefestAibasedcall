@@ -5,6 +5,7 @@ import com.sr.capital.entity.mongo.crif.CrifConsentDetails;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.repository.mongo.CrifConsentDetailsRepo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CrifConsentDetailsService {
 
     private final CrifConsentDetailsRepo crifConsentDetailsRepo;
@@ -29,11 +31,10 @@ public class CrifConsentDetailsService {
         if (lastRecord != null && lastRecord.getConsentId() != null) {
             try {
                 // Extract the numeric part of consentId and increment
-                String lastConsentId = lastRecord.getConsentId();
-                int currentSequence = Integer.parseInt(lastConsentId.replaceAll("\\D+", ""));
-                return String.valueOf(currentSequence + 1);
+                Long lastConsentId = lastRecord.getConsentId();
+                return String.valueOf(lastConsentId + 1);
             } catch (NumberFormatException e) {
-                throw new RuntimeException("Invalid consentId format: " + lastRecord.getConsentId(), e);
+                log.error("Error while parsing consentId format: " + lastRecord.getConsentId(), e);
             }
         }
 
@@ -41,7 +42,7 @@ public class CrifConsentDetailsService {
         return String.valueOf(1);
     }
 
-    public String getNextSequence() {
+    public Long getNextSequence() {
         RAtomicLong atomicLong = redissonClient.getAtomicLong(Constants.RedisKeys.CRIF_CONSENT_ID_KEY);
 
         long currentSequence = atomicLong.incrementAndGet();
@@ -53,7 +54,7 @@ public class CrifConsentDetailsService {
             currentSequence = Long.parseLong(nextConsentSequencesFromDb);
         }
 
-        return String.valueOf(currentSequence);
+        return currentSequence;
     }
 
     public void save(CrifConsentDetails crifConsentDetails) {

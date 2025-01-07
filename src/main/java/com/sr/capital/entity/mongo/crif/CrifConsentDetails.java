@@ -21,7 +21,7 @@ import java.util.List;
 public class CrifConsentDetails extends BaseDoc {
 
     @Field("consent_id")
-    private String consentId;
+    private Long consentId;
 
     @Field("expired_at")
     private String expiredAt;
