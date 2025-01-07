@@ -88,7 +88,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
     @Override
     public void purgeExpiredData() {
-        Pageable pageable = PageRequest.of(0, 100); // Fetch 50 records per page
+        Pageable pageable = PageRequest.of(0, 100);
         Page<CrifConsentDetails> expiredDetailsPage;
         List<String> consentIds = new ArrayList<>();
 
@@ -97,7 +97,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
             if (expiredDetailsPage.hasContent()) {
                 List<CrifConsentDetails> expiredDetails = expiredDetailsPage.getContent();
-                List<String> consentIdList = expiredDetails.stream().map(CrifConsentDetails::getConsentId).toList();
+                List<String> consentIdList = expiredDetails.stream().filter(d -> d.getConsentId() != null).map(d -> String.valueOf(d.getConsentId())).toList();
 
                 consentIds.addAll(consentIdList);
 
@@ -887,6 +887,6 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 .build();
 
         crifConsentDetailsService.save(build);
-        return build.getConsentId();
+        return String.valueOf(build.getConsentId());
     }
 }
