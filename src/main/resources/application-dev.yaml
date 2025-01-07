@@ -318,3 +318,7 @@ aes:
 is:
   encryption:
     enabled: ${IS_ENCRYPTION_ENABLED:true}
+
+server:
+  tomcat:
+    max-http-header-size: 8192
