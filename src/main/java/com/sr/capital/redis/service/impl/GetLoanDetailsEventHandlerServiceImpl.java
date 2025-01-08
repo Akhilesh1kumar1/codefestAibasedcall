@@ -36,14 +36,22 @@ public class GetLoanDetailsEventHandlerServiceImpl {
             log.info("Inside handleGetLoanDetails for expiredKey :: " + expiredKey);
             String internalLoanId = expiredKey.split("%%")[2]; //getDataFromString(expiredKey, CommonConstant.INTERNAL_LOAN_ID);
             String partner = expiredKey.split("%%")[3];
+            log.info("partner:: " + partner + " internalLoanId : " +internalLoanId);
+
             if (internalLoanId != null && !internalLoanId.isEmpty()) {
                 LoanApplication loanApplication = loanApplicationRepository.findByInternalLoanId(internalLoanId);
-                LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().loanVendorId(loanApplication.getLoanVendorId()).loanVendorName(partner).loanId(loanApplication.getVendorLoanId()).build();
-
+                log.info("loanApplication Fetched :::::::1:::::");
+                LoanMetaDataDto loanMetaDataDto = LoanMetaDataDto.builder().loanVendorId(loanApplication.getLoanVendorId())
+                        .loanVendorName(partner).loanId(loanApplication.getVendorLoanId()).build();
+                log.info("loanMetaDataDto Fetched :::::::2:::::");
                 Object object = creditPartnerFactoryService.getPartnerService(partner).getLoanDetails(loanMetaDataDto);
+                log.info("object Fetched :::::::3:::::");
                 LoanDetails loanDetails = MapperUtils.convertValue(object, LoanDetails.class);
+                log.info("loanDetails Fetched :::::::4:::::");
                 LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto = FlexiLoanMapper.convertToWebhookDto(loanDetails);
+                log.info("loanStatusUpdateWebhookDto Fetched :::::::5:::::");
                 RedisTTLListenerUtil.updateStatus(expiredKey, redisEventTrackingRepo, LOAN_STATUS_UPDATE);
+                log.info("Status updated :::::::6:::::");
                 kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(),kafkaMessagePublisherUtil.
                         getKafkaMessage(MapperUtils.writeValueAsString(loanStatusUpdateWebhookDto), LOAN_STATUS_UPDATE.name(),
                                 null,null,partner));
@@ -53,7 +61,7 @@ public class GetLoanDetailsEventHandlerServiceImpl {
             }
 
         } catch (Exception e) {
-            log.error("Error while pushing status change queue : " + e.getMessage() + " error is " + e);
+            log.error("Error while pushing status change queue : " + e.getMessage() + " error is " + e.getStackTrace());
         }
     }
 }
