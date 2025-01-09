@@ -366,6 +366,16 @@ public class AppProperties {
     @Value("${jobs.crif.purge.expireAt}")
     private String crifConsentExpireAt;
 
+    @Value("${external.google.baseUri}")
+    private String googleBaseUri;
 
+    @Value("${external.google.captcha-secret-key}")
+    private String captchaSiteVerificationSecretKey;
+
+    @Value("${external.google.endpoints.captcha-site-verify}")
+    private String captchaSiteVerificationEndpoint;
+
+    @Value("${app.captcha-verification.enabled}")
+    private Boolean captchaVerificationEnabled;
 
 }
