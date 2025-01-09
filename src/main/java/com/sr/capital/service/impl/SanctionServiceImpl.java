@@ -244,33 +244,35 @@ public class SanctionServiceImpl {
                 }
             });*/
 
-        LoanApplicationStatus  loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanMetaDataDto.getInternalLoanId());
+        if (loanMetaDataDto != null && loanMetaDataDto.getSanctionDto() != null && loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject() != null) {
+            LoanApplicationStatus loanApplicationStatus = loanApplicationStatusEntityService.getLoanApplicationStatusByLoanId(loanMetaDataDto.getInternalLoanId());
 
-        if(loanApplicationStatus==null) {
-            loanApplicationStatus = LoanApplicationStatus.builder().loanId(loanMetaDataDto.getInternalLoanId())
-                    .vendorLoanId(loanMetaDataDto.getLoanId()).vendorStatus(loanMetaDataDto.getVendorStatus())
-                    .comment("Loan Sanctioned")
-                    .loanAmountApproved(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanAmount().replaceAll(",", ""))))
-                    .interestRate(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getAnnualRateOfInterest().replaceAll("%", "")))
-                    .interestAmountAtSanction(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalInterest().replaceAll(",", ""))))
-                    .loanDuration(Integer.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanRepaymentPeriod())).
-                    totalDisbursedAmount(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getDisbursalAmount().replaceAll(",", ""))))
-                    .sanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code()).totalRecoverableAmount(BigDecimal.valueOf(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalRepayable().replaceAll(",", ""))))
-                    .totalAmountRecovered(BigDecimal.ZERO).build();
-        }else{
-            loanApplicationStatus.setLoanAmountApproved(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanAmount().replaceAll(",", ""))));
-            loanApplicationStatus.setInterestRate(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getAnnualRateOfInterest().replaceAll("%", "")));
-            loanApplicationStatus.setInterestAmountAtSanction(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalInterest().replaceAll(",", ""))));
-            loanApplicationStatus.setLoanDuration(Integer.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanRepaymentPeriod()));
-            loanApplicationStatus.setTotalDisbursedAmount(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getDisbursalAmount().replaceAll(",", ""))));
-            loanApplicationStatus.setSanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code());
-            loanApplicationStatus.setTotalRecoverableAmount(BigDecimal.valueOf(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalRepayable().replaceAll(",", ""))));
-            loanApplicationStatus.setSanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code());
-         }
+            if (loanApplicationStatus == null) {
+                loanApplicationStatus = LoanApplicationStatus.builder().loanId(loanMetaDataDto.getInternalLoanId())
+                        .vendorLoanId(loanMetaDataDto.getLoanId()).vendorStatus(loanMetaDataDto.getVendorStatus())
+                        .comment("Loan Sanctioned")
+                        .loanAmountApproved(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanAmount().replaceAll(",", ""))))
+                        .interestRate(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getAnnualRateOfInterest().replaceAll("%", "")))
+                        .interestAmountAtSanction(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalInterest().replaceAll(",", ""))))
+                        .loanDuration(Integer.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanRepaymentPeriod())).
+                        totalDisbursedAmount(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getDisbursalAmount().replaceAll(",", ""))))
+                        .sanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code()).totalRecoverableAmount(BigDecimal.valueOf(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalRepayable().replaceAll(",", ""))))
+                        .totalAmountRecovered(BigDecimal.ZERO).build();
+            } else {
+                loanApplicationStatus.setLoanAmountApproved(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanAmount().replaceAll(",", ""))));
+                loanApplicationStatus.setInterestRate(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getAnnualRateOfInterest().replaceAll("%", "")));
+                loanApplicationStatus.setInterestAmountAtSanction(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalInterest().replaceAll(",", ""))));
+                loanApplicationStatus.setLoanDuration(Integer.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getLoanRepaymentPeriod()));
+                loanApplicationStatus.setTotalDisbursedAmount(BigDecimal.valueOf(Long.parseLong(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getDisbursalAmount().replaceAll(",", ""))));
+                loanApplicationStatus.setSanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code());
+                loanApplicationStatus.setTotalRecoverableAmount(BigDecimal.valueOf(Double.valueOf(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getTotalRepayable().replaceAll(",", ""))));
+                loanApplicationStatus.setSanctionCode(loanMetaDataDto.getSanctionDto().getPartnerIntegrationProject().getSanction_code());
+            }
 
-        loanApplicationStatusEntityService.saveLoanApplicationStatus(loanApplicationStatus);
+            loanApplicationStatusEntityService.saveLoanApplicationStatus(loanApplicationStatus);
 
-        return loanApplicationStatus;
+            return loanApplicationStatus;
+        }
+        return null;
     }
-
 }
