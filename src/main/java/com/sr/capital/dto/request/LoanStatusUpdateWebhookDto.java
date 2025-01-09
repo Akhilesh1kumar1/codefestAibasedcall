@@ -269,7 +269,7 @@ public class LoanStatusUpdateWebhookDto {
     public static class Checkpoint {
         private String checkpoint;
         private String state;
-        private LoanDetails.Meta meta;
+        private Meta meta;
 
     }
 
