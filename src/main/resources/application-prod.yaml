@@ -326,5 +326,4 @@ is:
 
 
 server:
-  tomcat:
-    max-http-header-size: 65536
+  max-http-header-size: 65536
