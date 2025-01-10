@@ -55,7 +55,7 @@ spring:
 app:
   captcha-verification:
     enabled: true
-  cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173
+  cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173,null
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
   web-url: ${WEB_URL:https://multichannel-appstore-qa.kartrocket.com/capital/home}
@@ -163,7 +163,7 @@ management:
 external:
   google:
     baseUri: https://www.google.com
-    captcha-secret-key: 6LckO1EpAAAAAC8kxIJBCCKnKHZH6tPP-C2QMHWe
+    captcha-secret-key: 6LftabMqAAAAAHLNe3D4XBBbPs0e08jsQJ2NxItX
     endpoints:
       captcha-site-verify: /recaptcha/api/siteverify
   karza:
@@ -335,7 +335,7 @@ bypass:
   apis:
     "/api/v1/test/redis-set-temp-value":
       method:
-        - GET
+        - POST
       captchaEnabled: true
       captchaAction: "testAction"
       channel: "testChannel"

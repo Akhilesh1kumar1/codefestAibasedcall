@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
-import com.sr.capital.exception.custom.CaptchaValidationException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
@@ -24,7 +23,7 @@ public class FilterErrorUtil {
     public static void onError(HttpServletResponse response, String err, HttpStatus httpStatus) {
         // Create the generic response object
         GenericResponse<?> genericResponse = ResponseBuilderUtil.getResponse(null
-                ,ERROR, REQUEST_FAILED, 400);
+                ,ERROR, err, 400);
         ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
         try {

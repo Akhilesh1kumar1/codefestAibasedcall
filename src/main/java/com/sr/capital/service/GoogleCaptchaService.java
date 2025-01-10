@@ -17,6 +17,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +53,7 @@ public class GoogleCaptchaService {
         String uri = CoreUtil.constructUri(appProperties.getGoogleBaseUri(), appProperties.getCaptchaSiteVerificationEndpoint(), params);
 
         Object responseBody = webClientUtil.makeExternalCallBlocking(ServiceName.CAPTCHA, appProperties.getGoogleBaseUri(), appProperties.getCaptchaSiteVerificationEndpoint(),
-                HttpMethod.POST, null, new HttpHeaders(), null, params, Object.class);
+                HttpMethod.POST, null, new HttpHeaders(), params, "", Object.class);
 
         if (responseBody != null) {
             try {

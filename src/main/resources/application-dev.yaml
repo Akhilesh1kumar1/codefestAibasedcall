@@ -329,3 +329,13 @@ is:
 server:
   tomcat:
     max-http-header-size: 8192
+
+
+bypass:
+  apis:
+    "/api/v1/test/redis-set-temp-value":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "testAction"
+      channel: "testChannel"
