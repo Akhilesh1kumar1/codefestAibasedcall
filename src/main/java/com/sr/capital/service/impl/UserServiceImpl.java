@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
                 ).tenantDetails(tenantDetails)
                 .build();
 
-        verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest);
+        verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest, String.valueOf(userDetails.getSrCompanyId()));
         return verificationOrchestratorRequest;
     }
 

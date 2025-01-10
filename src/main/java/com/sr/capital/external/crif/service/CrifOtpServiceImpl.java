@@ -89,7 +89,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                 .documentType(crifGenerateOtpRequestModel.getDocType())
                 .documentValue(crifGenerateOtpRequestModel.getDocValue())
                 .mobile(crifGenerateOtpRequestModel.getMobile())
-                .srCompanyId(RequestData.getTenantId())
+                .srCompanyId(RequestData.getTenantId() != null ? RequestData.getTenantId() : appProperties.getPublicCompanyId())
                 .consentId(consentId)
                 .currentStatus(CrifStatus.CRIF_DETAILS_VERIFICATION.name())
                 .isOtpVerified(false);

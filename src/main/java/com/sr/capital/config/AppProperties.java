@@ -366,6 +366,10 @@ public class AppProperties {
     @Value("${jobs.crif.purge.expireAt}")
     private String crifConsentExpireAt;
 
+    @Value("${external.crif.public.company-id}")
+    private String publicCompanyId;
 
+    @Value("${external.crif.public.user-id}")
+    private String publicUserId;
 
 }
