@@ -226,6 +226,9 @@ external:
           stage2:
             url: /Inquiry/do.getSecureService/DTC/response
       key: 423714eb-ece1-495b-8760-c2bf9ca3bf08
+    public:
+      company-id: -67891012345
+      user-id: -678910
     verify:
       retry:
         backoff:

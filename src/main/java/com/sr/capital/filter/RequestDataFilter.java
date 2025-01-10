@@ -35,7 +35,7 @@ public class RequestDataFilter implements Filter {
           //  new AntPathRequestMatcher("/**/karza/**"),
             new AntPathRequestMatcher("/**/external/**"),
                     //    new AntPathRequestMatcher("/**/icrm/**")
-            new AntPathRequestMatcher("/**/public/**")
+            new AntPathRequestMatcher("/**/public/crif/**")
     );
 
     @Autowired
