@@ -243,6 +243,9 @@ external:
       customer-id: ${CRIF_CUSTOMER_ID}
       app-id: ${CRIF_APP_ID}
       product-code: ${CRIF_PRODUCT_CODE}
+    public:
+      company-id: -67891012345
+      user-id: -678910
 karza:
   async:
     response:
