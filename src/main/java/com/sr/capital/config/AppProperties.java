@@ -358,6 +358,9 @@ public class AppProperties {
     @Value("${external.authbridge.is-truth-screen-enable}")
     private Boolean isTruthScreenEnable;
 
+    @Value("${external.authbridge.cin-url}")
+    private String authBridgeCinUrl;
+
     @Value("${external.crif.access-code.user}")
     private String CrifUser;
     @Value("${external.crif.access-code.password}")

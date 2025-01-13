@@ -101,6 +101,13 @@ public class TruthScreenAdapter {
                     .docType(TruthScreenDocType.GSTIN)
                     .responseClass(TruthScreenGstinDecryptedResponseDto.class)
                     .build();
+        } else if (request.getDetails() instanceof CinExtractionRequestData) {
+            return TruthScreenExternalRequestMetaData.builder()
+                    .endpoint(appProperties.getAuthBridgeCinUrl())
+                    .docType(TruthScreenDocType.CIN)
+                    .responseClass(TruthScreenCinDecryptResponseDto.class)
+                    .build();
+
         } else {
             throw new ServiceEndpointNotFoundException();
         }

@@ -12,7 +12,7 @@ import com.sr.capital.external.truthscreen.dto.request.IdSearchRequestDto;
 import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.repository.TruthScreenDocDetailsRepository;
-import com.sr.capital.external.truthscreen.service.PanService;
+import com.sr.capital.external.truthscreen.service.IdService;
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenEntityConstructorStrategy;
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenIdSearchResponseStrategy;
 import com.sr.capital.external.truthscreen.service.transformers.TruthScreenExternalRequestTransformerStrategy;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PanServiceImpl implements PanService {
+public class IdServiceImpl implements IdService {
 
     private final TruthScreenAdapter truthScreenAdapter;
 
@@ -35,7 +35,7 @@ public class PanServiceImpl implements PanService {
     private final TruthScreenEntityConstructorStrategy truthEntityConstructorStrategy;
 
     @Override
-    public IdSearchResponseDto<?> sendPanRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
+    public IdSearchResponseDto<?> sendRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
         TruthScreenDocDetails<?> truthScreenDocDetails = truthScreenDocDetailsRepository.findBySrCompanyIdAndTruthScreenDocType(RequestData.getTenantId(), TruthScreenDocType.fromValue(requestDTO.getDocType()));
 
         if (truthScreenDocDetails == null) {
@@ -98,6 +98,8 @@ public class PanServiceImpl implements PanService {
                 return PanToGstDetails.class;
             case GSTIN:
                 return GSTinDetails.class;
+            case CIN:
+                return CinDetails.class;
             default:
                 throw new CustomException("Invalid Doc type");
         }

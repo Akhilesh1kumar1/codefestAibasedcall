@@ -14,6 +14,9 @@ import java.io.IOException;
 public class TruthScreenIdSearchResponseStrategy {
 
     @Autowired
+    private TruthScreenCinResponseConstructor truthScreenCinResponseConstructor;
+
+    @Autowired
     private TruthScreenGstinResponseConstructor truthScreenGstinResponseConstructor;
 
     @Autowired
@@ -40,6 +43,8 @@ public class TruthScreenIdSearchResponseStrategy {
             entityConstructor = truthScreenPanToGstResponseConstructor;
         } else if (responseClass.equals(GSTinDetails.class)) {
             entityConstructor = truthScreenGstinResponseConstructor;
+        } else if (responseClass.equals(CinDetails.class)) {
+            entityConstructor = truthScreenCinResponseConstructor;
         } else {
             throw new EntityConstructorNotFoundException();
         }

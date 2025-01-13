@@ -2,7 +2,8 @@ package com.sr.capital.external.truthscreen.service.constructors;
 
 import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.external.truthscreen.dto.response.IdSearchResponseDto;
-import com.sr.capital.external.truthscreen.entity.*;
+import com.sr.capital.external.truthscreen.entity.CinDetails;
+import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenResponseConstructor;
 import com.sr.capital.util.MapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class TruthScreenGstinResponseConstructor implements TruthScreenResponseConstructor {
+public class TruthScreenCinResponseConstructor implements TruthScreenResponseConstructor {
 
     @Autowired
     private AES256 aes256;
@@ -27,9 +28,10 @@ public class TruthScreenGstinResponseConstructor implements TruthScreenResponseC
                 .build();
     }
 
-    public GSTinDetails getDecryptedResponse(Object gstinDetails) throws IOException {
-        GSTinDetails gsTinDetails = MapperUtils.convertValue(gstinDetails, GSTinDetails.class);
-        GSTinDetails.decryptInfo(gsTinDetails,aes256);
-        return gsTinDetails;
+    private CinDetails getDecryptedResponse(Object data) throws IOException {
+        CinDetails cinDetails = MapperUtils.convertValue(data, CinDetails.class);
+        CinDetails.decryptInfo(cinDetails,aes256);
+        return cinDetails;
+
     }
 }

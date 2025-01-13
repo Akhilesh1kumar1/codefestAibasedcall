@@ -5,6 +5,7 @@ import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestrato
 import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.entity.constructors.TruthPanDocDetailsEntityConstructor;
 import com.sr.capital.external.truthscreen.entity.constructors.TruthScreenPanComprehensiveEntityConstructor;
+import com.sr.capital.external.truthscreen.service.constructors.TruthScreenCinEntityConstructor;
 import com.sr.capital.external.truthscreen.service.constructors.TruthScreenGstinEntityConstructor;
 import com.sr.capital.external.truthscreen.service.constructors.TruthScreenPanComplianceEntityConstructor;
 import com.sr.capital.external.truthscreen.service.constructors.TruthScreenPanToGstEntityConstructor;
@@ -16,6 +17,9 @@ import java.io.IOException;
 
 @Service
 public class TruthScreenEntityConstructorStrategy {
+
+    @Autowired
+    private TruthScreenCinEntityConstructor truthScreenCinEntityConstructor;
 
     @Autowired
     private TruthScreenGstinEntityConstructor truthScreenGstinEntityConstructor;
@@ -45,6 +49,8 @@ public class TruthScreenEntityConstructorStrategy {
             entityConstructor = truthScreenPanToGstEntityCOnstructor;
         } else if (responseClass.equals(GSTinDetails.class)) {
             entityConstructor = truthScreenGstinEntityConstructor;
+        } else if (responseClass.equals(CinDetails.class)) {
+            entityConstructor = truthScreenCinEntityConstructor;
         } else {
             throw new EntityConstructorNotFoundException();
         }

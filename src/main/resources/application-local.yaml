@@ -162,7 +162,7 @@ external:
   authbridge:
     vendor-password: ${AUTHBRIDGE:India@2608}
     vendor-username: ${AUTHBRIDGE:test@shiprocket.com}
-    is-truth-screen-enable: true
+    is-truth-screen-enable: false
     base:
       url: https://www.truthscreen.com
     idsearch-url: /v1/apicall/nid/idsearch
@@ -170,6 +170,7 @@ external:
     pan-compliance-url: /v1/apicall/nid/pan_compliance_check
     pan-to-gst-url: /v1/apicall/business/pantogst
     gstin-url: /v1/apicall/business/gstin
+    cin-url: /api/v2.2/idsearch
 
   karza:
     enabled: false
