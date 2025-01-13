@@ -66,7 +66,7 @@ public class CrifConsentDetailsService {
     }
 
     public CrifConsentDetails findByConsentId(String consentId) {
-        return crifConsentDetailsRepo.findByConsentId(consentId);
+        return crifConsentDetailsRepo.findByConsentId(Long.valueOf(consentId));
     }
 
     public void saveAll(List<CrifConsentDetails> expiredDetails) {
