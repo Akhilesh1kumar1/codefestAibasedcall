@@ -48,9 +48,6 @@ public class SanctionServiceImpl {
             LoanMetaDataDto loanMetaDataDto =LoanMetaDataDto.builder().srCompanyId(loanApplication.getSrCompanyId()).loanVendorId(loanApplication.getLoanVendorId())
                     .loanId(loanApplication.getVendorLoanId()).internalLoanId(loanApplicationId).loanVendorName(loanVendorName).build();
 
-//            if(1==2){
-//                return buildDummyDto(loanMetaDataDto);
-//            }
 
             SanctionDto sanctionDto = fetchAndSaveSanctionDetails(loanMetaDataDto);
             if(sanctionDto!=null){

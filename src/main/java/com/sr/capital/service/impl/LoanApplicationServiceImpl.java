@@ -13,10 +13,13 @@ import com.sr.capital.entity.mongo.kyc.child.PersonalAddressDetails;
 import com.sr.capital.entity.primary.LoanApplication;
 import com.sr.capital.entity.primary.Pincode;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.DocType;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.kyc.service.DocDetailsService;
+import com.sr.capital.redis.entity.RedisEventTracking;
+import com.sr.capital.redis.repository.mongo.RedisEventTrackingRepo;
 import com.sr.capital.repository.primary.LoanApplicationRepository;
 import com.sr.capital.service.CreditPartnerFactoryService;
 import com.sr.capital.service.LoanApplicationService;
@@ -28,6 +31,8 @@ import com.sr.capital.util.MapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +42,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +60,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     final DocumentSyncHelperServiceImpl documentSyncHelperService;
     final PincodeEntityServiceImpl pincodeEntityService;
     final AppProperties appProperties;
+    final RedissonClient redissonClient;
+    final RedisEventTrackingRepo redisEventTrackingRepo;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoanApplicationResponseDto submitLoanApplication(LoanApplicationRequestDto loanApplicationRequestDto) throws Exception {
@@ -192,9 +200,31 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loan.setLoanSubmissionTime(LocalDateTime.now());
                 loanApplicationRepository.save(loan);
 
+                ScheduleCacheForStatusUpdate(loan.getInternalLoanId(), "flexi");
             }
         }
         return loanApplicationResponseDto;
+    }
+
+    public void ScheduleCacheForStatusUpdate(String internalLoanId, String partner) {
+
+        String key = getKeyForCache(internalLoanId, partner);
+        redissonClient.getMapCache(key).put(key, true, 1, TimeUnit.MINUTES);
+        saveIntoDb(internalLoanId, key, partner);
+    }
+
+    private String getKeyForCache(String internalLoanId, String partner) {
+        return "%%" + Constants.RedisKeys.LOAN_AT_VENDOR + "%%" + internalLoanId + "%%" + partner + "%%";
+    }
+
+    private void saveIntoDb(String internalLoanId, String key, String partner) {
+        RedisEventTracking redisEventTracking = RedisEventTracking.builder()
+                .redisKey(key)
+                .internalLoanId(internalLoanId)
+                .partner(partner)
+                .isEventExecuted(false)
+                .build();
+        redisEventTrackingRepo.save(redisEventTracking);
     }
 
     @Override

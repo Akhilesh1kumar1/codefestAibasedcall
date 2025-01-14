@@ -2,10 +2,13 @@ package com.sr.capital.external.truthscreen.dto.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sr.capital.external.truthscreen.entity.CinInnerDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -14,8 +17,8 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CinExtractionResponseData {
 
-    private String cin;
-    @JsonProperty("company_name")
-    private String companyName;
+    private int status;
+    private List<CinInnerDetails> msg;
+
 
 }

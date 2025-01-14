@@ -4,6 +4,7 @@ import com.omunify.core.model.GenericResponse;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.dto.request.BureauInitiatePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
+import com.sr.capital.external.crif.dto.request.CrifConsentWithdrawalRequestModel;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
@@ -17,6 +18,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
@@ -50,6 +53,16 @@ public class CrifController {
         ResponseEntity<BureauReportResponse> response = new ResponseEntity<>(report, HttpStatusCode.valueOf(200));
 
         return response;
+
+    }
+
+    @PostMapping(value = "/purge", consumes = "application/json", produces = "application/json")
+    public GenericResponse<Map<String, String>> crifConsentWithdrawal(@RequestBody CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel
+    ) throws CRIFApiException {
+
+        crifPartnerService.consentWithdrawalProcess(crifConsentWithdrawalRequestModel);
+        return ResponseBuilderUtil.getResponse(null
+                ,SUCCESS, REQUEST_SUCCESS, 200);
 
     }
 

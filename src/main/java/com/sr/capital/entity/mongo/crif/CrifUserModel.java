@@ -39,6 +39,9 @@ public class CrifUserModel extends BaseDoc {
     @Field("sr_company_id")
     private String srCompanyId;
 
+//    @Field("consent_date")
+//    private String consentDate;
+
     @EncryptField
     @Field("doc_value")
     private String documentValue;
@@ -48,6 +51,12 @@ public class CrifUserModel extends BaseDoc {
 
     @Field("verification_token")
     private UUID verificationToken;
+
+    @Field("consent_id")
+    private String consentId;
+
+    @Field("current_status")
+    private String currentStatus;
 
     @Column(name = "utm_source")
     String utmSource;

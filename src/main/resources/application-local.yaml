@@ -162,7 +162,7 @@ external:
   authbridge:
     vendor-password: ${AUTHBRIDGE:India@2608}
     vendor-username: ${AUTHBRIDGE:test@shiprocket.com}
-    is-truth-screen-enable: false
+    is-truth-screen-enable: true
     base:
       url: https://www.truthscreen.com
     idsearch-url: /v1/apicall/nid/idsearch
@@ -323,7 +323,10 @@ jobs:
     cronInMinutes: 120
   communication:
     scheduledTime: 0 0 1 * * ?
-
+  crif:
+    purge:
+      scheduledTime: 0 0 1 * * ?
+      expireAt: 5 MINUTES
 aes:
   secret:
     key: ${AES_SECRET_KEY:U0h8UFIwa0BUQCFAIyQmKg==}

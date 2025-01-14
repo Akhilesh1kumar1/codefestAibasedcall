@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
@@ -14,5 +15,5 @@ import java.util.Map;
 public class TruthScreenCinDecryptResponseDto extends TruthScreenBaseResponse {
 
     private String status;
-    private Map<String,Object> msg;
+    private List<Map<String,Object>> msg;
 }

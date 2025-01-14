@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder(toBuilder = true)
@@ -36,8 +37,13 @@ public class BureauInitiateModel extends BaseDoc {
     @Field("sr_company_id")
     private String srCompanyId;
 
-    @Field("request_payload")
-    private String requestPayload;
+    @Field("init_request_payload")
+    @EncryptField
+    private String initRequestPayload;
+
+    @Field("questionnaire_request_payload")
+    @EncryptField
+    private String questionnaireRequestPayload;
 
     @Field("request_header")
     private String requestHeader;
@@ -54,18 +60,21 @@ public class BureauInitiateModel extends BaseDoc {
     @Field("questionnaire_status")
     private String questionnaireStatus;
 
-    @Field("question")
-    private String question;
+    @Field("last_question")
+    private String lastQuestion;
 
     @Field("user_answer")
     private String userAnswer;
 
-    @Field("option_list")
-    private List<String> optionList;
+    @Field("question_option_list")
+    private List<Map<String, List<String>>> questionOptionList;
 
     @Field("button_behavior")
     private String buttonBehavior;
 
     @Field("completed_at")
     private String completedAt;
+
+    @Field("consent_id")
+    private String consentId;
 }

@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,16 +17,14 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CinDetails {
 
-    private String cin;
-    private String companyName;
+    private int status;
+    private List<CinInnerDetails> msg;
 
-    public static void encryptInfo(CinDetails cinDetails, AES256 aes256){
-        cinDetails.setCin(aes256.encrypt(cinDetails.getCin()));
-        cinDetails.setCompanyName(aes256.encrypt(cinDetails.getCompanyName()));
+    public static void encryptInfo(CinDetails details, AES256 aes256){
+        details.setMsg(CinInnerDetails.encryptInfo(details.getMsg(),aes256));
     }
 
-    public static void decryptInfo(CinDetails cinDetails, AES256 aes256) {
-        cinDetails.setCin(aes256.decrypt(cinDetails.getCin()));
-        cinDetails.setCompanyName(aes256.decrypt(cinDetails.getCompanyName()));
+    public static void decryptInfo(CinDetails details, AES256 aes256){
+        details.setMsg(CinInnerDetails.decryptInfo(details.getMsg(),aes256));
     }
 }

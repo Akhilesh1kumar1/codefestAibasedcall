@@ -147,6 +147,10 @@ public class TruthScreenAdapter {
                     jsonResponse = "{\n" +
                             "  \"responseData\": \"T/viOFoPCoclixQew/UEJpUZHaR2jGBP2wrYZXTOiokT1V2nrv+xTHLEeZVXSF9um+heO379riuCPlyOV27WjlWb7yv4OHbGROn0OsaM6eIUm1IT8cy2fMZJxHpbvJGxI2zXXTLCrVcR6IPCwXm5WSl/s1UsA4rsLally18c2IunPz7Q3xaD6IrGNm0RsOJcWMd8HLvqCNyd8aagmSfUTkXV2CdJrKH2sC8xx/Al59kl70u2ZJiPXHNmqu8ZxDsFofK+KegtlKLEfJcOB7v30uO92+nswvIGKC5VgQGeWWxJ16pD8FeytzxJCSw3YO7P1xi2enkOKRXASh6f/tdZeFBcjE1UkmjN56EPDSPU6FMF0443S+0qm+ymTaNJ8Cqm+gcHjx9lcWJWLvBEDL4xYo0Lvb201+j2dihuv5CjeqByCIRsyMpWch1v7pyz2bSuomx6JKRQnV3+oHr2N0yHaYPgUyfL7fXeG25BHcpwBOoYDJl2TWvdn5BIrDX3xVxDU8+LSmSxMXQJblkGSEPOcTtrxyhEGs/+LZkos8RAk98Vj1z07v9BSsC6V/9KxyYd+CwYr54wS8DeMIN2quxLqjA0WNg0iIe4RoFi3+BP+WXJXS6ECoocQm/u9g/m/ipJM6v9G1CaDdyHSkkGo7zg5ErXahR1SNGhi5srV50mXQPlj4HPB58O6QvmnyOET3x7YdicZy5QJOZGIbsDC1ZTX/vUuCNeMe9AkoZW4vfC0yDpwU91KvkGOU/sjogy15UMVrXPGqrXgp8dY5M91SDp2ruEJpKudQf2eivx3tJByuM=:2W1lHZ9Co8QD/jzZY7469Q==\"\n" +
                             "}";
+                } else if (request.getDocType() == TruthScreenDocType.CIN) {
+                    jsonResponse = "{\n" +
+                    "  \"responseData\": \"AlDNR1Gp2sjnPHB0ozaGm4RZoWT9p0lBFTM7Vo7q/UPCgXT9YoEeWgaNqMtKWB80MX+26nZ/32rH334q0GuiSoTP0hIJbD3A9WqgaSl3sU2eTf/vSaInAPpUZmgARgupstp1VS+lPK2HMcAuzWs4CA==:FMvI6maXWyDGE8B/bvDf2g==\"\n" +
+                            "}";
                 }
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> responseMap = objectMapper.readValue(jsonResponse.toString(), Map.class);

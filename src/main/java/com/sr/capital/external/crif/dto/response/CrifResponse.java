@@ -17,5 +17,7 @@ public class CrifResponse {
     private UUID token;
     private Object questionnaireResponse;
     private Object report;
+    private String createdAt;
+    private String validTill;
 
 }

@@ -3,6 +3,7 @@ package com.sr.capital.external.crif.service;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.dto.request.BureauInitiatePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
+import com.sr.capital.external.crif.dto.request.CrifConsentWithdrawalRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
@@ -33,5 +34,11 @@ public interface CrifPartnerService {
     CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException, CRIFApiException, CRIFApiLimitExceededException;
 
     Map<String, String> getDocType();
+
+    void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) throws CRIFApiException;
+
+    void purgeExpiredData();
+
+    String saveAndGetConsentId();
 }
 

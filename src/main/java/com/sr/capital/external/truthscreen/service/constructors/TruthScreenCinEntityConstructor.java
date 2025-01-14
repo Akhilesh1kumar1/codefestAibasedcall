@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class TruthScreenCinEntityConstructor implements TruthScreenEntityConstructor {
@@ -21,7 +22,7 @@ public class TruthScreenCinEntityConstructor implements TruthScreenEntityConstru
 
     @Override
     public <T> T constructEntity(TruthScreenDocOrchestratorRequest request, T entity) throws IOException {
-        CinExtractionResponseData cinExtractionResponseData = MapperUtils.convertValue(request.getTruthScreenBaseResponse().getMsg(), CinExtractionResponseData.class);
+        CinExtractionResponseData cinExtractionResponseData = MapperUtils.convertValue(request.getTruthScreenBaseResponse(), CinExtractionResponseData.class);
         CinDetails gstinDetails = getCINdetails(cinExtractionResponseData);
         return (T) TruthScreenDocDetails.builder()
                 .srCompanyId(RequestData.getTenantId())
@@ -34,7 +35,7 @@ public class TruthScreenCinEntityConstructor implements TruthScreenEntityConstru
     }
 
     public CinDetails getCINdetails(CinExtractionResponseData extractionRequestData){
-        CinDetails cinDetails = CinDetails.builder().companyName(extractionRequestData.getCompanyName()).cin(extractionRequestData.getCin()).build();
+        CinDetails cinDetails = CinDetails.builder().msg(extractionRequestData.getMsg()).status(extractionRequestData.getStatus()).build();
         CinDetails.encryptInfo(cinDetails,aes256);
         return cinDetails;
     }

@@ -1,10 +1,14 @@
 package com.sr.capital.external.crif.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sr.capital.CommonConstant;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.crif.BureauInitiateModel;
+import com.sr.capital.entity.mongo.crif.CrifConsentDetails;
 import com.sr.capital.entity.mongo.crif.CrifReport;
+import com.sr.capital.entity.mongo.crif.CrifUserModel;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.Constant.Constant;
 import com.sr.capital.external.crif.Constant.CrifDocumentType;
@@ -17,6 +21,7 @@ import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.util.CrifModelHelper;
 import com.sr.capital.external.crif.util.CrifStatusCode;
+import com.sr.capital.external.crif.util.CrifUserModelHelper;
 import com.sr.capital.external.crif.util.StringUtils;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.helpers.enums.ServiceName;
@@ -24,10 +29,14 @@ import com.sr.capital.repository.mongo.BureauInitiateModelRepo;
 import com.sr.capital.repository.mongo.CrifReportRepo;
 import com.sr.capital.util.Base64Util;
 import com.sr.capital.util.WebClientUtil;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +64,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final CrifModelHelper crifModelHelper;
     private final RedissonClient redissonClient;
     private final ObjectMapper mapper;
+    private final CrifUserModelHelper crifUserModelHelper;
+    private final CrifConsentDetailsService crifConsentDetailsService;
     @Override
     public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
 
@@ -75,6 +86,153 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                                 Enum::name, (a, b) -> b, LinkedHashMap::new));
         return map;
     }
+    @Override
+    public void purgeExpiredData() {
+        Pageable pageable = PageRequest.of(0, 100);
+        Page<CrifConsentDetails> expiredDetailsPage;
+        List<String> consentIds = new ArrayList<>();
+
+        do {
+            expiredDetailsPage = getExpiredDetailsForLast24Hours(pageable);
+
+            if (expiredDetailsPage.hasContent()) {
+                List<CrifConsentDetails> expiredDetails = expiredDetailsPage.getContent();
+                List<String> consentIdList = expiredDetails.stream().filter(d -> d.getConsentId() != null).map(d -> String.valueOf(d.getConsentId())).toList();
+
+                consentIds.addAll(consentIdList);
+
+                // Update each record's status and deletion details
+                expiredDetails.forEach(e -> {
+                    e.setExpirationMethod(CommonConstant.AUTOMATIC);
+                    e.setStatus(CommonConstant.DELETED);
+                    e.setDeletedAt(LocalDateTime.now().format(FORMATTER));
+                });
+
+                crifConsentDetailsService.saveAll(expiredDetails);
+            }
+
+            pageable = expiredDetailsPage.nextPageable();
+        } while (expiredDetailsPage.hasNext());
+
+        if (!consentIds.isEmpty()) {
+            processInBatches(consentIds, 10);
+        }
+
+    }
+
+    public void processInBatches(List<String> consentIds, int batchSize) {
+        int totalSize = consentIds.size();
+        for (int i = 0; i < totalSize; i += batchSize) {
+            int end = Math.min(i + batchSize, totalSize);
+            List<String> batch = consentIds.subList(i, end);
+
+            purgeData(batch);
+        }
+    }
+
+    private void purgeData(List<String> consentIdList) {
+        List<CrifReport> crifReportList = crifModelHelper.findAllByConsentId(consentIdList);
+        List<CrifUserModel> crifUserModels = crifUserModelHelper.findAllByConsentId(consentIdList);
+        List<BureauInitiateModel> bureauInitiateModelList = bureauInitiateModelRepo.findAllByConsentIdIn(consentIdList);
+
+        if (crifReportList != null) {
+            crifReportRepo.deleteAll(crifReportList);
+        }
+        if (crifUserModels != null) {
+            crifUserModelHelper.deleteAll(crifUserModels);
+        }
+        if (bureauInitiateModelList != null) {
+            bureauInitiateModelRepo.deleteAll(bureauInitiateModelList);
+        }
+    }
+
+    private void deleteFromBureauInitiateModel(List<String> consentIdList) {
+        List<BureauInitiateModel> bureauInitiateModelList = bureauInitiateModelRepo.findAllByConsentIdIn(consentIdList);
+        if (bureauInitiateModelList != null) {
+            bureauInitiateModelRepo.deleteAll(bureauInitiateModelList);
+        }
+    }
+
+//    private void deleteFromCrifUserDetails(List<String> consentIdList) {
+//        List<CrifUserModel> crifUserModels = crifUserModelHelper.findAllByConsentId(consentIdList);
+//        if (crifUserModels != null) {
+//            crifUserModelHelper.deleteAll(crifUserModels);
+//        }
+//    }
+
+    private void deleteFromCrifReport(List<String> consentIdList) {
+        List<CrifReport> crifReportList = crifModelHelper.findAllByConsentId(consentIdList);
+        if (crifReportList != null) {
+            crifReportRepo.deleteAll(crifReportList);
+        }
+    }
+
+    public Page<CrifConsentDetails> getExpiredDetailsForLast24Hours(Pageable pageable) {
+        // Current time
+        String currentTime = LocalDateTime.now().format(FORMATTER);
+
+        // Previous day's 12 AM
+        String previousDayMidnight = LocalDateTime.now().minusDays(1).withHour(0).withMinute(0).withSecond(0).format(FORMATTER);
+
+        return crifConsentDetailsService.findByExpiredAtBetweenAndStatus(currentTime, previousDayMidnight, pageable, Constant.ACTIVE);
+    }
+    @Override
+    public void consentWithdrawalProcess(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) throws CRIFApiException {
+        String consentId = deleteData(crifConsentWithdrawalRequestModel);
+
+        CrifConsentDetails crifConsentDetails = crifConsentDetailsService.findByConsentId(consentId);
+        if (crifConsentDetails != null) {
+            crifConsentDetails.setExpirationMethod(CommonConstant.MANUAL);
+            crifConsentDetails.setStatus(CommonConstant.DELETED);
+            crifConsentDetails.setDeletedAt(LocalDateTime.now().format(FORMATTER));
+            crifConsentDetailsService.save(crifConsentDetails);
+        }
+    }
+
+    private String deleteData(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) throws CRIFApiException {
+        Optional<CrifUserModel> optionalCrifUserModel = crifUserModelHelper.findByMobileDockTypeAndDocValue(crifConsentWithdrawalRequestModel.getMobile(),
+                crifConsentWithdrawalRequestModel.getDocType(), crifConsentWithdrawalRequestModel.getDocValue());
+
+        if (!optionalCrifUserModel.isPresent()) {
+            throw new ConstraintViolationException(Constant.USER_NOT_FOUND_FOR_PURGE_ERROR_MESSAGE, null);
+        }
+        Optional<CrifReport> optional = crifModelHelper.findByMobile(crifConsentWithdrawalRequestModel.getMobile());
+        List<BureauInitiateModel> optionalBureauInitiateModel = crifModelHelper.findByMobileNumber(crifConsentWithdrawalRequestModel.getMobile());
+
+
+        String consentId = optionalCrifUserModel.get().getConsentId();
+        crifUserModelHelper.delete(optionalCrifUserModel.get());
+
+        if (optionalBureauInitiateModel != null) {
+            bureauInitiateModelRepo.deleteAll(optionalBureauInitiateModel);
+        }
+
+        optional.ifPresent(crifReportRepo::delete);
+
+        return consentId;
+    }
+
+//    private String deleteFromCrifUserDetails(CrifConsentWithdrawalRequestModel crifConsentWithdrawalRequestModel) {
+//        Optional<CrifUserModel> optional = crifUserModelHelper.findByMobileDockTypeAndDocValue(crifConsentWithdrawalRequestModel.getMobile(),
+//                crifConsentWithdrawalRequestModel.getDocType(), crifConsentWithdrawalRequestModel.getDocValue());
+//        String consentId = "";
+//        if (optional.isPresent()) {
+//            consentId = optional.get().getConsentId();
+//            crifUserModelHelper.delete(optional.get());
+//        }
+//        return consentId;
+//    }
+
+//    private void deleteFromCrifReport(String mobile) {
+//        Optional<CrifReport> optional = crifModelHelper.findByMobile(mobile);
+//        optional.ifPresent(crifReportRepo::delete);
+//    }
+//    private void deleteFromBureauInitiateModel(String mobile) {
+//        List<BureauInitiateModel> optional = crifModelHelper.findByMobileNumber(mobile);
+//        if (optional != null) {
+//            bureauInitiateModelRepo.deleteAll(optional);
+//        }
+//    }
 
     @Override
     public CrifResponse verify(BureauInitiateResponse bureauInitiateResponse) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
@@ -82,7 +240,16 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
 
         BureauQuestionnaireResponse questionnaire = getQuestionnaire(bureauInitiateResponse);
         if (questionnaire != null && isAuthorizedForReport(questionnaire.getStatus())) {
-            setResponse(crifResponse, new HashMap<>(){{put(DATA, getReport(questionnaire, false)); put(STAGE, STAGE_3);}});
+            BureauReportResponse report = getReport(questionnaire, false);
+            if (report != null) {
+                Object reportData = StringUtils.covertToJsonString(report.getResult());
+                setResponse(crifResponse, new HashMap<>() {{
+                    put(DATA, reportData);
+                    put(STAGE, STAGE_3);
+                    put(CREATED_AT, report.getCreatedAt());
+                    put(VALID_AT, report.getValidAt());
+                }});
+            }
             return crifResponse;
         }
         setResponse(crifResponse, new HashMap<>(){{put(DATA, questionnaire); put(STAGE, STAGE_2);}});
@@ -120,7 +287,15 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         BureauQuestionnaireResponse bureauQuestionnaireResponse = initiateBureauAndGetQuestionnaire(bureauInitiatePayloadRequest);
 
         if (bureauQuestionnaireResponse != null && isAuthorizedForReport(bureauQuestionnaireResponse.getStatus())) {
-            return new HashMap<>(){{put(DATA, getReport(bureauQuestionnaireResponse, false)); put(STAGE, STAGE_3);}};
+            BureauReportResponse report = getReport(bureauQuestionnaireResponse, false);
+            if (report != null) {
+                return new HashMap<>() {{
+                    put(DATA, StringUtils.covertToJsonString(report.getResult()));
+                    put(STAGE, STAGE_3);
+                    put(CREATED_AT, report.getCreatedAt());
+                    put(VALID_AT, report.getValidAt());
+                }};
+            }
         }
         return new HashMap<>(){{put(DATA, bureauQuestionnaireResponse); put(STAGE, STAGE_2);}};
     }
@@ -134,18 +309,35 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             bureauQuestionnaireResponse.setOrderId(bureauInitiateModel.getOrderId());
             bureauQuestionnaireResponse.setReportId(bureauInitiateModel.getReportId());
             bureauQuestionnaireResponse.setRedirectURL(bureauInitiateModel.getRedirectUrl());
-            return new HashMap<>() {{
 
-                put(DATA, getReport(bureauQuestionnaireResponse, true));
-                put(STAGE, STAGE_3);
-            }};
+            BureauReportResponse report = getReport(bureauQuestionnaireResponse, true);
+            if (report != null) {
+                return new HashMap<>() {{
+                    put(DATA, StringUtils.covertToJsonString(report.getResult()));
+                    put(STAGE, STAGE_3);
+                    put(CREATED_AT, report.getCreatedAt());
+                    put(VALID_AT, report.getValidAt());
+                }};
+            }
         }
 
         return null;
     }
 
     private Map<String, Object> getStoredReport(CrifReport crifGenerateOtpRequestModel) {
-        return new HashMap<>(){{put(DATA, crifGenerateOtpRequestModel.getResult()); put(STAGE, STAGE_3);}};
+        String consentId = crifGenerateOtpRequestModel.getConsentId();
+        updateConsentHistory(consentId);
+        return new HashMap<>(){{put(DATA, StringUtils.covertToJsonString(crifGenerateOtpRequestModel.getResult())); put(STAGE, STAGE_3); put(CREATED_AT, crifGenerateOtpRequestModel.getCreatedAt()) ; put(VALID_AT, crifGenerateOtpRequestModel.getValidTill());}};
+    }
+
+    private void updateConsentHistory(String consentId) {
+        CrifConsentDetails crifConsentDetails = crifConsentDetailsService.findByConsentId(consentId);
+        if (crifConsentDetails != null) {
+            List<String> consentDateHistory = crifConsentDetails.getConsentDateHistory();
+            consentDateHistory.add(LocalDateTime.now().format(FORMATTER));
+            crifConsentDetails.setConsentDateHistory(consentDateHistory);
+            crifConsentDetailsService.save(crifConsentDetails);
+        }
     }
 
     private boolean isOldRequest(String time) {
@@ -255,18 +447,6 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     private BureauInitiateResponse authenticateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest, String requestPayload, String orderId, HttpHeaders header) {
-        //        setDummyData(bureauInitiatePayloadRequest);
-
-
-//        log.info("OrderId: {}, RequestPayload: {}, Headers: {}, BaseUrl: {}, EndPoint: {}",
-//                orderId,
-//                requestPayload,
-//                header.entrySet().stream()
-//                        .map(entry -> entry.getKey() + "=" + String.join(",", entry.getValue()))
-//                        .collect(Collectors.joining(", ")),
-//                appProperties.getCrifBaseUri(),
-//                appProperties.getCrifExtractStage2Endpoint());
-
         return webClientUtil.makeExternalCallBlocking(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage1Endpoint(),
                         HttpMethod.POST, ServiceName.CRIF.getName(),
                 header, null,
@@ -283,22 +463,32 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             bureauInitiateModel.setOrderId(bureauInitiateResponse.getOrderId());
             bureauInitiateModel.setReportId(bureauInitiateResponse.getReportId());
             bureauInitiateModel.setRequestHeader(getHeadersAsString(header));
-            bureauInitiateModel.setRequestPayload(requestPayload);
+            bureauInitiateModel.setInitRequestPayload(requestPayload);
             bureauInitiateModel.setSrCompanyId(RequestData.getTenantId());
         } else {
+            String consentIdByMobileNumber = getConsentIdByMobileNumber(bureauInitiatePayloadRequest.getMobile());
             bureauInitiateModel = BureauInitiateModel.builder()
                     .redirectUrl(bureauInitiateResponse.getRedirectURL())
                     .initStatus(bureauInitiateResponse.getStatus())
                     .orderId(bureauInitiateResponse.getOrderId())
                     .reportId(bureauInitiateResponse.getReportId())
                     .requestHeader(getHeadersAsString(header))
-                    .requestPayload(requestPayload)
+                    .initRequestPayload(requestPayload)
                     .mobile(bureauInitiatePayloadRequest.getMobile())
                     .srCompanyId(RequestData.getTenantId())
                     .initResponse(bureauInitiateResponse.toString())
+                    .consentId(consentIdByMobileNumber)
                     .build();
         }
         bureauInitiateModelRepo.save(bureauInitiateModel);
+    }
+
+    private String getConsentIdByMobileNumber(String mobile) {
+        Optional<CrifUserModel> byMobileNumber = crifUserModelHelper.findByMobile(mobile);
+        if (byMobileNumber.isPresent()) {
+            return byMobileNumber.get().getConsentId();
+        }
+        return "";
     }
 
 
@@ -371,31 +561,31 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private HttpHeaders getHeaderForInitiateBureau(String orderId) {
         HttpHeaders header = new HttpHeaders();
 
-        header.add(Constant.ORDER_ID, orderId);
-        header.add(Constant.ACCESS_TOKEN, getAccessCode());
-        header.add(Constant.APP_ID, appProperties.getCrifAppId());
+        header.add(ORDER_ID, orderId);
+        header.add(ACCESS_TOKEN, getAccessCode());
+        header.add(APP_ID, appProperties.getCrifAppId());
 //        header.add(Constant.CONTENT_TYPE, TEXT_PLANE);
         header.add(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN_VALUE); // Set explicitly
         header.add(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
-        header.add(Constant.MERCHANT_ID, appProperties.getCrifCustomerId());
+        header.add(MERCHANT_ID, appProperties.getCrifCustomerId());
         return header;
     }
 
     private HttpHeaders getHeaderForQuestionnaire(String orderId, String reportId, boolean isAuthentication, boolean isRefreshRequest) {
         HttpHeaders header = new HttpHeaders();
-        header.add(Constant.ACCESS_TOKEN, getAccessCode());
-        header.add(Constant.APP_ID, appProperties.getCrifAppId());
-        header.add(Constant.CONTENT_TYPE, TEXT_PLANE);
-        header.add(Constant.MERCHANT_ID, appProperties.getCrifCustomerId());
+        header.add(ACCESS_TOKEN, getAccessCode());
+        header.add(APP_ID, appProperties.getCrifAppId());
+        header.add(CONTENT_TYPE, TEXT_PLANE);
+        header.add(MERCHANT_ID, appProperties.getCrifCustomerId());
         if (isAuthentication) {
-            header.add(Constant.REQUEST_TYPE, Constant.AUTHORIZATION);
+            header.add(REQUEST_TYPE, AUTHORIZATION);
         }
         if (isRefreshRequest) {
-            header.add(Constant.REQUEST_TYPE, Constant.UPGRADE);
+            header.add(REQUEST_TYPE, UPGRADE);
         }
-        header.add(Constant.REPORT_ID, reportId);
+        header.add(REPORT_ID, reportId);
         header.add(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN_VALUE); // Set explicitly
-        header.add(Constant.ORDER_ID, orderId);
+        header.add(ORDER_ID, orderId);
 
         return header;
     }
@@ -453,17 +643,6 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         bureauQuestionnairePayloadRequest.setAccessCode(header.get(Constant.ACCESS_TOKEN).get(0));
         String requestPayload = StringUtils.toPipeSeparatedString(bureauQuestionnairePayloadRequest);
 
-//        String orderId = header.get(Constant.ORDER_ID).get(0);
-
-//        log.info("OrderId: {}, RequestPayload: {}, Headers: {}, BaseUrl: {}, EndPoint: {}",
-//                orderId,
-//                requestPayload,
-//                header.entrySet().stream()
-//                        .map(entry -> entry.getKey() + "=" + String.join(",", entry.getValue()))
-//                        .collect(Collectors.joining(", ")),
-//                appProperties.getCrifBaseUri(),
-//                appProperties.getCrifExtractStage2Endpoint());
-
         Object object = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF,
                 appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
                 HttpMethod.POST, ServiceName.CRIF.getName(),
@@ -480,20 +659,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     bureauQuestionnaireResponse.getReportId(), bureauQuestionnaireResponse.getOrderId(),
                     bureauQuestionnaireResponse.getRedirectURL(), bureauQuestionnaireResponse.getQuestion(),
                     bureauQuestionnaireResponse.getButtonBehaviour(), bureauQuestionnaireResponse.getOptionList());
-            Optional<BureauInitiateModel> optional = bureauInitiateModelRepo.
-                    findByReportIdAndOrderId(bureauQuestionnaireResponse.getReportId(),
-                    bureauQuestionnaireResponse.getOrderId());
-            if (optional.isPresent()) {
-                BureauInitiateModel bureauInitiateModel = optional.get();
-                bureauInitiateModel.setQuestion(bureauQuestionnaireResponse.getQuestion());
-                bureauInitiateModel.setOptionList(bureauQuestionnaireResponse.getOptionList());
-                bureauInitiateModel.setButtonBehavior(bureauQuestionnaireResponse.getButtonBehaviour());
-                bureauInitiateModel.setQuestionnaireStatus(bureauQuestionnaireResponse.getStatus());
-                bureauInitiateModel.setStatusDesc(bureauQuestionnaireResponse.getStatusDesc());
-                bureauInitiateModel.setCompletedAt(bureauQuestionnaireResponse.getCompletedAt());
-                bureauInitiateModel.setQuestionnaireResponse(bureauQuestionnaireResponse.toString());
-                bureauInitiateModelRepo.save(bureauInitiateModel);
-            }
+
+            saveQuestionnaireResponseIntoDb(bureauQuestionnaireResponse, requestPayload);
 
             handleExceptions(bureauQuestionnaireResponse.getStatus());
 
@@ -502,6 +669,38 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         }
 
         return bureauQuestionnaireResponse;
+    }
+
+    private void saveQuestionnaireResponseIntoDb(BureauQuestionnaireResponse bureauQuestionnaireResponse, String requestPayload) {
+        Optional<BureauInitiateModel> optional = bureauInitiateModelRepo.
+                findByReportIdAndOrderId(bureauQuestionnaireResponse.getReportId(),
+                        bureauQuestionnaireResponse.getOrderId());
+        if (optional.isPresent()) {
+            BureauInitiateModel bureauInitiateModel = optional.get();
+            bureauInitiateModel.setLastQuestion(bureauQuestionnaireResponse.getQuestion());
+
+            Map<String, List<String>> questionsOptionMap = new HashMap<>();
+            if (bureauQuestionnaireResponse.getQuestion() != null && bureauQuestionnaireResponse.getOptionList() != null) {
+                questionsOptionMap.put(bureauQuestionnaireResponse.getQuestion(), bureauQuestionnaireResponse.getOptionList());
+            }
+            List<Map<String, List<String>>> optionList = bureauInitiateModel.getQuestionOptionList();
+            if (!questionsOptionMap.isEmpty()) {
+                if (optionList != null) {
+                    optionList.add(questionsOptionMap);
+                } else {
+                    optionList = Collections.singletonList(questionsOptionMap);
+                }
+            }
+
+            bureauInitiateModel.setQuestionOptionList(optionList);
+            bureauInitiateModel.setQuestionnaireRequestPayload(requestPayload);
+            bureauInitiateModel.setButtonBehavior(bureauQuestionnaireResponse.getButtonBehaviour());
+            bureauInitiateModel.setQuestionnaireStatus(bureauQuestionnaireResponse.getStatus());
+            bureauInitiateModel.setStatusDesc(bureauQuestionnaireResponse.getStatusDesc());
+            bureauInitiateModel.setCompletedAt(bureauQuestionnaireResponse.getCompletedAt());
+            bureauInitiateModel.setQuestionnaireResponse(bureauQuestionnaireResponse.toString());
+            bureauInitiateModelRepo.save(bureauInitiateModel);
+        }
     }
 
         private void handleExceptions(String statusCode) throws CRIFApiException, CRIFApiLimitExceededException {
@@ -530,19 +729,10 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         HttpHeaders header = getHeaderForQuestionnaire(bureauReportPayloadRequest.getOrderId(),
                 bureauReportPayloadRequest.getReportId(), false, isRefreshRequest);
 
-        bureauReportPayloadRequest.setAccessCode(header.get(Constant.ACCESS_TOKEN).get(0));
+        bureauReportPayloadRequest.setAccessCode(header.get(ACCESS_TOKEN).get(0));
         String requestPayload = StringUtils.toPipeSeparatedString(bureauReportPayloadRequest);
 
-        String orderId = header.get(Constant.ORDER_ID).get(0);
-
-//        log.info("OrderId: {}, RequestPayload: {}, Headers: {}, BaseUrl: {}, EndPoint: {}",
-//                orderId,
-//                requestPayload,
-//                header.entrySet().stream()
-//                        .map(entry -> entry.getKey() + "=" + String.join(",", entry.getValue()))
-//                        .collect(Collectors.joining(", ")),
-//                appProperties.getCrifBaseUri(),
-//                appProperties.getCrifExtractStage2Endpoint());
+        String orderId = header.get(ORDER_ID).get(0);
 
         Object bureauReportResponse = webClientUtil.makeExternalCallBlocking(ServiceName.CRIF, appProperties.getCrifBaseUri(), appProperties.getCrifExtractStage2Endpoint(),
                         HttpMethod.POST, ServiceName.CRIF.getName(),
@@ -552,7 +742,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         if (bureauReportResponse != null) {
             log.info("response {} ", bureauReportResponse);
 
-            CrifReport crifReport = saveReportData(orderId, bureauReportResponse, bureauReportPayloadRequest);
+            CrifReport crifReport = saveReportData(orderId, bureauReportResponse, bureauReportPayloadRequest, isRefreshRequest);
 
             if (bureauReportResponse instanceof LinkedHashMap<?,?> map && map.containsKey("status")) {
                 handleExceptions((String) map.get("Status"));
@@ -569,31 +759,113 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     }
 
     private CrifReport saveReportData(String orderId, Object bureauReportResponse,
-                                      BureauReportPayloadRequest bureauReportPayloadRequest) {
-        String mobile = getMobileNumberByOrderIdAndReportId(orderId, bureauReportPayloadRequest.getReportId());
-        Optional<CrifReport> optional = crifModelHelper.findByMobile(mobile);
+                                      BureauReportPayloadRequest bureauReportPayloadRequest, boolean isRefreshRequest) {
+
+        Map<String, String> mobileAndNumberByOrderIdAndReportId =
+                getMobileAndNumberByOrderIdAndReportId(orderId, bureauReportPayloadRequest.getReportId());
+
+        String mobile = mobileAndNumberByOrderIdAndReportId.get(MOBILE);
+        String oldConsentId = mobileAndNumberByOrderIdAndReportId.get(CONSENT);
+
         CrifReport crifReport;
-        if (optional.isPresent()) {
-            crifReport = optional.get();
-        }  else {
-            crifReport = CrifReport.builder().build();
-            crifReport.setMobile(mobile);
+
+        if (isRefreshRequest) {
+
+            String newConsentId = deleteOldConsentAndCreateNewConsent(oldConsentId);;
+            updateConsentDetails(oldConsentId, newConsentId);
+            crifReport = buildCrifReport(mobile, newConsentId, bureauReportResponse, bureauReportPayloadRequest);
+        } else {
+            Optional<CrifReport> existingReport = crifModelHelper.findByMobile(mobile);
+            crifReport = existingReport.orElseGet(() ->
+                    buildCrifReport(mobile, oldConsentId , bureauReportResponse, bureauReportPayloadRequest)
+            );
         }
-        crifReport.setOrderId(bureauReportPayloadRequest.getOrderId());
-        crifReport.setResult(bureauReportResponse);
-        crifReport.setReportId(bureauReportPayloadRequest.getReportId());
-        crifReport.setSrCompanyId(RequestData.getTenantId());
-        crifReport.setValidTill(StringUtils.getTimeAfterOneMonths());
-        crifReportRepo.save(crifReport);
+
+        crifModelHelper.save(crifReport);
         return crifReport;
     }
 
-    private String getMobileNumberByOrderIdAndReportId(String orderId, String reportId) {
-        Optional<BureauInitiateModel> bureauInitiateModel = bureauInitiateModelRepo.findByReportIdAndOrderId(reportId, orderId);
-        if (bureauInitiateModel.isPresent()) {
-            return bureauInitiateModel.get().getMobile();
+    private String deleteOldConsentAndCreateNewConsent(String consent) {
+        CrifConsentDetails consentDetails = crifConsentDetailsService.findByConsentId(consent);
+        if (consentDetails != null) {
+            consentDetails.setStatus(CommonConstant.REFRESHED);
+            crifConsentDetailsService.save(consentDetails);
         }
-        return "";
+        return saveAndGetConsentId();
+    }
+
+    private CrifReport buildCrifReport(String mobile, String consent, Object bureauReportResponse,
+                                       BureauReportPayloadRequest bureauReportPayloadRequest) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            byte[] byteArrayResponse = objectMapper.writeValueAsBytes(bureauReportResponse);
+            return CrifReport.builder()
+                    .mobile(mobile)
+                    .consentId(consent)
+                    .result(Base64.getEncoder().encodeToString(byteArrayResponse))
+                    .orderId(bureauReportPayloadRequest.getOrderId())
+                    .reportId(bureauReportPayloadRequest.getReportId())
+                    .srCompanyId(RequestData.getTenantId())
+                    .validTill(StringUtils.getTimeAfterMonths(1))
+                    .build();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Delete old data for given consent id noe=w this consent id will treat as new id because old is deleted
+     *
+     * @param oldConsentId
+     * @param newConsentId
+     */
+    private void updateConsentDetails(String oldConsentId, String newConsentId) {
+        updateUserDetails(oldConsentId, newConsentId);
+        deleteFromBureauInitiateModelViaSettingNull(oldConsentId, newConsentId);
+        deleteFromCrifReport(Collections.singletonList(oldConsentId));
+
+    }
+
+    private void updateUserDetails(String oldConsentId, String newConsentId) {
+        List<CrifUserModel> userModels = crifUserModelHelper.findAllByConsentId(Collections.singletonList(oldConsentId));
+        if (userModels != null && !userModels.isEmpty()) {
+            userModels.forEach(u -> {
+                u.setConsentId(newConsentId);
+            });
+        }
+        crifUserModelHelper.saveAll(userModels);
+    }
+
+    private void deleteFromBureauInitiateModelViaSettingNull(String consentId, String newConsentId) {
+        List<BureauInitiateModel> bureauInitiateModelList = bureauInitiateModelRepo.findAllByConsentIdIn(Collections.singletonList(consentId));
+            if (bureauInitiateModelList != null && !bureauInitiateModelList.isEmpty()) {
+                bureauInitiateModelList.forEach(d -> {
+                    d.setLastQuestion(null);
+                    d.setInitStatus(null);
+                    d.setInitRequestPayload(null);
+                    d.setButtonBehavior(null);
+                    d.setInitResponse(null);
+                    d.setQuestionnaireRequestPayload(null);
+                    d.setQuestionnaireResponse(null);
+                    d.setQuestionnaireStatus(null);
+                    d.setQuestionOptionList(null);
+                    d.setRedirectUrl(null);
+                    d.setRequestHeader(null);
+                    d.setUserAnswer(null);
+                    d.setConsentId(newConsentId);
+                });
+                bureauInitiateModelRepo.saveAll(bureauInitiateModelList);
+            }
+    }
+
+    private Map<String, String> getMobileAndNumberByOrderIdAndReportId(String orderId, String reportId) {
+        Optional<BureauInitiateModel> bureauInitiateModel = bureauInitiateModelRepo.findByReportIdAndOrderId(reportId, orderId);
+        Map<String, String> res = new HashMap<>();
+        if (bureauInitiateModel.isPresent()) {
+            res.put(MOBILE, bureauInitiateModel.get().getMobile());
+            res.put(CONSENT, bureauInitiateModel.get().getConsentId());
+        }
+        return res;
     }
 
     private void setDummyData(BureauReportPayloadRequest bureauReportPayloadRequest) {
@@ -611,4 +883,17 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         bureauReportPayloadRequest.setJsonFlag("Y");
     }
 
+    @Override
+    public String saveAndGetConsentId() {
+
+        CrifConsentDetails build = CrifConsentDetails.builder()
+                .consentId(crifConsentDetailsService.getNextSequence())
+                .expiredAt(StringUtils.getConsentExpireTime(appProperties.getCrifConsentExpireAt()))
+                .status(ACTIVE)
+                .consentDateHistory(Collections.singletonList(LocalDateTime.now().format(FORMATTER)))
+                .build();
+
+        crifConsentDetailsService.save(build);
+        return String.valueOf(build.getConsentId());
+    }
 }

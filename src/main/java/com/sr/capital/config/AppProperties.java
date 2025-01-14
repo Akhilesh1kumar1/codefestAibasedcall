@@ -394,4 +394,10 @@ public class AppProperties {
 
     @Value("${aes.iv.key}")
     private String aesIVKey;
+
+    @Value("${jobs.crif.purge.expireAt}")
+    private String crifConsentExpireAt;
+
+
+
 }

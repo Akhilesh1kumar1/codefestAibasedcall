@@ -3,6 +3,7 @@ package com.sr.capital.external.flexi.service;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.external.common.StatusMapperInterface;
 import com.sr.capital.external.flexi.constants.Checkpoint;
+import com.sr.capital.external.flexi.dto.response.LoanDetails;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.Screens;
 import com.sr.capital.util.LoggerUtil;
@@ -63,8 +64,8 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
 
     private void handleNotApprovedStatus(LoanStatusUpdateWebhookDto dto) {
         String currentStatus = dto.getInternalCurrentStatus();
-        if (LoanStatus.LEAD_DOCUMENT_UPLOAD.name().equalsIgnoreCase(currentStatus) ||
-                LoanStatus.LEAD_IN_PROGRESS.name().equalsIgnoreCase(currentStatus) ||  LoanStatus.LEAD_REJECTED.name().equalsIgnoreCase(currentStatus)) {
+        if (((LoanStatus.LEAD_DOCUMENT_UPLOAD.name().equalsIgnoreCase(currentStatus) ||
+                LoanStatus.LEAD_IN_PROGRESS.name().equalsIgnoreCase(currentStatus)) && dto.getVendorStatus()==null) || LoanStatus.LEAD_REJECTED.name().equalsIgnoreCase(currentStatus)) {
             dto.setInternalStatus(LoanStatus.LEAD_REJECTED.name());
         } else if(LoanStatus.LOAN_GENERATE.name().equalsIgnoreCase(currentStatus) || LoanStatus.LOAN_DECLINE.name().equalsIgnoreCase(currentStatus)){
             dto.setInternalStatus(LoanStatus.LOAN_DECLINE.name());
@@ -175,5 +176,6 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
         dto.setInternalState(screen.name());
         dto.setInternalStatus(status.name());
     }
+
 
 }

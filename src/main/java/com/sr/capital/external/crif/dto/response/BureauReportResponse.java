@@ -30,4 +30,10 @@ public class BureauReportResponse implements Serializable {
 
     @Field("status")
     private String status;
+
+    @Field("created_at")
+    private String createdAt;
+
+    @Field("valid_at")
+    private String validAt;
 }

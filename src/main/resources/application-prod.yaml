@@ -309,6 +309,10 @@ jobs:
     cronInMinutes: 120
   communication:
     scheduledTime: 0 0 1 * * ?
+  crif:
+    purge:
+      scheduledTime: 0 0 1 * * ?
+      expireAt: 6 MONTHS
 
 
 aes:
@@ -319,4 +323,8 @@ aes:
 
 is:
   encryption:
-    enabled: ${IS_ENCRYPTION_ENABLED:false}
+    enabled: ${IS_ENCRYPTION_ENABLED:true}
+
+
+server:
+  max-http-header-size: 65536
