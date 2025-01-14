@@ -246,6 +246,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 setResponse(crifResponse, new HashMap<>() {{
                     put(DATA, reportData);
                     put(STAGE, STAGE_3);
+                    put(CREATED_AT, report.getCreatedAt());
+                    put(VALID_AT, report.getValidAt());
                 }});
             }
             return crifResponse;
@@ -288,7 +290,10 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             BureauReportResponse report = getReport(bureauQuestionnaireResponse, false);
             if (report != null) {
                 return new HashMap<>() {{
-                    put(DATA, StringUtils.covertToJsonString(report.getResult())); put(STAGE, STAGE_3);
+                    put(DATA, StringUtils.covertToJsonString(report.getResult()));
+                    put(STAGE, STAGE_3);
+                    put(CREATED_AT, report.getCreatedAt());
+                    put(VALID_AT, report.getValidAt());
                 }};
             }
         }
@@ -310,6 +315,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 return new HashMap<>() {{
                     put(DATA, StringUtils.covertToJsonString(report.getResult()));
                     put(STAGE, STAGE_3);
+                    put(CREATED_AT, report.getCreatedAt());
+                    put(VALID_AT, report.getValidAt());
                 }};
             }
         }
@@ -320,7 +327,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private Map<String, Object> getStoredReport(CrifReport crifGenerateOtpRequestModel) {
         String consentId = crifGenerateOtpRequestModel.getConsentId();
         updateConsentHistory(consentId);
-        return new HashMap<>(){{put(DATA, StringUtils.covertToJsonString(crifGenerateOtpRequestModel.getResult())); put(STAGE, STAGE_3);}};
+        return new HashMap<>(){{put(DATA, StringUtils.covertToJsonString(crifGenerateOtpRequestModel.getResult())); put(STAGE, STAGE_3); put(CREATED_AT, crifGenerateOtpRequestModel.getCreatedAt()) ; put(VALID_AT, crifGenerateOtpRequestModel.getValidTill());}};
     }
 
     private void updateConsentHistory(String consentId) {
