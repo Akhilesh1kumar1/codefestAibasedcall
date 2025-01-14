@@ -64,8 +64,8 @@ public class FlexiStatusMapperServiceImpl implements StatusMapperInterface {
 
     private void handleNotApprovedStatus(LoanStatusUpdateWebhookDto dto) {
         String currentStatus = dto.getInternalCurrentStatus();
-        if (LoanStatus.LEAD_DOCUMENT_UPLOAD.name().equalsIgnoreCase(currentStatus) ||
-                LoanStatus.LEAD_IN_PROGRESS.name().equalsIgnoreCase(currentStatus) ||  LoanStatus.LEAD_REJECTED.name().equalsIgnoreCase(currentStatus)) {
+        if (((LoanStatus.LEAD_DOCUMENT_UPLOAD.name().equalsIgnoreCase(currentStatus) ||
+                LoanStatus.LEAD_IN_PROGRESS.name().equalsIgnoreCase(currentStatus)) && dto.getVendorStatus()==null) || LoanStatus.LEAD_REJECTED.name().equalsIgnoreCase(currentStatus)) {
             dto.setInternalStatus(LoanStatus.LEAD_REJECTED.name());
         } else if(LoanStatus.LOAN_GENERATE.name().equalsIgnoreCase(currentStatus) || LoanStatus.LOAN_DECLINE.name().equalsIgnoreCase(currentStatus)){
             dto.setInternalStatus(LoanStatus.LOAN_DECLINE.name());

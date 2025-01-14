@@ -75,7 +75,7 @@ public class LoanStatusUpdateHandlerServiceImpl {
         if(loanApplication!=null){
 
             loanStatusUpdateWebhookDto.setInternalCurrentStatus(loanApplication.getLoanStatus().name());
-
+            loanStatusUpdateWebhookDto.setVendorStatus(loanApplication.getVendorStatus());
             loanStatusUpdateWebhookDto = statusMapperServiceStrategy.getPartnerService(loanVendorName).mapStatus(loanStatusUpdateWebhookDto);
 
 
