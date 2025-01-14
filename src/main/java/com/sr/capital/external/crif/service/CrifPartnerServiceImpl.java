@@ -390,10 +390,10 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                 bureauInitiatePayloadRequest.setUID(docValue);
                 break;
             }
-            case OTHER: {
+          /*  case OTHER: {
                 bureauInitiatePayloadRequest.setOtherId1(docValue);
                 break;
-            }
+            }*/
             case CKYC: {
                 bureauInitiatePayloadRequest.setCkyc(docValue);
                 break;
