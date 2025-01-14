@@ -7,15 +7,14 @@ import java.util.List;
 
 @Getter
 public enum CrifDocumentType {
-    PAN("Pan"),
-    UID("UID"),
+    PAN("PAN Card"),
+    UID("Aadhaar Card (UID)"),
     DRIVING_LICENCE("Driving Licence"),
-    VOTER("Voter"),
+    VOTER("Voter ID"),
     PASSPORT("Passport"),
     RATION_CARD("Ration Card"),
-    NREGA("Nrega"),
-    CKYC("CKYC"),
-    OTHER("Other");
+    NREGA("NREGA Job Card"),
+    CKYC("CKYC (Central KYC)");
 
     private final String displayName;
 
