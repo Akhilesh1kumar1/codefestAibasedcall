@@ -118,7 +118,11 @@ public class CrifOtpServiceImpl implements CrifOtpService {
         if (data != null && !data.isEmpty() && data.containsKey(STAGE)) {
             switch (String.valueOf(data.get(STAGE))) {
                 case STAGE_2 -> crifResponse.setQuestionnaireResponse(data.get(DATA));
-                case STAGE_3 -> crifResponse.setReport(data.get(DATA));
+                case STAGE_3 -> {
+                    crifResponse.setReport(data.get(DATA));
+                    crifResponse.setCreatedAt(String.valueOf(data.get(CREATED_AT)));
+                    crifResponse.setValidTill(String.valueOf(data.get(VALID_AT)));
+                }
             }
             crifResponse.setStatus(String.valueOf(data.get(STAGE)));
         }
