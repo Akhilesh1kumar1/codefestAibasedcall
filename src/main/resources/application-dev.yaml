@@ -333,9 +333,23 @@ server:
 
 bypass:
   apis:
-    "/api/v1/test/redis-set-temp-value":
+    "/api/public/crif/generate-otp":
       method:
         - POST
       captchaEnabled: true
-      captchaAction: "testAction"
-      channel: "testChannel"
+      captchaAction: "GenerateAction"
+    "/api/public/crif/verify-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "VerifyAction"
+    "/api/public/crif/validate":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "ValidateAction"
+    "/api/public/crif/purge":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "PurgeAction"

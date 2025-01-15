@@ -11,6 +11,5 @@ public class BypassApiDetails {
     private List<HttpMethod> method;
     private Boolean captchaEnabled = Boolean.FALSE;
     private String captchaAction;
-    private String channel;
 
 }
