@@ -752,6 +752,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     .result(crifReport.getResult())
                     .orderId(crifReport.getOrderId())
                     .reportId(crifReport.getReportId())
+                    .createdAt(String.valueOf(crifReport.getCreatedAt()))
+                    .validAt(crifReport.getValidTill())
                     .build();
         } else {
             throw new CRIFApiException("External API returned null");
