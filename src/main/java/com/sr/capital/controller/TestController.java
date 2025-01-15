@@ -3,6 +3,7 @@ package com.sr.capital.controller;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
+import com.sr.capital.excelprocessor.service.ExcelProcessingService;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.dto.response.ValidateTokenResponse;
 import com.sr.capital.external.service.CommunicationService;
@@ -38,6 +39,7 @@ public class TestController {
     final ServicesHandler servicesHandler;
     final CommunicationService communicationService;
     final WebClientUtil webClientUtil;
+    final ExcelProcessingService excelProcessingService;
 
     @GetMapping()
     public GenericResponse testValidateTokenApi(@RequestParam("token") String token) throws UnirestException, CustomException {
@@ -91,6 +93,13 @@ public class TestController {
     public GenericResponse test()  {
 
         return ResponseBuilderUtil.getResponse(testService.setTempValueInRadis(),Constants.StatusEnum.SUCCESS,
+                "done",  HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/excelTest")
+    public GenericResponse processExcel() throws IOException {
+
+        return ResponseBuilderUtil.getResponse(excelProcessingService.processExcel(null),Constants.StatusEnum.SUCCESS,
                 "done",  HttpStatus.SC_OK);
     }
     @GetMapping("/redis-set-temp-value1")

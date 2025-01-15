@@ -1,22 +1,27 @@
 package com.sr.capital.service.impl;
 
+import com.amazonaws.HttpMethod;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.omunify.core.util.ExceptionUtils;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.primary.FileUploadData;
+import com.sr.capital.excelprocessor.model.ProcessUploadDataMessage;
+import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
+import com.sr.capital.kyc.dto.request.FileDetails;
+import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
+import com.sr.capital.kyc.service.DocExtractionService;
 import com.sr.capital.repository.mongo.FileUploadDataRepository;
 import com.sr.capital.service.FileUploadService;
-import com.sr.capital.util.LoggerUtil;
-import com.sr.capital.util.RedisUtil;
-import com.sr.capital.util.S3Util;
+import com.sr.capital.util.*;
 import com.sr.capital.validation.FileValidator;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,16 +39,19 @@ import static com.omunify.core.util.Constants.GlobalErrorEnum.INTERNAL_SERVER_ER
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.FILE_IN_PROGRESS_ERROR;
 import static com.sr.capital.helpers.constants.Constants.Separators.QUERY_PARAM_SEPARATOR;
 import static com.sr.capital.helpers.enums.FileProcessingStatus.ACKNOWLEDGEMENT_PENDING;
+import static com.sr.capital.helpers.enums.KafkaEventTypes.PROCESS_UPLOAD_DATA_EVENT;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileUploadServiceImpl implements FileUploadService {
 
     final FileUploadDataRepository fileUploadDataRepository;
     final RedisUtil redisUtil;
     final AppProperties appProperties;
+    private final DocExtractionService docExtractionService;
+    private final KafkaMessagePublisherUtil kafkaMessagePublisherUtil;
 
-    LoggerUtil loggerUtil =LoggerUtil.getLogger(FileUploadServiceImpl.class);
     @Override
     public String generatePreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId) {
         String preSignedUrl = "";
@@ -54,19 +62,40 @@ public class FileUploadServiceImpl implements FileUploadService {
                 ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_IN_PROGRESS_ERROR, HttpStatus.BAD_REQUEST);
             }
             redisUtil.updateFileInCache(tenantId, fileUploadRequestDto.getFileName());
-            preSignedUrl = generatePreSignedUrl(fileUploadRequestDto, tenantId, startTime);
+            preSignedUrl = generateUrl(fileUploadRequestDto, tenantId, startTime);
             saveFileUploadData(fileUploadRequestDto, tenantId, userId, preSignedUrl, RequestData.getCorrelationId(), startTime);
         } catch (Exception ex) {
-            loggerUtil.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
+            log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
             ExceptionUtils.throwCustomExceptionWithTrace(INTERNAL_SERVER_ERROR.getCode(), ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR, ex);
         }
         return preSignedUrl;
     }
 
-    @Override
-    public void acknowledgeFile(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId) {
+    private String generateUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, long startTime) {
+        GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
+                .filePath(RequestData.getUserId() + "_" + fileUploadRequestDto.getFileName())
+                .bucketName(appProperties.getBucketName())
+                .httpMethod(HttpMethod.GET)
+                .build();
 
+        log.info("generate pre-signed url ");
+        String preSignedUrl = S3Util.generatePreSignedUrl(preSignedUrlRequest);
+        log.info("pre-signed url " +preSignedUrl);
+
+        return preSignedUrl;
+    }
+
+    @Override
+    public void acknowledgeFile(FileUploadRequestDTO fileUploadRequestDto) throws JsonProcessingException, CustomException {
+        FileUploadData fileUpload = fileUploadDataRepository.findByTenantIdAndCorrelationId(RequestData.getTenantId(), fileUploadRequestDto.getCorrelationId());
+        if (fileUpload != null) {
+            kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(), kafkaMessagePublisherUtil.
+                    getKafkaMessage(MapperUtils.writeValueAsString(fileUploadRequestDto),
+                            PROCESS_UPLOAD_DATA_EVENT.name(), null, null, null));
+        } else {
+            throw new CustomException("Invalid Data");
+        }
     }
 
     @Override
@@ -82,24 +111,24 @@ public class FileUploadServiceImpl implements FileUploadService {
 
                     if(CollectionUtils.isNotEmpty(details.getImages())) {
                         for (String docPath: details.getImages()) {
-                            loggerUtil.info("Processing image: " +docPath);
+                            log.info("Processing image: " +docPath);
 
                             if (io.micrometer.common.util.StringUtils.isNotBlank(docPath)) {
                                 try (InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(),docPath)) {
                                     if (inputStream != null) {
                                         String fileName = docPath;
                                         String filePath = tempDir.getAbsolutePath() + "/" + fileName;
-                                        loggerUtil.info("fileName :- "+ fileName);
-                                        loggerUtil.info("filePath Done:"+ filePath);
+                                        log.info("fileName :- "+ fileName);
+                                        log.info("filePath Done:"+ filePath);
                                         writeInputStreamToFile(inputStream, filePath);
 
                                         addFileToZip(zipOutputStream, filePath, fileName);
 
 
-                                        loggerUtil.info("File "+fileName+" added to the zip");
+                                        log.info("File "+fileName+" added to the zip");
                                     }
                                 } catch (IOException e) {
-                                    loggerUtil.error("Error while processing file from AWS: "+ e.getMessage());
+                                    log.error("Error while processing file from AWS: "+ e.getMessage());
                                 }
                             }
                         }
@@ -108,7 +137,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 }
             }
             if(isAllFileAddedToZip){
-                loggerUtil.info("uploading zip file to s3 ");
+                log.info("uploading zip file to s3 ");
                 String key = docDetails.get(0).getSrCompanyId()+"_"+ UUID.randomUUID()+"_doc.zip";
                 S3Util.uploadFileToS3(appProperties.getBucketName(),key,new File(zipFilePath));
             }
@@ -116,7 +145,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             return zipFilePath;
         }finally {
             if (tempDir != null) {
-                loggerUtil.info("Inside finally block for clean up processing :- ");
+                log.info("Inside finally block for clean up processing :- ");
                 deleteDirectory(tempDir);
             }
         }
@@ -192,7 +221,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             File[] files = directory.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    loggerUtil.info("deleting file:- "+ file.getName());
+                    log.info("deleting file:- "+ file.getName());
                     deleteDirectory(file);
                 }
             }
@@ -214,7 +243,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 outputStream.write(buffer, 0, bytesRead);
             }
         } catch (IOException e) {
-            loggerUtil.error("Error writing input stream to file: " + e.getMessage());
+            log.error("Error writing input stream to file: " + e.getMessage());
             throw e;
         }
     }

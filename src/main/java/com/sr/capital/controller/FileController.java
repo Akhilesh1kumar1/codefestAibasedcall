@@ -1,9 +1,11 @@
 package com.sr.capital.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 import com.sr.capital.dto.request.file.FileUploadResponseDTO;
+import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.service.FileUploadService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import jakarta.validation.Valid;
@@ -32,5 +34,13 @@ public class FileController {
         return ResponseBuilderUtil.getResponse(new FileUploadResponseDTO(preSignedUrl), SUCCESS,
                 PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
     }
+
+    @PostMapping("/acknowledge")
+    public GenericResponse<Object> acknowledgeFileUpload(@RequestBody FileUploadRequestDTO fileDetails) throws CustomException, JsonProcessingException {
+
+        fileService.acknowledgeFile(fileDetails);
+
+        return ResponseBuilderUtil.getResponse(null, SUCCESS,
+                PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);    }
 
 }

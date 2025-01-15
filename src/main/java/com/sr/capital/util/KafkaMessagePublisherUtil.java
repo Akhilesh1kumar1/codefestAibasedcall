@@ -51,6 +51,7 @@ public class KafkaMessagePublisherUtil {
         Map<String, String> headers = new HashMap<>();
         headers.put(CORRELATION_HEADER, correlationId);
         headers.put(TENANT_HEADER, RequestData.getTenantId());
+        headers.put(USER_HEADER, RequestData.getUserId() != null ? String.valueOf(RequestData.getUserId()) : "");
         headers.put(LOAN_VENDOR_NAME,loanVendorName);
         msgMessage.setHeaders(headers);
         return msgMessage;

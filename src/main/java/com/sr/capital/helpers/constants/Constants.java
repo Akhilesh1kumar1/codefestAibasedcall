@@ -1,7 +1,6 @@
 package com.sr.capital.helpers.constants;
 
 import com.sr.capital.helpers.enums.DocType;
-import org.redisson.api.RMapCache;
 
 import java.util.Map;
 import java.util.Set;
