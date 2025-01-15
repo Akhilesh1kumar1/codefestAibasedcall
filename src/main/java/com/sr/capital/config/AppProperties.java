@@ -368,8 +368,18 @@ public class AppProperties {
 
     @Value("${external.crif.public.company-id}")
     private String publicCompanyId;
+    @Value("${external.google.baseUri}")
+    private String googleBaseUri;
+
+    @Value("${external.google.captcha-secret-key}")
+    private String captchaSiteVerificationSecretKey;
 
     @Value("${external.crif.public.user-id}")
     private String publicUserId;
+    @Value("${external.google.endpoints.captcha-site-verify}")
+    private String captchaSiteVerificationEndpoint;
+
+    @Value("${app.captcha-verification.enabled}")
+    private Boolean captchaVerificationEnabled;
 
 }

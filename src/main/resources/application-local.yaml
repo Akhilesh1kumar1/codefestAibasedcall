@@ -53,6 +53,8 @@ spring:
     import: optional:file:.env[.properties]
 
 app:
+  captcha-verification:
+    enabled: true
   cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
@@ -159,6 +161,11 @@ management:
 
 ####################################### KARZA API #############################################
 external:
+  google:
+    baseUri: https://www.google.com
+    captcha-secret-key: 6LcPP7cqAAAAACUvJnEkjG9wGhVsQV1cVLcBJXx1
+    endpoints:
+      captcha-site-verify: /recaptcha/api/siteverify
   karza:
     enabled: false
     vendor-token: ${KARZA_VENDOR_TOKEN:test}
@@ -327,5 +334,27 @@ is:
   encryption:
     enabled: ${IS_ENCRYPTION_ENABLED:false}
 
+bypass:
+  apis:
+    "/api/public/crif/generate-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "GenerateAction"
+    "/api/public/crif/verify-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "VerifyAction"
+    "/api/public/crif/validate":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "ValidateAction"
+    "/api/public/crif/purge":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "PurgeAction"
 
 

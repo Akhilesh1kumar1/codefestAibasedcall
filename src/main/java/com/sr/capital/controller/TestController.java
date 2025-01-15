@@ -87,7 +87,7 @@ public class TestController {
     }
 
     //TODO ::
-    @GetMapping("/redis-set-temp-value")
+    @PostMapping("/redis-set-temp-value")
     public GenericResponse test()  {
 
         return ResponseBuilderUtil.getResponse(testService.setTempValueInRadis(),Constants.StatusEnum.SUCCESS,
