@@ -43,23 +43,20 @@ public class RedisExpiryListener {
 
     private void setupExpirationListener() {
         String expireChannel = "__keyevent@0__:expired"; // Channel for key expiration events
-        log.info("TTL listener is executing for key ::" + "1");
 
         redissonClient.getTopic(expireChannel, new StringCodec()).addListener(String.class, new MessageListener<String>() {
 
             @Override
             public void onMessage(CharSequence channel, String msg) {
 
-            log.info("TTL listener is executing for key ::" + msg);
-
             if (msg.contains(Constants.RedisKeys.LOAN_AT_VENDOR)) {
+                log.info("TTL listener is executing for key ::" + msg);
                 handleKeyExpiration(msg);
             }
 
             }
 
         });
-        log.info("TTL listener is executing for key ::" + "2");
 
     }
     private void handleKeyExpiration(String expiredKey) {
