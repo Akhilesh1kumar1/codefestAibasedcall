@@ -27,9 +27,8 @@ public class FileController {
     final FileUploadService fileService;
 
     @PostMapping(value = "/presigned-url")
-    public GenericResponse<String> generatePreSignedUrl(@RequestHeader(TENANT_ID) String tenantId,
-                                                        @RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
-        String preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, tenantId, RequestData.getUserId());
+    public GenericResponse<String> generatePreSignedUrl(@RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
+        String preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId());
         return ResponseBuilderUtil.getResponse(preSignedUrl, SUCCESS,
                 PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
     }
