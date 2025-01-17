@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
-import com.sr.capital.dto.request.file.FileUploadResponseDTO;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.service.FileUploadService;
 import com.sr.capital.util.ResponseBuilderUtil;
@@ -28,10 +27,10 @@ public class FileController {
     final FileUploadService fileService;
 
     @PostMapping(value = "/presigned-url")
-    public GenericResponse<FileUploadResponseDTO> generatePreSignedUrl(@RequestHeader(TENANT_ID) String tenantId,
-                                                                       @RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
+    public GenericResponse<String> generatePreSignedUrl(@RequestHeader(TENANT_ID) String tenantId,
+                                                        @RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
         String preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, tenantId, RequestData.getUserId());
-        return ResponseBuilderUtil.getResponse(new FileUploadResponseDTO(preSignedUrl), SUCCESS,
+        return ResponseBuilderUtil.getResponse(preSignedUrl, SUCCESS,
                 PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
     }
 
