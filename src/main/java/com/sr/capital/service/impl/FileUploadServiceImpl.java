@@ -63,7 +63,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
             redisUtil.updateFileInCache(tenantId, fileUploadRequestDto.getFileName());
             preSignedUrl = generateUrl(fileUploadRequestDto, tenantId, startTime);
-            saveFileUploadData(fileUploadRequestDto, tenantId, userId, preSignedUrl, RequestData.getCorrelationId(), startTime);
+            saveFileUploadData(fileUploadRequestDto, tenantId, userId, preSignedUrl, fileUploadRequestDto.getCorrelationId(), startTime);
         } catch (Exception ex) {
             log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
             ExceptionUtils.throwCustomExceptionWithTrace(INTERNAL_SERVER_ERROR.getCode(), ex.getMessage(),
@@ -92,7 +92,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         if (fileUpload != null) {
             kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(), kafkaMessagePublisherUtil.
                     getKafkaMessage(MapperUtils.writeValueAsString(fileUploadRequestDto),
-                            PROCESS_UPLOAD_DATA_EVENT.name(), null, null, null));
+                            PROCESS_UPLOAD_DATA_EVENT.name(), null, fileUploadRequestDto.getCorrelationId(), null));
         } else {
             throw new CustomException("Invalid Data");
         }
