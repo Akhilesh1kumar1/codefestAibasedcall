@@ -360,6 +360,16 @@ bypass:
       method:
         - POST
       captchaEnabled: true
-      captchaAction: "FetchDocType"
+      captchaAction: "FetchDocTypeAction"
+    "/api/public/crif/resend-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "ReSendOtpAction"
+    "/api/public/crif/banners":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "FetchBannerAction"
 
 
