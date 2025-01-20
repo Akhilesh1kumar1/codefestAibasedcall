@@ -76,11 +76,11 @@ public class FileUploadServiceImpl implements FileUploadService {
         GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
                 .filePath(fileUploadRequestDto.getFileName())
                 .bucketName(appProperties.getBucketName())
-                .httpMethod(HttpMethod.POST)
+                .httpMethod(HttpMethod.PUT)
                 .build();
 
         log.info("generate pre-signed url ");
-        String preSignedUrl = S3Util.generatePreSignedUrl(preSignedUrlRequest);
+        String preSignedUrl = S3Util.generateUrl(preSignedUrlRequest);
         log.info("pre-signed url " +preSignedUrl);
 
         return preSignedUrl;
