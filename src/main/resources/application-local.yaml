@@ -358,7 +358,7 @@ bypass:
       captchaAction: "PurgeAction"
     "/api/public/crif/get-doc-type":
       method:
-        - POST
+        - GET
       captchaEnabled: true
       captchaAction: "FetchDocTypeAction"
     "/api/public/crif/resend-otp":
@@ -368,8 +368,7 @@ bypass:
       captchaAction: "ReSendOtpAction"
     "/api/public/crif/banners":
       method:
-        - POST
+        - GET
       captchaEnabled: true
       captchaAction: "FetchBannerAction"
-
 

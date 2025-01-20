@@ -55,10 +55,11 @@ public class DataProcessService {
                 .loanId(loanApplication.getId())
                 .disbursedDate(loanDetailsFieldFromExcel.getDisbursementDate())
                 .loanAmountDisbursed(BigDecimal.valueOf(loanDetailsFieldFromExcel.getDisbursementAmount()))
-//                .interestRateAtDisbursal(loanDetailsFieldFromExcel.getInterestOutstanding() != null ? Double.valueOf(loanDetailsFieldFromExcel.getInterestOutstanding()) : 0)
+               .emiAmount(BigDecimal.valueOf(loanDetailsFieldFromExcel.getMonthlyEMIAmount() != null ? loanDetailsFieldFromExcel.getMonthlyEMIAmount() : 0))
+               .interestRateAtDisbursal(loanDetailsFieldFromExcel.getDisbursementLoanROI() != null ? loanDetailsFieldFromExcel.getDisbursementLoanROI() : 0)
 //                .interestAmountAtDisbursal(loanDetailsFieldFromExcel.getInterestAmountAtSanction())
 //                .vendorDisbursedId(disbursementAccount.getDisbursementId())
-                .disbursedDate(CoreUtil.convertTOdate(String.valueOf(loanDetailsFieldFromExcel.getDisbursementDate()), "yyyy-MM-dd"))
+                .disbursedDate(loanDetailsFieldFromExcel.getDisbursementDate())
                 .build();
         loanDisbursedRepository.save(loanDisbursed);
     }
@@ -87,7 +88,7 @@ public class DataProcessService {
                 .vendorStatus(loanDetailsFieldFromExcel.getVendorLoanStatus())
 //                .comment(loanDetailsFieldFromExcel.getRejectReason())
                 .loanAmountApproved(BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionAmount()))
-//                .interestRate(loanDetailsFieldFromExcel.getInterestRate())
+                .interestRate(loanDetailsFieldFromExcel.getDisbursementLoanROI())
 //                .interestAmountAtSanction(BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionAmount()))
                 .loanDuration(loanDetailsFieldFromExcel.getSanctionLoanTenure()).
                 totalDisbursedAmount(BigDecimal.valueOf(loanDetailsFieldFromExcel.getDisbursementAmount()))
