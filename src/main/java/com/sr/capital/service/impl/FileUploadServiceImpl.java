@@ -76,7 +76,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
                 .filePath(fileUploadRequestDto.getFileName())
                 .bucketName(appProperties.getBucketName())
-                .httpMethod(HttpMethod.GET)
+                .httpMethod(HttpMethod.POST)
                 .build();
 
         log.info("generate pre-signed url ");
