@@ -3,6 +3,7 @@ package com.sr.capital.external.truthscreen.service.impl;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.exception.custom.RequestTransformerNotFoundException;
+import com.sr.capital.external.truthscreen.adapter.CorpVedaAdapter;
 import com.sr.capital.external.truthscreen.adapter.TruthScreenAdapter;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
@@ -13,8 +14,10 @@ import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.repository.TruthScreenDocDetailsRepository;
 import com.sr.capital.external.truthscreen.service.IdService;
+import com.sr.capital.external.truthscreen.service.strategy.AdapterStrategy;
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenEntityConstructorStrategy;
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenIdSearchResponseStrategy;
+import com.sr.capital.external.truthscreen.service.strategy.TruthScreenRequestValidatorStrategy;
 import com.sr.capital.external.truthscreen.service.transformers.TruthScreenExternalRequestTransformerStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,27 +37,29 @@ public class IdServiceImpl implements IdService {
 
     private final TruthScreenEntityConstructorStrategy truthEntityConstructorStrategy;
 
-    @Override
-    public IdSearchResponseDto<?> sendRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
-        TruthScreenDocDetails<?> truthScreenDocDetails = truthScreenDocDetailsRepository.findBySrCompanyIdAndTruthScreenDocType(RequestData.getTenantId(), TruthScreenDocType.fromValue(requestDTO.getDocType()));
+    private final TruthScreenRequestValidatorStrategy truthScreenRequestValidatorStrategy;
 
+    @Override
+    public IdSearchResponseDto<?> sendRequest(IdSearchRequestDto requestDTO) throws Exception {
+        TruthScreenDocDetails<?> truthScreenDocDetails = truthScreenDocDetailsRepository.findBySrCompanyIdAndTruthScreenDocType(RequestData.getTenantId(), TruthScreenDocType.fromValue(requestDTO.getDocType()));
+        TruthScreenDocOrchestratorRequest truthScreenDocOrchestratorRequest = new TruthScreenDocOrchestratorRequest();
+        //truthScreenDocOrchestratorRequest = truthScreenRequestValidatorStrategy.validateRequest(truthScreenDocOrchestratorRequest, truthScreenDocDetails, TruthScreenDocType.fromValue(requestDTO.getDocType()));
         if (truthScreenDocDetails == null) {
-            return processNewRequest(requestDTO);
+            return processNewRequest(requestDTO, truthScreenDocOrchestratorRequest);
         } else {
             return processExistingRequest(truthScreenDocDetails, requestDTO);
         }
     }
 
-    private IdSearchResponseDto<?> processNewRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
-        TruthScreenDocOrchestratorRequest truthScreenDocOrchestratorRequest = new TruthScreenDocOrchestratorRequest();
+    private IdSearchResponseDto<?> processNewRequest(IdSearchRequestDto requestDTO, TruthScreenDocOrchestratorRequest truthScreenDocOrchestratorRequest) throws RequestTransformerNotFoundException {
         truthScreenDocOrchestratorRequest.setDocType(TruthScreenDocType.fromValue(requestDTO.getDocType()));
         truthScreenDocOrchestratorRequest.setDocNumber(requestDTO.getDocNumber());
         truthScreenDocOrchestratorRequest.setSrCompanyId(RequestData.getTenantId());
-
         TruthScreenBaseRequest<?> truthScreenBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(truthScreenDocOrchestratorRequest);
         truthScreenDocOrchestratorRequest.setTruthScreenBaseRequest(truthScreenBaseRequest);
 
         try {
+
             TruthScreenBaseResponse<?> truthScreenBaseResponse = truthScreenAdapter.extractDetails(truthScreenBaseRequest);
             truthScreenDocOrchestratorRequest.setTruthScreenBaseResponse(truthScreenBaseResponse);
 

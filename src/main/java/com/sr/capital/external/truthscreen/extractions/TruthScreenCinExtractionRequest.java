@@ -1,4 +1,4 @@
-package com.sr.capital.external.truthscreen.adapter.extractions;
+package com.sr.capital.external.truthscreen.extractions;
 
 import com.sr.capital.external.truthscreen.dto.data.CinExtractionRequestData;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;

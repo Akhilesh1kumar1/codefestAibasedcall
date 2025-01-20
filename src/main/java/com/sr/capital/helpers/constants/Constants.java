@@ -179,6 +179,8 @@ public final class Constants {
 
         public static final String CRIF_CONSENT_ID_KEY = "crif_consent_id";
         public static final String LOAN_AT_VENDOR = "LOAN_AT_VENDOR";
+
+        public static final String CORP_VEDA_VENDOR_TOKEN = "corp_veda_vendor_token";
     }
 
     public static final class Headers {

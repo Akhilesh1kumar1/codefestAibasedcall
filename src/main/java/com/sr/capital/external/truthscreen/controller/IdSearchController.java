@@ -19,7 +19,7 @@ public class IdSearchController {
     private final IdService idService;
 
     @PostMapping
-    public IdSearchResponseDto sendRequest(@RequestBody IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException {
+    public IdSearchResponseDto sendRequest(@RequestBody IdSearchRequestDto requestDTO) throws Exception {
         IdSearchResponseDto response = idService.sendRequest(requestDTO);
         return response;
     }

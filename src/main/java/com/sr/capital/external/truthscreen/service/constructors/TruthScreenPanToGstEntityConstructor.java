@@ -4,7 +4,6 @@ import com.omunify.encryption.algorithm.AES256;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.external.truthscreen.dto.data.PanToGstExtractionResponseData;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
-import com.sr.capital.external.truthscreen.entity.GSTDetails;
 import com.sr.capital.external.truthscreen.entity.PanToGstDetails;
 import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenEntityConstructor;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @Service
 public class TruthScreenPanToGstEntityConstructor implements TruthScreenEntityConstructor {

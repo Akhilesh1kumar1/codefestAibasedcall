@@ -16,6 +16,9 @@ import java.security.NoSuchProviderException;
 public class TruthScreenExternalRequestTransformerStrategy {
 
     @Autowired
+    private CorpVedaRequestTransformer corpVedaRequestTransformer;
+
+    @Autowired
     private TruthScreenCinRequestTransformer cinRequestTransformer;
 
     @Autowired
@@ -54,6 +57,9 @@ public class TruthScreenExternalRequestTransformerStrategy {
                 break;
             case CIN:
                 requestTransformer = cinRequestTransformer;
+                break;
+            case CIN_SEARCH:
+                requestTransformer = corpVedaRequestTransformer;
                 break;
             default:
                 throw new RequestTransformerNotFoundException();

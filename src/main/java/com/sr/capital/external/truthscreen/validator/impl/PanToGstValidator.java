@@ -1,18 +1,20 @@
-package com.sr.capital.validation;
+package com.sr.capital.external.truthscreen.validator.impl;
 
 import com.sr.capital.exception.verification.InvalidPanException;
-import com.sr.capital.service.RequestValidator;
+import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
+import com.sr.capital.external.truthscreen.validator.TruthScreenRequestValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class PANValidator implements RequestValidator {
+public class PanToGstValidator implements TruthScreenRequestValidator {
+
+
 
     private static final String PAN_REGEX = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$";
 
-    // Method to validate PAN number
     private Boolean validatePAN(String pan) {
         Pattern pattern = Pattern.compile(PAN_REGEX);
         Matcher matcher = pattern.matcher(pan);
@@ -20,13 +22,15 @@ public class PANValidator implements RequestValidator {
     }
 
     @Override
-    public <T, U> T validateRequest(U request) throws Exception {
+    public <T, U> T validateRequest(U request, TruthScreenDocDetails truthScreenDocDetails) throws Exception {
         Boolean result= validatePAN(String.valueOf(request));
+        if (result){
 
-        if(!result){
+        }
+        else{
             throw new InvalidPanException();
         }
-        return (T)result;
+        return null;
     }
-}
 
+}

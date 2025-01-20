@@ -16,7 +16,8 @@ public enum ServiceName {
     KARZA("karza"),
     FLEXI("flexi"),
     TRUTHSCREEN("truthscreen"),
-    CRIF("crif");
+    CRIF("crif"),
+    CORPVEDA("corpveda");
 
     final String name;
     ServiceName(String name) {

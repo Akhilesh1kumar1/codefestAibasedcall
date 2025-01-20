@@ -15,12 +15,12 @@ import lombok.experimental.FieldDefaults;
 public class IdSearchRequestDto {
 
     @JsonProperty("trans_id")
-    private String transId;
+    String transId;
 
     @JsonProperty("doc_type")
-    private int docType;
+     int docType;
 
     @JsonProperty("doc_number")
-    private String docNumber;
+    String docNumber;
 
 }

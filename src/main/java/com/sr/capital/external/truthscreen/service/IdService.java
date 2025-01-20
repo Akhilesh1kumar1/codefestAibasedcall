@@ -6,6 +6,6 @@ import com.sr.capital.external.truthscreen.dto.response.IdSearchResponseDto;
 
 public interface IdService {
 
-    IdSearchResponseDto<?> sendRequest(IdSearchRequestDto requestDTO) throws RequestTransformerNotFoundException;
+    IdSearchResponseDto<?> sendRequest(IdSearchRequestDto requestDTO) throws Exception;
 
 }

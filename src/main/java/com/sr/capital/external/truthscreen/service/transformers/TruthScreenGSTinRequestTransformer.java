@@ -1,6 +1,6 @@
 package com.sr.capital.external.truthscreen.service.transformers;
 
-import com.sr.capital.external.truthscreen.adapter.extractions.TruthScreenGstExtractionRequest;
+import com.sr.capital.external.truthscreen.extractions.TruthScreenGstExtractionRequest;
 import com.sr.capital.external.truthscreen.dto.data.GstinExtractionRequestData;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;

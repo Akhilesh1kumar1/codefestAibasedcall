@@ -361,6 +361,25 @@ public class AppProperties {
     @Value("${external.authbridge.cin-url}")
     private String authBridgeCinUrl;
 
+    //CorpVeda
+    @Value("${external.corpveda.vendor-username}")
+    private String corpVedaUsername;
+
+    @Value("${external.corpveda.vendor-password}")
+    private String corpVedaPassword;
+
+    @Value("${external.corpveda.client-id}")
+    private String corpVedaClientId;
+
+    @Value("${external.corpveda.base.url}")
+    private String corpVedaBaseUrl;
+
+    @Value("${external.corpveda.place-order}")
+    private String corpVedaPlaceOrderUrl;
+
+    @Value("${external.corpveda.login-url}")
+    private String corpVedaLoginUrl;
+
     @Value("${external.crif.access-code.user}")
     private String CrifUser;
     @Value("${external.crif.access-code.password}")
