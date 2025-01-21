@@ -203,29 +203,33 @@ public class LoanStatusUpdateHandlerServiceImpl {
 
     private void saveLoanMetaData(LoanApplication loanApplication, LoanStatusUpdateWebhookDto loanStatusUpdateWebhookDto) {
 
-        LoanMetaData loanMetaData = loanMetaDataEntityService.getLoanMetaDataDetails(loanApplication.getId());
-        if(loanMetaData==null){
-            TypeReference<List<Checkpoints>> tref =new TypeReference<List<Checkpoints>>() {
-            };
-            List<Checkpoints> checkpoints = MapperUtils.convertValue(loanStatusUpdateWebhookDto.getCheckpoints(),tref);
+        try {
+            LoanMetaData loanMetaData = loanMetaDataEntityService.getLoanMetaDataDetails(loanApplication.getId());
+            if (loanMetaData == null) {
+                TypeReference<List<Checkpoints>> tref = new TypeReference<List<Checkpoints>>() {
+                };
+                List<Checkpoints> checkpoints = MapperUtils.convertValue(loanStatusUpdateWebhookDto.getCheckpoints(), tref);
 
-            loanMetaData =LoanMetaData.builder().loanId(loanApplication.getId()).checkPoints(checkpoints).externalStatus1(loanStatusUpdateWebhookDto.getS1())
-                    .externalStatus2(loanStatusUpdateWebhookDto.getS2()).externalStatus3(loanStatusUpdateWebhookDto.getS3()).leadCode(loanStatusUpdateWebhookDto.getLeadCode())
-                    .externalApplicationStatus(loanStatusUpdateWebhookDto.getApplicationStatus()).build();
-        }else{
+                loanMetaData = LoanMetaData.builder().loanId(loanApplication.getId()).checkPoints(checkpoints).externalStatus1(loanStatusUpdateWebhookDto.getS1())
+                        .externalStatus2(loanStatusUpdateWebhookDto.getS2()).externalStatus3(loanStatusUpdateWebhookDto.getS3()).leadCode(loanStatusUpdateWebhookDto.getLeadCode())
+                        .externalApplicationStatus(loanStatusUpdateWebhookDto.getApplicationStatus()).build();
+            } else {
 
-            TypeReference<List<Checkpoints>> tref =new TypeReference<List<Checkpoints>>() {
-            };
-            List<Checkpoints> checkpoints = MapperUtils.convertValue(loanStatusUpdateWebhookDto.getCheckpoints(),tref);
+                TypeReference<List<Checkpoints>> tref = new TypeReference<List<Checkpoints>>() {
+                };
+                List<Checkpoints> checkpoints = MapperUtils.convertValue(loanStatusUpdateWebhookDto.getCheckpoints(), tref);
 
-            loanMetaData.setCheckPoints(checkpoints);
-            loanMetaData.setExternalStatus1(loanStatusUpdateWebhookDto.getS1());
-            loanMetaData.setExternalStatus2(loanStatusUpdateWebhookDto.getS2());
-            loanMetaData.setExternalStatus3(loanStatusUpdateWebhookDto.getS3());
-            loanMetaData.setExternalApplicationStatus(loanStatusUpdateWebhookDto.getApplicationStatus());
-            loanMetaData.setLastModifiedAt(LocalDateTime.now());
+                loanMetaData.setCheckPoints(checkpoints);
+                loanMetaData.setExternalStatus1(loanStatusUpdateWebhookDto.getS1());
+                loanMetaData.setExternalStatus2(loanStatusUpdateWebhookDto.getS2());
+                loanMetaData.setExternalStatus3(loanStatusUpdateWebhookDto.getS3());
+                loanMetaData.setExternalApplicationStatus(loanStatusUpdateWebhookDto.getApplicationStatus());
+                loanMetaData.setLastModifiedAt(LocalDateTime.now());
+            }
+            loanMetaDataEntityService.saveLoanMetaData(loanMetaData);
+        }catch (Exception ex){
+            log.error("error in saving loanMeta data "+ex.getCause());
         }
-        loanMetaDataEntityService.saveLoanMetaData(loanMetaData);
 
     }
 
