@@ -8,10 +8,7 @@ import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.primary.FileUploadData;
-import com.sr.capital.excelprocessor.model.ProcessUploadDataMessage;
 import com.sr.capital.exception.custom.CustomException;
-import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
-import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.service.DocExtractionService;
 import com.sr.capital.repository.mongo.FileUploadDataRepository;
@@ -62,7 +59,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_IN_PROGRESS_ERROR, HttpStatus.BAD_REQUEST);
             }
             redisUtil.updateFileInCache(tenantId, fileUploadRequestDto.getFileName());
-            preSignedUrl = generateUrl(fileUploadRequestDto, tenantId, startTime);
+            preSignedUrl = generateUrl(fileUploadRequestDto, tenantId, startTime, HttpMethod.PUT);
             saveFileUploadData(fileUploadRequestDto, tenantId, userId, preSignedUrl, fileUploadRequestDto.getCorrelationId(), startTime);
         } catch (Exception ex) {
             log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
@@ -72,11 +69,12 @@ public class FileUploadServiceImpl implements FileUploadService {
         return preSignedUrl;
     }
 
-    private String generateUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, long startTime) {
+    @Override
+    public String generateUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, long startTime, HttpMethod method) {
         GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
                 .filePath(fileUploadRequestDto.getFileName())
                 .bucketName(appProperties.getBucketName())
-                .httpMethod(HttpMethod.PUT)
+                .httpMethod(method)
                 .build();
 
         log.info("generate pre-signed url ");

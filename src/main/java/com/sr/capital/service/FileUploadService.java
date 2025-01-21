@@ -1,6 +1,7 @@
 package com.sr.capital.service;
 
 
+import com.amazonaws.HttpMethod;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
@@ -16,6 +17,8 @@ public interface FileUploadService {
     String generatePreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId);
 
 //    void acknowledgeFile(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId);
+
+    String generateUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, long startTime, HttpMethod method);
 
     void acknowledgeFile(FileUploadRequestDTO fileUploadRequestDto) throws JsonProcessingException, CustomException;
 
