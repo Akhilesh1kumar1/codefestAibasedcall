@@ -4,6 +4,7 @@ import com.amazonaws.HttpMethod;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omunify.kafka.consumer.thread.MainConsumerThread;
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.dto.request.UserDetails;
 import com.sr.capital.dto.response.CompanySalesDetails;
@@ -135,7 +136,10 @@ public class ExternalServiceImpl implements ExternalService {
 
         creditPartnerFactoryService.getPartnerService(loanVendorName).validateExternalRequest(vendorToken, vendorCode);
 
-        kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(),kafkaMessagePublisherUtil.getKafkaMessage(MapperUtils.writeValueAsString(loanStatusWebhook), KafkaEventTypes.LOAN_STATUS_UPDATE.name(),null,null,loanVendorName));
+
+        String groupId = (String) (loanStatusWebhook.get("loanCode")!=null? loanStatusWebhook.get("loanCode"): loanStatusWebhook.get("clientLoanId"));
+
+        kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(),kafkaMessagePublisherUtil.getKafkaMessage(MapperUtils.writeValueAsString(loanStatusWebhook), KafkaEventTypes.LOAN_STATUS_UPDATE.name(),groupId, RequestData.getCorrelationId(),loanVendorName));
 
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
