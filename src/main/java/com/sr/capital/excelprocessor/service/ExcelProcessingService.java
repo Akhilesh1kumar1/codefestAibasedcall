@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service
@@ -92,8 +93,10 @@ public class ExcelProcessingService {
             }
 
             log.info("upload to s3");
+            File file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
+            S3Util.uploadFileToS3(appProperties.getBucketName(), processUploadDataMessage.getFileName(), file);
             S3Util.uploadObjectTos3(inputStream.readAllBytes(), RequestData.getTenantId(), processUploadDataMessage.getFileName(), appProperties.getBucketName());
-
+            file.delete();
 //            try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
 //                workbook.write(fos);
 //            } catch (IOException e) {
@@ -108,6 +111,25 @@ public class ExcelProcessingService {
         return loanDetailsList;
     }
 
+    public static File convertWorkbookToFile(Workbook workbook, String fileName) throws IOException {
+        // Create a temporary file
+        File tempFile = createTempFile(fileName.substring(0,fileName.lastIndexOf("."))
+                ,fileName.substring(fileName.lastIndexOf(".")));
+
+        // Write the workbook data to the file
+        try (FileOutputStream fileOutputStream = new FileOutputStream(tempFile)) {
+            workbook.write(fileOutputStream);
+        }
+
+        // Close the workbook
+        workbook.close();
+
+        return tempFile;
+    }
+
+    public static File createTempFile(String prefix, String suffix) throws IOException {
+        return Files.createTempFile(prefix, suffix).toFile();
+    }
     private void setValuesFromDoc(LoanDetailsFieldFromExcel loanDetails, Map<String, Integer> columnIndexMap, Row row) {
         loanDetails.setShipRocketApplicationId(getCellValue(row, columnIndexMap, LoanDetailsConstants.SHIPROCKET_APPLICATION_ID));
         loanDetails.setDateOfInitiation(getDateCellValue(row, columnIndexMap, LoanDetailsConstants.DATE_OF_INITIATION));
