@@ -43,7 +43,7 @@ public class DataProcessService {
             saveIntoLoanDisbursed(loanDetailsFieldFromExcel, loanApplicationStatus, loanApplication);
             log.info("Data saved into db");
         } catch (Exception e) {
-            log.error("Error While saving data:  + e.getLocalizedMessage()");
+            log.error("Error While saving data:"  + e.getLocalizedMessage());
             loanDetailsFieldFromExcel.setMessage("Error While saving data: " + e.getLocalizedMessage());
             loanDetailsFieldFromExcel.setCurrentStatus(FAILED);
             throw e;
@@ -68,7 +68,12 @@ public class DataProcessService {
     }
 
     private LoanApplication getLoanDetailsModel(LoanDetailsFieldFromExcel loanDetailsFieldFromExcel) {
-        BaseCreditPartner creditPartner = baseCreditPartnerEntityService.getCreditPartnerByName(loanDetailsFieldFromExcel.getLoanVendorName());
+        BaseCreditPartner creditPartner = null;
+        try {
+            creditPartner = baseCreditPartnerEntityService.getCreditPartnerByName(loanDetailsFieldFromExcel.getLoanVendorName());
+        } catch (Exception e) {
+            log.error("Vendor not found with given name " + loanDetailsFieldFromExcel.getLoanVendorName());
+        }
 
         LoanApplication.LoanApplicationBuilder builder = LoanApplication.builder()
                 .srCompanyId(Long.valueOf(loanDetailsFieldFromExcel.getCompanyId()))

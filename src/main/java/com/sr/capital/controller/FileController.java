@@ -37,7 +37,7 @@ public class FileController {
     public GenericResponse<String> downloadDoc(@RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
         String preSignedUrl = fileService.generateDownloadPreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId(), HttpMethod.GET);
         return ResponseBuilderUtil.getResponse(preSignedUrl, SUCCESS,
-                ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
+                PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
     }
 
     @PostMapping("/acknowledge")
@@ -46,6 +46,6 @@ public class FileController {
         fileService.acknowledgeFile(fileDetails);
 
         return ResponseBuilderUtil.getResponse(null, SUCCESS,
-                PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);    }
+                ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);    }
 
 }
