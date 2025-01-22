@@ -12,6 +12,7 @@ import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -38,16 +39,16 @@ public class ExcelProcessingService {
         List<LoanDetailsFieldFromExcel> loanDetailsList = new ArrayList<>();
         int lastColumIndex = 0;
 
-//        String excelFilePath = "/home/akhileshkumar/IdeaProjects/capital/src/main/resources/templates/sheet.xlsx";
-//        try (FileInputStream fis = new FileInputStream(new File(excelFilePath));
-//             Workbook workbook = new XSSFWorkbook(fis)) {
+        String excelFilePath = "/home/akhileshkumar/IdeaProjects/capital/src/main/resources/templates/sheet.xlsx";
+        try (FileInputStream fis = new FileInputStream(new File(excelFilePath));
+             Workbook workbook = new XSSFWorkbook(fis)) {
 
         log.info("Started Fetching from s3 bucket");
-        InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), processUploadDataMessage.getFileName());
-        log.info("file fetched Starting processing");
-        log.info(String.valueOf("Input Stream " + inputStream != null + " FIleName " + processUploadDataMessage.getFileName()));
-        File file = null;
-        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+//        InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), processUploadDataMessage.getFileName());
+//        log.info("file fetched Starting processing");
+//        log.info(String.valueOf("Input Stream " + inputStream != null + " FIleName " + processUploadDataMessage.getFileName()));
+//        File file = null;
+//        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
 
@@ -99,37 +100,37 @@ public class ExcelProcessingService {
             }
 
             log.info("upload to s3");
-            file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
-            S3Util.uploadFileToS3(appProperties.getBucketName(), processUploadDataMessage.getFileName(), file);
-            boolean isDeleted = file.delete();
-            log.info("Is Temp File Deleted ?" + isDeleted);
-//            try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
-//                workbook.write(fos);
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
+//            file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
+//            S3Util.uploadFileToS3(appProperties.getBucketName(), processUploadDataMessage.getFileName(), file);
+//            boolean isDeleted = file.delete();
+//            log.info("Is Temp File Deleted ?" + isDeleted);
+            try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
+                workbook.write(fos);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             log.info("Upload updated Data");
         } catch (IOException e) {
             log.error(e.getMessage() + e);
-            if (file != null) {
-                file.delete();
-            }
+//            if (file != null) {
+//                file.delete();
+//            }
 
         }
 
         LocalDateTime processEndTime = LocalDateTime.now();
-        updateDataInDb(loanDetailsList, processUploadDataMessage.getUserId(), RequestData.getTenantId(), processUploadDataMessage.getFileName(), processStartTime, processEndTime);
+        updateDataInDb(loanDetailsList, processUploadDataMessage.getUserId(), processUploadDataMessage.getFileName(), RequestData.getTenantId(), processStartTime, processEndTime);
         log.info("Data updated in db");
 
         return loanDetailsList;
     }
 
     private void updateDataInDb(List<LoanDetailsFieldFromExcel> loanDetailsList, Long userId, String fileName, String tenantId, LocalDateTime processStartTime, LocalDateTime processEndTime) {
-        log.info("Start Updating Db");
+        log.info("Start Updating Db for tenantId, userId, fileName" + tenantId + userId + fileName);
         FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileName);
         if (fileUploadOldData != null) {
-            long failedCount = loanDetailsList.stream().filter(d -> d.getCurrentStatus().equals(LoanDetailsConstants.FAILED)).count();
+            long failedCount = loanDetailsList.stream().filter(d -> d.getCurrentStatus() != null && d.getCurrentStatus().equals(LoanDetailsConstants.FAILED)).count();
             long successCount = loanDetailsList.size() - failedCount;
             fileUploadOldData.setStatus(ACKNOWLEDGEMENT_DONE);
             fileUploadOldData.setFileConsumptionDataDTO(new FileConsumptionDataDTO(loanDetailsList.size(), successCount, failedCount, processStartTime, processEndTime));
