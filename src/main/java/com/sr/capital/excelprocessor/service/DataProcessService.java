@@ -79,7 +79,8 @@ public class DataProcessService {
                 .srCompanyId(Long.valueOf(loanDetailsFieldFromExcel.getCompanyId()))
                 .loanAmountRequested(loanDetailsFieldFromExcel.getSanctionAmount() != null ? BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionAmount()) : BigDecimal.valueOf(0))
 //                .loanOfferId(loanDetailsFieldFromExcel.getLoanOfferId())
-                .loanVendorId(creditPartner != null ? creditPartner.getId() : null)
+                // Todo :: remove static value
+                .loanVendorId(creditPartner != null ? creditPartner.getId() : 1)
                 .vendorLoanId(String.valueOf(loanDetailsFieldFromExcel.getVendorLoanId()))
                 .loanDuration(loanDetailsFieldFromExcel.getSanctionLoanTenure())
                 .loanType(loanDetailsFieldFromExcel.getLoanType())
