@@ -50,18 +50,33 @@ public class FileUploadServiceImpl implements FileUploadService {
     public String generatePreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId, HttpMethod method) {
         String preSignedUrl = "";
         try {
-//            FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileUploadRequestDto.getFileName());
-//            if (fileUploadOldData != null) {
-//                ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_NAME_ALREADY_EXIST_ERROR, HttpStatus.BAD_REQUEST);
-//            }
+            FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileUploadRequestDto.getFileName());
+            if (fileUploadOldData != null) {
+                ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_NAME_ALREADY_EXIST_ERROR, HttpStatus.BAD_REQUEST);
+            }
             long startTime = System.currentTimeMillis();
             FileValidator.validateFileUploadRequest(fileUploadRequestDto);
-//            if (!redisUtil.checkIfFileExists(tenantId)) {
-//                ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_IN_PROGRESS_ERROR, HttpStatus.BAD_REQUEST);
-//            }
-//            redisUtil.updateFileInCache(tenantId, fileUploadRequestDto.getFileName());
+            if (!redisUtil.checkIfFileExists(tenantId)) {
+                ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_IN_PROGRESS_ERROR, HttpStatus.BAD_REQUEST);
+            }
+            redisUtil.updateFileInCache(tenantId, fileUploadRequestDto.getFileName());
             preSignedUrl = generateUrl(fileUploadRequestDto, tenantId, startTime, method);
-//            saveFileUploadData(fileUploadRequestDto, tenantId, userId, preSignedUrl, fileUploadRequestDto.getCorrelationId(), startTime);
+            saveFileUploadData(fileUploadRequestDto, tenantId, userId, preSignedUrl, fileUploadRequestDto.getCorrelationId(), startTime);
+        } catch (Exception ex) {
+            log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
+            ExceptionUtils.throwCustomExceptionWithTrace(INTERNAL_SERVER_ERROR.getCode(), ex.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR, ex);
+        }
+        return preSignedUrl;
+    }
+
+    @Override
+    public String generateDownloadPreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId, HttpMethod method) {
+        String preSignedUrl = "";
+        try {
+            long startTime = System.currentTimeMillis();
+            FileValidator.validateFileUploadRequest(fileUploadRequestDto);
+            preSignedUrl = generateUrl(fileUploadRequestDto, tenantId, startTime, method);
         } catch (Exception ex) {
             log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
             ExceptionUtils.throwCustomExceptionWithTrace(INTERNAL_SERVER_ERROR.getCode(), ex.getMessage(),

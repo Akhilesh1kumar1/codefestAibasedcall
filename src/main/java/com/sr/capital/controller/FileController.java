@@ -34,7 +34,7 @@ public class FileController {
     }
     @PostMapping(value = "/download-doc-url")
     public GenericResponse<String> downloadDoc(@RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
-        String preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId(), HttpMethod.GET);
+        String preSignedUrl = fileService.generateDownloadPreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId(), HttpMethod.GET);
         return ResponseBuilderUtil.getResponse(preSignedUrl, SUCCESS,
                 PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
     }

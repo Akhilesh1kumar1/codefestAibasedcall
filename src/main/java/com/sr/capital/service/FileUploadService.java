@@ -17,6 +17,8 @@ public interface FileUploadService {
 
 //    void acknowledgeFile(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId);
 
+    String generateDownloadPreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId, HttpMethod method);
+
     void acknowledgeFile(FileUploadRequestDTO fileUploadRequestDto) throws JsonProcessingException, CustomException;
 
     String downloadAndAddFileToZip(List<KycDocDetails<?>> docDetails) ;
