@@ -102,6 +102,7 @@ public final class Constants {
         public static final String FILE_NAME_MISMATCH = "Acknowledgement is being done for a different file concerned with correlation ID.";
         public static final String STATUS_MISMATCH = "The request is already acknowledged.";
         public static final String FILE_IN_PROGRESS_ERROR = "A file is already in progress. Please retry after some time.";
+        public static final String FILE_NAME_ALREADY_EXIST_ERROR = "A file with given name is already present. Please retry with different file Name.";
 
         public static final String VALID_PAN = "Pan Number is in valid format";
 

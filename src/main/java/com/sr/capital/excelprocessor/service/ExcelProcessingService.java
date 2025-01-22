@@ -2,22 +2,26 @@ package com.sr.capital.excelprocessor.service;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
+import com.sr.capital.dto.request.file.FileConsumptionDataDTO;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
+import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.excelprocessor.model.LoanDetailsFieldFromExcel;
 import com.sr.capital.excelprocessor.util.LoanDetailsConstants;
-import com.sr.capital.helpers.constants.Constants;
+import com.sr.capital.repository.mongo.FileUploadDataRepository;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.sr.capital.helpers.enums.FileProcessingStatus.ACKNOWLEDGEMENT_DONE;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +30,11 @@ public class ExcelProcessingService {
 
     private final DataProcessService dataProcessService;
     private final AppProperties appProperties;
+    private final FileUploadDataRepository fileUploadDataRepository;
 
 
     public List<LoanDetailsFieldFromExcel> processExcel(FileUploadRequestDTO processUploadDataMessage) throws IOException {
+        LocalDateTime processStartTime = LocalDateTime.now();
         List<LoanDetailsFieldFromExcel> loanDetailsList = new ArrayList<>();
         int lastColumIndex = 0;
 
@@ -107,8 +113,23 @@ public class ExcelProcessingService {
             log.error(e.getMessage() + e);
     }
 
+        LocalDateTime processEndTime = LocalDateTime.now();
+        updateDataInDb(loanDetailsList, RequestData.getUserId(), RequestData.getTenantId(), processUploadDataMessage.getFileName(), processStartTime, processEndTime);
+
 
         return loanDetailsList;
+    }
+
+    private void updateDataInDb(List<LoanDetailsFieldFromExcel> loanDetailsList, Long userId, String fileName, String tenantId, LocalDateTime processStartTime, LocalDateTime processEndTime) {
+        FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileName);
+        if (fileUploadOldData != null) {
+            long failedCount = loanDetailsList.stream().filter(d -> d.getCurrentStatus().equals(LoanDetailsConstants.FAILED)).count();
+            long successCount = loanDetailsList.size() - failedCount;
+            fileUploadOldData.setStatus(ACKNOWLEDGEMENT_DONE);
+            fileUploadOldData.setFileConsumptionDataDTO(new FileConsumptionDataDTO(loanDetailsList.size(), successCount, failedCount, processStartTime, processEndTime));
+            fileUploadDataRepository.save(fileUploadOldData);
+        }
+
     }
 
     public static File convertWorkbookToFile(Workbook workbook, String fileName) throws IOException {

@@ -21,29 +21,28 @@ import java.time.ZoneId;
 public class FileConsumptionDataDTO {
 
     int totalRecords;
-    int successRecords;
-    int validationFailedRecords;
-    int errorRecords;
-    String errorFilePath;
+    Long successRecords;
+    Long failedRecords;
+//    String errorFilePath;
     LocalDateTime processStartTime;
     LocalDateTime processEndTime;
 
-    public FileConsumptionDataDTO(FileProcessingHelper helper, String failureReportPath) {
-        this.totalRecords = helper.getTotalRows();
-        this.successRecords = 0;
-        this.validationFailedRecords = helper.getRowFailureReports().size();
-        this.errorFilePath = failureReportPath;
-        this.processStartTime = Instant.ofEpochMilli(helper.getProcessStartTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        this.processEndTime = Instant.ofEpochMilli(helper.getProcessEndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
-    public FileConsumptionDataDTO(String failureReportPath, FileProcessingHelper fileProcessingHelper,
-                                  long startTime, long endTime) {
-        this.totalRecords = fileProcessingHelper.getTotalRows();
-        this.successRecords = 0;
-        this.validationFailedRecords = fileProcessingHelper.getTotalRows();
-        this.errorFilePath = failureReportPath;
-        this.processStartTime = Instant.ofEpochMilli(startTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        this.processEndTime = Instant.ofEpochMilli(endTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
+//    public FileConsumptionDataDTO(FileProcessingHelper helper) {
+//        this.totalRecords = helper.getTotalRows();
+//        this.successRecords = 0;
+//        this.validationFailedRecords = helper.getRowFailureReports().size();
+//        this.errorFilePath = failureReportPath;
+//        this.processStartTime = Instant.ofEpochMilli(helper.getProcessStartTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+//        this.processEndTime = Instant.ofEpochMilli(helper.getProcessEndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+//    }
+//
+//    public FileConsumptionDataDTO(String failureReportPath, FileProcessingHelper fileProcessingHelper,
+//                                  long startTime, long endTime) {
+//        this.totalRecords = fileProcessingHelper.getTotalRows();
+//        this.successRecords = 0;
+//        this.validationFailedRecords = fileProcessingHelper.getTotalRows();
+//        this.errorFilePath = failureReportPath;
+//        this.processStartTime = Instant.ofEpochMilli(startTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
+//        this.processEndTime = Instant.ofEpochMilli(endTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
+//    }
 }

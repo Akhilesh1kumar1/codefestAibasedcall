@@ -1,5 +1,6 @@
 package com.sr.capital.controller;
 
+import com.amazonaws.HttpMethod;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.RequestData;
@@ -13,7 +14,6 @@ import org.apache.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.omunify.core.util.Constants.Headers.TENANT_ID;
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.PRESIGNED_URL_GENERATION;
 
@@ -28,7 +28,13 @@ public class FileController {
 
     @PostMapping(value = "/presigned-url")
     public GenericResponse<String> generatePreSignedUrl(@RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
-        String preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId());
+        String preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId(), HttpMethod.PUT);
+        return ResponseBuilderUtil.getResponse(preSignedUrl, SUCCESS,
+                PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
+    }
+    @PostMapping(value = "/download-doc-url")
+    public GenericResponse<String> downloadDoc(@RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
+        String preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId(), HttpMethod.GET);
         return ResponseBuilderUtil.getResponse(preSignedUrl, SUCCESS,
                 PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
     }

@@ -1,6 +1,8 @@
 package com.sr.capital.entity.primary;
 
+import com.sr.capital.dto.request.BaseRequest;
 import com.sr.capital.dto.request.file.FileConsumptionDataDTO;
+import com.sr.capital.entity.mongo.kyc.BaseDoc;
 import com.sr.capital.helpers.enums.FileProcessingStatus;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
@@ -11,6 +13,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -19,10 +23,7 @@ import java.time.LocalDateTime;
 @FieldNameConstants
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Document(collection = "file_upload_data")
-public class FileUploadData {
-
-    @MongoId
-    String id;
+public class FileUploadData extends BaseDoc {
 
     @NotEmpty
     String fileName;
@@ -31,13 +32,11 @@ public class FileUploadData {
     String correlationId;
 
     FileProcessingStatus status;
-    String locationId;
-    String sourceFileUrl;
-    FileConsumptionDataDTO fileConsumptionDataDTO;
-    String tenantId;
-    Long uploadedBy;
-    LocalDateTime createdAt;
 
-    @LastModifiedDate
-    LocalDateTime lastModifiedAt;
+    FileConsumptionDataDTO fileConsumptionDataDTO;
+
+    String tenantId;
+
+    Long uploadedBy;
+
 }

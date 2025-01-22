@@ -16,4 +16,6 @@ public interface FileUploadDataRepository extends MongoRepository<FileUploadData
 
     Page<FileUploadData> findByTenantIdAndCreatedAtBetween(String tenantId, LocalDate fromDate, LocalDate toDate,
                                                            PageRequest pageRequest, Sort sortBy);
+    FileUploadData findByTenantIdAndUploadedBy(String tenantId, Long uploadedBy);
+    FileUploadData findByTenantIdAndUploadedByAndFileName(String tenantId, Long uploadedBy, String fileName);
 }

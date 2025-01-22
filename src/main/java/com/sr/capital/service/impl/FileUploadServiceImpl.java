@@ -8,10 +8,7 @@ import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.primary.FileUploadData;
-import com.sr.capital.excelprocessor.model.ProcessUploadDataMessage;
 import com.sr.capital.exception.custom.CustomException;
-import com.sr.capital.kyc.dto.request.DocOrchestratorRequest;
-import com.sr.capital.kyc.dto.request.FileDetails;
 import com.sr.capital.kyc.dto.request.GeneratePreSignedUrlRequest;
 import com.sr.capital.kyc.service.DocExtractionService;
 import com.sr.capital.repository.mongo.FileUploadDataRepository;
@@ -21,14 +18,11 @@ import com.sr.capital.validation.FileValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -37,7 +31,7 @@ import java.util.zip.ZipOutputStream;
 import static com.omunify.core.util.Constants.GlobalErrorEnum.BAD_REQUEST;
 import static com.omunify.core.util.Constants.GlobalErrorEnum.INTERNAL_SERVER_ERROR;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.FILE_IN_PROGRESS_ERROR;
-import static com.sr.capital.helpers.constants.Constants.Separators.QUERY_PARAM_SEPARATOR;
+import static com.sr.capital.helpers.constants.Constants.MessageConstants.FILE_NAME_ALREADY_EXIST_ERROR;
 import static com.sr.capital.helpers.enums.FileProcessingStatus.ACKNOWLEDGEMENT_PENDING;
 import static com.sr.capital.helpers.enums.KafkaEventTypes.PROCESS_UPLOAD_DATA_EVENT;
 
@@ -53,16 +47,20 @@ public class FileUploadServiceImpl implements FileUploadService {
     private final KafkaMessagePublisherUtil kafkaMessagePublisherUtil;
 
     @Override
-    public String generatePreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId) {
+    public String generatePreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId, HttpMethod method) {
         String preSignedUrl = "";
         try {
+            FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileUploadRequestDto.getFileName());
+            if (fileUploadOldData != null) {
+                ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_NAME_ALREADY_EXIST_ERROR, HttpStatus.BAD_REQUEST);
+            }
             long startTime = System.currentTimeMillis();
             FileValidator.validateFileUploadRequest(fileUploadRequestDto);
             if (!redisUtil.checkIfFileExists(tenantId)) {
                 ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_IN_PROGRESS_ERROR, HttpStatus.BAD_REQUEST);
             }
             redisUtil.updateFileInCache(tenantId, fileUploadRequestDto.getFileName());
-            preSignedUrl = generateUrl(fileUploadRequestDto, tenantId, startTime);
+            preSignedUrl = generateUrl(fileUploadRequestDto, tenantId, startTime, method);
             saveFileUploadData(fileUploadRequestDto, tenantId, userId, preSignedUrl, fileUploadRequestDto.getCorrelationId(), startTime);
         } catch (Exception ex) {
             log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
@@ -72,11 +70,11 @@ public class FileUploadServiceImpl implements FileUploadService {
         return preSignedUrl;
     }
 
-    private String generateUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, long startTime) {
+    private String generateUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, long startTime, HttpMethod method) {
         GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
                 .filePath(fileUploadRequestDto.getFileName())
                 .bucketName(appProperties.getBucketName())
-                .httpMethod(HttpMethod.PUT)
+                .httpMethod(method)
                 .build();
 
         log.info("generate pre-signed url ");
@@ -184,15 +182,17 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private void saveFileUploadData(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId,
                                     String preSignedUrl, String correlationId, long startTime) {
+        FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedBy(tenantId, userId);
         FileUploadData fileUploadData = FileUploadData.builder()
                 .fileName(fileUploadRequestDto.getFileName())
                 .correlationId(correlationId)
                 .status(ACKNOWLEDGEMENT_PENDING)
-                .sourceFileUrl(StringUtils.substringBetween(preSignedUrl, ".com", QUERY_PARAM_SEPARATOR))
                 .tenantId(tenantId)
                 .uploadedBy(userId)
-                .createdAt(Instant.ofEpochMilli(startTime).atZone(ZoneOffset.UTC).toLocalDateTime())
                 .build();
+        if (fileUploadOldData != null) {
+            fileUploadData.setId(fileUploadOldData.getId());
+        }
         fileUploadDataRepository.save(fileUploadData);
     }
 
