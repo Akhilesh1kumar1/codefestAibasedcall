@@ -182,7 +182,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private void saveFileUploadData(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId,
                                     String preSignedUrl, String correlationId, long startTime) {
-        FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedBy(tenantId, userId);
+        FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileUploadRequestDto.getFileName());
         FileUploadData fileUploadData = FileUploadData.builder()
                 .fileName(fileUploadRequestDto.getFileName())
                 .correlationId(correlationId)
