@@ -119,7 +119,7 @@ public class ExcelProcessingService {
         }
 
         LocalDateTime processEndTime = LocalDateTime.now();
-        updateDataInDb(loanDetailsList, RequestData.getUserId(), RequestData.getTenantId(), processUploadDataMessage.getFileName(), processStartTime, processEndTime);
+        updateDataInDb(loanDetailsList, processUploadDataMessage.getUserId(), RequestData.getTenantId(), processUploadDataMessage.getFileName(), processStartTime, processEndTime);
         log.info("Data updated in db");
 
         return loanDetailsList;

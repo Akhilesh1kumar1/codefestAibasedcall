@@ -22,6 +22,7 @@ public class ProcessUploadedDataEventHandlerServiceImpl {
     public void processData(FileUploadRequestDTO payload) throws IOException {
         FileUploadData fileUpload = fileUploadDataRepository.findByTenantIdAndCorrelationId(RequestData.getTenantId(), payload.getCorrelationId());
         if (fileUpload != null) {
+            RequestData.setUserId(payload.getUserId());
             List<LoanDetailsFieldFromExcel> loanDetailsFieldFromExcels = excelProcessingService.processExcel(payload);
         }
     }

@@ -18,6 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 import static com.sr.capital.excelprocessor.util.LoanDetailsConstants.FAILED;
 
@@ -34,7 +38,6 @@ public class DataProcessService {
     @Transactional(rollbackFor = Exception.class)
     public void saveDataIntoDb(LoanDetailsFieldFromExcel loanDetailsFieldFromExcel) {
         try {
-//            BaseCreditPartner creditPartner = baseCreditPartnerEntityService.getCreditPartnerByName(loanDetailsFieldFromExcel.getLoanVendorName());
             LoanApplication loanApplication = saveIntoLoanDetails(loanDetailsFieldFromExcel);
             LoanApplicationStatus loanApplicationStatus = saveIntoLoanDetailsStatus(loanDetailsFieldFromExcel, loanApplication);
             saveIntoLoanDisbursed(loanDetailsFieldFromExcel, loanApplicationStatus, loanApplication);
@@ -57,7 +60,7 @@ public class DataProcessService {
                 .loanAmountDisbursed(BigDecimal.valueOf(loanDetailsFieldFromExcel.getDisbursementAmount()))
                .emiAmount(BigDecimal.valueOf(loanDetailsFieldFromExcel.getMonthlyEMIAmount() != null ? loanDetailsFieldFromExcel.getMonthlyEMIAmount() : 0))
                .interestRateAtDisbursal(loanDetailsFieldFromExcel.getDisbursementLoanROI() != null ? loanDetailsFieldFromExcel.getDisbursementLoanROI() : 0)
-//                .interestAmountAtDisbursal(loanDetailsFieldFromExcel.getInterestAmountAtSanction())
+                .interestAmountAtDisbursal(BigDecimal.valueOf(loanDetailsFieldFromExcel.getDisbursementLoanROI()))
 //                .vendorDisbursedId(disbursementAccount.getDisbursementId())
                 .disbursedDate(loanDetailsFieldFromExcel.getDisbursementDate())
                 .build();
@@ -65,15 +68,19 @@ public class DataProcessService {
     }
 
     private LoanApplication getLoanDetailsModel(LoanDetailsFieldFromExcel loanDetailsFieldFromExcel) {
+        BaseCreditPartner creditPartner = baseCreditPartnerEntityService.getCreditPartnerByName(loanDetailsFieldFromExcel.getLoanVendorName());
+
         LoanApplication.LoanApplicationBuilder builder = LoanApplication.builder()
                 .srCompanyId(Long.valueOf(loanDetailsFieldFromExcel.getCompanyId()))
                 .loanAmountRequested(loanDetailsFieldFromExcel.getSanctionAmount() != null ? BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionAmount()) : BigDecimal.valueOf(0))
 //                .loanOfferId(loanDetailsFieldFromExcel.getLoanOfferId())
-                .loanVendorId(Long.valueOf(loanDetailsFieldFromExcel.getVendorLoanId()))
+                .loanVendorId(creditPartner != null ? creditPartner.getId() : null)
+                .vendorLoanId(String.valueOf(loanDetailsFieldFromExcel.getVendorLoanId()))
                 .loanDuration(loanDetailsFieldFromExcel.getSanctionLoanTenure())
                 .loanType(loanDetailsFieldFromExcel.getLoanType())
                 .state(loanDetailsFieldFromExcel.getState())
                 .vendorStatus(loanDetailsFieldFromExcel.getVendorLoanStatus())
+                .loanSubmissionTime(convertDateToLocalDateTime(loanDetailsFieldFromExcel.getSanctionDate()))
                 .loanStatus(LoanStatus.LOAN_DISBURSED);
 
         builder.utmSource("ICRM");
@@ -86,10 +93,12 @@ public class DataProcessService {
                 .loanAmountApproved(BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionAmount()))
                 .vendorLoanId(loanDetailsFieldFromExcel.getVendorLoanId() != null ? String.valueOf(loanDetailsFieldFromExcel.getVendorLoanId()) : "")
                 .vendorStatus(loanDetailsFieldFromExcel.getVendorLoanStatus())
-//                .comment(loanDetailsFieldFromExcel.getRejectReason())
+                .startDate(convertDateToLocalDate(loanDetailsFieldFromExcel.getDateOfInitiation()))
+                .endDate(convertDateToLocalDate(loanDetailsFieldFromExcel.getLastEMIDate()))
                 .loanAmountApproved(BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionAmount()))
                 .interestRate(loanDetailsFieldFromExcel.getDisbursementLoanROI())
-//                .interestAmountAtSanction(BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionAmount()))
+                .totalRecoverableAmount(loanDetailsFieldFromExcel.getAmountDueTillDate())
+                .interestAmountAtSanction(BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionLoanROI()))
                 .loanDuration(loanDetailsFieldFromExcel.getSanctionLoanTenure()).
                 totalDisbursedAmount(BigDecimal.valueOf(loanDetailsFieldFromExcel.getDisbursementAmount()))
                 .totalAmountRecovered(loanDetailsFieldFromExcel.getSanctionAmount() != null ? BigDecimal.valueOf(loanDetailsFieldFromExcel.getSanctionAmount()) : BigDecimal.valueOf(0))
@@ -101,5 +110,35 @@ public class DataProcessService {
     private LoanApplication saveIntoLoanDetails(LoanDetailsFieldFromExcel loanDetailsFieldFromExcel) {
         LoanApplication loanDetailsModel = getLoanDetailsModel(loanDetailsFieldFromExcel);
         return loanApplicationRepository.save(loanDetailsModel);
+    }
+
+    private LocalDateTime convertDateToLocalDateTime(Date date) {
+        if (date == null) {
+            return null;
+        }
+
+        try {
+            return date.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+        } catch (Exception e) {
+            log.error("Error while parsing date " + date);
+            return null;
+        }
+    }
+
+    private LocalDate convertDateToLocalDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+
+        try {
+            return date.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        } catch (Exception e) {
+            log.error("Error while parsing date " + date);
+            return null;
+        }
     }
 }

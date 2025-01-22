@@ -103,6 +103,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     public void acknowledgeFile(FileUploadRequestDTO fileUploadRequestDto) throws JsonProcessingException, CustomException {
         FileUploadData fileUpload = fileUploadDataRepository.findByTenantIdAndCorrelationId(RequestData.getTenantId(), fileUploadRequestDto.getCorrelationId());
         if (fileUpload != null) {
+            fileUploadRequestDto.setUserId(RequestData.getUserId());
             kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName(), kafkaMessagePublisherUtil.
                     getKafkaMessage(MapperUtils.writeValueAsString(fileUploadRequestDto),
                             PROCESS_UPLOAD_DATA_EVENT.name(), null, fileUploadRequestDto.getCorrelationId(), null));
