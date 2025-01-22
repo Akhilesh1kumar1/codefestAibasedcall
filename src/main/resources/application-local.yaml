@@ -163,7 +163,7 @@ management:
 external:
   google:
     baseUri: https://www.google.com
-    captcha-secret-key: 6LcPP7cqAAAAACUvJnEkjG9wGhVsQV1cVLcBJXx1
+    captcha-secret-key: ${CAPTCHA_VALIDATION_SECRET_KEY:6LcPP7cqAAAAACUvJnEkjG9wGhVsQV1cVLcBJXx1}
     endpoints:
       captcha-site-verify: /recaptcha/api/siteverify
   karza:
@@ -356,5 +356,20 @@ bypass:
         - POST
       captchaEnabled: true
       captchaAction: "PurgeAction"
+    "/api/public/crif/get-doc-type":
+      method:
+        - GET
+      captchaEnabled: true
+      captchaAction: "FetchDocTypeAction"
+    "/api/public/crif/resend-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "ReSendOtpAction"
+    "/api/public/crif/banners":
+      method:
+        - GET
+      captchaEnabled: true
+      captchaAction: "FetchBannerAction"
 
 
