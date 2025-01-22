@@ -120,12 +120,13 @@ public class ExcelProcessingService {
 
         LocalDateTime processEndTime = LocalDateTime.now();
         updateDataInDb(loanDetailsList, RequestData.getUserId(), RequestData.getTenantId(), processUploadDataMessage.getFileName(), processStartTime, processEndTime);
-
+        log.info("Data updated in db");
 
         return loanDetailsList;
     }
 
     private void updateDataInDb(List<LoanDetailsFieldFromExcel> loanDetailsList, Long userId, String fileName, String tenantId, LocalDateTime processStartTime, LocalDateTime processEndTime) {
+        log.info("Start Updating Db");
         FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileName);
         if (fileUploadOldData != null) {
             long failedCount = loanDetailsList.stream().filter(d -> d.getCurrentStatus().equals(LoanDetailsConstants.FAILED)).count();
