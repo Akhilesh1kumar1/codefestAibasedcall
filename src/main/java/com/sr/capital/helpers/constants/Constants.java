@@ -87,6 +87,7 @@ public final class Constants {
         public static final String ERROR_WHILE_READING_DATA_FROM_AWS = "Error while reading data : %s from AWS, error : %s";
         public static final String ERROR_WHILE_UPLOADING_FILE_TO_AWS = "Error while uploading file : %s to AWS, error : %s";
         public static final String PRESIGNED_URL_GENERATION = "Pre signed URL generated successfully.";
+        public static final String ACKNOWLEDGED_SUCCESSFULLY = "Acknowledge successfully.";
         public static final String CREDIT_PARTNER_CREATED_SUCCESSFULLY = "Credit partner added successfully";
         public static final String CREDIT_PARTNER_UPDATED_SUCCESSFULLY = "Credit partner updated successfully";
         public static final String NO_RECORD_FOUND_WITH_GIVEN_DETAILS = "Invalid Request, No record found for given details";

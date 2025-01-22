@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
+import static com.sr.capital.helpers.constants.Constants.MessageConstants.ACKNOWLEDGED_SUCCESSFULLY;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.PRESIGNED_URL_GENERATION;
 
 @RestController
@@ -36,7 +37,7 @@ public class FileController {
     public GenericResponse<String> downloadDoc(@RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
         String preSignedUrl = fileService.generateDownloadPreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId(), HttpMethod.GET);
         return ResponseBuilderUtil.getResponse(preSignedUrl, SUCCESS,
-                PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
+                ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 
     @PostMapping("/acknowledge")

@@ -46,6 +46,7 @@ public class ExcelProcessingService {
         InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), processUploadDataMessage.getFileName());
         log.info("file fetched Starting processing");
         log.info(String.valueOf("Input Stream " + inputStream != null + " FIleName " + processUploadDataMessage.getFileName()));
+        File file = null;
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
@@ -83,7 +84,6 @@ public class ExcelProcessingService {
             processData(loanDetailsList); // Custom post-processing
 
 
-
             log.info("update doc based on status of row");
             for (LoanDetailsFieldFromExcel loanDetailsFieldFromExcel : loanDetailsList) {
                 sheet = workbook.getSheetAt(0);
@@ -99,19 +99,24 @@ public class ExcelProcessingService {
             }
 
             log.info("upload to s3");
-            File file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
+            file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
             S3Util.uploadFileToS3(appProperties.getBucketName(), processUploadDataMessage.getFileName(), file);
-            S3Util.uploadObjectTos3(inputStream.readAllBytes(), RequestData.getTenantId(), processUploadDataMessage.getFileName(), appProperties.getBucketName());
-            file.delete();
+            boolean isDeleted = file.delete();
+            log.info("Is Temp File Deleted ?" + isDeleted);
 //            try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
 //                workbook.write(fos);
 //            } catch (IOException e) {
 //                throw new RuntimeException(e);
 //            }
 
-    } catch (IOException e) {
+            log.info("Upload updated Data");
+        } catch (IOException e) {
             log.error(e.getMessage() + e);
-    }
+            if (file != null) {
+                file.delete();
+            }
+
+        }
 
         LocalDateTime processEndTime = LocalDateTime.now();
         updateDataInDb(loanDetailsList, RequestData.getUserId(), RequestData.getTenantId(), processUploadDataMessage.getFileName(), processStartTime, processEndTime);
