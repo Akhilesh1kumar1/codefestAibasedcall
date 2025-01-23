@@ -3,7 +3,6 @@ package com.sr.capital.external.truthscreen.service.impl;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.exception.custom.RequestTransformerNotFoundException;
-import com.sr.capital.external.truthscreen.adapter.CorpVedaAdapter;
 import com.sr.capital.external.truthscreen.adapter.TruthScreenAdapter;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
@@ -14,7 +13,6 @@ import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.repository.TruthScreenDocDetailsRepository;
 import com.sr.capital.external.truthscreen.service.IdService;
-import com.sr.capital.external.truthscreen.service.strategy.AdapterStrategy;
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenEntityConstructorStrategy;
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenIdSearchResponseStrategy;
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenRequestValidatorStrategy;
@@ -62,7 +60,6 @@ public class IdServiceImpl implements IdService {
 
             TruthScreenBaseResponse<?> truthScreenBaseResponse = truthScreenAdapter.extractDetails(truthScreenBaseRequest);
             truthScreenDocOrchestratorRequest.setTruthScreenBaseResponse(truthScreenBaseResponse);
-
             TruthScreenDocDetails<?> truthScreenDocDetailsToBeSaved = truthEntityConstructorStrategy.constructEntity(
                     truthScreenDocOrchestratorRequest,
                     truthScreenDocOrchestratorRequest.getTruthScreenDocDetails(),

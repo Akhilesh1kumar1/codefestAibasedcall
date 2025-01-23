@@ -14,9 +14,15 @@ import java.io.Serializable;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CorpVedaResponseDto<T> implements Serializable {
+public class CorpVedaResponseDto {
 
-    private String status;
-    private T msg;
-    private String referenceId;
+    private String srCompanyId;
+    private String cin;
+    private String companyPan;
+    private String registrationNumber;
+    private String companyName;
+    private String telephone;
+    private String email;
+    private String authorizedCapital;
+    private String initialStatus;
 }

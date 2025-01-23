@@ -380,6 +380,15 @@ public class AppProperties {
     @Value("${external.corpveda.login-url}")
     private String corpVedaLoginUrl;
 
+    @Value("${external.corpveda.get-data}")
+    private String corpVedaGetDataUrl;
+
+    @Value("${external.corpveda.token-time}")
+    private String corpVedaTokenTime;
+
+    @Value("${external.corpveda.referenceId-time}")
+    private String corpVedaRedisReferenceIdTime;
+
     @Value("${external.crif.access-code.user}")
     private String CrifUser;
     @Value("${external.crif.access-code.password}")

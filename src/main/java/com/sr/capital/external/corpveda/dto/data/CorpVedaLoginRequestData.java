@@ -1,6 +1,5 @@
-package com.sr.capital.external.truthscreen.dto.data;
+package com.sr.capital.external.corpveda.dto.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
 

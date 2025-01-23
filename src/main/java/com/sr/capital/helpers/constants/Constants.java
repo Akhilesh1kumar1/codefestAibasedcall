@@ -1,7 +1,7 @@
 package com.sr.capital.helpers.constants;
 
 import com.sr.capital.helpers.enums.DocType;
-import org.redisson.api.RMapCache;
+
 
 import java.util.Map;
 import java.util.Set;
@@ -181,6 +181,8 @@ public final class Constants {
         public static final String LOAN_AT_VENDOR = "LOAN_AT_VENDOR";
 
         public static final String CORP_VEDA_VENDOR_TOKEN = "corp_veda_vendor_token";
+
+        public static final String CORP_VEDA_META_DATA = "corp_veda_meta_data";
     }
 
     public static final class Headers {

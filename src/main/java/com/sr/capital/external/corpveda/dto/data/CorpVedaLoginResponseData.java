@@ -1,4 +1,4 @@
-package com.sr.capital.external.truthscreen.dto.data;
+package com.sr.capital.external.corpveda.dto.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -15,8 +15,7 @@ public enum TruthScreenDocType {
         PAN_COMPLIANCE("pan_compliance",527),
         PAN_TO_GST("pan_to_gst",455),
         GSTIN("gstin",23),
-        CIN("cin", 52),
-        CIN_SEARCH("cin_search", 5345);
+        CIN("cin", 52);
         private final String name;
         private final int value;
 

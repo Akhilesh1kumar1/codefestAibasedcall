@@ -2,6 +2,7 @@ package com.sr.capital.external.corpveda.docs;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sr.capital.entity.mongo.kyc.BaseDoc;
+import com.sr.capital.external.corpveda.enums.CorpVedaDocType;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +25,8 @@ public class CorpVedaDocDetails<T> extends BaseDoc {
     @Indexed(unique = true)
     private String transId;
 
-    @Field("truth_screen_doc_type")
-    private TruthScreenDocType truthScreenDocType;
+    @Field("corp_veda_doc_type")
+    private CorpVedaDocType corpVedaDocType;
 
     @Field("details")
     private T details;
