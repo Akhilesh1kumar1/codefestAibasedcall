@@ -39,16 +39,16 @@ public class ExcelProcessingService {
         List<LoanDetailsFieldFromExcel> loanDetailsList = new ArrayList<>();
         int lastColumIndex = 0;
 
-        String excelFilePath = "/home/akhileshkumar/IdeaProjects/capital/src/main/resources/templates/sheet.xlsx";
-        try (FileInputStream fis = new FileInputStream(new File(excelFilePath));
-             Workbook workbook = new XSSFWorkbook(fis)) {
+//        String excelFilePath = "/home/akhileshkumar/IdeaProjects/capital/src/main/resources/templates/sheet.xlsx";
+//        try (FileInputStream fis = new FileInputStream(new File(excelFilePath));
+//             Workbook workbook = new XSSFWorkbook(fis)) {
 
         log.info("Started Fetching from s3 bucket");
-//        InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), processUploadDataMessage.getFileName());
-//        log.info("file fetched Starting processing");
-//        log.info(String.valueOf("Input Stream " + inputStream != null + " FIleName " + processUploadDataMessage.getFileName()));
-//        File file = null;
-//        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+        InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), processUploadDataMessage.getFileName());
+        log.info("file fetched Starting processing");
+        log.info(String.valueOf("Input Stream " + inputStream != null + " FIleName " + processUploadDataMessage.getFileName()));
+        File file = null;
+        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
 
@@ -100,22 +100,22 @@ public class ExcelProcessingService {
             }
 
             log.info("upload to s3");
-//            file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
-//            S3Util.uploadFileToS3(appProperties.getBucketName(), processUploadDataMessage.getFileName(), file);
-//            boolean isDeleted = file.delete();
-//            log.info("Is Temp File Deleted ?" + isDeleted);
-            try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
-                workbook.write(fos);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
+            S3Util.uploadFileToS3(appProperties.getBucketName(), processUploadDataMessage.getFileName(), file);
+            boolean isDeleted = file.delete();
+            log.info("Is Temp File Deleted ?" + isDeleted);
+//            try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
+//                workbook.write(fos);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
 
             log.info("Upload updated Data");
         } catch (IOException e) {
             log.error(e.getMessage() + e);
-//            if (file != null) {
-//                file.delete();
-//            }
+            if (file != null) {
+                file.delete();
+            }
 
         }
 
