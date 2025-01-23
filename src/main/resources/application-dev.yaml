@@ -53,6 +53,8 @@ spring:
     import: optional:file:.env[.properties]
 
 app:
+  captcha-verification:
+    enabled: true
   cors-allowed-origins: https://qa-web-1.kartrocket.com,https://multichannel-appstore-qa.kartrocket.com,http://localhost:5371,http://app.shiprocket.local,https://app.shiprocket.in
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
@@ -74,7 +76,7 @@ app:
     sinfini:
       enabled: true
       baseUri: ${SINFINI_BASE_URI:http://alerts.sinfini.com/api/v3/index.php}
-      apiKey: ${SINFINI_API_KEY:Afa8f859f3f8af5f9bd92c9e8db94bd39}
+      apiKey: ${SINFINI_API_KEY}
       sms:
         method: ${SINFING_SMS_METHOD:sms}
         sender: ${SINFINI_SMS_SENDER:SHPRKT}
@@ -82,9 +84,9 @@ app:
     kaleyra:
       enabled: false
       baseUri: ${KALEYRA_BASE_URI:https://api.kaleyra.io/v1}
-      senderId: ${KALEYRA_SENDER_ID:HXIN1724808889IN}
-      apiKey: ${KALEYRA_API_KEY:Aca6d903762f7aa22e3b1d392059be7cd}
-      fromNo: ${KALEYRA_FROM_NO:917217894979}
+      senderId: ${KALEYRA_SENDER_ID}
+      apiKey: ${KALEYRA_API_KEY}
+      fromNo: ${KALEYRA_FROM_NO}
       endpoints:
         send-messages: "/messages"
       whatsapp:
@@ -126,8 +128,8 @@ app:
       vendor-token: ${COMMON_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
       vendor-code: ${COMMON_VENDOR_CODE:8908f14a7-9fbc-4f07-3f18-2917063B8c}
     flexi:
-      vendor-token: ${FLEXI_VENDOR_TOKEN:661f14a7-9fbc-4f07-8f18-2917065d80}
-      vendor-code: ${FLEXI_VENDOR_CODE:8908f14a7-9fbc-4f07-3f18-2917063B8c}
+      vendor-token: ${FLEXI_VENDOR_TOKEN}
+      vendor-code: ${FLEXI_VENDOR_CODE}
       redirection-url: ${FLEXI_REDIRECTION_URL:https://ops.flexiloans.com/sanction/accept/%s}
 
 aws:
@@ -159,6 +161,11 @@ management:
 
 ####################################### KARZA API #############################################
 external:
+  google:
+    baseUri: https://www.google.com
+    captcha-secret-key: ${CAPTCHA_VALIDATION_SECRET_KEY:6LcPP7cqAAAAACUvJnEkjG9wGhVsQV1cVLcBJXx1}
+    endpoints:
+      captcha-site-verify: /recaptcha/api/siteverify
   karza:
     enabled: false
     vendor-token: ${KARZA_VENDOR_TOKEN:test}
@@ -226,6 +233,9 @@ external:
           stage2:
             url: /Inquiry/do.getSecureService/DTC/response
       key: 423714eb-ece1-495b-8760-c2bf9ca3bf08
+    public:
+      company-id: -67891012345
+      user-id: -678910
     verify:
       retry:
         backoff:
@@ -311,9 +321,9 @@ jobs:
 
 aes:
   secret:
-    key: ${AES_SECRET_KEY:U0h8UFIwa0BUQCFAIyQmKg==}
+    key: ${AES_SECRET_KEY}
   iv:
-    key: ${AES_IV_KEY:U0h8UFIwa0BUQCQh}
+    key: ${AES_IV_KEY}
 
 is:
   encryption:
@@ -322,3 +332,42 @@ is:
 server:
   tomcat:
     max-http-header-size: 8192
+
+
+bypass:
+  apis:
+    "/api/public/crif/generate-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "GenerateAction"
+    "/api/public/crif/verify-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "VerifyAction"
+    "/api/public/crif/validate":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "ValidateAction"
+    "/api/public/crif/purge":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "PurgeAction"
+    "/api/public/crif/get-doc-type":
+      method:
+        - GET
+      captchaEnabled: true
+      captchaAction: "FetchDocTypeAction"
+    "/api/public/crif/resend-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "ReSendOtpAction"
+    "/api/public/crif/banners":
+      method:
+        - GET
+      captchaEnabled: true
+      captchaAction: "FetchBannerAction"

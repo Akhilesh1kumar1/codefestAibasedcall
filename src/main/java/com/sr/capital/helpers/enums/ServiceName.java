@@ -15,6 +15,7 @@ public enum ServiceName {
     GETVENTAGE("getventage"),
     KARZA("karza"),
     FLEXI("flexi"),
+    CAPTCHA("captcha"),
     TRUTHSCREEN("truthscreen"),
     CRIF("crif"),
     CORPVEDA("corpveda");

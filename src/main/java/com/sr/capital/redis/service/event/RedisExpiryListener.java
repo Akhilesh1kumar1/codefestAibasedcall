@@ -1,11 +1,14 @@
 package com.sr.capital.redis.service.event;
 import com.sr.capital.config.AppProperties;
+import com.sr.capital.config.RedisConfig;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.redis.repository.mongo.RedisEventTrackingRepo;
 import com.sr.capital.redis.util.RedisTTLListenerUtil;
 import com.sr.capital.util.KafkaMessagePublisherUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.Redisson;
+import org.redisson.api.RPatternTopic;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.listener.MessageListener;
 import org.redisson.client.codec.StringCodec;
@@ -46,14 +49,14 @@ public class RedisExpiryListener {
             @Override
             public void onMessage(CharSequence channel, String msg) {
 
-                if (msg.contains(Constants.RedisKeys.LOAN_AT_VENDOR)) {
-                    log.info("TTL listener is executing for key ::" + msg);
-                    handleKeyExpiration(msg);
-                } else if (msg.contains(Constants.RedisKeys.CORP_VEDA_META_DATA)) {
-                    log.info("TTL listener is executing for key ::" + msg);
-                    handleVerboseDataKeyExpiration(msg);
+            if (msg.contains(Constants.RedisKeys.LOAN_AT_VENDOR)) {
+                log.info("TTL listener is executing for key ::" + msg);
+                handleKeyExpiration(msg);
+            } else if (msg.contains(Constants.RedisKeys.CORP_VEDA_META_DATA)) {
+                log.info("TTL listener is executing for key ::" + msg);
+                handleVerboseDataKeyExpiration(msg);
 
-                }
+            }
 
             }
 

@@ -30,9 +30,7 @@ public class RedisConfig {
 
     @Bean
     public RedissonClient redissonClient() throws IOException {
-        Config config =Config.fromYAML(new ClassPathResource(file).getInputStream());
-        //config.setCodec(new StringCodec());
-        return Redisson.create(config);
+        return Redisson.create(Config.fromYAML(new ClassPathResource(file).getInputStream()));
     }
 
     /*@Bean

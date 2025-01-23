@@ -77,12 +77,12 @@ public class UserServiceImpl implements UserService {
                                 .callbackType(CallbackType.USER_SIGN_UP)
                                 .verificationType(VerificationType.OTP)
                                 .entityId(userDetails.getId())
-                                .channel(CommunicationChannels.SMS_WHATSAPP)
+                                .channel(CommunicationChannels.WHATSAPP)
                                 .build()
                 ).tenantDetails(tenantDetails)
                 .build();
 
-        verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest);
+        verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest, String.valueOf(userDetails.getSrCompanyId()));
         return verificationOrchestratorRequest;
     }
 

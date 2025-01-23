@@ -186,6 +186,10 @@ public final class Constants {
     }
 
     public static final class Headers {
+        public static final String X_BYPASS_GOOGLE_CAPTCHA = "X-Bypass-Google-Captcha";
+        public static final String X_BYPASS_GOOGLE_CAPTCHA_SECRET = "X-Bypass-Google-Captcha-Secret";
+        public static final String X_GOOGLE_CAPTCHA_RESPONSE = "g-recaptcha-response";
+
         private Headers() {
             throw new AssertionError(UTILITY_INSTANTIATION_ERROR);
         }
