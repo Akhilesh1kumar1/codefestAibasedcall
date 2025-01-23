@@ -19,6 +19,8 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -34,7 +36,7 @@ public class ExcelProcessingService {
     private final FileUploadDataRepository fileUploadDataRepository;
 
 
-    public List<LoanDetailsFieldFromExcel> processExcel(FileUploadRequestDTO processUploadDataMessage) throws IOException {
+    public void processExcel(FileUploadRequestDTO processUploadDataMessage) throws IOException {
         LocalDateTime processStartTime = LocalDateTime.now();
         List<LoanDetailsFieldFromExcel> loanDetailsList = new ArrayList<>();
         int lastColumIndex = 0;
@@ -117,13 +119,15 @@ public class ExcelProcessingService {
                 file.delete();
             }
 
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchProviderException e) {
+            throw new RuntimeException(e);
         }
 
         LocalDateTime processEndTime = LocalDateTime.now();
         updateDataInDb(loanDetailsList, processUploadDataMessage.getUserId(), processUploadDataMessage.getFileName(), RequestData.getTenantId(), processStartTime, processEndTime);
         log.info("Data updated in db");
-
-        return loanDetailsList;
     }
 
     private void updateDataInDb(List<LoanDetailsFieldFromExcel> loanDetailsList, Long userId, String fileName, String tenantId, LocalDateTime processStartTime, LocalDateTime processEndTime) {
@@ -225,7 +229,7 @@ public class ExcelProcessingService {
 
     }
 
-    private void processData(List<LoanDetailsFieldFromExcel> loanDetailsList) {
+    private void processData(List<LoanDetailsFieldFromExcel> loanDetailsList) throws NoSuchAlgorithmException, NoSuchProviderException {
         validateData(loanDetailsList);
         for (LoanDetailsFieldFromExcel loanDetailsFieldFromExcel : loanDetailsList) {
             if (loanDetailsFieldFromExcel.getCurrentStatus() == null || !loanDetailsFieldFromExcel.getCurrentStatus().equals(LoanDetailsConstants.FAILED)) {

@@ -368,4 +368,6 @@ public class AppProperties {
 
 
 
+    @Value("${global.loan-vendor-id}")
+    private Long globalVendorId;
 }

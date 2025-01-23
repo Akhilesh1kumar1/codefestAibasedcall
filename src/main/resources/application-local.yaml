@@ -163,7 +163,7 @@ management:
 external:
   google:
     baseUri: https://www.google.com
-    captcha-secret-key: 6LcPP7cqAAAAACUvJnEkjG9wGhVsQV1cVLcBJXx1
+    captcha-secret-key: ${CAPTCHA_VALIDATION_SECRET_KEY:6LcPP7cqAAAAACUvJnEkjG9wGhVsQV1cVLcBJXx1}
     endpoints:
       captcha-site-verify: /recaptcha/api/siteverify
   karza:
@@ -372,3 +372,5 @@ bypass:
       captchaEnabled: true
       captchaAction: "FetchBannerAction"
 
+global:
+  loan-vendor-id: 1

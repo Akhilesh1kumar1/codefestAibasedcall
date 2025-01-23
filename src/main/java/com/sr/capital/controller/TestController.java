@@ -99,7 +99,8 @@ public class TestController {
     @GetMapping("/excelTest")
     public GenericResponse processExcel() throws IOException {
 
-        return ResponseBuilderUtil.getResponse(excelProcessingService.processExcel(null),Constants.StatusEnum.SUCCESS,
+        excelProcessingService.processExcel(null);
+        return ResponseBuilderUtil.getResponse(null,Constants.StatusEnum.SUCCESS,
                 "done",  HttpStatus.SC_OK);
     }
     @GetMapping("/redis-set-temp-value1")

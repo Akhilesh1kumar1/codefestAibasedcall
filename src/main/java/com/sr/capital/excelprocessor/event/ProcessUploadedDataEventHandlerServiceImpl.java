@@ -23,7 +23,7 @@ public class ProcessUploadedDataEventHandlerServiceImpl {
         FileUploadData fileUpload = fileUploadDataRepository.findByTenantIdAndCorrelationId(RequestData.getTenantId(), payload.getCorrelationId());
         if (fileUpload != null) {
             RequestData.setUserId(payload.getUserId());
-            List<LoanDetailsFieldFromExcel> loanDetailsFieldFromExcels = excelProcessingService.processExcel(payload);
+            excelProcessingService.processExcel(payload);
         }
     }
 }
