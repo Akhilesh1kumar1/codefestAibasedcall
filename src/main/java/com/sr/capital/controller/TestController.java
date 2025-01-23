@@ -3,9 +3,9 @@ package com.sr.capital.controller;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
+import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.excelprocessor.service.ExcelProcessingService;
 import com.sr.capital.exception.custom.CustomException;
-import com.sr.capital.external.dto.response.ValidateTokenResponse;
 import com.sr.capital.external.service.CommunicationService;
 import com.sr.capital.repository.secondary.TestRepository;
 import com.sr.capital.service.impl.ServicesHandler;
@@ -18,15 +18,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.InvalidCredentialsException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
-
-import static com.sr.capital.helpers.enums.ServiceName.SHIPROCKET;
 
 @RestController
 @RequestMapping("/api/v1/test")
@@ -99,7 +95,7 @@ public class TestController {
     @GetMapping("/excelTest")
     public GenericResponse processExcel() throws IOException {
 
-        excelProcessingService.processExcel(null);
+        excelProcessingService.processExcel(null, null);
         return ResponseBuilderUtil.getResponse(null,Constants.StatusEnum.SUCCESS,
                 "done",  HttpStatus.SC_OK);
     }

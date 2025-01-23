@@ -20,10 +20,10 @@ public class ProcessUploadedDataEventHandlerServiceImpl {
     private final FileUploadDataRepository fileUploadDataRepository;
 
     public void processData(FileUploadRequestDTO payload) throws IOException {
-        FileUploadData fileUpload = fileUploadDataRepository.findByTenantIdAndCorrelationId(RequestData.getTenantId(), payload.getCorrelationId());
+        FileUploadData fileUpload = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileNameAndCorrelationId(RequestData.getTenantId(), payload.getUserId(), payload.getFileName(), payload.getCorrelationId());
         if (fileUpload != null) {
             RequestData.setUserId(payload.getUserId());
-            excelProcessingService.processExcel(payload);
+            excelProcessingService.processExcel(payload, fileUpload);
         }
     }
 }

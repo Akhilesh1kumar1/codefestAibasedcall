@@ -38,7 +38,7 @@ public class RedisUtil {
 
     public void updateFileInCache(String tenantId, String fileName) {
         RBucket<String> fileCache = redissonClient.getBucket(String.join(UNDERSCORE_SEPARATOR, FILE_UPLOAD_RECORD, tenantId));
-        fileCache.set(fileName, Duration.of(appConfig.getFileUploadCoolOffWindow(), TimeUnit.SECONDS.toChronoUnit()));
+        fileCache.set(fileName, Duration.of(appConfig.getFileUploadCoolOffWindow(), TimeUnit.MINUTES.toChronoUnit()));
     }
 
     public boolean checkIfFileExists(String tenantId) {

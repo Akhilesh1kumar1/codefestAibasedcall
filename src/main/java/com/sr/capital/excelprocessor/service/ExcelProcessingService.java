@@ -7,12 +7,12 @@ import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.excelprocessor.model.LoanDetailsFieldFromExcel;
 import com.sr.capital.excelprocessor.util.LoanDetailsConstants;
+import com.sr.capital.excelprocessor.util.LoanMandatoryConstants;
 import com.sr.capital.repository.mongo.FileUploadDataRepository;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -36,7 +36,7 @@ public class ExcelProcessingService {
     private final FileUploadDataRepository fileUploadDataRepository;
 
 
-    public void processExcel(FileUploadRequestDTO processUploadDataMessage) throws IOException {
+    public void processExcel(FileUploadRequestDTO processUploadDataMessage, FileUploadData fileUpload) throws IOException {
         LocalDateTime processStartTime = LocalDateTime.now();
         List<LoanDetailsFieldFromExcel> loanDetailsList = new ArrayList<>();
         int lastColumIndex = 0;
@@ -126,19 +126,20 @@ public class ExcelProcessingService {
         }
 
         LocalDateTime processEndTime = LocalDateTime.now();
-        updateDataInDb(loanDetailsList, processUploadDataMessage.getUserId(), processUploadDataMessage.getFileName(), RequestData.getTenantId(), processStartTime, processEndTime);
+        updateDataInDb(loanDetailsList, processUploadDataMessage.getUserId(), processUploadDataMessage.getFileName(), RequestData.getTenantId(), processStartTime, processEndTime, fileUpload);
         log.info("Data updated in db");
     }
 
-    private void updateDataInDb(List<LoanDetailsFieldFromExcel> loanDetailsList, Long userId, String fileName, String tenantId, LocalDateTime processStartTime, LocalDateTime processEndTime) {
+    private void updateDataInDb(List<LoanDetailsFieldFromExcel> loanDetailsList, Long userId, String fileName, String tenantId,
+                                LocalDateTime processStartTime, LocalDateTime processEndTime, FileUploadData fileUpload) {
         log.info("Start Updating Db for tenantId, userId, fileName" + tenantId + userId + fileName);
-        FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileName);
-        if (fileUploadOldData != null) {
+//        FileUploadData fileUpload = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileName);
+        if (fileUpload != null) {
             long failedCount = loanDetailsList.stream().filter(d -> d.getCurrentStatus() != null && d.getCurrentStatus().equals(LoanDetailsConstants.FAILED)).count();
             long successCount = loanDetailsList.size() - failedCount;
-            fileUploadOldData.setStatus(ACKNOWLEDGEMENT_DONE);
-            fileUploadOldData.setFileConsumptionDataDTO(new FileConsumptionDataDTO(loanDetailsList.size(), successCount, failedCount, processStartTime, processEndTime));
-            fileUploadDataRepository.save(fileUploadOldData);
+            fileUpload.setStatus(ACKNOWLEDGEMENT_DONE);
+            fileUpload.setFileConsumptionDataDTO(new FileConsumptionDataDTO(loanDetailsList.size(), successCount, failedCount, processStartTime, processEndTime));
+            fileUploadDataRepository.save(fileUpload);
         }
 
     }
@@ -314,7 +315,7 @@ public class ExcelProcessingService {
     public static Map<String, String> validateLoanDetails(LoanDetailsFieldFromExcel loanDetails) {
         Map<String, String> validationErrors = new HashMap<>();
 
-        for (String fieldName : LoanDetailsConstants.MANDATORY_FIELDS) {
+        for (String fieldName : LoanMandatoryConstants.MANDATORY_FIELDS) {
             try {
                 Field field = LoanDetailsFieldFromExcel.class.getDeclaredField(fieldName);
                 field.setAccessible(true);
