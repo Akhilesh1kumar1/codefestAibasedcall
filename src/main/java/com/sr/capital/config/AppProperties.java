@@ -382,4 +382,13 @@ public class AppProperties {
     @Value("${app.captcha-verification.enabled}")
     private Boolean captchaVerificationEnabled;
 
+    @Value("${app.rate-limit.enabled}")
+    private Boolean rateLimitEnabled;
+
+    @Value("${app.rate-limit.duration-in-minute}")
+    private Long rateLimitDurationInMinute;
+
+    @Value("${app.rate-limit.allowed-request}")
+    private Long rateLimitAllowedRequest;
+
 }
