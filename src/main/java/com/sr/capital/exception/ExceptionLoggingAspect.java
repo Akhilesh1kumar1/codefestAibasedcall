@@ -58,19 +58,19 @@ public class ExceptionLoggingAspect {
                 .build();
 
         ErrorLogs errorLogs1 = exceptionLogRepository.saveErrorLogs(errorLogs);
-        triggerEmail(serviceName, baseUri, endPoint, errorLogs1.getId(), ex);
+        triggerEmail(serviceName.getName(), baseUri, endPoint, errorLogs1.getId(), ex);
     }
 
-    private void triggerEmail(ServiceName serviceName, String baseUri, String endPoint, String id, Exception exception) {
-        if (appProperties.getIsErrorMailTriggerEnabled() && !appProperties.getNetCoreSendEmailEndpoint().equals(endPoint)) {
-            try {
+    private void triggerEmail(String serviceName, String baseUri, String endPoint, String id, Exception exception) {
+        try {
+            if (appProperties.getIsErrorMailTriggerEnabled() && !appProperties.getNetCoreSendEmailEndpoint().equals(endPoint)) {
                 String subject = "Exception Alert: An Error Occurred";
                 String templateName = CommunicationTemplateNames.EXCEPTION_ALERT_EMAIL.getTemplateName();
                 String message = "Error while calling api " + baseUri + endPoint + " is " + exception.getMessage()
                         + " Error log id for reference  " + id;
 
                 CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder()
-                        .vendorName(serviceName.getName())
+                        .vendorName(serviceName)
                         .capitalUrl(appProperties.getCapitalWebUrl()).exception(message).build();
 
                 String errorEmailRecipientName = appProperties.getErrorEmailRecipientName();
@@ -85,9 +85,9 @@ public class ExceptionLoggingAspect {
                         communicationService.sendCommunicationForLoan(communicationRequestTemp);
                     }
                 }
-            } catch (Exception ex) {
-                log.error("error in communication  " + ex.getMessage());
             }
+        } catch (Exception ex) {
+            log.error("error in communication  " + ex.getMessage());
         }
     }
 
@@ -108,6 +108,8 @@ public class ExceptionLoggingAspect {
                 .errorMessage(ex.getMessage())
                 .build();
 
-        exceptionLogRepository.saveErrorLogs(errorLogs);
+        ErrorLogs errorLogs1 = exceptionLogRepository.saveErrorLogs(errorLogs);
+        triggerEmail("makeApiCall", endPoint, "", errorLogs1.getId(), ex);
+
     }
 }
