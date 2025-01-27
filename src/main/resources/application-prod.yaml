@@ -321,9 +321,14 @@ aes:
     key: ${AES_IV_KEY:U0h8UFIwa0BUQCQh}
 
 is:
+  error-mail-trigger:
+    enabled: ${IS_ERROR_MAIL_ENABLED:true}
   encryption:
     enabled: ${IS_ENCRYPTION_ENABLED:true}
 
+error:
+  email:
+    recipientName: ${ERROR_EMAIL_RECIPIENT_NAME:vikas.sinwar@shiprocket.com,akhilesh.kumar@shiprocket.com}
 
 server:
   max-http-header-size: 65536

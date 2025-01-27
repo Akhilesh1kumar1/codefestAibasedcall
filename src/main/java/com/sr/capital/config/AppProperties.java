@@ -366,6 +366,10 @@ public class AppProperties {
     @Value("${jobs.crif.purge.expireAt}")
     private String crifConsentExpireAt;
 
+    @Value("${is.error-mail-trigger.enabled}")
+    private Boolean isErrorMailTriggerEnabled;
 
+    @Value("${error.email.recipientName}")
+    private String errorEmailRecipientName;
 
 }

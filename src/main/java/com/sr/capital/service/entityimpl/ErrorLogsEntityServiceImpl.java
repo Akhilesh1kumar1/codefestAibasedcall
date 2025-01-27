@@ -12,8 +12,7 @@ public class ErrorLogsEntityServiceImpl {
     final ErrorLogsRepository errorLogsRepository;
 
 
-    public Boolean saveErrorLogs(ErrorLogs errorLogs){
-        errorLogsRepository.save(errorLogs);
-        return true;
+    public ErrorLogs saveErrorLogs(ErrorLogs errorLogs){
+        return errorLogsRepository.save(errorLogs);
     }
 }
