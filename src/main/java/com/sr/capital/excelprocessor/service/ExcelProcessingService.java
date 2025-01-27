@@ -5,14 +5,17 @@ import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileConsumptionDataDTO;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 import com.sr.capital.entity.primary.FileUploadData;
+import com.sr.capital.entity.secondary.CompanyWiseReport;
 import com.sr.capital.excelprocessor.model.LoanDetailsFieldFromExcel;
 import com.sr.capital.excelprocessor.util.LoanDetailsConstants;
 import com.sr.capital.excelprocessor.util.LoanMandatoryConstants;
 import com.sr.capital.repository.mongo.FileUploadDataRepository;
+import com.sr.capital.service.entityimpl.CompanyWiseReportEntityServiceImpl;
 import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -34,6 +37,7 @@ public class ExcelProcessingService {
     private final DataProcessService dataProcessService;
     private final AppProperties appProperties;
     private final FileUploadDataRepository fileUploadDataRepository;
+    private final CompanyWiseReportEntityServiceImpl companyWiseReportEntityService;
 
 
     public void processExcel(FileUploadRequestDTO processUploadDataMessage, FileUploadData fileUpload) throws IOException {
@@ -300,6 +304,18 @@ public class ExcelProcessingService {
                 d.setMessage(validateFieldMessage.toString());
             }
         });
+
+        for (LoanDetailsFieldFromExcel loanDetailsFieldFromExcel : loanDetailsList) {
+            if (loanDetailsFieldFromExcel.getCompanyId() != null &&
+                    (loanDetailsFieldFromExcel.getCurrentStatus() == null ||
+                            !loanDetailsFieldFromExcel.getCurrentStatus().equals(LoanDetailsConstants.FAILED))) {
+                CompanyWiseReport reportData = companyWiseReportEntityService.getReportData(Long.valueOf(loanDetailsFieldFromExcel.getCompanyId()));
+                if (reportData == null) {
+                    loanDetailsFieldFromExcel.setCurrentStatus(LoanDetailsConstants.FAILED);
+                    loanDetailsFieldFromExcel.setMessage("Invalid CompanyId");
+                }
+            }
+        }
     }
 
 

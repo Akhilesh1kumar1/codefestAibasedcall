@@ -3,6 +3,7 @@ package com.sr.capital.controller;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.omunify.core.model.GenericResponse;
 import com.omunify.core.util.Constants;
+import com.sr.capital.dto.request.file.FileUploadRequestDTO;
 import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.excelprocessor.service.ExcelProcessingService;
 import com.sr.capital.exception.custom.CustomException;
@@ -95,7 +96,7 @@ public class TestController {
     @GetMapping("/excelTest")
     public GenericResponse processExcel() throws IOException {
 
-        excelProcessingService.processExcel(null, null);
+        excelProcessingService.processExcel(new FileUploadRequestDTO(), null);
         return ResponseBuilderUtil.getResponse(null,Constants.StatusEnum.SUCCESS,
                 "done",  HttpStatus.SC_OK);
     }
