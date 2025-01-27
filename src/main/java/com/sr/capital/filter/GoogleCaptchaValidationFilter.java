@@ -33,7 +33,7 @@ public class GoogleCaptchaValidationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-     /*   if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+        if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
             chain.doFilter(request, response);
             return;
         }
@@ -63,7 +63,7 @@ public class GoogleCaptchaValidationFilter implements Filter {
 
         if (googleCaptchaService.verifyCaptcha(httpRequest, httpResponse, captchaAction)) {
             chain.doFilter(request, response);
-        }*/
+        }
         chain.doFilter(request, response);
     }
 
