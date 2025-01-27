@@ -64,6 +64,8 @@ public class CommunicationRequestTemp {
         private Double disbursmentInterest;
 
         private BigDecimal monthlyEmi;
+
+        private String exception;
     }
 
     @Data

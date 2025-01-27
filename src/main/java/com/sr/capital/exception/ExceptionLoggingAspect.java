@@ -1,34 +1,39 @@
 package com.sr.capital.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.entity.mongo.ErrorLogs;
+import com.sr.capital.external.dto.request.CommunicationRequestTemp;
+import com.sr.capital.external.service.CommunicationService;
+import com.sr.capital.helpers.enums.CommunicationTemplateNames;
 import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.service.entityimpl.ErrorLogsEntityServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Aspect
 @Component
+@Slf4j
 public class ExceptionLoggingAspect {
 
     private final ErrorLogsEntityServiceImpl exceptionLogRepository;
     private final ObjectMapper objectMapper;
+    private final CommunicationService communicationService;
+    private final AppProperties appProperties;
 
-    public ExceptionLoggingAspect(ErrorLogsEntityServiceImpl exceptionLogRepository, ObjectMapper objectMapper) {
+    public ExceptionLoggingAspect(ErrorLogsEntityServiceImpl exceptionLogRepository, ObjectMapper objectMapper, CommunicationService communicationService, AppProperties appProperties) {
         this.exceptionLogRepository = exceptionLogRepository;
         this.objectMapper = objectMapper;
+        this.communicationService = communicationService;
+        this.appProperties = appProperties;
     }
 
     @Pointcut("execution(public * com.sr.capital.util.WebClientUtil.invokeWebClient*(..)) || " +
@@ -52,7 +57,38 @@ public class ExceptionLoggingAspect {
                 .errorMessage(ex.getMessage())
                 .build();
 
-        exceptionLogRepository.saveErrorLogs(errorLogs);
+        ErrorLogs errorLogs1 = exceptionLogRepository.saveErrorLogs(errorLogs);
+        triggerEmail(serviceName, baseUri, endPoint, errorLogs1.getId(), ex);
+    }
+
+    private void triggerEmail(ServiceName serviceName, String baseUri, String endPoint, String id, Exception exception) {
+        if (appProperties.getIsErrorMailTriggerEnabled() && !appProperties.getNetCoreSendEmailEndpoint().equals(endPoint)) {
+            try {
+                String subject = "Exception Alert: An Error Occurred";
+                String templateName = CommunicationTemplateNames.EXCEPTION_ALERT_EMAIL.getTemplateName();
+                String message = "Error while calling api " + baseUri + endPoint + " is " + exception.getMessage()
+                        + " Error log id for reference  " + id;
+
+                CommunicationRequestTemp.MetaData metaData = CommunicationRequestTemp.MetaData.builder()
+                        .vendorName(serviceName.getName())
+                        .capitalUrl(appProperties.getCapitalWebUrl()).exception(message).build();
+
+                String errorEmailRecipientName = appProperties.getErrorEmailRecipientName();
+                if (errorEmailRecipientName != null) {
+                    String[] split = errorEmailRecipientName.split(",");
+                    for (String recipient : split) {
+                        CommunicationRequestTemp.EmailCommunicationDTO emailCommunicationDTO = CommunicationRequestTemp.EmailCommunicationDTO.builder()
+                                .recipientEmail(recipient).recipientName("").subject(subject).build();
+
+                        CommunicationRequestTemp communicationRequestTemp = CommunicationRequestTemp.builder().contentMetaData(metaData).emailCommunicationDto(emailCommunicationDTO).templateName(templateName).build();
+
+                        communicationService.sendCommunicationForLoan(communicationRequestTemp);
+                    }
+                }
+            } catch (Exception ex) {
+                log.error("error in communication  " + ex.getMessage());
+            }
+        }
     }
 
     @Pointcut("execution(public * com.sr.capital.util.ProviderHelperUtil.makeApiCall*(..))")
