@@ -51,10 +51,15 @@ public class RateLimitFilter implements Filter {
                         "Limit exceeded. Try again later.",
                         HttpStatus.TOO_MANY_REQUESTS
                 );
+                return;
             }
             else {
                 chain.doFilter(request, response);
+                return;
             }
+        } else {
+            chain.doFilter(request, response);
+            return;
         }
     }
 
