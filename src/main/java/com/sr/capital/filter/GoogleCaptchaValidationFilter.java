@@ -2,7 +2,6 @@ package com.sr.capital.filter;
 
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.config.properties.BypassProperties;
-import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.service.GoogleCaptchaService;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -13,17 +12,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
 @Component
 @Slf4j
-public class GoogleCaptchaValidator implements Filter {
+public class GoogleCaptchaValidationFilter implements Filter {
 
     @Autowired
     private BypassProperties bypassProperties;
@@ -60,13 +57,14 @@ public class GoogleCaptchaValidator implements Filter {
             return;
         }
 
+
+
         String captchaAction = googleCaptchaFlagAndAction.getSecond();
 
         if (googleCaptchaService.verifyCaptcha(httpRequest, httpResponse, captchaAction)) {
             chain.doFilter(request, response);
-        } else {
-            return;
         }
+        chain.doFilter(request, response);
     }
 
 

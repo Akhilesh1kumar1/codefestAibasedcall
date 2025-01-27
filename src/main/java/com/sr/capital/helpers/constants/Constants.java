@@ -178,6 +178,8 @@ public final class Constants {
         public static final String CRIF_ACCESS_TOKEN =  "crif_access_tokens";
 
         public static final String CRIF_CONSENT_ID_KEY = "crif_consent_id";
+        public static final String RATE_LIMIT_KEY_PREFIX = "rate_limit_key_";
+        public static final String RATE_LIMIT_INTERNAL_KEY_PREFIX = "rate_limit_internal_key_";
         public static final String LOAN_AT_VENDOR = "LOAN_AT_VENDOR";
     }
 
