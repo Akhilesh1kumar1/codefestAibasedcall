@@ -391,4 +391,6 @@ public class AppProperties {
     @Value("${app.rate-limit.allowed-request}")
     private Long rateLimitAllowedRequest;
 
+    @Value("${global.loan-vendor-id}")
+    private Long globalVendorId;
 }

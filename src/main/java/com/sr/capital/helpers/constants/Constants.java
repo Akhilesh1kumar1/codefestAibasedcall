@@ -1,7 +1,6 @@
 package com.sr.capital.helpers.constants;
 
 import com.sr.capital.helpers.enums.DocType;
-import org.redisson.api.RMapCache;
 
 import java.util.Map;
 import java.util.Set;
@@ -88,6 +87,7 @@ public final class Constants {
         public static final String ERROR_WHILE_READING_DATA_FROM_AWS = "Error while reading data : %s from AWS, error : %s";
         public static final String ERROR_WHILE_UPLOADING_FILE_TO_AWS = "Error while uploading file : %s to AWS, error : %s";
         public static final String PRESIGNED_URL_GENERATION = "Pre signed URL generated successfully.";
+        public static final String ACKNOWLEDGED_SUCCESSFULLY = "Acknowledge successfully.";
         public static final String CREDIT_PARTNER_CREATED_SUCCESSFULLY = "Credit partner added successfully";
         public static final String CREDIT_PARTNER_UPDATED_SUCCESSFULLY = "Credit partner updated successfully";
         public static final String NO_RECORD_FOUND_WITH_GIVEN_DETAILS = "Invalid Request, No record found for given details";
@@ -103,6 +103,7 @@ public final class Constants {
         public static final String FILE_NAME_MISMATCH = "Acknowledgement is being done for a different file concerned with correlation ID.";
         public static final String STATUS_MISMATCH = "The request is already acknowledged.";
         public static final String FILE_IN_PROGRESS_ERROR = "A file is already in progress. Please retry after some time.";
+        public static final String FILE_NAME_ALREADY_EXIST_ERROR = "A file with given name is already present. Please retry with different file Name.";
 
         public static final String VALID_PAN = "Pan Number is in valid format";
 
