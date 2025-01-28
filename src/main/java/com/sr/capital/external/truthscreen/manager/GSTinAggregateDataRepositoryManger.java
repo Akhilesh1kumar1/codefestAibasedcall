@@ -23,7 +23,7 @@ public class GSTinAggregateDataRepositoryManger {
             log.error("Doc Details not present for the user with tentant_id " + RequestData.getTenantId());
         }
 
-        gstinAggregateDataHistoryRepository.save(GSTinDetailsHistory.builder().transId(gsTinDetails.getTransId()).gsTinDetails(gsTinDetails).build());
+        gstinAggregateDataHistoryRepository.save(GSTinDetailsHistory.builder().srCompanyId(RequestData.getTenantId()).transId(gsTinDetails.getTransId()).gsTinDetails(gsTinDetails).build());
         return gstinAggregateDataRepository.save(gsTinDetails);
     }
 }

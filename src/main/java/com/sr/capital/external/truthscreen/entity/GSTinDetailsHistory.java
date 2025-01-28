@@ -11,7 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class GSTinDetailsHistory {
 
     private String transId;
-
+    @Field("sr_company_id")
+    private String srCompanyId;
     @Field("gstin-details")
     private GSTinDetails gsTinDetails;
 
