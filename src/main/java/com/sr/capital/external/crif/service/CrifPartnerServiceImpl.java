@@ -1,6 +1,7 @@
 package com.sr.capital.external.crif.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sr.capital.CommonConstant;
 import com.sr.capital.config.AppProperties;
@@ -28,6 +29,7 @@ import com.sr.capital.helpers.enums.ServiceName;
 import com.sr.capital.repository.mongo.BureauInitiateModelRepo;
 import com.sr.capital.repository.mongo.CrifReportRepo;
 import com.sr.capital.util.Base64Util;
+import com.sr.capital.util.MapperUtils;
 import com.sr.capital.util.WebClientUtil;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,8 @@ import static com.sr.capital.external.crif.util.StringUtils.FORMATTER;
 @RequiredArgsConstructor
 public class CrifPartnerServiceImpl implements CrifPartnerService {
 
+    public static final String ERROR_WHILE_FETCHING_SCORE = "Error while fetching score: ";
+    public static final String ERROR_WHILE_PARSING_JSON = "Error while parsing JSON: {}";
     private final WebClientUtil webClientUtil;
     private final AppProperties appProperties;
     private final BureauInitiateModelRepo bureauInitiateModelRepo;
@@ -883,6 +887,39 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         bureauReportPayloadRequest.setAlertFlag("N");
         bureauReportPayloadRequest.setPaymentFlag("N");
         bureauReportPayloadRequest.setJsonFlag("Y");
+    }
+
+    @Override
+    public String getScoreForGivenMobile(String mobileNumber) {
+        try {
+            return crifModelHelper.findByMobile(mobileNumber)
+                    .map(CrifReport::getResult)
+                    .map(result -> fetchScoreFromJson((String) result))
+                    .orElse(null);
+        } catch (Exception e) {
+            log.error(ERROR_WHILE_FETCHING_SCORE + e.getMessage() + e);
+            return null;
+        }
+    }
+
+    private String fetchScoreFromJson(String result) {
+        try {
+            JsonNode rootNode = MapperUtils.convertToJsonNode(result);
+            return getJsonValue(rootNode, Constant.B2C_REPORT, Constant.REPORT_DATA, Constant.STANDARD_DATA, Constant.SCORE, Constant.VALUE);
+        } catch (Exception e) {
+            log.error(ERROR_WHILE_PARSING_JSON, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private String getJsonValue(JsonNode rootNode, String... paths) {
+        for (String path : paths) {
+            if (rootNode == null || rootNode.isMissingNode()) {
+                return null;
+            }
+            rootNode = rootNode.path(path);
+        }
+        return rootNode.isArray() ? rootNode.get(0).asText() : rootNode.asText();
     }
 
     @Override

@@ -78,6 +78,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             loanApplication = loanApplicationRepository.save(loanApplication);
         }
 
+        loanApplication.setCrifScore(loanApplicationRequestDto.getCrifScore());
+
         LoanApplicationResponseDto loanApplicationResponseDto =LoanApplicationResponseDto.mapLoanApplicationResponse(loanApplication);
 
         if(loanApplicationRequestDto.getCreateLoanAtVendor()){

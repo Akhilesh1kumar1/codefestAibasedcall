@@ -4,6 +4,7 @@ import com.sr.capital.dto.request.LoanApplicationRequestDto;
 import com.sr.capital.dto.request.LoanMetaDataDto;
 import com.sr.capital.dto.request.ValidateMobileNumberRequestDto;
 import com.sr.capital.exception.custom.CustomException;
+import com.sr.capital.external.crif.service.CrifPartnerService;
 import com.sr.capital.helpers.enums.LoanStatus;
 import com.sr.capital.helpers.enums.RequestType;
 import com.sr.capital.service.LoanApplicationService;
@@ -25,6 +26,7 @@ public class ValidateServiceImpl implements ValidateService {
    final RequestValidationStrategy requestValidationStrategy;
    final LoanApplicationService loanApplicationService;
    final LoanAllocationServiceImpl loanAllocationService;
+   final CrifPartnerService crifPartnerService;
     @Override
     public Boolean validatePan(String value) throws Exception {
         return requestValidationStrategy.validateRequest(value, RequestType.PAN);
@@ -54,7 +56,8 @@ public class ValidateServiceImpl implements ValidateService {
         if(validMobileNumber){
             requestDto.setLoanStatus(LoanStatus.LEAD_INITIATED);
         }
-         loanApplicationService.submitLoanApplication(requestDto);
+        requestDto.setCrifScore(crifPartnerService.getScoreForGivenMobile(validateMobileNumberRequestDto.getMobileNumber()));
+        loanApplicationService.submitLoanApplication(requestDto);
 
          return validMobileNumber;
     }
