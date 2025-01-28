@@ -11,6 +11,7 @@ import com.sr.capital.external.truthscreen.dto.response.TruthScreenBaseResponse;
 import com.sr.capital.external.truthscreen.dto.request.IdSearchRequestDto;
 import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
+import com.sr.capital.external.truthscreen.manager.TruthScreenDocDetailsManager;
 import com.sr.capital.external.truthscreen.repository.TruthScreenDocDetailsRepository;
 import com.sr.capital.external.truthscreen.service.IdService;
 import com.sr.capital.external.truthscreen.service.strategy.TruthScreenEntityConstructorStrategy;
@@ -36,6 +37,8 @@ public class IdServiceImpl implements IdService {
     private final TruthScreenEntityConstructorStrategy truthEntityConstructorStrategy;
 
     private final TruthScreenRequestValidatorStrategy truthScreenRequestValidatorStrategy;
+
+    private final TruthScreenDocDetailsManager truthScreenDocDetailsManager;
 
     @Override
     public IdSearchResponseDto<?> sendRequest(IdSearchRequestDto requestDTO) throws Exception {
@@ -65,9 +68,7 @@ public class IdServiceImpl implements IdService {
                     truthScreenDocOrchestratorRequest.getTruthScreenDocDetails(),
                     getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType()))
             );
-
-            truthScreenDocDetailsRepository.save(truthScreenDocDetailsToBeSaved);
-
+            truthScreenDocDetailsManager.saveDocs(truthScreenDocDetailsToBeSaved);
             return truthScreenIdSearchResponseStrategy.constructResponse(
                     truthScreenDocDetailsToBeSaved,
                     getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType()))

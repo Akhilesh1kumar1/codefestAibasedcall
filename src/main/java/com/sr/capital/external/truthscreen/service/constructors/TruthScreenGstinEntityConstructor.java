@@ -6,7 +6,7 @@ import com.sr.capital.external.truthscreen.dto.data.GSTinExtractionResponseData;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
 import com.sr.capital.external.truthscreen.entity.GSTinDetails;
 import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
-import com.sr.capital.external.truthscreen.repository.GstinAggregateDataRepository;
+import com.sr.capital.external.truthscreen.manager.GSTinAggregateDataRepositoryManger;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenEntityConstructor;
 import com.sr.capital.util.MapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class TruthScreenGstinEntityConstructor implements TruthScreenEntityConstructor {
 
     @Autowired
-    private GstinAggregateDataRepository gstinAggregateDataRepository;
+    private GSTinAggregateDataRepositoryManger gsTinAggregateDataRepositoryManager;
 
     @Autowired
     private AES256 aes256;
@@ -67,13 +67,11 @@ public class TruthScreenGstinEntityConstructor implements TruthScreenEntityConst
 
     private GSTinDetails saveAggregateData(GSTinDetails gstinDetails,AES256 aes256, TruthScreenDocOrchestratorRequest request){
         gstinDetails.setTransId(request.getTransId());
-        gstinAggregateDataRepository.save(gstinDetails);
+        gsTinAggregateDataRepositoryManager.saveDoc(gstinDetails);
         GSTinDetails.encryptInfo(gstinDetails,aes256);
         gstinDetails.setFilingData(null);
         gstinDetails.setGoodsAndService(null);
         gstinDetails.setPlaceOfBusinessData(null);
         return gstinDetails;
     }
-
-
 }
