@@ -10,4 +10,6 @@ public interface FeatureBannerService {
 
 
     Map<String, Object> getFeatureBannerData();
+
+    Map<String, Object> getPublicBannerData();
 }
