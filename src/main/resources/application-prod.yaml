@@ -381,3 +381,6 @@ bypass:
         - GET
       captchaEnabled: true
       captchaAction: "FetchBannerAction"
+
+global:
+  loan-vendor-id: 1
