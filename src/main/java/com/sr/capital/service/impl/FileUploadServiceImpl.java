@@ -6,6 +6,7 @@ import com.omunify.core.util.ExceptionUtils;
 import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
+import com.sr.capital.dto.response.FileUploadDataDTO;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.entity.primary.FileUploadData;
 import com.sr.capital.exception.custom.CustomException;
@@ -23,8 +24,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -173,6 +177,50 @@ public class FileUploadServiceImpl implements FileUploadService {
         return S3Util.downloadFileFromS3(appProperties.getBucketName(),fileName,tempDir);
     }
 
+    @Override
+    public List<FileUploadDataDTO> searchByUserId(String uploadedBy) {
+        if (uploadedBy != null) {
+            String[] split = uploadedBy.split(",");
+                List<Long> userIdList = Arrays.stream(split).filter(str -> {
+                            try {
+                                Long.valueOf(str);
+                                return true;
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                        }).map(Long::valueOf)
+                        .toList();
+            if (CollectionUtils.isNotEmpty(userIdList)) {
+                return convertToDTO(fileUploadDataRepository.findAllByUploadedByIn(userIdList));
+            }
+        }
+        return convertToDTO(fileUploadDataRepository.findAll());
+    }
+
+    @Override
+    public List<FileUploadDataDTO> getUploadedFileDetails() {
+        List<FileUploadData> fileUploadDataList = fileUploadDataRepository.findAll();
+        return convertToDTO(fileUploadDataList);
+    }
+
+    public static List<FileUploadDataDTO> convertToDTO(List<FileUploadData> fileUploadDataList) {
+        List<FileUploadDataDTO> fileUploadDataDTOList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(fileUploadDataList)) {
+
+            for (FileUploadData fileUploadData : fileUploadDataList) {
+
+                fileUploadDataDTOList.add(FileUploadDataDTO.builder()
+                        .fileName(fileUploadData.getFileName())
+                        .correlationId(fileUploadData.getCorrelationId())
+                        .status(fileUploadData.getStatus())
+                        .fileConsumptionData(fileUploadData.getFileConsumptionDataDTO())
+                        .tenantId(fileUploadData.getTenantId())
+                        .uploadedBy(fileUploadData.getUploadedBy())
+                        .build());
+            }
+        }
+        return fileUploadDataDTOList;
+    }
     @Override
     public Boolean deleteFiles(File file) {
          try {

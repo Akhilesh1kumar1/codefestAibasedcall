@@ -4,6 +4,7 @@ package com.sr.capital.service;
 import com.amazonaws.HttpMethod;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
+import com.sr.capital.dto.response.FileUploadDataDTO;
 import com.sr.capital.entity.mongo.kyc.KycDocDetails;
 import com.sr.capital.exception.custom.CustomException;
 
@@ -28,4 +29,7 @@ public interface FileUploadService {
 
     public Boolean deleteFiles(File file);
 
+    List<FileUploadDataDTO> getUploadedFileDetails();
+
+    List<FileUploadDataDTO> searchByUserId(String uploadedBy);
 }

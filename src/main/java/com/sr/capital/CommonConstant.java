@@ -15,6 +15,7 @@ public class CommonConstant {
             new AntPathRequestMatcher("/api/v1/kyc/doc/upload_and_extract/**"),
             new AntPathRequestMatcher("/aes/decrypt/**"),
             new AntPathRequestMatcher("/aes/encrypt/**"),
+            new AntPathRequestMatcher("/api/file-upload/**"),
             new AntPathRequestMatcher("/**/icrm/**")
 
     );

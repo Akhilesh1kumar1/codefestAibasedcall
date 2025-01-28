@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.omunify.core.model.GenericResponse;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.file.FileUploadRequestDTO;
+import com.sr.capital.dto.response.FileUploadDataDTO;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.service.FileUploadService;
 import com.sr.capital.util.ResponseBuilderUtil;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.ACKNOWLEDGED_SUCCESSFULLY;
@@ -47,5 +50,16 @@ public class FileController {
 
         return ResponseBuilderUtil.getResponse(null, SUCCESS,
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);    }
+
+    @GetMapping("/get-data")
+    public GenericResponse<List<FileUploadDataDTO>> acknowledgeFileUpload() throws CustomException, JsonProcessingException {
+        return ResponseBuilderUtil.getResponse(fileService.getUploadedFileDetails(), SUCCESS,
+                ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
+    }
+    @PostMapping("/search")
+    public GenericResponse<List<FileUploadDataDTO>> searchByUploadedBy(@RequestParam(name = "uploaded_by") String uploadedBy) throws CustomException, JsonProcessingException {
+        return ResponseBuilderUtil.getResponse(fileService.searchByUserId(uploadedBy), SUCCESS,
+                ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
+    }
 
 }
