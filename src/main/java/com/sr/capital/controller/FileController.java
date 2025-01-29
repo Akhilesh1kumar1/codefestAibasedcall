@@ -12,10 +12,12 @@ import com.sr.capital.util.ResponseBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.ACKNOWLEDGED_SUCCESSFULLY;
@@ -31,8 +33,10 @@ public class FileController {
     final FileUploadService fileService;
 
     @PostMapping(value = "/presigned-url")
-    public GenericResponse<String> generatePreSignedUrl(@RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
-        String preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId(), HttpMethod.PUT);
+    public GenericResponse<Map<String, String>> generatePreSignedUrl(@RequestBody @Valid FileUploadRequestDTO fileUploadRequestDto) {
+        //Todo :: remove this line
+        fileUploadRequestDto.setCorrelationId(RequestData.getCorrelationId());
+        Map<String, String> preSignedUrl = fileService.generatePreSignedUrl(fileUploadRequestDto, RequestData.getTenantId(), RequestData.getUserId(), HttpMethod.PUT);
         return ResponseBuilderUtil.getResponse(preSignedUrl, SUCCESS,
                 PRESIGNED_URL_GENERATION, HttpStatus.SC_OK);
     }
@@ -57,8 +61,13 @@ public class FileController {
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
     @PostMapping("/search")
-    public GenericResponse<List<FileUploadDataDTO>> searchByUploadedBy(@RequestParam(name = "uploaded_by") String uploadedBy) throws CustomException, JsonProcessingException {
-        return ResponseBuilderUtil.getResponse(fileService.searchByUserId(uploadedBy), SUCCESS,
+    public GenericResponse<Page<FileUploadDataDTO>> searchByUploadedBy(@RequestParam(name = "uploaded_by") String uploadedBy,
+                                                                       @RequestParam(name = "page_number", required = false) Integer pageNumber,
+                                                                       @RequestParam(name = "page_size", required = false) Integer pageSize )
+            throws CustomException, JsonProcessingException {
+        if (pageNumber == null) pageNumber = 0;
+        if (pageSize == null) pageSize = 20;
+        return ResponseBuilderUtil.getResponse(fileService.searchByUserIdOrName(uploadedBy, pageNumber, pageSize), SUCCESS,
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 

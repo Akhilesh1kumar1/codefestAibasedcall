@@ -16,19 +16,19 @@ import com.sr.capital.repository.mongo.FileUploadDataRepository;
 import com.sr.capital.service.FileUploadService;
 import com.sr.capital.util.*;
 import com.sr.capital.validation.FileValidator;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -51,8 +51,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     private final KafkaMessagePublisherUtil kafkaMessagePublisherUtil;
 
     @Override
-    public String generatePreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId, HttpMethod method) {
+    public Map<String, String> generatePreSignedUrl(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId, HttpMethod method) {
         String preSignedUrl = "";
+        FileUploadData fileUploadData = FileUploadData.builder().build();
         try {
             FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileNameAndCorrelationId(tenantId, userId, fileUploadRequestDto.getFileName(), RequestData.getCorrelationId());
             if (fileUploadOldData != null) {
@@ -63,13 +64,27 @@ public class FileUploadServiceImpl implements FileUploadService {
                 ExceptionUtils.throwCustomException(BAD_REQUEST.getCode(), FILE_IN_PROGRESS_ERROR, HttpStatus.BAD_REQUEST);
             }
             redisUtil.updateFileInCache(tenantId, fileUploadRequestDto.getFileName());
-            preSignedUrl = generateUrl(fileUploadRequestDto, method);
-            saveFileUploadData(fileUploadRequestDto, tenantId, userId, fileUploadRequestDto.getCorrelationId(), fileUploadOldData);
+            preSignedUrl = generateUrlToUpload(fileUploadRequestDto, method);
+            fileUploadData = saveFileUploadData(fileUploadRequestDto, tenantId, userId, fileUploadRequestDto.getCorrelationId(), fileUploadOldData);
         } catch (Exception ex) {
-            log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
+            log.error("Exception: " + ex.getMessage()+ " occurred while generating pre-signed url for file: " + fileUploadRequestDto.getFileName() + " and tenant ID: " + tenantId);
             ExceptionUtils.throwCustomExceptionWithTrace(INTERNAL_SERVER_ERROR.getCode(), ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR, ex);
         }
+        return Map.of("preSignedUrl", preSignedUrl, "correlationId", fileUploadData.getId());
+    }
+
+    private String generateUrlToUpload(FileUploadRequestDTO fileUploadRequestDto, HttpMethod method) {
+        GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
+                .filePath(fileUploadRequestDto.getFileName())
+                .bucketName(appProperties.getBucketName())
+                .httpMethod(method)
+                .build();
+
+        log.info("generate pre-signed url ");
+        String preSignedUrl = S3Util.generateUrl(preSignedUrlRequest);
+        log.info("pre-signed url " +preSignedUrl);
+
         return preSignedUrl;
     }
 
@@ -89,7 +104,6 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private String generateUrl(FileUploadRequestDTO fileUploadRequestDto, HttpMethod method) {
         GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
-                .filePath(fileUploadRequestDto.getFileName())
                 .bucketName(appProperties.getBucketName())
                 .httpMethod(method)
                 .build();
@@ -198,6 +212,43 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
+    public Page<FileUploadDataDTO> searchByUserIdOrName(String uploadedBy, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<FileUploadData> resultPage;
+
+        if (StringUtils.isNotBlank(uploadedBy)) {
+            String[] split = uploadedBy.split(",");
+            List<String> userNameList = new ArrayList<>();
+
+            for (String str : split) {
+               userNameList.add(str.trim());
+            }
+
+            if (CollectionUtils.isNotEmpty(userNameList)) {
+                resultPage = fileUploadDataRepository.findAllByUploadedByUserNameLike(userNameList, pageable);
+            } else {
+                resultPage = fileUploadDataRepository.findAll(pageable);
+            }
+        } else {
+            resultPage = fileUploadDataRepository.findAll(pageable);
+        }
+
+        return resultPage.map(this::convertSingleToDTO);
+    }
+
+    private FileUploadDataDTO convertSingleToDTO(FileUploadData fileUploadData) {
+        return FileUploadDataDTO.builder()
+                .fileName(fileUploadData.getFileName())
+                .correlationId(fileUploadData.getCorrelationId())
+                .status(fileUploadData.getStatus())
+                .fileConsumptionData(fileUploadData.getFileConsumptionDataDTO())
+                .tenantId(fileUploadData.getTenantId())
+                .uploadedByUserId(fileUploadData.getUploadedBy())
+                .uploadedByUserName(fileUploadData.getUploadedByUserName())
+                .build();
+    }
+
+    @Override
     public List<FileUploadDataDTO> getUploadedFileDetails() {
         List<FileUploadData> fileUploadDataList = fileUploadDataRepository.findAll();
         return convertToDTO(fileUploadDataList);
@@ -215,7 +266,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                         .status(fileUploadData.getStatus())
                         .fileConsumptionData(fileUploadData.getFileConsumptionDataDTO())
                         .tenantId(fileUploadData.getTenantId())
-                        .uploadedBy(fileUploadData.getUploadedBy())
+                        .uploadedByUserId(fileUploadData.getUploadedBy())
+                        .uploadedByUserName(fileUploadData.getUploadedByUserName())
                         .build());
             }
         }
@@ -242,8 +294,8 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
 
-    private void saveFileUploadData(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId,
-                                    String correlationId, FileUploadData fileUploadOldData) {
+    private FileUploadData saveFileUploadData(FileUploadRequestDTO fileUploadRequestDto, String tenantId, Long userId,
+                                              String correlationId, FileUploadData fileUploadOldData) {
 //        FileUploadData fileUploadOldData = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileName(tenantId, userId, fileUploadRequestDto.getFileName());
         FileUploadData fileUploadData = FileUploadData.builder()
                 .fileName(fileUploadRequestDto.getFileName())
@@ -251,11 +303,15 @@ public class FileUploadServiceImpl implements FileUploadService {
                 .status(ACKNOWLEDGEMENT_PENDING)
                 .tenantId(tenantId)
                 .uploadedBy(userId)
+                .uploadedByUserName(fileUploadRequestDto.getUserName())
                 .build();
         if (fileUploadOldData != null) {
             fileUploadData.setId(fileUploadOldData.getId());
         }
-        fileUploadDataRepository.save(fileUploadData);
+        FileUploadData fileUploadData1 = fileUploadDataRepository.save(fileUploadData);
+        //Todo :: remove this code use id directly
+        fileUploadData1.setCorrelationId(fileUploadData1.getId());
+        return fileUploadDataRepository.save(fileUploadData);
     }
 
 
