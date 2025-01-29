@@ -95,7 +95,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             FileValidator.validateFileUploadRequest(fileUploadRequestDto);
             preSignedUrl = generateUrl(fileUploadRequestDto, method);
         } catch (Exception ex) {
-            log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
+            log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: " + tenantId);
             ExceptionUtils.throwCustomExceptionWithTrace(INTERNAL_SERVER_ERROR.getCode(), ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR, ex);
         }

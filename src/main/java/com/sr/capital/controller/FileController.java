@@ -56,8 +56,8 @@ public class FileController {
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);    }
 
     @GetMapping("/get-data")
-    public GenericResponse<List<FileUploadDataDTO>> acknowledgeFileUpload() throws CustomException, JsonProcessingException {
-        return ResponseBuilderUtil.getResponse(fileService.getUploadedFileDetails(), SUCCESS,
+    public GenericResponse<Page<FileUploadDataDTO>> acknowledgeFileUpload() throws CustomException, JsonProcessingException {
+        return ResponseBuilderUtil.getResponse(fileService.searchByUserIdOrName(null, 0, 20), SUCCESS,
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
     @PostMapping("/search")
