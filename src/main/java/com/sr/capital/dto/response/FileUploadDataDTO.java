@@ -23,5 +23,7 @@ public class FileUploadDataDTO {
 
     private String tenantId;
 
-    private Long uploadedBy;
+    private Long uploadedByUserId;
+
+    private String uploadedByUserName;
 }

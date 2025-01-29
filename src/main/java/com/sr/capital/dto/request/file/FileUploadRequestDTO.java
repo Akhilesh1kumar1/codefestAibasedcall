@@ -23,5 +23,7 @@ public class FileUploadRequestDTO {
 
     String correlationId;
 
+    String userName;
+
     Long userId;
 }
