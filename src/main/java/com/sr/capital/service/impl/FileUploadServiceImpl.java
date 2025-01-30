@@ -199,7 +199,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public Page<FileUploadDataDTO> searchByUserIdOrName(String uploadedBy, int page, int size) {
+    public Page<FileUploadDataDTO> searchByUserName(String uploadedBy, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<FileUploadData> resultPage;
 

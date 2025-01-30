@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
@@ -61,7 +60,7 @@ public class FileController {
             throws CustomException, JsonProcessingException {
         if (pageNumber == null) pageNumber = 0;
         if (pageSize == null) pageSize = 20;
-        return ResponseBuilderUtil.getResponse(fileService.searchByUserIdOrName(null, pageNumber, pageSize), SUCCESS,
+        return ResponseBuilderUtil.getResponse(fileService.searchByUserName(null, pageNumber, pageSize), SUCCESS,
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
     @PostMapping("/search")
@@ -71,7 +70,7 @@ public class FileController {
             throws CustomException, JsonProcessingException {
         if (pageNumber == null) pageNumber = 0;
         if (pageSize == null) pageSize = 20;
-        return ResponseBuilderUtil.getResponse(fileService.searchByUserIdOrName(uploadedBy, pageNumber, pageSize), SUCCESS,
+        return ResponseBuilderUtil.getResponse(fileService.searchByUserName(uploadedBy, pageNumber, pageSize), SUCCESS,
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 
