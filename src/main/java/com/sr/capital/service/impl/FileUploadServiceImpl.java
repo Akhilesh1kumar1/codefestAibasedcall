@@ -102,21 +102,6 @@ public class FileUploadServiceImpl implements FileUploadService {
         return preSignedUrl;
     }
 
-
-
-    private String generateUrl(FileUploadRequestDTO fileUploadRequestDto, HttpMethod method) {
-        GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
-                .bucketName(appProperties.getBucketName())
-                .httpMethod(method)
-                .build();
-
-        log.info("generate pre-signed url ");
-        String preSignedUrl = S3Util.generateUrl(preSignedUrlRequest);
-        log.info("pre-signed url " +preSignedUrl);
-
-        return preSignedUrl;
-    }
-
     @Override
     public void acknowledgeFile(FileUploadRequestDTO fileUploadRequestDto) throws JsonProcessingException, CustomException {
         FileUploadData fileUpload = fileUploadDataRepository.findByTenantIdAndUploadedByAndFileNameAndCorrelationId(RequestData.getTenantId(), RequestData.getUserId(), fileUploadRequestDto.getFileName(), fileUploadRequestDto.getCorrelationId());
