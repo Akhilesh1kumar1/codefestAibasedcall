@@ -212,7 +212,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
 
             if (CollectionUtils.isNotEmpty(userNameList)) {
-                resultPage = fileUploadDataRepository.findAllByUploadedByUserNameLike(userNameList, pageable);
+                resultPage = fileUploadDataRepository.findAllByUploadedByUserNameLikeOrderByCreatedAtDesc(userNameList, pageable);
             } else {
                 resultPage = fileUploadDataRepository.findAll(pageable);
             }

@@ -29,5 +29,8 @@ public interface FileUploadDataRepository extends MongoRepository<FileUploadData
     @Query("{ 'uploadedByUserName': { $regex: ?0, $options: 'i' } }")
     Page<FileUploadData> findAllByUploadedByUserNameLike(List<String> uploadedByUserName, Pageable pageable);
 
+    @Query("{ 'uploadedByUserName': { $regex: ?0, $options: 'i' } }")
+    Page<FileUploadData> findAllByUploadedByUserNameLikeOrderByCreatedAtDesc(List<String> uploadedByUserName, Pageable pageable);
+
 //    FileUploadData findByTenantIdAndUploadedByAndFileName(String tenantId, Long uploadedBy, String fileName);
 }
