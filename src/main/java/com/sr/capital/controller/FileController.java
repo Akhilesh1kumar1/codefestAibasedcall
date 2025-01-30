@@ -56,14 +56,18 @@ public class FileController {
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);    }
 
     @GetMapping("/get-data")
-    public GenericResponse<Page<FileUploadDataDTO>> acknowledgeFileUpload() throws CustomException, JsonProcessingException {
-        return ResponseBuilderUtil.getResponse(fileService.searchByUserIdOrName(null, 0, 20), SUCCESS,
+    public GenericResponse<Page<FileUploadDataDTO>> getData( @RequestParam(name = "page", required = false) Integer pageNumber,
+                                                                           @RequestParam(name = "size", required = false) Integer pageSize)
+            throws CustomException, JsonProcessingException {
+        if (pageNumber == null) pageNumber = 0;
+        if (pageSize == null) pageSize = 20;
+        return ResponseBuilderUtil.getResponse(fileService.searchByUserIdOrName(null, pageNumber, pageSize), SUCCESS,
                 ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
     @PostMapping("/search")
     public GenericResponse<Page<FileUploadDataDTO>> searchByUploadedBy(@RequestParam(name = "uploaded_by") String uploadedBy,
-                                                                       @RequestParam(name = "page_number", required = false) Integer pageNumber,
-                                                                       @RequestParam(name = "page_size", required = false) Integer pageSize )
+                                                                       @RequestParam(name = "page", required = false) Integer pageNumber,
+                                                                       @RequestParam(name = "size", required = false) Integer pageSize)
             throws CustomException, JsonProcessingException {
         if (pageNumber == null) pageNumber = 0;
         if (pageSize == null) pageSize = 20;
