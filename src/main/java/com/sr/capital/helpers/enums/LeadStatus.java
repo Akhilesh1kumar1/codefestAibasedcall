@@ -15,7 +15,8 @@ public enum LeadStatus {
     LOAN_OFFER_DECLINED_BY_SELLER("loan offer declined by seller"),
     LOAN_OFFER_ACCEPTED("loan offer accepted"),
     LOAN_OFFER_PARTIALLY_DISBURSED("loan offer partially disbursed"),
-    LOAN_OFFER_FULLY_DISBURSED("loan offer fully disbursed");
+    LOAN_OFFER_FULLY_DISBURSED("loan offer fully disbursed"),
+    LEAD_CLOSED("Lead Closed");
     /*INTERESTED_FULLY_DISBURSED("Interested & Fully Disbursed")
     INTERESTED_FOLLOW_UP("Interested & Follow Up"),
     INTERESTED_REJECTED("Interested & Rejected"),

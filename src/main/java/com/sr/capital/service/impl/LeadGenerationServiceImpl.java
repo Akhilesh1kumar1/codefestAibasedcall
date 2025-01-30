@@ -48,9 +48,14 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
             throws CustomException {
         List<Lead> leadList = leadGenerationRepository.findBySrCompanyIdOrderByCreatedAtDesc(Long.valueOf(RequestData.getTenantId()));
         if(CollectionUtils.isNotEmpty(leadList)){
+            Lead lead = leadList.get(0);
             LocalDateTime previousLeadTime = LocalDateTime.now().minusMonths(1);
-            if(leadList.get(0).getCreatedAt().isAfter(previousLeadTime)) {
+            if(lead.getCreatedAt().isAfter(previousLeadTime)) {
                 throw new CustomException("Lead is already generated", HttpStatus.BAD_REQUEST);
+            }else if(lead.getStatus()!=LeadStatus.LEAD_CLOSED){
+                lead.setStatus(LeadStatus.LEAD_CLOSED);
+                lead.setRemarks("New lead generated; this lead is closed");
+                leadGenerationRepository.save(lead);
             }
         }
         addUserIfEmpty(RequestData.getUserId(), token);
