@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <meta name="supported-color-schemes" content="light dark" />
-    <meta name="description" content="Dear Saahil, your order has been shipped and will reach you by dd/mm/yy." />
-    <title>Complete Your Loan Application in Just a Few Clicks!</title>
+    <meta name="description" content="exception mail" />
+    <title>An exception occurred</title>
     <style type="text/css">
         body {
           margin: 0;
@@ -55,7 +55,7 @@
                                 <tbody>
                                 <tr style="background-color: #e7edff">
                                     <td style="padding-left: 20px; padding-right: 50px">
-                                        <p style=" color: #6148dc; letter-spacing: -0.5px; font-size: 20px; font-weight: 500; ">Complete Your Loan Application in Just a Few Clicks!</p>
+                                        <p style=" color: #6148dc; letter-spacing: -0.5px; font-size: 20px; font-weight: 500; ">An exception occurred</p>
                                     </td>
                                     <td>
                                         <img src="https://kr-shipmultichannel-mum.s3-ap-south-1.amazonaws.com/upload-file/email-templates/seller/Group_713@2x.png" width="94" height="90" style=" object-fit: contain; float: right; padding: 30px; " />
@@ -74,35 +74,31 @@
                                         <table style="background-color: white; width: 100%; color: #000000de; font-size: 16px;">
                                             <tbody>
                                             <tr>
-                                                <td style="padding: 2em 1em 1em 1.25em;">
-                                                    <span style="font-weight: 500">Hey <span th:text="${userName}" />,</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="text-align: center; padding: 0.5em 1em 2em;">
-                                                    <p style="text-align: left; margin-bottom: 2rem;">
-                                                        We noticed your loan application
-                                                        <b>(Application ID: <span th:text="${loanId}" />)</b> is currently incomplete and paused at the
-                                                        <b><span th:text="${state}" /></b> step.
-                                                    </p>
-                                                    <p style="text-align: left; margin-bottom: 2rem;">
-                                                        To finish the process and move closer to securing the financial support you need, click below:
-                                                    </p>
-                                                    <div style="text-align: center; margin-bottom: 2rem;">
-                                                        <a href="https://app.shiprocket.in/capital" role="button"
-                                                           style="text-decoration: none; background-color: #6f57e9; color: white; padding: 12px 20px; font-size: 14px; border: 1px solid #6f57e9b3; border-radius: 8px;"
-                                                           target="_blank">
-                                                            Resume Application
-                                                        </a>
-                                                    </div>
-                                                    <p style="text-align: left; margin-bottom: 2rem;">
-                                                        If you have any questions or need help, please contact your Capital Advisor at:</br>
-                                                        📧 <b>capital@shiprocket.com</b><br />
-                                                        📞 <b>9821008947</b>
-                                                    </p>
-                                                    <p style="text-align: left; margin-bottom: 2rem;">
-                                                        We’re here to assist you every step of the way!
-                                                    </p>
+                                                <td>
+                                                    <table style="background-color: white; width: 100%; color: #000000de; font-size: 16px;">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td style="padding: 2em 1em 1em 1.25em">
+                                                                <span style="font-weight: 500">Hey ,</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="text-align: left; padding: 0.5em 1em 2em">
+                                                                <p style="margin-bottom: 2rem;">
+                                                                    An exception occurred in Capital application:" <br>
+                                                                    <b>Exception: </b> <span th:text="${exception}"></span> <br>
+                                                                </p>
+                                                                <p style="margin-bottom: 2rem;">
+                                                                    If you have any questions or need assistance, feel free to contact your Capital Advisor at:
+                                                                    <br />
+                                                                    📧 <a href="mailto:capital@shiprocket.com">capital@shiprocket.com</a>
+                                                                    <br />
+                                                                    📞<b>9821008947</b>
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -110,6 +106,7 @@
                                     </td>
                                 </tr>
 
+                                </tbody>
                             </table>
                         </td>
                     </tr>

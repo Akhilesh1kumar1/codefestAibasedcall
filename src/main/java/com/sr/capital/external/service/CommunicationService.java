@@ -289,6 +289,7 @@ public class CommunicationService {
         context.setVariable(CommunicationRequestTemp.MetaData.Fields.disbursmentInterest,communicationRequest.getContentMetaData().getDisbursmentInterest());
         context.setVariable(CommunicationRequestTemp.MetaData.Fields.disbursmentTenure,communicationRequest.getContentMetaData().getDisbursmentTenure());
         context.setVariable(CommunicationRequestTemp.MetaData.Fields.monthlyEmi,communicationRequest.getContentMetaData().getMonthlyEmi());
+        context.setVariable(CommunicationRequestTemp.MetaData.Fields.exception,communicationRequest.getContentMetaData().getException());
 
         return context;
     }
