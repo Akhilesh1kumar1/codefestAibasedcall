@@ -373,11 +373,15 @@ public class AppProperties {
 
     @Value("${external.google.captcha-secret-key}")
     private String captchaSiteVerificationSecretKey;
+    @Value("${is.error-mail-trigger.enabled}")
+    private Boolean isErrorMailTriggerEnabled;
 
     @Value("${external.crif.public.user-id}")
     private String publicUserId;
     @Value("${external.google.endpoints.captcha-site-verify}")
     private String captchaSiteVerificationEndpoint;
+    @Value("${error.email.recipientName}")
+    private String errorEmailRecipientName;
 
     @Value("${app.captcha-verification.enabled}")
     private Boolean captchaVerificationEnabled;

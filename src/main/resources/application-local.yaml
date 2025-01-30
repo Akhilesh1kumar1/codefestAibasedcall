@@ -335,6 +335,8 @@ aes:
     key: ${AES_IV_KEY:U0h8UFIwa0BUQCQh}
 
 is:
+  error-mail-trigger:
+    enabled: ${IS_ERROR_MAIL_ENABLED:true}
   encryption:
     enabled: ${IS_ENCRYPTION_ENABLED:false}
 
@@ -378,3 +380,7 @@ bypass:
 
 global:
   loan-vendor-id: 1
+error:
+  email:
+    recipientName: ${ERROR_EMAIL_RECIPIENT_NAME:vikas.sinwar@shiprocket.com,akhilesh.kumar@shiprocket.com}
+
