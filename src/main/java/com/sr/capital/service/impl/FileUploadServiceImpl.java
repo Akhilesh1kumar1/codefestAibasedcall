@@ -93,7 +93,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         String preSignedUrl = "";
         try {
             FileValidator.validateFileUploadRequest(fileUploadRequestDto);
-            preSignedUrl = generateUrl(fileUploadRequestDto, method);
+            preSignedUrl = S3Util.generatePresignedUrl(appProperties.getBucketName(), fileUploadRequestDto.getFileName(), 10);
         } catch (Exception ex) {
             log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: " + tenantId);
             ExceptionUtils.throwCustomExceptionWithTrace(INTERNAL_SERVER_ERROR.getCode(), ex.getMessage(),
@@ -101,6 +101,8 @@ public class FileUploadServiceImpl implements FileUploadService {
         }
         return preSignedUrl;
     }
+
+
 
     private String generateUrl(FileUploadRequestDTO fileUploadRequestDto, HttpMethod method) {
         GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()

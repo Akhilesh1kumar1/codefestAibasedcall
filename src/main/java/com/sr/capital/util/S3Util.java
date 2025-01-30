@@ -149,6 +149,20 @@ public class S3Util {
         return presignedUrl.toString();
     }
 
+    public static String generatePresignedUrl(String bucketName, String objectKey, int expirationMinutes) {
+        Date expiration = new Date();
+        long expTimeMillis = System.currentTimeMillis();
+        expTimeMillis += (long) expirationMinutes * 60 * 1000;
+        expiration.setTime(expTimeMillis);
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, objectKey)
+                .withMethod(com.amazonaws.HttpMethod.GET)
+                .withExpiration(expiration);
+
+        URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+        return url.toString();
+    }
+
     public static String generatePreSignedUrl(GeneratePreSignedUrlRequest request) {
 
         log.info("[generatePreSignedUrl]for request {} ",request);
