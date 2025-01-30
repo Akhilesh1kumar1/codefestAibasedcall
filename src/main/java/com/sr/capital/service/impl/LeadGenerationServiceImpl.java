@@ -54,6 +54,7 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
                 throw new CustomException("Lead is already generated", HttpStatus.BAD_REQUEST);
             }else if(lead.getStatus()!=LeadStatus.LEAD_CLOSED){
                 lead.setStatus(LeadStatus.LEAD_CLOSED);
+                lead.setRemarks("New lead generated; this lead is closed");
                 leadGenerationRepository.save(lead);
             }
         }
