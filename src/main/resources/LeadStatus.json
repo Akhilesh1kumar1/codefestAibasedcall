@@ -816,6 +816,60 @@
           }
         }
       }
+    },
+    "LEAD_CLOSED": {
+      "transition": {
+        "{\"status\":\"LEAD_START\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"CALL_CONNECTED\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"NOT_INTERESTED\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"LOAN_OFFER_ACCEPTED\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"LOAN_OFFER_PARTIALLY_DISBURSED\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"LOAN_OFFER_ACCEPTED\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"LOAN_OFFER_GENERATED\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"REJECTED_BY_ONE_LP_REFERRED_TO_ANOTHER\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"DOCUMENT_UNDER_CREDIT_EVALUATION\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        },
+        "{\"status\":\"INTERESTED_DOCUMENT_PENDING\"}": {
+          "state": {
+            "status": "NOT_CONNECTED"
+          }
+        }
+      }
     }
 
   }
