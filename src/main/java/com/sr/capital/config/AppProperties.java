@@ -391,4 +391,9 @@ public class AppProperties {
     @Value("${app.rate-limit.allowed-request}")
     private Long rateLimitAllowedRequest;
 
+    @Value("${external.crif.score.threshold}")
+    private Long crifScoreThreshold;
+
+    @Value("${external.crif.shipment.gmv.threshold}")
+    private Long crifShipmentGMVThreshold;
 }

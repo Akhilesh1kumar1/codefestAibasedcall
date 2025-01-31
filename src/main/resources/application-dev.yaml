@@ -226,6 +226,11 @@ external:
         endpoint:
           tasks: /v3/tasks
   crif:
+    score:
+      threshold: ${CRIF_THRESHOLD_VALUE:675}
+    shipment:
+      gmv:
+        threshold: ${CRIF_SHIPMENT_GMV_THRESHOLD_VALUE:675}
     enabled: true
     vendor-token: ${CRIF_VENDOR_TOKEN:test}
     vendor-code: ${CRIF_VENDOR_CODE:test}

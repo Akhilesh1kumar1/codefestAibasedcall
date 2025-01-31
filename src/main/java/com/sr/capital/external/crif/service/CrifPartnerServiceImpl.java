@@ -804,6 +804,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                                        BureauReportPayloadRequest bureauReportPayloadRequest) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
+            String scoreForGivenMobile = getScoreForGivenMobile(mobile);
             byte[] byteArrayResponse = objectMapper.writeValueAsBytes(bureauReportResponse);
             return CrifReport.builder()
                     .mobile(mobile)
@@ -813,6 +814,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     .reportId(bureauReportPayloadRequest.getReportId())
                     .srCompanyId(RequestData.getTenantId() != null ? RequestData.getTenantId() : appProperties.getPublicCompanyId())
                     .validTill(StringUtils.getTimeAfterMonths(1))
+                    .crifScore(scoreForGivenMobile)
                     .build();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
