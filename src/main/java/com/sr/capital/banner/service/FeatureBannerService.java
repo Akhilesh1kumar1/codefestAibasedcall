@@ -11,7 +11,7 @@ import java.util.Map;
 public interface FeatureBannerService {
 
 
-    List<BannerResponse> getFeatureBannerData(String mobile) throws IOException;
+    Map<String, List<BannerResponse>> getFeatureBannerData(String mobile) throws IOException;
 
     Map<String, Object> getPublicBannerData();
 }

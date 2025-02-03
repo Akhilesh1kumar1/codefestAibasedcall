@@ -24,7 +24,7 @@ public class FeatureBannerServiceImpl implements FeatureBannerService {
     private final CrifReportRepo crifReportRepo;
     private final AppProperties appProperties;
     @Override
-    public List<BannerResponse> getFeatureBannerData(String mobile) throws IOException {
+    public Map<String, List<BannerResponse>> getFeatureBannerData(String mobile) throws IOException {
 
         // Todo :: Update after geting clarity on gmv values
         if (mobile != null) {
@@ -52,7 +52,7 @@ public class FeatureBannerServiceImpl implements FeatureBannerService {
         }
         //Todo :: remove this when checks will provided
 
-        return FeatureBannerEnum.CRIF.toRisponseDtoList();
+        return Map.of(FeatureBannerEnum.CRIF.name(), FeatureBannerEnum.CRIF.toRisponseDtoList());
 
     }
 
