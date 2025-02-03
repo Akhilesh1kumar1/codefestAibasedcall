@@ -51,7 +51,9 @@ public class FeatureBannerServiceImpl implements FeatureBannerService {
                 }
             }
 
-        }for (FeatureBannerEnum feature : FeatureBannerEnum.values()) {
+        }
+        //Todo :: remove this when checks will provided
+        for (FeatureBannerEnum feature : FeatureBannerEnum.values()) {
             response.put(feature.name(), feature.getBannerUrls());
         }
 
