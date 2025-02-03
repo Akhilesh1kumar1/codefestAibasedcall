@@ -65,6 +65,9 @@ public class LoanApplication extends UUIDBaseEntity{
     @Column(name = "vendor_status")
     String vendorStatus;
 
+    @Column(name = "crif_score")
+    String crifScore;
+
     @Column(name = "utm_source")
     String utmSource;
 

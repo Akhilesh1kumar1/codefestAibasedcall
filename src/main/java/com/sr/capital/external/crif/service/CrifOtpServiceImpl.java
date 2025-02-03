@@ -122,6 +122,7 @@ public class CrifOtpServiceImpl implements CrifOtpService {
                     crifResponse.setReport(data.get(DATA));
                     crifResponse.setCreatedAt(String.valueOf(data.get(CREATED_AT)));
                     crifResponse.setValidTill(String.valueOf(data.get(VALID_AT)));
+                    crifResponse.setCrifScore(String.valueOf(data.get(GOOD_SCORE)));
                 }
             }
             crifResponse.setStatus(String.valueOf(data.get(STAGE)));

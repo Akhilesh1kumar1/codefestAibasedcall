@@ -19,5 +19,6 @@ public class CrifResponse {
     private Object report;
     private String createdAt;
     private String validTill;
+    private String crifScore;
 
 }

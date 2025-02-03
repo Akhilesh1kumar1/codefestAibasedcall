@@ -46,4 +46,7 @@ public class CrifReport extends BaseDoc {
 
     @Field("consent_id")
     private String consentId;
+
+    @Field("crif_score")
+    private String crifScore;
 }

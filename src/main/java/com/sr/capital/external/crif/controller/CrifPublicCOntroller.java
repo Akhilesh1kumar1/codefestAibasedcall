@@ -1,6 +1,8 @@
 package com.sr.capital.external.crif.controller;
 
 import com.omunify.core.model.GenericResponse;
+import com.sr.capital.banner.service.FeatureBannerService;
+import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.dto.request.CrifConsentWithdrawalRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifGenerateOtpRequestModel;
@@ -11,9 +13,12 @@ import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.service.CrifOtpService;
 import com.sr.capital.external.crif.service.CrifPartnerService;
 
+import com.sr.capital.service.VerificationService;
 import com.sr.capital.util.ResponseBuilderUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +36,8 @@ public class CrifPublicCOntroller {
 
     private final CrifOtpService crifOtpService;
     private final CrifPartnerService crifPartnerService;
+    private final VerificationService verificationService;
+    private final FeatureBannerService featureBannerService;
 
     @PostMapping(value = "/generate-otp")
     public GenericResponse<?> crifGenerateOtp(@RequestBody CrifGenerateOtpRequestModel crifGenerateOtpRequestModel) throws CRIFApiException, IOException, CustomException, CRIFApiLimitExceededException {
@@ -58,4 +65,21 @@ public class CrifPublicCOntroller {
                 SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
+    @GetMapping(value = "/get-doc-type")
+    public GenericResponse<?> getDocType() {
+        return ResponseBuilderUtil.getResponse(crifPartnerService.getDocType()
+                ,SUCCESS, REQUEST_SUCCESS, 200);
+    }
+
+    @PostMapping(path = "/resend-otp", produces = MediaType.APPLICATION_JSON_VALUE)
+    public GenericResponse<Boolean> resendOtp(@Valid @RequestBody ResendOtpRequest request) throws Exception {
+        return ResponseBuilderUtil.getResponse(verificationService.resendOtp(request),SUCCESS,
+                "", HttpStatus.SC_OK);
+    }
+
+    @GetMapping("/banners")
+    public GenericResponse<Map<String, Object>> getFeatureBanners() {
+        return ResponseBuilderUtil.getResponse(featureBannerService.getPublicBannerData(), SUCCESS,
+                REQUEST_SUCCESS, HttpStatus.SC_OK);
+    }
 }

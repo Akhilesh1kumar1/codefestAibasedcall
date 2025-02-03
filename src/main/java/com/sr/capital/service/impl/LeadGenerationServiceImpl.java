@@ -46,9 +46,17 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
     @Override
     public GenerateLeadResponseDto saveLead(GenerateLeadRequestDto generateLeadRequestDto, String token)
             throws CustomException {
-        List<Lead> leadList = leadGenerationRepository.findBySrCompanyId(Long.valueOf(RequestData.getTenantId()));
+        List<Lead> leadList = leadGenerationRepository.findBySrCompanyIdOrderByCreatedAtDesc(Long.valueOf(RequestData.getTenantId()));
         if(CollectionUtils.isNotEmpty(leadList)){
-            throw new CustomException("Lead is already generated", HttpStatus.BAD_REQUEST);
+            Lead lead = leadList.get(0);
+            LocalDateTime previousLeadTime = LocalDateTime.now().minusMonths(1);
+            if(lead.getCreatedAt().isAfter(previousLeadTime)) {
+                throw new CustomException("Lead is already generated", HttpStatus.BAD_REQUEST);
+            }else if(lead.getStatus()!=LeadStatus.LEAD_CLOSED){
+                lead.setStatus(LeadStatus.LEAD_CLOSED);
+                lead.setRemarks("New lead generated; this lead is closed");
+                leadGenerationRepository.save(lead);
+            }
         }
         addUserIfEmpty(RequestData.getUserId(), token);
         Lead lead =Lead.builder().srCompanyId(generateLeadRequestDto.getSrCompanyId()!=null? generateLeadRequestDto.getSrCompanyId() : Long.valueOf(RequestData.getTenantId())).amount(generateLeadRequestDto.getAmount()).duration(generateLeadRequestDto.getDuration()).leadSource(generateLeadRequestDto.getLeadSource()).status(LeadStatus.LEAD_START).userName(generateLeadRequestDto.getUserName())
@@ -65,7 +73,7 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
 
     @Override
     public List<GenerateLeadResponseDto> getAllLeads(Long srCompanyId) {
-        List<Lead> leadList = leadGenerationRepository.findBySrCompanyId(srCompanyId);
+        List<Lead> leadList = leadGenerationRepository.findBySrCompanyIdOrderByCreatedAtDesc(srCompanyId);
         List<GenerateLeadResponseDto> responseDtos =new ArrayList<>();
         leadList.forEach(lead -> {
             responseDtos.add(GenerateLeadResponseDto.builder().status(lead.getStatus()).amount(lead.getAmount()).duration(lead.getDuration()).id(lead.getId()).tier(lead.getTier()).leadSource(lead.getLeadSource()).loanApplicationId(lead.getLoanApplicationId())

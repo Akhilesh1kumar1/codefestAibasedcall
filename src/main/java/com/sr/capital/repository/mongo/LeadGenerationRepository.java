@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface LeadGenerationRepository extends MongoRepository<Lead,String> {
-    List<Lead> findBySrCompanyId(Long srCompanyId);
+    List<Lead> findBySrCompanyIdOrderByCreatedAtDesc(Long srCompanyId);
 
     @Query("{ 'createdAt': { $gte: ?0, $lte: ?1  } }")
     Page<Lead> findByCreatedAtBetween(LocalDateTime startDate,LocalDateTime endDate, Pageable pageable);

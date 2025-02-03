@@ -53,8 +53,12 @@ spring:
     import: optional:file:.env[.properties]
 
 app:
+  rate-limit:
+    allowed-request: ${RATE_LIMIT_REQUEST_ALLOWED:30}
+    duration-in-minute: ${RATE_LIMIT_DURATION_IN_MINUTE:1}
+    enabled: ${RATE_LIMIT_STATUS:true}
   captcha-verification:
-    enabled: true
+    enabled: ${CAPTCHA_VERIFICATION_STATUS:true}
   cors-allowed-origins: https://qa-web-1.kartrocket.com,https://multichannel-appstore-qa.kartrocket.com,http://localhost:5371,http://app.shiprocket.local,https://app.shiprocket.in
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
@@ -222,6 +226,11 @@ external:
         endpoint:
           tasks: /v3/tasks
   crif:
+    score:
+      threshold: ${CRIF_THRESHOLD_VALUE:675}
+    shipment:
+      gmv:
+        threshold: ${CRIF_SHIPMENT_GMV_THRESHOLD_VALUE:675}
     enabled: true
     vendor-token: ${CRIF_VENDOR_TOKEN:test}
     vendor-code: ${CRIF_VENDOR_CODE:test}
@@ -377,3 +386,6 @@ bypass:
         - GET
       captchaEnabled: true
       captchaAction: "FetchBannerAction"
+
+global:
+  loan-vendor-id: 1

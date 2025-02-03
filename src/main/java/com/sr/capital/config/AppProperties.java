@@ -426,8 +426,6 @@ public class AppProperties {
     @Value("${jobs.crif.purge.expireAt}")
     private String crifConsentExpireAt;
 
-    @Value("${is.error-mail-trigger.enabled}")
-    private Boolean isErrorMailTriggerEnabled;
     @Value("${external.crif.public.company-id}")
     private String publicCompanyId;
     @Value("${external.google.baseUri}")
@@ -435,6 +433,8 @@ public class AppProperties {
 
     @Value("${external.google.captcha-secret-key}")
     private String captchaSiteVerificationSecretKey;
+    @Value("${is.error-mail-trigger.enabled}")
+    private Boolean isErrorMailTriggerEnabled;
 
     @Value("${error.email.recipientName}")
     private String errorEmailRecipientName;
@@ -442,8 +442,29 @@ public class AppProperties {
     private String publicUserId;
     @Value("${external.google.endpoints.captcha-site-verify}")
     private String captchaSiteVerificationEndpoint;
+    @Value("${error.email.recipientName}")
+    private String errorEmailRecipientName;
 
     @Value("${app.captcha-verification.enabled}")
     private Boolean captchaVerificationEnabled;
 
+    @Value("${app.captcha-verification.enabled}")
+    private Boolean captchaVerificationEnabled;
+
+    @Value("${app.rate-limit.enabled}")
+    private Boolean rateLimitEnabled;
+
+    @Value("${app.rate-limit.duration-in-minute}")
+    private Long rateLimitDurationInMinute;
+
+    @Value("${app.rate-limit.allowed-request}")
+    private Long rateLimitAllowedRequest;
+
+    @Value("${global.loan-vendor-id}")
+    private Long globalVendorId;
+    @Value("${external.crif.score.threshold}")
+    private Long crifScoreThreshold;
+
+    @Value("${external.crif.shipment.gmv.threshold}")
+    private Long crifShipmentGMVThreshold;
 }

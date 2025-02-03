@@ -40,5 +40,7 @@ public interface CrifPartnerService {
     void purgeExpiredData();
 
     String saveAndGetConsentId();
+
+    String getScoreForGivenMobile(String mobileNumber);
 }
 

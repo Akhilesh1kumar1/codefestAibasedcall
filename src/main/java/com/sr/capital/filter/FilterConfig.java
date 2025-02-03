@@ -15,9 +15,16 @@ public class FilterConfig {
         return registrationBean;
     }
     @Bean
-    public FilterRegistrationBean<GoogleCaptchaValidator> googleCaptchaValidatorRegistration(GoogleCaptchaValidator corsFilter) {
-        FilterRegistrationBean<GoogleCaptchaValidator> registrationBean = new FilterRegistrationBean<>(corsFilter);
-        registrationBean.setOrder(20); // Ensure CORS filter runs first
+    public FilterRegistrationBean<RateLimitFilter> RateLimitFilterRegistration(RateLimitFilter rateLimitFilter) {
+        FilterRegistrationBean<RateLimitFilter> registrationBean = new FilterRegistrationBean<>(rateLimitFilter);
+        registrationBean.setOrder(11);
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<GoogleCaptchaValidationFilter> GoogleCaptchaValidationFilterRegistration(GoogleCaptchaValidationFilter corsFilter) {
+        FilterRegistrationBean<GoogleCaptchaValidationFilter> registrationBean = new FilterRegistrationBean<>(corsFilter);
+        registrationBean.setOrder(20);
         return registrationBean;
     }
 

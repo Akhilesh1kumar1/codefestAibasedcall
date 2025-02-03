@@ -131,6 +131,24 @@ public class S3Util {
         return imageLink;
     }
 
+    public static String generateUrl(GeneratePreSignedUrlRequest request) {
+
+        log.info("[generatePreSignedUrl]for request {} ",request);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MINUTE, request.getExpiry());
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(request.getBucketName(), request.getFilePath())
+                        .withMethod(request.getHttpMethod())
+                        .withExpiration(calendar.getTime())
+                        .withContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+        URL presignedUrl = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+        log.info("[generatePreSignedUrl] url {}",presignedUrl.toString());
+        return presignedUrl.toString();
+    }
+
     public static String generatePreSignedUrl(GeneratePreSignedUrlRequest request) {
 
         log.info("[generatePreSignedUrl]for request {} ",request);

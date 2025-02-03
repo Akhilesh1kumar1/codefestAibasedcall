@@ -23,6 +23,7 @@ public class Constant {
     public static final String STAGE = "STAGE";
     public static final String CREATED_AT = "CREATED_AT";
     public static  final String VALID_AT = "VALID_AT";
+    public static  final String GOOD_SCORE = "GOOD_SCORE";
     public static final String STAGE_2 = "QUESTIONS_GENERATED";
     public static final String STAGE_3 = "REPORT_GENERATED";
     public static final String LIMIT_EXCEEDED = "LIMIT_EXCEEDED";
@@ -30,6 +31,11 @@ public class Constant {
 
     public static final String OTP_VERIFICATION_PENDING = "OTP_VERIFICATION_PENDING";
     public static final String ACTIVE = "ACTIVE";
+    public static final String B2C_REPORT = "B2C-REPORT";
+    public static final String REPORT_DATA = "REPORT-DATA";
+    public static final String STANDARD_DATA = "STANDARD-DATA";
+    public static final String SCORE = "SCORE";
+    public static final String VALUE = "VALUE";
     public static String MOBILE = "Mobile";
     public static String CONSENT = "Consent";
     public static String USER_NOT_FOUND_FOR_PURGE_ERROR_MESSAGE = "Entered details don't match our records. Please re-check and try again.";
