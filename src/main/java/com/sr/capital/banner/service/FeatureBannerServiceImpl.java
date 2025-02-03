@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.LongStream;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +24,8 @@ public class FeatureBannerServiceImpl implements FeatureBannerService {
     private final CrifReportRepo crifReportRepo;
     private final AppProperties appProperties;
     @Override
-    public Map<String, Object> getFeatureBannerData(String mobile) throws IOException {
+    public List<BannerResponse> getFeatureBannerData(String mobile) throws IOException {
 
-        Map<String, Object> response = new HashMap<>();
         // Todo :: Update after geting clarity on gmv values
         if (mobile != null) {
             Optional<CrifReport> optional = crifReportRepo.findByMobile(mobile);
@@ -53,11 +51,9 @@ public class FeatureBannerServiceImpl implements FeatureBannerService {
 
         }
         //Todo :: remove this when checks will provided
-        for (FeatureBannerEnum feature : FeatureBannerEnum.values()) {
-            response.put(feature.name(), feature.getBannerUrls());
-        }
 
-        return response;
+        return FeatureBannerEnum.CRIF.toRisponseDtoList();
+
     }
 
     @Override
