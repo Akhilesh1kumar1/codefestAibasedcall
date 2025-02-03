@@ -252,6 +252,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     put(STAGE, STAGE_3);
                     put(CREATED_AT, report.getCreatedAt());
                     put(VALID_AT, report.getValidAt());
+                    put(GOOD_SCORE, appProperties.getCrifScoreThreshold());
                 }});
             }
             return crifResponse;
@@ -298,6 +299,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     put(STAGE, STAGE_3);
                     put(CREATED_AT, report.getCreatedAt());
                     put(VALID_AT, report.getValidAt());
+                    put(GOOD_SCORE, appProperties.getCrifScoreThreshold());
                 }};
             }
         }
@@ -321,6 +323,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     put(STAGE, STAGE_3);
                     put(CREATED_AT, report.getCreatedAt());
                     put(VALID_AT, report.getValidAt());
+                    put(GOOD_SCORE, appProperties.getCrifScoreThreshold());
                 }};
             }
         }
@@ -331,7 +334,11 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private Map<String, Object> getStoredReport(CrifReport crifGenerateOtpRequestModel) {
         String consentId = crifGenerateOtpRequestModel.getConsentId();
         updateConsentHistory(consentId);
-        return new HashMap<>(){{put(DATA, StringUtils.covertToJsonString(crifGenerateOtpRequestModel.getResult())); put(STAGE, STAGE_3); put(CREATED_AT, crifGenerateOtpRequestModel.getCreatedAt()) ; put(VALID_AT, crifGenerateOtpRequestModel.getValidTill());}};
+        return new HashMap<>(){{put(DATA, StringUtils.covertToJsonString(crifGenerateOtpRequestModel.getResult()));
+            put(STAGE, STAGE_3);
+            put(CREATED_AT, crifGenerateOtpRequestModel.getCreatedAt());
+            put(VALID_AT, crifGenerateOtpRequestModel.getValidTill());
+            put(GOOD_SCORE, appProperties.getCrifScoreThreshold());}};
     }
 
     private void updateConsentHistory(String consentId) {
