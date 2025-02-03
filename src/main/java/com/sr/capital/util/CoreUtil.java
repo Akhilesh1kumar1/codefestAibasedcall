@@ -7,6 +7,8 @@ import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -156,6 +158,25 @@ public class CoreUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String constructUri(String baseUri, String endPoint, Map<String, String> parameters) {
+
+        String uri = baseUri + (endPoint != null ? endPoint : "");
+        if(CollectionUtils.isEmpty(parameters)) {
+            return uri;
+        }
+        StringBuilder uriBuilder = new StringBuilder(uri);
+        uriBuilder.append("?");
+        for(Map.Entry<String, String> keyValuePair : parameters.entrySet()) {
+            if(keyValuePair.getValue() == null){
+                continue;
+            }
+            String key = URLEncoder.encode(keyValuePair.getKey(), StandardCharsets.UTF_8);
+            String value = URLEncoder.encode(keyValuePair.getValue(), StandardCharsets.UTF_8);
+            uriBuilder.append(key).append("=").append(value).append("&");
+        }
+        return uriBuilder.toString();
     }
 
 }

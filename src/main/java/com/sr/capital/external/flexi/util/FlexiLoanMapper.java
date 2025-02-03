@@ -1,10 +1,15 @@
 package com.sr.capital.external.flexi.util;
 
+import com.mashape.unirest.http.ObjectMapper;
 import com.sr.capital.dto.request.LoanStatusUpdateWebhookDto;
 import com.sr.capital.external.flexi.dto.response.LoanDetails;
+import com.sr.capital.util.MapperUtils;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 public class FlexiLoanMapper {
 
     public static LoanStatusUpdateWebhookDto convertToWebhookDto(LoanDetails loanDetails) {
@@ -16,6 +21,9 @@ public class FlexiLoanMapper {
         webhookDto.setUpdatedAt(loanDetails.getData().getUpdatedAt());
         webhookDto.setCreatedAt(loanDetails.getData().getCreatedAt());
         webhookDto.setApplicationStatus(loanDetails.getData().getApplicationStatus());
+        webhookDto.setS1(loanDetails.getData().getS1());
+        webhookDto.setS2(loanDetails.getData().getS2());
+        webhookDto.setS3(loanDetails.getData().getS3());
 
         // Map checkpoints if present
         if (loanDetails.getData().getCheckpoints() != null) {
@@ -28,12 +36,11 @@ public class FlexiLoanMapper {
 
                     // Map Meta if present
                     if (checkpoint.getMeta() != null) {
-//                        LoanStatusUpdateWebhookDto.Meta webhookMeta = new LoanStatusUpdateWebhookDto.Meta();
-//                        webhookMeta.setSubCode(checkpoint.getMeta().getSubCode());
-//                        webhookMeta.setCode(checkpoint.getMeta().getCode());
-//                        webhookMeta.setFields(checkpoint.getMeta().getFields());
-//                        webhookMeta.setMessage(checkpoint.getMeta().getMessage());
-                        webhookCheckpoint.setMeta(checkpoint.getMeta());
+                        try {
+                            webhookCheckpoint.setMeta(MapperUtils.convertValue(checkpoint.getMeta(), LoanStatusUpdateWebhookDto.Meta.class));
+                        } catch (IOException e) {
+                            log.error("Error while converting file" + e);
+                        }
                     }
 
                     return webhookCheckpoint;

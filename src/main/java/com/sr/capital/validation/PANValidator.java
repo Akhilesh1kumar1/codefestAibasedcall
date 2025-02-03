@@ -14,11 +14,8 @@ public class PANValidator implements RequestValidator {
 
     // Method to validate PAN number
     private Boolean validatePAN(String pan) {
-        // Compile the regex pattern
         Pattern pattern = Pattern.compile(PAN_REGEX);
-        // Match the input PAN number with the pattern
         Matcher matcher = pattern.matcher(pan);
-        // Return if the PAN number matches the pattern
         return matcher.matches();
     }
 

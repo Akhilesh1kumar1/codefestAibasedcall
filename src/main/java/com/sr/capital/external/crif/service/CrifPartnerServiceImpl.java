@@ -464,7 +464,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
             bureauInitiateModel.setReportId(bureauInitiateResponse.getReportId());
             bureauInitiateModel.setRequestHeader(getHeadersAsString(header));
             bureauInitiateModel.setInitRequestPayload(requestPayload);
-            bureauInitiateModel.setSrCompanyId(RequestData.getTenantId());
+            bureauInitiateModel.setSrCompanyId(RequestData.getTenantId() != null ? RequestData.getTenantId() : appProperties.getPublicCompanyId());
         } else {
             String consentIdByMobileNumber = getConsentIdByMobileNumber(bureauInitiatePayloadRequest.getMobile());
             bureauInitiateModel = BureauInitiateModel.builder()
@@ -475,7 +475,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     .requestHeader(getHeadersAsString(header))
                     .initRequestPayload(requestPayload)
                     .mobile(bureauInitiatePayloadRequest.getMobile())
-                    .srCompanyId(RequestData.getTenantId())
+                    .srCompanyId(RequestData.getTenantId() != null ? RequestData.getTenantId() : appProperties.getPublicCompanyId())
                     .initResponse(bureauInitiateResponse.toString())
                     .consentId(consentIdByMobileNumber)
                     .build();
@@ -807,7 +807,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
                     .result(Base64.getEncoder().encodeToString(byteArrayResponse))
                     .orderId(bureauReportPayloadRequest.getOrderId())
                     .reportId(bureauReportPayloadRequest.getReportId())
-                    .srCompanyId(RequestData.getTenantId())
+                    .srCompanyId(RequestData.getTenantId() != null ? RequestData.getTenantId() : appProperties.getPublicCompanyId())
                     .validTill(StringUtils.getTimeAfterMonths(1))
                     .build();
         } catch (JsonProcessingException e) {

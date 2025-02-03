@@ -53,6 +53,8 @@ spring:
     import: optional:file:.env[.properties]
 
 app:
+  captcha-verification:
+    enabled: true
   cors-allowed-origins: https://multichannel-appstore-qa.kartrocket.com, https://qa-web-1.kartrocket.com, http://localhost:5173
   serviceTag: ${SERVICE_TAG:capital}
   secret: ${APP_JWT_SECRET:testabcd}
@@ -159,6 +161,35 @@ management:
 
 ####################################### KARZA API #############################################
 external:
+  authbridge:
+    vendor-password: ${AUTHBRIDGE:India@2608}
+    vendor-username: ${AUTHBRIDGE:test@shiprocket.com}
+    is-truth-screen-enable: true
+    base:
+      url: https://www.truthscreen.com
+    idsearch-url: /v1/apicall/nid/idsearch
+    pan-comprehensive-url: /v1/apicall/nid/panComprehensive
+    pan-compliance-url: /v1/apicall/nid/pan_compliance_check
+    pan-to-gst-url: /v1/apicall/business/pantogst
+    gstin-url: /v1/apicall/business/gstin
+    cin-url: /api/v2.2/idsearch
+  corpveda:
+    client-id: ${CORPVEDA_CLIENT_ID:t+wnian2e41yuPQ6r0aXBEiWU+rdX3s259sc7HcFTfTc8NxB}
+    vendor-username: ${CORPVEDA_VENDOR_USERNAME:test@shiprocket.com}
+    vendor-password: ${CORPVEDA_VENDOR_PASSWORD:Ship@123}
+    base:
+      url: https://uat-api.corpveda.com
+    login-url: /api/v2/api_login
+    place-order: /api/v2/api_place_order
+    get-data: /api/v2/api_get_data
+    token-time: 1
+    referenceId-time: 30
+
+  google:
+    baseUri: https://www.google.com
+    captcha-secret-key: ${CAPTCHA_VALIDATION_SECRET_KEY:6LcPP7cqAAAAACUvJnEkjG9wGhVsQV1cVLcBJXx1}
+    endpoints:
+      captcha-site-verify: /recaptcha/api/siteverify
   karza:
     enabled: false
     vendor-token: ${KARZA_VENDOR_TOKEN:test}
@@ -243,6 +274,9 @@ external:
       customer-id: ${CRIF_CUSTOMER_ID}
       app-id: ${CRIF_APP_ID}
       product-code: ${CRIF_PRODUCT_CODE}
+    public:
+      company-id: -67891012345
+      user-id: -678910
 karza:
   async:
     response:
@@ -329,4 +363,42 @@ is:
 error:
   email:
     recipientName: ${ERROR_EMAIL_RECIPIENT_NAME:vikas.sinwar@shiprocket.com,akhilesh.kumar@shiprocket.com}
+bypass:
+  apis:
+    "/api/public/crif/generate-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "GenerateAction"
+    "/api/public/crif/verify-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "VerifyAction"
+    "/api/public/crif/validate":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "ValidateAction"
+    "/api/public/crif/purge":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "PurgeAction"
+    "/api/public/crif/get-doc-type":
+      method:
+        - GET
+      captchaEnabled: true
+      captchaAction: "FetchDocTypeAction"
+    "/api/public/crif/resend-otp":
+      method:
+        - POST
+      captchaEnabled: true
+      captchaAction: "ReSendOtpAction"
+    "/api/public/crif/banners":
+      method:
+        - GET
+      captchaEnabled: true
+      captchaAction: "FetchBannerAction"
+
 

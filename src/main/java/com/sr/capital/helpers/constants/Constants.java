@@ -1,7 +1,7 @@
 package com.sr.capital.helpers.constants;
 
 import com.sr.capital.helpers.enums.DocType;
-import org.redisson.api.RMapCache;
+
 
 import java.util.Map;
 import java.util.Set;
@@ -179,9 +179,17 @@ public final class Constants {
 
         public static final String CRIF_CONSENT_ID_KEY = "crif_consent_id";
         public static final String LOAN_AT_VENDOR = "LOAN_AT_VENDOR";
+
+        public static final String CORP_VEDA_VENDOR_TOKEN = "corp_veda_vendor_token";
+
+        public static final String CORP_VEDA_META_DATA = "corp_veda_meta_data";
     }
 
     public static final class Headers {
+        public static final String X_BYPASS_GOOGLE_CAPTCHA = "X-Bypass-Google-Captcha";
+        public static final String X_BYPASS_GOOGLE_CAPTCHA_SECRET = "X-Bypass-Google-Captcha-Secret";
+        public static final String X_GOOGLE_CAPTCHA_RESPONSE = "g-recaptcha-response";
+
         private Headers() {
             throw new AssertionError(UTILITY_INSTANTIATION_ERROR);
         }

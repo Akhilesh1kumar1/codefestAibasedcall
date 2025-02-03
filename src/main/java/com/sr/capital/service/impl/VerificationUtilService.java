@@ -30,12 +30,12 @@ public class VerificationUtilService {
     @Autowired
     private CommunicationService communicationService;
 
-    public void createVerificationInstanceAndCommunicate(VerificationOrchestratorRequest verificationOrchestratorRequest) throws CustomException {
+    public void createVerificationInstanceAndCommunicate(VerificationOrchestratorRequest verificationOrchestratorRequest, String srCompanyIdToBeAdded) throws CustomException {
 
         VerificationOrchestratorRequest.RawRequest rawRequest = verificationOrchestratorRequest.getRawRequest();
         VerificationEntity verificationEntity = VerificationEntity.builder()
                 .type(rawRequest.getVerificationType())
-                .srCompanyId(String.valueOf(RequestData.getTenantId())).userId(verificationOrchestratorRequest.getTenantDetails().getCapitalUserId())
+                .srCompanyId(srCompanyIdToBeAdded).userId(verificationOrchestratorRequest.getTenantDetails().getCapitalUserId())
                 .callback(rawRequest.getCallbackType())
                 .channel(rawRequest.getChannel())
                 .build();

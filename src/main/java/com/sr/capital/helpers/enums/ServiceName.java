@@ -15,7 +15,10 @@ public enum ServiceName {
     GETVENTAGE("getventage"),
     KARZA("karza"),
     FLEXI("flexi"),
-    CRIF("crif");
+    CAPTCHA("captcha"),
+    TRUTHSCREEN("truthscreen"),
+    CRIF("crif"),
+    CORPVEDA("corpveda");
 
     final String name;
     ServiceName(String name) {

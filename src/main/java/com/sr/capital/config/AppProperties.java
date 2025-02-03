@@ -329,6 +329,66 @@ public class AppProperties {
     @Value("${app.web-url}")
     private String capitalWebUrl;
 
+
+    //AuthBridge
+    @Value("${external.authbridge.vendor-password}")
+    private String authBridgePassword;
+
+    @Value("${external.authbridge.vendor-username}")
+    private String authBridgeUsername;
+
+    @Value("${external.authbridge.base.url}")
+    private String authBridgeBaseUrl;
+
+    @Value("${external.authbridge.idsearch-url}")
+    private String authBridgeIdSearchUrl;
+
+    @Value("${external.authbridge.pan-comprehensive-url}")
+    private String authBridgePanComprehensiveUrl;
+
+    @Value("${external.authbridge.pan-compliance-url}")
+    private String authBridgePanComplianceUrl;
+
+    @Value("${external.authbridge.pan-to-gst-url}")
+    private String authBridgePanToGstUrl;
+
+    @Value("${external.authbridge.gstin-url}")
+    private String authBridgeGstinUrl;
+
+    @Value("${external.authbridge.is-truth-screen-enable}")
+    private Boolean isTruthScreenEnable;
+
+    @Value("${external.authbridge.cin-url}")
+    private String authBridgeCinUrl;
+
+    //CorpVeda
+    @Value("${external.corpveda.vendor-username}")
+    private String corpVedaUsername;
+
+    @Value("${external.corpveda.vendor-password}")
+    private String corpVedaPassword;
+
+    @Value("${external.corpveda.client-id}")
+    private String corpVedaClientId;
+
+    @Value("${external.corpveda.base.url}")
+    private String corpVedaBaseUrl;
+
+    @Value("${external.corpveda.place-order}")
+    private String corpVedaPlaceOrderUrl;
+
+    @Value("${external.corpveda.login-url}")
+    private String corpVedaLoginUrl;
+
+    @Value("${external.corpveda.get-data}")
+    private String corpVedaGetDataUrl;
+
+    @Value("${external.corpveda.token-time}")
+    private String corpVedaTokenTime;
+
+    @Value("${external.corpveda.referenceId-time}")
+    private String corpVedaRedisReferenceIdTime;
+
     @Value("${external.crif.access-code.user}")
     private String CrifUser;
     @Value("${external.crif.access-code.password}")
@@ -368,8 +428,22 @@ public class AppProperties {
 
     @Value("${is.error-mail-trigger.enabled}")
     private Boolean isErrorMailTriggerEnabled;
+    @Value("${external.crif.public.company-id}")
+    private String publicCompanyId;
+    @Value("${external.google.baseUri}")
+    private String googleBaseUri;
+
+    @Value("${external.google.captcha-secret-key}")
+    private String captchaSiteVerificationSecretKey;
 
     @Value("${error.email.recipientName}")
     private String errorEmailRecipientName;
+    @Value("${external.crif.public.user-id}")
+    private String publicUserId;
+    @Value("${external.google.endpoints.captcha-site-verify}")
+    private String captchaSiteVerificationEndpoint;
+
+    @Value("${app.captcha-verification.enabled}")
+    private Boolean captchaVerificationEnabled;
 
 }

@@ -1,6 +1,7 @@
 package com.sr.capital.external.crif.util;
 
 import com.omunify.encryption.algorithm.AES256;
+import com.sr.capital.config.AppProperties;
 import com.sr.capital.dto.RequestData;
 import com.sr.capital.dto.request.ResendOtpRequest;
 import com.sr.capital.dto.request.TenantDetails;
@@ -26,13 +27,14 @@ public class CrifVerificationUtils {
 
     private final VerificationUtilService verificationUtilService;
 
-
+    private final AppProperties appProperties;
 
 
     public VerificationOrchestratorRequest sendOtp(CrifUserModel userDetails) throws CustomException {
-        TenantDetails tenantDetails =TenantDetails.builder().capitalUserId(RequestData.getUserId())
+        TenantDetails tenantDetails =TenantDetails.builder().capitalUserId(userDetails.getId() != null ? RequestData.getUserId() : Long.valueOf(appProperties.getPublicUserId()))
                 .mobileNumber(userDetails.getMobile())
-                .srUserId(RequestData.getUserId()).emailId(userDetails.getEmail()).build();
+                .srUserId(userDetails.getId() != null ? RequestData.getUserId() : Long.valueOf(appProperties.getPublicUserId())).emailId(userDetails.getEmail()).srCompanyId(userDetails.getSrCompanyId()).build();
+
 
         VerificationOrchestratorRequest verificationOrchestratorRequest = VerificationOrchestratorRequest.builder()
                 .rawRequest(
@@ -45,7 +47,7 @@ public class CrifVerificationUtils {
                 ).tenantDetails(tenantDetails)
                 .build();
 
-        verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest);
+        verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest, userDetails.getSrCompanyId());
         return verificationOrchestratorRequest;
     }
 

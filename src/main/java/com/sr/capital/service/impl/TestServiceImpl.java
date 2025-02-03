@@ -93,7 +93,7 @@ public class TestServiceImpl {
     }
 
     public void ScheduleCacheForStatusUpdate(){
-        LoanApplication loanApplication = loanApplicationRepository.findByInternalLoanId("SCAPf5e4849d70d56929");
+        LoanApplication loanApplication = loanApplicationRepository.findByInternalLoanId("SCAP8c16daee5b4ff8cd");
         String partner = "flexi";
         String key = getKeyForCache(loanApplication.getInternalLoanId(), partner);
 
