@@ -79,7 +79,7 @@ public class CrifPublicCOntroller {
 
     @GetMapping("/banners")
     public GenericResponse<Map<String, Object>> getFeatureBanners() {
-        return ResponseBuilderUtil.getResponse(featureBannerService.getFeatureBannerData(), SUCCESS,
+        return ResponseBuilderUtil.getResponse(featureBannerService.getPublicBannerData(), SUCCESS,
                 REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 }
