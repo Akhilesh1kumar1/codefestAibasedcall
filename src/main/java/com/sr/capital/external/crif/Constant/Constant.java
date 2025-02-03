@@ -23,6 +23,7 @@ public class Constant {
     public static final String STAGE = "STAGE";
     public static final String CREATED_AT = "CREATED_AT";
     public static  final String VALID_AT = "VALID_AT";
+    public static  final String GOOD_SCORE = "GOOD_SCORE";
     public static final String STAGE_2 = "QUESTIONS_GENERATED";
     public static final String STAGE_3 = "REPORT_GENERATED";
     public static final String LIMIT_EXCEEDED = "LIMIT_EXCEEDED";
