@@ -37,6 +37,8 @@ public class LoanApplicationRequestDto extends BaseRequest {
 
     String loanType;
 
+    String crifScore;
+
     @Builder.Default
     Boolean createLoanAtVendor=false;
 

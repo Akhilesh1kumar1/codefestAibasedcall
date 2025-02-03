@@ -397,4 +397,9 @@ public class AppProperties {
 
     @Value("${global.loan-vendor-id}")
     private Long globalVendorId;
+    @Value("${external.crif.score.threshold}")
+    private Long crifScoreThreshold;
+
+    @Value("${external.crif.shipment.gmv.threshold}")
+    private Long crifShipmentGMVThreshold;
 }
