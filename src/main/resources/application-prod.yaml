@@ -161,6 +161,32 @@ management:
 
 ####################################### KARZA API #############################################
 external:
+  authbridge:
+    vendor-password: ${AUTHBRIDGE_PASSWORD:India@2608}
+    vendor-username: ${AUTHBRIDGE_USERNAME:test@shiprocket.com}
+    is-truth-screen-enable: false
+    base:
+      url: https://www.truthscreen.com
+    idsearch-url: /v1/apicall/nid/idsearch
+    pan-comprehensive-url: /v1/apicall/nid/panComprehensive
+    pan-compliance-url: /v1/apicall/nid/pan_compliance_check
+    pan-to-gst-url: /v1/apicall/business/pantogst
+    gstin-url: /v1/apicall/business/gstin
+    cin-url: /api/v2.2/idsearch
+
+  corpveda:
+    client-id: ${CORPVEDA_CLIENT_ID:t+wnian2e41yuPQ6r0aXBEiWU+rdX3s259sc7HcFTfTc8NxB}
+    vendor-username: ${CORPVEDA_VENDOR_USERNAME:test@shiprocket.com}
+    vendor-password: ${CORPVEDA_VENDOR_PASSWORD:Ship@123}
+    base:
+      url: https://uat-api.corpveda.com
+    login-url: /api/v2/api_login
+    place-order: /api/v2/api_place_order
+    get-data: /api/v2/api_get_data
+    token-time: 1
+    referenceId-time: 30
+
+
   google:
     baseUri: https://www.google.com
     captcha-secret-key: ${CAPTCHA_VALIDATION_SECRET_KEY:6LcPP7cqAAAAACUvJnEkjG9wGhVsQV1cVLcBJXx1}
