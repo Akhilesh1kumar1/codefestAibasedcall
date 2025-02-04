@@ -28,6 +28,8 @@ import com.sr.capital.util.KafkaMessagePublisherUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static com.sr.capital.external.truthscreen.enums.TruthScreenDocType.PAN_COMPREHENSIVE;
 
 @RequiredArgsConstructor
@@ -93,7 +95,7 @@ public class LosUserServiceImpl implements LosUserService{
     }
 
     @Override
-    public VerificationOrchestratorRequest generateOtp(String mobile) throws CustomException {
+    public UUID generateOtp(String mobile) throws CustomException {
         saveDetailsIntoLosUserTable(mobile);
 
         TenantDetails tenantDetails =TenantDetails.builder().capitalUserId(RequestData.getUserId())
@@ -113,7 +115,7 @@ public class LosUserServiceImpl implements LosUserService{
                 .build();
 
         verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest, RequestData.getTenantId());
-        return verificationOrchestratorRequest;
+        return verificationOrchestratorRequest.getVerificationEntity().getId();
     }
 
     private void saveDetailsIntoLosUserTable(String mobile) throws CustomException {

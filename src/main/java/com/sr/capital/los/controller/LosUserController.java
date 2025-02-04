@@ -2,7 +2,6 @@ package com.sr.capital.los.controller;
 
 
 import com.omunify.core.model.GenericResponse;
-import com.sr.capital.dto.request.VerificationOrchestratorRequest;
 import com.sr.capital.dto.request.VerifyOtpRequest;
 import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
@@ -17,6 +16,7 @@ import org.apache.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
@@ -44,7 +44,7 @@ public class LosUserController {
     }
 
     @PostMapping(value = "/generate-otp")
-    public GenericResponse<VerificationOrchestratorRequest> crifGenerateOtp(@RequestBody String mobile) throws CRIFApiException, IOException, CustomException, CRIFApiLimitExceededException {
+    public GenericResponse<UUID> crifGenerateOtp(@RequestBody String mobile) throws CRIFApiException, IOException, CustomException, CRIFApiLimitExceededException {
         return ResponseBuilderUtil.getResponse(losUserService.generateOtp(mobile), SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
