@@ -1,6 +1,5 @@
 package com.sr.capital.excelprocessor.model;
 
-import com.sr.capital.helpers.enums.LoanStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -60,7 +59,7 @@ public class LoanDetailsFieldFromExcel {
     private String programCode;
     private String city;
     private String state;
-    private String pincode;
+    private String pinCode;
     private Double processingFeeRate;
     private String ever30Plus;
     private String ever60Plus;
