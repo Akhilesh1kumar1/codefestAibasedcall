@@ -168,7 +168,7 @@ external:
   authbridge:
     vendor-password: ${AUTHBRIDGE:India@2608}
     vendor-username: ${AUTHBRIDGE:test@shiprocket.com}
-    is-truth-screen-enable: true
+    is-truth-screen-enable: false
     base:
       url: https://www.truthscreen.com
     idsearch-url: /v1/apicall/nid/idsearch
