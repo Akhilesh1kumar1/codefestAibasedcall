@@ -68,6 +68,8 @@ public class LosUserServiceImpl implements LosUserService{
         LosUserEntity losUserEntity = losUserRepository.findByUserId(String.valueOf(RequestData.getUserId()));
         if (losUserEntity != null) {
             return LosUserDTO.builder().userId(losUserEntity.getSrCompanyId())
+                    .firstName(losUserEntity.getFirstName())
+                    .lastName(losUserEntity.getLastName())
                     .email(losUserEntity.getEmail()).isMobileVerified(losUserEntity.getIsMobileVerified())
                     .mobile(losUserEntity.getMobile()).pan(losUserEntity.getPan())
                     .typeOfEntity(losUserEntity.getTypeOfEntity()).build();
@@ -76,6 +78,8 @@ public class LosUserServiceImpl implements LosUserService{
             if (userDetailsUsingInternalToken != null) {
                 return LosUserDTO.builder().userId(userDetailsUsingInternalToken.getUserId()).email(userDetailsUsingInternalToken.getEmail())
                         .mobile(userDetailsUsingInternalToken.getMobile()).isMobileVerified(true)
+                        .firstName(userDetailsUsingInternalToken.getFirstName())
+                        .lastName(userDetailsUsingInternalToken.getLastName())
                         .build();
             }
         }
@@ -144,6 +148,8 @@ public class LosUserServiceImpl implements LosUserService{
             user.setTypeOfEntity(updatedLosUserDTO.getTypeOfEntity());
             user.setPan(updatedLosUserDTO.getPan());
             user.setLoanAmount(updatedLosUserDTO.getLoanAmount());
+            user.setFirstName(updatedLosUserDTO.getFirstName());
+            user.setLastName(updatedLosUserDTO.getLastName());
             if (!user.getMobile().equals(updatedLosUserDTO.getMobile())) {
                 user.setMobile(updatedLosUserDTO.getMobile());
             }
@@ -156,6 +162,8 @@ public class LosUserServiceImpl implements LosUserService{
                     .userId(String.valueOf(RequestData.getUserId()))
                     .email(updatedLosUserDTO.getEmail())
                     .pan(updatedLosUserDTO.getPan())
+                    .firstName(updatedLosUserDTO.getFirstName())
+                    .lastName(updatedLosUserDTO.getLastName())
                     .loanAmount(updatedLosUserDTO.getLoanAmount())
                     .typeOfEntity(updatedLosUserDTO.getTypeOfEntity())
                     .isMobileVerified(false)

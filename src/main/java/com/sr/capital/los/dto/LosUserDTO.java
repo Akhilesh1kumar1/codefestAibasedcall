@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class LosUserDTO {
     private String userId;
+    private String firstName;
+    private String lastName;
     private String srCompanyId;
     private String mobile;
     private String email;

@@ -22,6 +22,10 @@ public class LosUserEntity extends BaseDoc {
     private String srCompanyId;
     @Field("user_id")
     private String userId;
+    @Field("first_name")
+    private String firstName;
+    @Field("last_name")
+    private String lastName;
     @Field("email")
     private String email;
     @Field("type_of_entity")

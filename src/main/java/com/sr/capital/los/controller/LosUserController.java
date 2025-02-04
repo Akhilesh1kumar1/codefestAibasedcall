@@ -36,7 +36,6 @@ public class LosUserController {
     }
 
 
-    // PUT (Update User)
     @PostMapping()
     public GenericResponse<IdSearchResponseDto<?>> updateUser(@RequestBody LosUserDTO updatedUser) throws Exception {
             return ResponseBuilderUtil.getResponse(losUserService.updateUser(updatedUser)
