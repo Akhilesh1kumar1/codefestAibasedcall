@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -93,25 +94,12 @@ public class FileUploadServiceImpl implements FileUploadService {
         String preSignedUrl = "";
         try {
             FileValidator.validateFileUploadRequest(fileUploadRequestDto);
-            preSignedUrl = generateUrl(fileUploadRequestDto, method);
+            preSignedUrl = S3Util.generatePresignedUrl(appProperties.getBucketName(), fileUploadRequestDto.getFileName(), 10);
         } catch (Exception ex) {
-            log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: {}"+tenantId);
+            log.error("Exception: "+ ex.getMessage()+" occurred while generating pre-signed url for file: "+fileUploadRequestDto.getFileName()+" and tenant ID: " + tenantId);
             ExceptionUtils.throwCustomExceptionWithTrace(INTERNAL_SERVER_ERROR.getCode(), ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR, ex);
         }
-        return preSignedUrl;
-    }
-
-    private String generateUrl(FileUploadRequestDTO fileUploadRequestDto, HttpMethod method) {
-        GeneratePreSignedUrlRequest preSignedUrlRequest = GeneratePreSignedUrlRequest.builder()
-                .bucketName(appProperties.getBucketName())
-                .httpMethod(method)
-                .build();
-
-        log.info("generate pre-signed url ");
-        String preSignedUrl = S3Util.generateUrl(preSignedUrlRequest);
-        log.info("pre-signed url " +preSignedUrl);
-
         return preSignedUrl;
     }
 
@@ -212,8 +200,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public Page<FileUploadDataDTO> searchByUserIdOrName(String uploadedBy, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<FileUploadDataDTO> searchByUserName(String uploadedBy, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
         Page<FileUploadData> resultPage;
 
         if (StringUtils.isNotBlank(uploadedBy)) {
@@ -225,7 +214,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
 
             if (CollectionUtils.isNotEmpty(userNameList)) {
-                resultPage = fileUploadDataRepository.findAllByUploadedByUserNameLike(userNameList, pageable);
+                resultPage = fileUploadDataRepository.findAllByUploadedByUserNameLikeOrderByCreatedAtDesc(userNameList, pageable);
             } else {
                 resultPage = fileUploadDataRepository.findAll(pageable);
             }

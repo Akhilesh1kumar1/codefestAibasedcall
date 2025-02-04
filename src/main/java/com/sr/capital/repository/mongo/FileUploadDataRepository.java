@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -25,7 +26,11 @@ public interface FileUploadDataRepository extends MongoRepository<FileUploadData
 
     List<FileUploadData> findAllByUploadedByIn(List<Long> uploadedBy);
 
+    @Query("{ 'uploadedByUserName': { $regex: ?0, $options: 'i' } }")
     Page<FileUploadData> findAllByUploadedByUserNameLike(List<String> uploadedByUserName, Pageable pageable);
+
+    @Query("{ 'uploadedByUserName': { $regex: ?0, $options: 'i' } }")
+    Page<FileUploadData> findAllByUploadedByUserNameLikeOrderByCreatedAtDesc(List<String> uploadedByUserName, Pageable pageable);
 
 //    FileUploadData findByTenantIdAndUploadedByAndFileName(String tenantId, Long uploadedBy, String fileName);
 }

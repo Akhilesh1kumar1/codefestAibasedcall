@@ -38,13 +38,14 @@ public class RedisUtil {
 
     public void updateFileInCache(String tenantId, String fileName) {
         RBucket<String> fileCache = redissonClient.getBucket(String.join(UNDERSCORE_SEPARATOR, FILE_UPLOAD_RECORD, tenantId));
-        fileCache.set(fileName, Duration.of(appConfig.getFileUploadCoolOffWindow(), TimeUnit.MINUTES.toChronoUnit()));
+        fileCache.set(fileName, Duration.of(appConfig.getFileUploadCoolOffWindow(), TimeUnit.SECONDS.toChronoUnit()));
     }
 
     public boolean checkIfFileExists(String tenantId) {
-        RBucket<String> fileCache = redissonClient.getBucket(String.join(UNDERSCORE_SEPARATOR, FILE_UPLOAD_RECORD, tenantId));
-        String fileRecord = fileCache.get();
-        return StringUtils.isEmpty(fileRecord);
+//        RBucket<String> fileCache = redissonClient.getBucket(String.join(UNDERSCORE_SEPARATOR, FILE_UPLOAD_RECORD, tenantId));
+//        String fileRecord = fileCache.get();
+//        return StringUtils.isEmpty(fileRecord);
+        return true;
     }
 
     public Double getFileProgressPercentage(String tenantId, String fileId) {

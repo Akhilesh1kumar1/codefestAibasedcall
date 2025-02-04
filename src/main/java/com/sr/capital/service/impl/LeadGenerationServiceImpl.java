@@ -82,7 +82,7 @@ public class LeadGenerationServiceImpl implements LeadGenerationService {
                     .utmContent(lead.getUtmContent())
                     .utmCampaign(lead.getUtmCampaign())
                     .utmTerm(lead.getUtmTerm())
-                    .utmSource(lead.getUtmSource()).build());
+                    .utmSource(lead.getUtmSource()).createdAt(lead.getCreatedAt()).build());
         });
         return responseDtos;
     }

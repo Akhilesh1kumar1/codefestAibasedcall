@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -41,4 +42,6 @@ public class GenerateLeadResponseDto {
     String utmTerm;
 
     String utmContent;
+
+    LocalDateTime createdAt;
 }
