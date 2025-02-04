@@ -14,6 +14,7 @@ public class TruthScreenNddResponseConstructor implements TruthScreenResponseCon
     @Override
     public IdSearchResponseDto<?> constructResponse(TruthScreenDocDetails request) throws IOException {
         return IdSearchResponseDto.builder().docType(request.getTruthScreenDocType())
+                .srCompanyId(request.getSrCompanyId())
                 .responses(request.getDetails())
                 .transId(request.getTransId())
                 .build();
