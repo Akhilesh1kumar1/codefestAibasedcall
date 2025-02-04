@@ -28,6 +28,8 @@ import com.sr.capital.util.KafkaMessagePublisherUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static com.sr.capital.external.truthscreen.enums.TruthScreenDocType.PAN_COMPREHENSIVE;
 
 @RequiredArgsConstructor
@@ -66,6 +68,8 @@ public class LosUserServiceImpl implements LosUserService{
         LosUserEntity losUserEntity = losUserRepository.findByUserId(String.valueOf(RequestData.getUserId()));
         if (losUserEntity != null) {
             return LosUserDTO.builder().userId(losUserEntity.getSrCompanyId())
+                    .firstName(losUserEntity.getFirstName())
+                    .lastName(losUserEntity.getLastName())
                     .email(losUserEntity.getEmail()).isMobileVerified(losUserEntity.getIsMobileVerified())
                     .mobile(losUserEntity.getMobile()).pan(losUserEntity.getPan())
                     .typeOfEntity(losUserEntity.getTypeOfEntity()).build();
@@ -74,6 +78,8 @@ public class LosUserServiceImpl implements LosUserService{
             if (userDetailsUsingInternalToken != null) {
                 return LosUserDTO.builder().userId(userDetailsUsingInternalToken.getUserId()).email(userDetailsUsingInternalToken.getEmail())
                         .mobile(userDetailsUsingInternalToken.getMobile()).isMobileVerified(true)
+                        .firstName(userDetailsUsingInternalToken.getFirstName())
+                        .lastName(userDetailsUsingInternalToken.getLastName())
                         .build();
             }
         }
@@ -93,7 +99,7 @@ public class LosUserServiceImpl implements LosUserService{
     }
 
     @Override
-    public VerificationOrchestratorRequest generateOtp(String mobile) throws CustomException {
+    public UUID generateOtp(String mobile) throws CustomException {
         saveDetailsIntoLosUserTable(mobile);
 
         TenantDetails tenantDetails =TenantDetails.builder().capitalUserId(RequestData.getUserId())
@@ -113,7 +119,7 @@ public class LosUserServiceImpl implements LosUserService{
                 .build();
 
         verificationUtilService.createVerificationInstanceAndCommunicate(verificationOrchestratorRequest, RequestData.getTenantId());
-        return verificationOrchestratorRequest;
+        return verificationOrchestratorRequest.getVerificationEntity().getId();
     }
 
     private void saveDetailsIntoLosUserTable(String mobile) throws CustomException {
@@ -142,6 +148,8 @@ public class LosUserServiceImpl implements LosUserService{
             user.setTypeOfEntity(updatedLosUserDTO.getTypeOfEntity());
             user.setPan(updatedLosUserDTO.getPan());
             user.setLoanAmount(updatedLosUserDTO.getLoanAmount());
+            user.setFirstName(updatedLosUserDTO.getFirstName());
+            user.setLastName(updatedLosUserDTO.getLastName());
             if (!user.getMobile().equals(updatedLosUserDTO.getMobile())) {
                 user.setMobile(updatedLosUserDTO.getMobile());
             }
@@ -154,6 +162,8 @@ public class LosUserServiceImpl implements LosUserService{
                     .userId(String.valueOf(RequestData.getUserId()))
                     .email(updatedLosUserDTO.getEmail())
                     .pan(updatedLosUserDTO.getPan())
+                    .firstName(updatedLosUserDTO.getFirstName())
+                    .lastName(updatedLosUserDTO.getLastName())
                     .loanAmount(updatedLosUserDTO.getLoanAmount())
                     .typeOfEntity(updatedLosUserDTO.getTypeOfEntity())
                     .isMobileVerified(false)
