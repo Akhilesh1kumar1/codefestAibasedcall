@@ -8,6 +8,7 @@ public enum CallbackType {
     USER_EMAIL_VERIFICATION("user_email_verification"),
     RESET_PASSWORD("reset_password"),
     CRIF_VERIFICATION("crif_verification"),
+    LOS_USER_VERIFICATION("los_user_verification"),
 
     UNKNOWN_REQUEST("unknown_request");
 

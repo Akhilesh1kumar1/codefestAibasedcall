@@ -1,0 +1,15 @@
+package com.sr.capital.los.utill;
+
+public enum FormStatusEnum {
+    BASIC_DETAILS,
+    OTP_VERIFIED,
+    OTP_VERIFICATION_PENDING,
+    PAN_VERIFIED,
+    PAN_TO_GST_FETCHED,
+    GST_IN_FETCHED,
+    CIN_FETCHED,
+    CORPVEDA_DETAILS_FETCHED,
+    NDD_FETCHED,
+    GST_ANALYTICS,
+    NET_BANKING_VERIFIED
+}
