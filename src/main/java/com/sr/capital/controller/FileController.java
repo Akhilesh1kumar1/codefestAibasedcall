@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
-import static com.sr.capital.helpers.constants.Constants.MessageConstants.ACKNOWLEDGED_SUCCESSFULLY;
-import static com.sr.capital.helpers.constants.Constants.MessageConstants.PRESIGNED_URL_GENERATION;
+import static com.sr.capital.helpers.constants.Constants.MessageConstants.*;
 
 @RestController
 @RequestMapping("/api/file-upload")
@@ -61,7 +60,7 @@ public class FileController {
         if (pageNumber == null) pageNumber = 0;
         if (pageSize == null) pageSize = 20;
         return ResponseBuilderUtil.getResponse(fileService.searchByUserName(null, pageNumber, pageSize), SUCCESS,
-                ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
+                DATA_FETCHED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
     @PostMapping("/search")
     public GenericResponse<Page<FileUploadDataDTO>> searchByUploadedBy(@RequestParam(name = "uploaded_by") String uploadedBy,
@@ -71,7 +70,7 @@ public class FileController {
         if (pageNumber == null) pageNumber = 0;
         if (pageSize == null) pageSize = 20;
         return ResponseBuilderUtil.getResponse(fileService.searchByUserName(uploadedBy, pageNumber, pageSize), SUCCESS,
-                ACKNOWLEDGED_SUCCESSFULLY, HttpStatus.SC_OK);
+                DATA_FETCHED_SUCCESSFULLY, HttpStatus.SC_OK);
     }
 
 }

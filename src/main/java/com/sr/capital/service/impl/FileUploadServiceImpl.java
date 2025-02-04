@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -200,7 +201,8 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public Page<FileUploadDataDTO> searchByUserName(String uploadedBy, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
         Page<FileUploadData> resultPage;
 
         if (StringUtils.isNotBlank(uploadedBy)) {
