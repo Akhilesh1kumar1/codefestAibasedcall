@@ -50,86 +50,88 @@ public class ExcelProcessingService {
 //             Workbook workbook = new XSSFWorkbook(fis)) {
 
         log.info("Started Fetching from s3 bucket");
-        InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), processUploadDataMessage.getFileName());
-        log.info("file fetched Starting processing");
-        log.info(String.valueOf("Input Stream " + inputStream != null + " FIleName " + processUploadDataMessage.getFileName()));
-        File file = null;
-        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
-            Sheet sheet = workbook.getSheetAt(0);
-            Row headerRow = sheet.getRow(0);
+        try (InputStream inputStream = S3Util.downloadObjectToFile(appProperties.getBucketName(), processUploadDataMessage.getFileName())) {
 
-            int lastNonEmptyRow = findLastNonEmptyRow(sheet);
+            log.info("file fetched Starting processing");
+            log.info(String.valueOf(!("Input Stream " + inputStream).equals(null + " FIleName " + processUploadDataMessage.getFileName())));
+            File file = null;
+            try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+                Sheet sheet = workbook.getSheetAt(0);
+                Row headerRow = sheet.getRow(0);
 
-            // Create a map of column names to their indices
-            Map<String, Integer> columnIndexMap = new HashMap<>();
-            for (Cell cell : headerRow) {
-                columnIndexMap.put(cell.getStringCellValue().toLowerCase().trim(), cell.getColumnIndex());
-                lastColumIndex = cell.getColumnIndex();
-            }
-            columnIndexMap.forEach((key, value) -> log.info(key + " " + value));
-            headerRow.createCell(lastColumIndex++).setCellValue(LoanDetailsConstants.STATUS);
-            headerRow.createCell(lastColumIndex).setCellValue(LoanDetailsConstants.MESSAGE);
-            log.info("lastNonEmptyRow " + lastNonEmptyRow);
-            // Process rows
-            for (int i = 1; i <= lastNonEmptyRow; i++) {
-                Row row = sheet.getRow(i);
-                if (row == null) continue;
+                int lastNonEmptyRow = findLastNonEmptyRow(sheet);
 
-                LoanDetailsFieldFromExcel loanDetails = new LoanDetailsFieldFromExcel();
-                try {
-                    loanDetails.setRowId(i);
-                    setValuesFromDoc(loanDetails, columnIndexMap, row);
-                    loanDetailsList.add(loanDetails);
-                } catch (Exception e) {
-                    row.createCell(row.getLastCellNum()).setCellValue("Failed");
-                    row.createCell(row.getLastCellNum()).setCellValue(e.getMessage());
+                // Create a map of column names to their indices
+                Map<String, Integer> columnIndexMap = new HashMap<>();
+                for (Cell cell : headerRow) {
+                    columnIndexMap.put(cell.getStringCellValue().toLowerCase().trim(), cell.getColumnIndex());
+                    lastColumIndex = cell.getColumnIndex();
                 }
-            }
+                columnIndexMap.forEach((key, value) -> log.info(key + " " + value));
+                headerRow.createCell(lastColumIndex++).setCellValue(LoanDetailsConstants.STATUS);
+                headerRow.createCell(lastColumIndex).setCellValue(LoanDetailsConstants.MESSAGE);
+                log.info("lastNonEmptyRow " + lastNonEmptyRow);
+                // Process rows
+                for (int i = 1; i <= lastNonEmptyRow; i++) {
+                    Row row = sheet.getRow(i);
+                    if (row == null) continue;
 
-            loanDetailsList.forEach(d -> log.info(d.getCompanyName()));
-
-            processData(loanDetailsList); // Custom post-processing
-
-
-            log.info("update doc based on status of row");
-            for (LoanDetailsFieldFromExcel loanDetailsFieldFromExcel : loanDetailsList) {
-                sheet = workbook.getSheetAt(0);
-                Row row = sheet.getRow(loanDetailsFieldFromExcel.getRowId());
-                if (loanDetailsFieldFromExcel.getCurrentStatus() != null) {
-
-                    row.createCell(lastColumIndex).setCellValue(loanDetailsFieldFromExcel.getMessage());
-                    row.createCell(lastColumIndex - 1).setCellValue(loanDetailsFieldFromExcel.getCurrentStatus());
-
-                } else {
-                    row.createCell(lastColumIndex - 1).setCellValue(LoanDetailsConstants.SUCCESS);
+                    LoanDetailsFieldFromExcel loanDetails = new LoanDetailsFieldFromExcel();
+                    try {
+                        loanDetails.setRowId(i);
+                        setValuesFromDoc(loanDetails, columnIndexMap, row);
+                        loanDetailsList.add(loanDetails);
+                    } catch (Exception e) {
+                        row.createCell(row.getLastCellNum()).setCellValue("Failed");
+                        row.createCell(row.getLastCellNum()).setCellValue(e.getMessage());
+                    }
                 }
-            }
 
-            log.info("upload to s3");
-            file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
-            S3Util.uploadFileToS3(appProperties.getBucketName(), processUploadDataMessage.getFileName(), file);
-            boolean isDeleted = file.delete();
-            log.info("Is Temp File Deleted ?" + isDeleted);
+                loanDetailsList.forEach(d -> log.info(d.getCompanyName()));
+
+                processData(loanDetailsList); // Custom post-processing
+
+
+                log.info("update doc based on status of row");
+                for (LoanDetailsFieldFromExcel loanDetailsFieldFromExcel : loanDetailsList) {
+                    sheet = workbook.getSheetAt(0);
+                    Row row = sheet.getRow(loanDetailsFieldFromExcel.getRowId());
+                    if (loanDetailsFieldFromExcel.getCurrentStatus() != null) {
+
+                        row.createCell(lastColumIndex).setCellValue(loanDetailsFieldFromExcel.getMessage());
+                        row.createCell(lastColumIndex - 1).setCellValue(loanDetailsFieldFromExcel.getCurrentStatus());
+
+                    } else {
+                        row.createCell(lastColumIndex - 1).setCellValue(LoanDetailsConstants.SUCCESS);
+                    }
+                }
+
+                log.info("upload to s3");
+                file = convertWorkbookToFile(workbook, processUploadDataMessage.getFileName());
+                S3Util.uploadFileToS3(appProperties.getBucketName(), processUploadDataMessage.getFileName(), file);
+                boolean isDeleted = file.delete();
+                log.info("Is Temp File Deleted ?" + isDeleted);
 //            try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
 //                workbook.write(fos);
 //            } catch (IOException e) {
 //                throw new RuntimeException(e);
 //            }
 
-            log.info("Upload updated Data");
-        } catch (IOException e) {
-            log.error(e.getMessage() + e);
-            if (file != null) {
-                file.delete();
-            }
+                log.info("Upload updated Data");
+            } catch (IOException e) {
+                log.error(e.getMessage() + e);
+                if (file != null) {
+                    file.delete();
+                }
 
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchProviderException e) {
-            throw new RuntimeException(e);
+            } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Exception e) {
+            log.error("Error while downloading file" + e.getMessage(), " Error is " + e);
         }
 
-        LocalDateTime processEndTime = LocalDateTime.now();
+            LocalDateTime processEndTime = LocalDateTime.now();
         updateDataInDb(loanDetailsList, processUploadDataMessage.getUserId(), processUploadDataMessage.getFileName(), RequestData.getTenantId(), processStartTime, processEndTime, fileUpload);
         log.info("Data updated in db");
     }

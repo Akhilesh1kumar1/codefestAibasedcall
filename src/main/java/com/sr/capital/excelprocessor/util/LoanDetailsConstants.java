@@ -74,27 +74,4 @@ public class LoanDetailsConstants {
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILED = "FAILED";
 
-
-
-    public static final Set<String> MANDATORY_FIELDS = Set.of(
-            "loanType",
-            "companyId",
-            "companyName",
-            "companyTier",
-            "loanVendorName",
-            "shipRocketLoanStatus",
-            "disbursementDate",
-            "sanctionAmount",
-            "sanctionLoanTenure",
-            "sanctionLoanROI",
-            "disbursementAmount",
-            "disbursementLoanTenure",
-            "disbursementLoanROI",
-            "monthlyEMIAmount",
-            "dpdBucket",
-            "city",
-            "state",
-            "processingFeeRate"
-    );
-
 }

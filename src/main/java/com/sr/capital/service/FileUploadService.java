@@ -31,7 +31,7 @@ public interface FileUploadService {
 
     public Boolean deleteFiles(File file);
 
-    Page<FileUploadDataDTO> searchByUserIdOrName(String uploadedBy, int page, int size);
+    Page<FileUploadDataDTO> searchByUserName(String uploadedBy, int page, int size);
 
     List<FileUploadDataDTO> getUploadedFileDetails();
 
