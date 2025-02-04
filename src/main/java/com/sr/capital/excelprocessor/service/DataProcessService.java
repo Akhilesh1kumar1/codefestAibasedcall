@@ -89,7 +89,7 @@ public class DataProcessService {
                 .externalLeadCode(String.valueOf(loanDetailsFieldFromExcel.getVendorLoanId()))
                 .loanDuration(loanDetailsFieldFromExcel.getSanctionLoanTenure())
                 .loanType(loanDetailsFieldFromExcel.getLoanType())
-                .state(loanDetailsFieldFromExcel.getState())
+                .state(LoanStatus.LOAN_GENERATE.name())
                 .vendorStatus(loanDetailsFieldFromExcel.getVendorLoanStatus())
                 .loanSubmissionTime(convertDateToLocalDateTime(loanDetailsFieldFromExcel.getSanctionDate()))
                 .loanStatus(LoanStatus.LOAN_DISBURSED);

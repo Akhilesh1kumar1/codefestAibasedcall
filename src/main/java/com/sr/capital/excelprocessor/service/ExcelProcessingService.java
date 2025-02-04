@@ -15,7 +15,6 @@ import com.sr.capital.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -219,7 +218,7 @@ public class ExcelProcessingService {
         loanDetails.setProgramCode(getCellValue(row, columnIndexMap, LoanDetailsConstants.PROGRAM_CODE));
         loanDetails.setCity(getCellValue(row, columnIndexMap, LoanDetailsConstants.CITY));
         loanDetails.setState(getCellValue(row, columnIndexMap, LoanDetailsConstants.STATE));
-        loanDetails.setPincode(getCellValue(row, columnIndexMap, LoanDetailsConstants.PINCODE));
+        loanDetails.setPinCode(getCellValue(row, columnIndexMap, LoanDetailsConstants.PINCODE));
         loanDetails.setProcessingFeeRate(getNumericCellValue(row, columnIndexMap, LoanDetailsConstants.PROCESSING_FEE_RATE));
         loanDetails.setEver30Plus(getCellValue(row, columnIndexMap, LoanDetailsConstants.EVER_30_PLUS));
         loanDetails.setEver60Plus(getCellValue(row, columnIndexMap, LoanDetailsConstants.EVER_60_PLUS));
