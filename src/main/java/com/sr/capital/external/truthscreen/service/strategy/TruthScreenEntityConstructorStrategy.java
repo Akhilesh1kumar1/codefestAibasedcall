@@ -5,36 +5,31 @@ import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestrato
 import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.entity.constructors.TruthPanDocDetailsEntityConstructor;
 import com.sr.capital.external.truthscreen.entity.constructors.TruthScreenPanComprehensiveEntityConstructor;
-import com.sr.capital.external.truthscreen.service.constructors.TruthScreenCinEntityConstructor;
-import com.sr.capital.external.truthscreen.service.constructors.TruthScreenGstinEntityConstructor;
-import com.sr.capital.external.truthscreen.service.constructors.TruthScreenPanComplianceEntityConstructor;
-import com.sr.capital.external.truthscreen.service.constructors.TruthScreenPanToGstEntityConstructor;
+import com.sr.capital.external.truthscreen.service.constructors.*;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenEntityConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
+@RequiredArgsConstructor
 public class TruthScreenEntityConstructorStrategy {
 
-    @Autowired
-    private TruthScreenCinEntityConstructor truthScreenCinEntityConstructor;
+    private final TruthScreenNddEntityConstructor truthScreenNddEntityConstructor;
 
-    @Autowired
-    private TruthScreenGstinEntityConstructor truthScreenGstinEntityConstructor;
+    private final TruthScreenCinEntityConstructor truthScreenCinEntityConstructor;
 
-    @Autowired
-    private TruthScreenPanToGstEntityConstructor truthScreenPanToGstEntityCOnstructor;
+    private final TruthScreenGstinEntityConstructor truthScreenGstinEntityConstructor;
 
-    @Autowired
-    private TruthScreenPanComplianceEntityConstructor truthScreenPanComplianceEntityConstructor;
+    private final TruthScreenPanToGstEntityConstructor truthScreenPanToGstEntityCOnstructor;
 
-    @Autowired
-    private TruthScreenPanComprehensiveEntityConstructor truthScreenPanComprehensiveEntityConstructor;
+    private final TruthScreenPanComplianceEntityConstructor truthScreenPanComplianceEntityConstructor;
 
-    @Autowired
-    private TruthPanDocDetailsEntityConstructor truthPanDocDetailsEntityConstructor;
+    private final TruthScreenPanComprehensiveEntityConstructor truthScreenPanComprehensiveEntityConstructor;
+
+    private final TruthPanDocDetailsEntityConstructor truthPanDocDetailsEntityConstructor;
 
     public <T> T constructEntity(TruthScreenDocOrchestratorRequest request, T entity, Class<?> responseClass) throws EntityConstructorNotFoundException, IOException {
         TruthScreenEntityConstructor entityConstructor = null;
@@ -51,6 +46,8 @@ public class TruthScreenEntityConstructorStrategy {
             entityConstructor = truthScreenGstinEntityConstructor;
         } else if (responseClass.equals(CinDetails.class)) {
             entityConstructor = truthScreenCinEntityConstructor;
+        } else if (responseClass.equals(NddDetails.class)) {
+            entityConstructor = truthScreenNddEntityConstructor;
         } else {
             throw new EntityConstructorNotFoundException();
         }

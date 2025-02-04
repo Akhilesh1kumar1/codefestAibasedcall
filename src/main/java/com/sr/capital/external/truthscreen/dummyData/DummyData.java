@@ -13,7 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class DummyData<T> extends TruthScreenBaseResponse<T> {
 
-    private String status;
+    private int status;
     private Map<String, Object> msgs;
 
 

@@ -27,7 +27,7 @@ public class TruthScreenPanToGstEntityConstructor implements TruthScreenEntityCo
                 .srCompanyId(RequestData.getTenantId())
                 .truthScreenDocType(request.getDocType())
                 .transId(request.getTransId())
-                .initialStatus(request.getTruthScreenBaseResponse().getStatus())
+                .initialStatus(String.valueOf(request.getTruthScreenBaseResponse().getStatus()))
                 .details(panToGstDetails)
                 .build();
     }

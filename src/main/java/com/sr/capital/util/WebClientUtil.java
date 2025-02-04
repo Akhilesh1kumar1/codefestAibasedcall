@@ -121,10 +121,9 @@ public class WebClientUtil {
                 .headers(getHeadersConsumer(httpHeaders))
                 .bodyValue(body)
                 .exchangeToMono(clientResponse -> {
-                    System.out.println(clientResponse);
                     return bodyToMonoAndLogResponse(serviceName, uri, method, requestId, executionStartTime, clientResponse, responseClass);
                 })
-                .timeout(Duration.ofSeconds(5), Mono.empty());
+                .timeout(Duration.ofSeconds(30), Mono.empty());
     }
 
 

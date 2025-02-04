@@ -5,15 +5,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TruthScreenGstinDecryptedResponseDto extends TruthScreenBaseResponse {
+public class TruthScreenGstAnalyticsDecryptedResponseDto extends TruthScreenBaseResponse{
 
+    private String transID;
+    private Boolean isOtpValidated;
+    private String tsTransId;
     private int status;
-    private Map<String,Object> msg;
-
 }

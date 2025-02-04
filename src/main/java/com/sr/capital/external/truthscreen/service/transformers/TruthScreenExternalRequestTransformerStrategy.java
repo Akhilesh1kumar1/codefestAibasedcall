@@ -6,33 +6,32 @@ import com.sr.capital.external.truthscreen.dto.request.TruthScreenBaseRequest;
 import com.sr.capital.external.truthscreen.dto.request.TruthScreenDocOrchestratorRequest;
 import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
 import com.sr.capital.external.truthscreen.service.transformers.interfaces.TruthScreenExternalRequestTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
 @Service
+@RequiredArgsConstructor
 public class TruthScreenExternalRequestTransformerStrategy {
 
 
-    @Autowired
-    private TruthScreenCinRequestTransformer cinRequestTransformer;
+    private final TruthScreenCinRequestTransformer cinRequestTransformer;
 
-    @Autowired
-    private TruthScreenGSTinRequestTransformer gstinRequestTransformer;
+    private final TruthScreenGSTinRequestTransformer gstinRequestTransformer;
 
-    @Autowired
-    private TruthScreenPanToGstRequestTransformer panToGstRequestTransformer;
+    private final TruthScreenPanToGstRequestTransformer panToGstRequestTransformer;
 
-    @Autowired
-    private TruthScreenPanComplianceRequestTransformer panComplianceRequestTransformer;
+    private final TruthScreenPanComplianceRequestTransformer panComplianceRequestTransformer;
 
-    @Autowired
-    private TruthScreenPanComprehensiveRequestTransformer panComprehensiveRequestTransformer;
+    private final TruthScreenPanComprehensiveRequestTransformer panComprehensiveRequestTransformer;
 
-    @Autowired
-    private TruthScreenPanExtractionRequestTransformer panExtractionRequestTransformer;
+    private final TruthScreenPanExtractionRequestTransformer panExtractionRequestTransformer;
+
+    private final TruthScreenNDDExtractionRequestTransformer nddTransformer;
+
+    private final TruthScreenGstAnalyticsRequestTransformer gstAnalyticsTransformer;
 
     public <T extends TruthScreenBaseRequest<?>> T transformExtractionRequest(TruthScreenDocOrchestratorRequest request) throws RequestTransformerNotFoundException {
         TruthScreenExternalRequestTransformer requestTransformer;
@@ -55,6 +54,12 @@ public class TruthScreenExternalRequestTransformerStrategy {
                 break;
             case CIN:
                 requestTransformer = cinRequestTransformer;
+                break;
+            case GST_ANALYTICS:
+                requestTransformer = gstAnalyticsTransformer;
+                break;
+            case NDD:
+                requestTransformer = nddTransformer;
                 break;
             default:
                 throw new RequestTransformerNotFoundException();

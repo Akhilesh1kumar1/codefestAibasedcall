@@ -51,6 +51,10 @@ public class HashUtil {
         return ThreadLocalRandom.current().nextLong(50000000L, Long.MAX_VALUE);
     }
 
+    public static Integer generateRandomIntegerUserId() throws NoSuchAlgorithmException, NoSuchProviderException {
+        return ThreadLocalRandom.current().nextInt(100,100000);
+    }
+
 
 
 
