@@ -436,17 +436,12 @@ public class AppProperties {
     @Value("${is.error-mail-trigger.enabled}")
     private Boolean isErrorMailTriggerEnabled;
 
-    @Value("${error.email.recipientName}")
-    private String errorEmailRecipientName;
     @Value("${external.crif.public.user-id}")
     private String publicUserId;
     @Value("${external.google.endpoints.captcha-site-verify}")
     private String captchaSiteVerificationEndpoint;
     @Value("${error.email.recipientName}")
     private String errorEmailRecipientName;
-
-    @Value("${app.captcha-verification.enabled}")
-    private Boolean captchaVerificationEnabled;
 
     @Value("${app.captcha-verification.enabled}")
     private Boolean captchaVerificationEnabled;
