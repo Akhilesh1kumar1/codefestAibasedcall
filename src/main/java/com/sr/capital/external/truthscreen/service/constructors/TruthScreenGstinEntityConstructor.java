@@ -9,19 +9,20 @@ import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
 import com.sr.capital.external.truthscreen.manager.GSTinAggregateDataRepositoryManger;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenEntityConstructor;
 import com.sr.capital.util.MapperUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
+@RequiredArgsConstructor
 public class TruthScreenGstinEntityConstructor implements TruthScreenEntityConstructor {
 
-    @Autowired
-    private GSTinAggregateDataRepositoryManger gsTinAggregateDataRepositoryManager;
 
-    @Autowired
-    private AES256 aes256;
+    private final GSTinAggregateDataRepositoryManger gsTinAggregateDataRepositoryManager;
+
+    private final AES256 aes256;
 
     @Override
     public <T> T constructEntity(TruthScreenDocOrchestratorRequest request, T entity) throws IOException {
@@ -30,7 +31,7 @@ public class TruthScreenGstinEntityConstructor implements TruthScreenEntityConst
         return (T) TruthScreenDocDetails.builder()
                 .srCompanyId(RequestData.getTenantId())
                 .transId(request.getTransId())
-                .initialStatus(request.getTruthScreenBaseResponse().getStatus())
+                .initialStatus(String.valueOf(request.getTruthScreenBaseResponse().getStatus()))
                 .details(gstinDetails)
                 .truthScreenDocType(request.getDocType())
                 .build();
@@ -61,14 +62,13 @@ public class TruthScreenGstinEntityConstructor implements TruthScreenEntityConst
                 .whetherEKYCVerified(extractionResponseData.getWhetherEKYCVerified())
                 .fieldVisitConducted(extractionResponseData.getFieldVisitConducted())
                 .build();
-        GSTinDetails responseGstinDetails = saveAggregateData(gstinDetails,aes256,request);
-        return responseGstinDetails;
+        return saveAggregateData(gstinDetails,aes256,request);
     }
 
     private GSTinDetails saveAggregateData(GSTinDetails gstinDetails,AES256 aes256, TruthScreenDocOrchestratorRequest request){
         gstinDetails.setTransId(request.getTransId());
-        gsTinAggregateDataRepositoryManager.saveDoc(gstinDetails);
         GSTinDetails.encryptInfo(gstinDetails,aes256);
+        gsTinAggregateDataRepositoryManager.saveDoc(gstinDetails);
         gstinDetails.setFilingData(null);
         gstinDetails.setGoodsAndService(null);
         gstinDetails.setPlaceOfBusinessData(null);

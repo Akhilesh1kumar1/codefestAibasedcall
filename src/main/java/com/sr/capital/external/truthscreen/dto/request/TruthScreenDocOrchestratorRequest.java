@@ -36,4 +36,11 @@ public class TruthScreenDocOrchestratorRequest {
     private TruthScreenDocDetails<T> truthScreenDocDetails;
 
     private TruthScreenDocDetails<T> previousDocDetails;
+
+    private String fromDate;
+
+    private String toDate;
+
+    private String gstPortalUsername;
+
 }

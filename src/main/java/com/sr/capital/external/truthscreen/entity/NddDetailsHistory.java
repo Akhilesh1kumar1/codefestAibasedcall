@@ -8,13 +8,13 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 @Builder
-@Document("gstin-details-history")
-public class GSTinDetailsHistory extends BaseDoc {
+@Document("ndd-details-history")
+public class NddDetailsHistory extends BaseDoc {
 
+    @Field("transId")
     private String transId;
     @Field("sr_company_id")
     private String srCompanyId;
-    @Field("gstin-details")
-    private GSTinDetails gsTinDetails;
-
+    @Field("ndd-details-history")
+    private NddDetails nddDetails;
 }

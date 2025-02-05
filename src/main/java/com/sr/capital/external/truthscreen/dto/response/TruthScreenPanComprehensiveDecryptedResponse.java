@@ -21,7 +21,7 @@ public class TruthScreenPanComprehensiveDecryptedResponse extends TruthScreenBas
     private DataDto data;
     private String message;
     private String messageCode;
-    private String status;
+    private int status;
     private int statusCode;
     private boolean success;
     @JsonProperty("tsTransID")

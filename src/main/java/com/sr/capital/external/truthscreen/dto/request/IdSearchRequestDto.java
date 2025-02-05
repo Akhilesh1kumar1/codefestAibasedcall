@@ -20,9 +20,19 @@ public class IdSearchRequestDto {
     String transId;
 
     @JsonProperty("doc_type")
-     int docType;
+    int docType;
 
     @JsonProperty("doc_number")
     String docNumber;
+
+    @JsonProperty("gst_portal_username")
+    String gstPortalUsername;
+
+    @JsonProperty("from_date")
+    String fromDate;
+
+    @JsonProperty("to_data")
+    String toDate;
+
 
 }

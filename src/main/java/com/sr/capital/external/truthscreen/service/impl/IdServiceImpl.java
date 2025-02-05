@@ -54,21 +54,26 @@ public class IdServiceImpl implements IdService {
 
     private IdSearchResponseDto<?> processNewRequest(IdSearchRequestDto requestDTO, TruthScreenDocOrchestratorRequest truthScreenDocOrchestratorRequest) throws RequestTransformerNotFoundException {
         truthScreenDocOrchestratorRequest.setDocType(TruthScreenDocType.fromValue(requestDTO.getDocType()));
+        truthScreenDocOrchestratorRequest.setToDate(requestDTO.getToDate());
         truthScreenDocOrchestratorRequest.setDocNumber(requestDTO.getDocNumber());
+        truthScreenDocOrchestratorRequest.setFromDate(requestDTO.getFromDate());
+        truthScreenDocOrchestratorRequest.setGstPortalUsername(requestDTO.getGstPortalUsername());
         truthScreenDocOrchestratorRequest.setSrCompanyId(RequestData.getTenantId());
         TruthScreenBaseRequest<?> truthScreenBaseRequest = externalRequestTransformerStrategy.transformExtractionRequest(truthScreenDocOrchestratorRequest);
         truthScreenDocOrchestratorRequest.setTruthScreenBaseRequest(truthScreenBaseRequest);
 
         try {
-
-            TruthScreenBaseResponse<?> truthScreenBaseResponse = truthScreenAdapter.extractDetails(truthScreenBaseRequest);
+             TruthScreenBaseResponse<?> truthScreenBaseResponse = truthScreenAdapter.extractDetails(truthScreenBaseRequest);
             truthScreenDocOrchestratorRequest.setTruthScreenBaseResponse(truthScreenBaseResponse);
+
             TruthScreenDocDetails<?> truthScreenDocDetailsToBeSaved = truthEntityConstructorStrategy.constructEntity(
                     truthScreenDocOrchestratorRequest,
                     truthScreenDocOrchestratorRequest.getTruthScreenDocDetails(),
                     getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType()))
             );
+
             truthScreenDocDetailsManager.saveDocs(truthScreenDocDetailsToBeSaved);
+
             return truthScreenIdSearchResponseStrategy.constructResponse(
                     truthScreenDocDetailsToBeSaved,
                     getResponseClass(TruthScreenDocType.fromValue(requestDTO.getDocType()))
@@ -103,6 +108,10 @@ public class IdServiceImpl implements IdService {
                 return GSTinDetails.class;
             case CIN:
                 return CinDetails.class;
+            case NDD:
+                return NddDetails.class;
+            case GST_ANALYTICS:
+                return GstAnalytics.class;
             default:
                 throw new CustomException("Invalid Doc type");
         }
