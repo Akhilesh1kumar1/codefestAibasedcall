@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Data
 @Document(collection = "users")
@@ -20,6 +21,6 @@ public class LosStatusEntity extends BaseDoc {
     @Field("los_user_id")
     private String losUserEntityId;
     @Field("status")
-    private String status;
+    private Set<String> status;
 
 }

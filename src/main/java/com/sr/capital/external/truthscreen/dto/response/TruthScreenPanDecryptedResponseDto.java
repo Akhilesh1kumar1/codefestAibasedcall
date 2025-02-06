@@ -17,7 +17,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TruthScreenPanDecryptedResponseDto extends TruthScreenBaseResponse{
 
-    String status;
+    int status;
     Map<String,Object> msg;
 
 }

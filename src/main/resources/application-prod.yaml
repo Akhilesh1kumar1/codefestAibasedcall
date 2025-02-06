@@ -169,6 +169,9 @@ external:
     vendor-password: ${AUTHBRIDGE_PASSWORD:India@2608}
     vendor-username: ${AUTHBRIDGE_USERNAME:test@shiprocket.com}
     is-truth-screen-enable: false
+    ndd-threshold: 70
+    ndd-all-database-flag: 1
+
     base:
       url: https://www.truthscreen.com
     idsearch-url: /v1/apicall/nid/idsearch
@@ -177,6 +180,7 @@ external:
     pan-to-gst-url: /v1/apicall/business/pantogst
     gstin-url: /v1/apicall/business/gstin
     cin-url: /api/v2.2/idsearch
+    ndd-url: /v1/apicall/employment/advance_negative_due_deligence
 
   corpveda:
     client-id: ${CORPVEDA_CLIENT_ID:t+wnian2e41yuPQ6r0aXBEiWU+rdX3s259sc7HcFTfTc8NxB}

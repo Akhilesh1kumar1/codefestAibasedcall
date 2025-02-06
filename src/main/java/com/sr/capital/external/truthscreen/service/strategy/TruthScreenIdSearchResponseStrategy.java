@@ -5,31 +5,28 @@ import com.sr.capital.external.truthscreen.dto.response.IdSearchResponseDto;
 import com.sr.capital.external.truthscreen.entity.*;
 import com.sr.capital.external.truthscreen.service.constructors.*;
 import com.sr.capital.external.truthscreen.service.interfaces.TruthScreenResponseConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
+@RequiredArgsConstructor
 public class TruthScreenIdSearchResponseStrategy {
 
-    @Autowired
-    private TruthScreenCinResponseConstructor truthScreenCinResponseConstructor;
+    private final TruthScreenNddResponseConstructor truthScreenNddResponseConstructor;
 
-    @Autowired
-    private TruthScreenGstinResponseConstructor truthScreenGstinResponseConstructor;
+    private final TruthScreenCinResponseConstructor truthScreenCinResponseConstructor;
 
-    @Autowired
-    private TruthScreenPanToGstResponseConstructor truthScreenPanToGstResponseConstructor;
+    private final TruthScreenGstinResponseConstructor truthScreenGstinResponseConstructor;
 
-    @Autowired
-    private TruthScreenPanComplianceResponseConstructor truthScreenPanComplianceResponseConstructor;
+    private final TruthScreenPanToGstResponseConstructor truthScreenPanToGstResponseConstructor;
 
-    @Autowired
-    private TruthScreenPanComprehensiveResponseConstructor tRuthScreenPanComprehensiveResponse;
+    private final TruthScreenPanComplianceResponseConstructor truthScreenPanComplianceResponseConstructor;
+    private final TruthScreenPanComprehensiveResponseConstructor tRuthScreenPanComprehensiveResponse;
 
-    @Autowired
-    private TruthScreenPanResponseConstructor truthScreenPanResponseEntityConstructor;
+    private final TruthScreenPanResponseConstructor truthScreenPanResponseEntityConstructor;
 
     public IdSearchResponseDto<?> constructResponse(TruthScreenDocDetails request, Class<?> responseClass) throws EntityConstructorNotFoundException, IOException {
         TruthScreenResponseConstructor entityConstructor = null;
@@ -45,6 +42,8 @@ public class TruthScreenIdSearchResponseStrategy {
             entityConstructor = truthScreenGstinResponseConstructor;
         } else if (responseClass.equals(CinDetails.class)) {
             entityConstructor = truthScreenCinResponseConstructor;
+        } else if (responseClass.equals(NddDetails.class)) {
+            entityConstructor = truthScreenNddResponseConstructor;
         } else {
             throw new EntityConstructorNotFoundException();
         }

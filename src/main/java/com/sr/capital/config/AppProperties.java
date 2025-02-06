@@ -361,6 +361,18 @@ public class AppProperties {
     @Value("${external.authbridge.cin-url}")
     private String authBridgeCinUrl;
 
+    @Value("${external.authbridge.ndd-url}")
+    private String authBridgeNddUrl;
+
+    @Value("${external.authbridge.ndd-threshold}")
+    private String authBridgeNddThreshold;
+
+    @Value("${external.authbridge.ndd-all-database-flag}")
+    private String authBridgeNddAllDatabase;
+
+//    @Value("${external.authbridge.gst-analytics-url}")
+//    private String authBridgeGstAnalyticsUrl;
+
     //CorpVeda
     @Value("${external.corpveda.vendor-username}")
     private String corpVedaUsername;

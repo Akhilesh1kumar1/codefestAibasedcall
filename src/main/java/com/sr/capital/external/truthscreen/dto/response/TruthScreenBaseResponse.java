@@ -10,7 +10,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TruthScreenBaseResponse<T> implements Serializable {
 
-    private String status;
+    private int status;
     private T msg;
     private String tsTransID;
 

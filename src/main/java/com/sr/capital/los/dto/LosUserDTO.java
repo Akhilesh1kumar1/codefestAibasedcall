@@ -22,5 +22,7 @@ public class LosUserDTO {
     private String typeOfEntity;
     private String pan;
     private BigDecimal loanAmount;
+    private String screenName;
     private Boolean isMobileVerified;
+    private AddressDto address;
 }

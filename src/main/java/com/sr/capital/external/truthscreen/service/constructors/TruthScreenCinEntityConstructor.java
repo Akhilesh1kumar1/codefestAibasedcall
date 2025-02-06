@@ -26,7 +26,7 @@ public class TruthScreenCinEntityConstructor implements TruthScreenEntityConstru
         return (T) TruthScreenDocDetails.builder()
                 .srCompanyId(RequestData.getTenantId())
                 .transId(request.getTransId())
-                .initialStatus(request.getTruthScreenBaseResponse().getStatus())
+                .initialStatus(String.valueOf(request.getTruthScreenBaseResponse().getStatus()))
                 .details(gstinDetails)
                 .truthScreenDocType(request.getDocType())
                 .build();

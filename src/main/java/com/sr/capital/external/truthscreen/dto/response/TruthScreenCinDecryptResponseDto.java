@@ -14,6 +14,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class TruthScreenCinDecryptResponseDto extends TruthScreenBaseResponse {
 
-    private String status;
+    private int status;
     private List<Map<String,Object>> msg;
 }

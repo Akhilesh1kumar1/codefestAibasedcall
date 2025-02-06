@@ -13,7 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class TruthScreenPanToGstDecryptedResponseDto extends TruthScreenBaseResponse {
 
-    private String status;
+    private int status;
     @JsonProperty("ts_trans_id")
     private String tsTransId;
     private List<Map<String, Object>> msg;
