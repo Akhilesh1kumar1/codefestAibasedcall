@@ -23,15 +23,11 @@ import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
 import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUEST_SUCCESS;
 
 @RestController
-@RequestMapping("/los/users")
-//@RequiredArgsConstructor
+@RequestMapping("/api/los/users")
+@RequiredArgsConstructor
 public class LosController {
 
     private final LosUserService losUserService;
-
-    public LosController(LosUserService losUserService) {
-        this.losUserService = losUserService;
-    }
 
     // GET user by ID
     @GetMapping()
