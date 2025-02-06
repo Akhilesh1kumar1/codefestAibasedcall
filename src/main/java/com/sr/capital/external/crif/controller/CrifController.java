@@ -7,6 +7,7 @@ import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
 import com.sr.capital.external.crif.dto.request.CrifConsentWithdrawalRequestModel;
 import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
 import com.sr.capital.external.crif.dto.response.BureauReportResponse;
+import com.sr.capital.external.crif.dto.response.CrifICRMReportRdo;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.service.CrifPartnerService;
@@ -14,11 +15,13 @@ import com.sr.capital.util.Base64Util;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.omunify.core.util.Constants.StatusEnum.SUCCESS;
@@ -74,6 +77,14 @@ public class CrifController {
         String accessCode = crifPartnerService.getAccessCode();
 
         return new ResponseEntity<>(new String[]{accessCode, Base64Util.decode(accessCode)}, HttpStatusCode.valueOf(200));
+    }
+
+    @PostMapping(value = "/get-report")
+    public GenericResponse<Page<CrifICRMReportRdo>> getReport(@RequestParam(name = "page", required = false) Integer pageNumber,
+                                                              @RequestParam(name = "size", required = false) Integer pageSize) {
+
+        return ResponseBuilderUtil.getResponse(crifPartnerService.getICRMReport(pageNumber, pageSize)
+                ,SUCCESS, REQUEST_SUCCESS, 200);
     }
 
     @GetMapping(value = "/get-doc-type")
