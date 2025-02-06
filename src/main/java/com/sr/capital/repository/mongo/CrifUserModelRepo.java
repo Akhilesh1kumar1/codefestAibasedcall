@@ -22,4 +22,6 @@ public interface CrifUserModelRepo extends MongoRepository<CrifUserModel, String
     Optional<CrifUserModel> findByMobileAndDocumentTypeAndDocumentValue(String encryptedMobileNumber, String docType, String encryptedDocValue);
 
     List<CrifUserModel> findAllByConsentIdIn(List<String> consentIdList);
+
+    List<CrifUserModel> findByMobileIn(List<String> encryptedMobileNumberList);
 }

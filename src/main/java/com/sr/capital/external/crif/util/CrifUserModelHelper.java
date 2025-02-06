@@ -7,6 +7,7 @@ import com.sr.capital.repository.mongo.CrifUserModelRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,5 +54,17 @@ public class CrifUserModelHelper {
     public void saveAll(List<CrifUserModel> userModels) {
         crifUserModelRepo.saveAll(userModels);
 
+    }
+
+    public List<CrifUserModel> findAll() {
+        return crifUserModelRepo.findAll();
+    }
+
+    public List<CrifUserModel> findByMobileIn(List<String> mobileNumbers) {
+        List<String> encryptedMobileNumberList = new ArrayList<>();
+        for (String mobileNumber : mobileNumbers) {
+            encryptedMobileNumberList.add(aes256.encrypt(mobileNumber));
+        }
+        return crifUserModelRepo.findByMobileIn(encryptedMobileNumberList);
     }
 }
