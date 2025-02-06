@@ -79,7 +79,7 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final ObjectMapper mapper;
     private final CrifUserModelHelper crifUserModelHelper;
     private final CrifConsentDetailsService crifConsentDetailsService;
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
@@ -947,109 +947,221 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
      * @param crifScoreFilter       (Optional) Filter on CrifReport.crifScore.
      * @return a Page containing CrifICRMReportRdo records.
      */
-    public Page<CrifICRMReportRdo> getICRMReport(int page, int size,
-                                                 String mobileFilter,
-                                                 String companyIdFilter,
-                                                 Date dateOfInitiationFrom,
-                                                 Integer crifScoreFilter) {
+//    @Override
+//    public Page<CrifICRMReportRdo> getICRMReport(int page, int size,
+//                                                 String mobileFilter,
+//                                                 String companyIdFilter,
+//                                                 Date dateOfInitiationFrom,
+//                                                 String crifScoreFilter) {
+//
+//        // Build criteria for CrifReport fields.
+//        List<Criteria> reportCriteriaList = new ArrayList<>();
+//        if (mobileFilter != null && !mobileFilter.isEmpty()) {
+//            reportCriteriaList.add(Criteria.where("mobile").is(mobileFilter));
+//        }
+//        if (crifScoreFilter != null) {
+//            reportCriteriaList.add(Criteria.where("crifScore").is(crifScoreFilter));
+//        }
+//        Criteria reportCriteria = reportCriteriaList.isEmpty()
+//                ? new Criteria()
+//                : new Criteria().andOperator(reportCriteriaList.toArray(new Criteria[0]));
+//
+//        // Build criteria for the joined CrifUserModel fields.
+//        List<Criteria> userCriteriaList = new ArrayList<>();
+//        if (companyIdFilter != null && !companyIdFilter.isEmpty()) {
+//            userCriteriaList.add(Criteria.where("userModels.srCompanyId").is(companyIdFilter));
+//        }
+//        if (dateOfInitiationFrom != null) {
+//            userCriteriaList.add(Criteria.where("userModels.lastModifiedBy").gte(dateOfInitiationFrom));
+//        }
+//        Criteria userCriteria = userCriteriaList.isEmpty()
+//                ? new Criteria()
+//                : new Criteria().andOperator(userCriteriaList.toArray(new Criteria[0]));
+//
+//        // Create the match stage for CrifReport filtering.
+//        MatchOperation reportMatch = Aggregation.match(reportCriteria);
+//
+//        // Lookup stage: join CrifReport with CrifUserModel on "mobile".
+//        LookupOperation lookupUserModels = Aggregation.lookup(
+//                "crifUserModel",  // target collection name (adjust if necessary)
+//                "mobile",         // local field in CrifReport
+//                "mobile",         // foreign field in CrifUserModel
+//                "userModels"      // output array field
+//        );
+//
+//        // Unwind the joined array; assuming one matching user per report.
+//        AggregationOperation unwind = Aggregation.unwind("userModels");
+//
+//        // Apply additional matching on the joined CrifUserModel fields.
+//        MatchOperation userMatch = Aggregation.match(userCriteria);
+//
+//        // Sorting based on dateOfInitiation (userModels.lastModifiedBy).
+//        AggregationOperation sort = Aggregation.sort(Sort.by(Sort.Direction.DESC, "userModels.lastModifiedBy"));
+//
+//        // Pagination: skip and limit.
+//        AggregationOperation skip = Aggregation.skip((long) page * size);
+//        AggregationOperation limit = Aggregation.limit(size);
+//
+//        // Projection: select only required fields and compute the "name" field.
+//        // Here, we use an expression string for name concatenation.
+//        AggregationOperation project = Aggregation.project()
+//                .and("mobile").as("mobile")
+//                .and("crifScore").as("score")
+//                .and("userModels.srCompanyId").as("companyId")
+//                .and("userModels.lastModifiedBy").as("dateOfInitiation")
+//                .and("userModels.utmCampaign").as("utm")
+//                .and("userModels.documentType").as("docType")
+//                .and("userModels.email").as("email")
+//                .andExpression("{ $cond: { if: { $eq: [ '$userModels.lastName', null ] }, then: '$userModels.firstName', else: { $concat: [ '$userModels.firstName', ' ', '$userModels.lastName' ] } } }")
+//                .as("name");
+//
+//        // Build the full aggregation pipeline.
+//        Aggregation aggregationPipeline = Aggregation.newAggregation(
+//                reportMatch,
+//                lookupUserModels,
+//                unwind,
+//                userMatch,
+//                sort,
+//                skip,
+//                limit,
+//                project
+//        );
+//
+//        // Execute the aggregation.
+//        List<CrifICRMReportRdo> dtos = mongoTemplate.aggregate(
+//                        aggregationPipeline, "crifReport", CrifICRMReportRdo.class)
+//                .getMappedResults();
+//
+//        // To determine the total count for pagination, run a count aggregation.
+//        Aggregation countAgg = Aggregation.newAggregation(
+//                reportMatch,
+//                lookupUserModels,
+//                unwind,
+//                userMatch,
+//                Aggregation.count().as("total")
+//        );
+//        AggregationResults<Document> countResults = mongoTemplate.aggregate(countAgg, "crifReport", Document.class);
+//        long total = 0;
+//        Document countDoc = countResults.getUniqueMappedResult();
+//        if (countDoc != null && countDoc.get("total") != null) {
+//            total = ((Number) countDoc.get("total")).longValue();
+//        }
+//
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "userModels.lastModifiedBy"));
+//        return new PageImpl<>(dtos, pageable, total);
+//    }
+@Override
+public Page<CrifICRMReportRdo> getICRMReport(int page, int size,
+                                             String mobileFilter,
+                                             String companyIdFilter,
+                                             Date dateOfInitiationFrom,
+                                             String crifScoreFilter) {
 
-        // Build criteria for CrifReport fields.
-        List<Criteria> reportCriteriaList = new ArrayList<>();
-        if (mobileFilter != null && !mobileFilter.isEmpty()) {
-            reportCriteriaList.add(Criteria.where("mobile").is(mobileFilter));
-        }
-        if (crifScoreFilter != null) {
-            reportCriteriaList.add(Criteria.where("crifScore").is(crifScoreFilter));
-        }
-        Criteria reportCriteria = reportCriteriaList.isEmpty()
-                ? new Criteria()
-                : new Criteria().andOperator(reportCriteriaList.toArray(new Criteria[0]));
+    // Build criteria for CrifReport fields.
+    List<Criteria> reportCriteriaList = new ArrayList<>();
+    if (mobileFilter != null && !mobileFilter.isEmpty()) {
+        reportCriteriaList.add(Criteria.where("mobile").is(mobileFilter));
+    }
+    if (crifScoreFilter != null) {
+        // Note: in CrifReport, crif_score is stored as a String.
+        reportCriteriaList.add(Criteria.where("crif_score").is(String.valueOf(crifScoreFilter)));
+    }
+    Criteria reportCriteria = reportCriteriaList.isEmpty()
+            ? new Criteria()
+            : new Criteria().andOperator(reportCriteriaList.toArray(new Criteria[0]));
 
-        // Build criteria for the joined CrifUserModel fields.
-        List<Criteria> userCriteriaList = new ArrayList<>();
-        if (companyIdFilter != null && !companyIdFilter.isEmpty()) {
-            userCriteriaList.add(Criteria.where("userModels.srCompanyId").is(companyIdFilter));
-        }
-        if (dateOfInitiationFrom != null) {
-            userCriteriaList.add(Criteria.where("userModels.lastModifiedBy").gte(dateOfInitiationFrom));
-        }
-        Criteria userCriteria = userCriteriaList.isEmpty()
-                ? new Criteria()
-                : new Criteria().andOperator(userCriteriaList.toArray(new Criteria[0]));
+    // Build criteria for the joined CrifUserModel fields.
+    List<Criteria> userCriteriaList = new ArrayList<>();
+    if (companyIdFilter != null && !companyIdFilter.isEmpty()) {
+        userCriteriaList.add(Criteria.where("userModels.sr_company_id").is(companyIdFilter));
+    }
+    if (dateOfInitiationFrom != null) {
+        userCriteriaList.add(Criteria.where("userModels.last_modified_by").gte(dateOfInitiationFrom));
+    }
+    Criteria userCriteria = userCriteriaList.isEmpty()
+            ? new Criteria()
+            : new Criteria().andOperator(userCriteriaList.toArray(new Criteria[0]));
 
-        // Create the match stage for CrifReport filtering.
-        MatchOperation reportMatch = Aggregation.match(reportCriteria);
+    // Create a match stage for CrifReport filtering.
+    MatchOperation reportMatch = Aggregation.match(reportCriteria);
 
-        // Lookup stage: join CrifReport with CrifUserModel on "mobile".
-        LookupOperation lookupUserModels = Aggregation.lookup(
-                "crifUserModel",  // target collection name (adjust if necessary)
-                "mobile",         // local field in CrifReport
-                "mobile",         // foreign field in CrifUserModel
-                "userModels"      // output array field
-        );
+    // Lookup stage: join CrifReport with CrifUserModel on "mobile".
+    LookupOperation lookupUserModels = Aggregation.lookup(
+            "crif_user_details",  // collection name for CrifUserModel
+            "mobile",             // local field in CrifReport
+            "mobile",             // foreign field in CrifUserModel
+            "userModels"          // output array field
+    );
 
-        // Unwind the joined array; assuming one matching user per report.
-        AggregationOperation unwind = Aggregation.unwind("userModels");
+    // Unwind the joined userModels array (assuming one matching user per report).
+    AggregationOperation unwind = Aggregation.unwind("userModels");
 
-        // Apply additional matching on the joined CrifUserModel fields.
-        MatchOperation userMatch = Aggregation.match(userCriteria);
+    // Apply additional matching on the joined CrifUserModel fields.
+    MatchOperation userMatch = Aggregation.match(userCriteria);
 
-        // Sorting based on dateOfInitiation (userModels.lastModifiedBy).
-        AggregationOperation sort = Aggregation.sort(Sort.by(Sort.Direction.DESC, "userModels.lastModifiedBy"));
+    // Sorting stage based on userModels.last_modified_by.
+    AggregationOperation sort = Aggregation.sort(Sort.by(Sort.Direction.DESC, "userModels.last_modified_by"));
 
-        // Pagination: skip and limit.
-        AggregationOperation skip = Aggregation.skip((long) page * size);
-        AggregationOperation limit = Aggregation.limit(size);
+    // Pagination stages: skip and limit.
+    AggregationOperation skip = Aggregation.skip((long) page * size);
+    AggregationOperation limit = Aggregation.limit(size);
 
-        // Projection: select only required fields and compute the "name" field.
-        // Here, we use an expression string for name concatenation.
-        AggregationOperation project = Aggregation.project()
-                .and("mobile").as("mobile")
-                .and("crifScore").as("score")
-                .and("userModels.srCompanyId").as("companyId")
-                .and("userModels.lastModifiedBy").as("dateOfInitiation")
-                .and("userModels.utmCampaign").as("utm")
-                .and("userModels.documentType").as("docType")
-                .and("userModels.email").as("email")
-                .andExpression("{ $cond: { if: { $eq: [ '$userModels.lastName', null ] }, then: '$userModels.firstName', else: { $concat: [ '$userModels.firstName', ' ', '$userModels.lastName' ] } } }")
-                .as("name");
+    // Projection stage: select only required fields and compute the "name" field using a lambda that returns a Document.
+    AggregationOperation project = Aggregation.project()
+            .and("mobile").as("mobile")
+            .and("crif_score").as("score")
+            .and("userModels.sr_company_id").as("companyId")
+            .and("userModels.last_modified_by").as("dateOfInitiation")
+            .and("userModels.utm_campaign").as("utm")
+            .and("userModels.doc_type").as("docType")
+            .and("userModels.email").as("email")
+            .and(context -> {
+                // Build the raw MongoDB expression document for:
+                // { $cond: { if: { $eq: [ "$userModels.lastName", null ] },
+                //            then: "$userModels.firstName",
+                //            else: { $concat: [ "$userModels.firstName", " ", "$userModels.lastName" ] } } }
+                return new Document("$cond",
+                        new Document("if", new Document("$eq", Arrays.asList("$userModels.lastName", null)))
+                                .append("then", "$userModels.firstName")
+                                .append("else", new Document("$concat", Arrays.asList("$userModels.firstName", " ", "$userModels.lastName")))
+                );
+            }).as("name");
 
-        // Build the full aggregation pipeline.
-        Aggregation aggregationPipeline = Aggregation.newAggregation(
-                reportMatch,
-                lookupUserModels,
-                unwind,
-                userMatch,
-                sort,
-                skip,
-                limit,
-                project
-        );
+    // Build the complete aggregation pipeline.
+    Aggregation aggregationPipeline = Aggregation.newAggregation(
+            reportMatch,
+            lookupUserModels,
+            unwind,
+            userMatch,
+            sort,
+            skip,
+            limit,
+            project
+    );
 
-        // Execute the aggregation.
-        List<CrifICRMReportRdo> dtos = mongoTemplate.aggregate(
-                        aggregationPipeline, "crifReport", CrifICRMReportRdo.class)
-                .getMappedResults();
+    // Execute the aggregation and map the results to CrifICRMReportRdo.
+    List<CrifICRMReportRdo> dtos = mongoTemplate.aggregate(
+                    aggregationPipeline, "crif_reports", CrifICRMReportRdo.class)
+            .getMappedResults();
 
-        // To determine the total count for pagination, run a count aggregation.
-        Aggregation countAgg = Aggregation.newAggregation(
-                reportMatch,
-                lookupUserModels,
-                unwind,
-                userMatch,
-                Aggregation.count().as("total")
-        );
-        AggregationResults<Document> countResults = mongoTemplate.aggregate(countAgg, "crifReport", Document.class);
-        long total = 0;
-        Document countDoc = countResults.getUniqueMappedResult();
-        if (countDoc != null && countDoc.get("total") != null) {
-            total = ((Number) countDoc.get("total")).longValue();
-        }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "userModels.lastModifiedBy"));
-        return new PageImpl<>(dtos, pageable, total);
+    // Count total documents matching the filter (without pagination) for Page metadata.
+    Aggregation countAgg = Aggregation.newAggregation(
+            reportMatch,
+            lookupUserModels,
+            unwind,
+            userMatch,
+            Aggregation.count().as("total")
+    );
+    AggregationResults<Document> countResults = mongoTemplate.aggregate(countAgg, "crif_reports", Document.class);
+    long total = 0;
+    Document countDoc = countResults.getUniqueMappedResult();
+    if (countDoc != null && countDoc.get("total") != null) {
+        total = ((Number) countDoc.get("total")).longValue();
     }
 
+    Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "userModels.last_modified_by"));
+    return new PageImpl<>(dtos, pageable, total);
+}
     private CrifICRMReportRdo convertToRdo(CrifReport crifReport, CrifUserModel crifUserModel) {
         return CrifICRMReportRdo.builder()
                 .utm(crifUserModel.getUtmCampaign())
