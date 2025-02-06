@@ -14,10 +14,7 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.Constant.Constant;
 import com.sr.capital.external.crif.Constant.CrifDocumentType;
 import com.sr.capital.external.crif.dto.request.*;
-import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
-import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
-import com.sr.capital.external.crif.dto.response.BureauReportResponse;
-import com.sr.capital.external.crif.dto.response.CrifResponse;
+import com.sr.capital.external.crif.dto.response.*;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.crif.util.CrifModelHelper;
@@ -39,6 +36,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +44,18 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
+import org.bson.Document;
+
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import static com.sr.capital.external.crif.Constant.Constant.*;
 import static com.sr.capital.external.crif.service.CrifOtpServiceImpl.setResponse;
@@ -70,6 +79,8 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
     private final ObjectMapper mapper;
     private final CrifUserModelHelper crifUserModelHelper;
     private final CrifConsentDetailsService crifConsentDetailsService;
+    private MongoTemplate mongoTemplate;
+
     @Override
     public Object initiateBureau(BureauInitiatePayloadRequest bureauInitiatePayloadRequest) throws CustomException, CRIFApiException, CRIFApiLimitExceededException {
 
@@ -896,6 +907,161 @@ public class CrifPartnerServiceImpl implements CrifPartnerService {
         bureauReportPayloadRequest.setAlertFlag("N");
         bureauReportPayloadRequest.setPaymentFlag("N");
         bureauReportPayloadRequest.setJsonFlag("Y");
+    }
+
+    @Override
+    public Page<CrifICRMReportRdo> getICRMReport(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("lastModifiedBy").descending());
+
+        Page<CrifReport> crifReportPage = crifReportRepo.findAllProjectedBy(pageable);
+
+        if (crifReportPage.hasContent()) {
+            List<String> mobileNumbers = crifReportPage.getContent().stream()
+                    .map(CrifReport::getMobile)
+                    .collect(Collectors.toList());
+
+            List<CrifUserModel> crifUserModels = crifUserModelHelper.findByMobileIn(mobileNumbers);
+
+            Map<String, CrifUserModel> crifUserModelMap = crifUserModels.stream()
+                    .collect(Collectors.toMap(CrifUserModel::getMobile, Function.identity()));
+
+            List<CrifICRMReportRdo> dtos = crifReportPage.getContent().stream()
+                    .map(report -> convertToRdo(report, crifUserModelMap.get(report.getMobile())))
+                    .collect(Collectors.toList());
+
+            return new PageImpl<>(dtos, pageable, crifReportPage.getTotalElements());
+        }
+
+        return Page.empty(pageable);
+    }
+
+
+    /**
+     * Retrieves a paginated, filtered list of CrifICRMReportRdo.
+     *
+     * @param page                  Zero-based page index.
+     * @param size                  Page size.
+     * @param mobileFilter          (Optional) Filter on CrifReport.mobile.
+     * @param companyIdFilter       (Optional) Filter on CrifUserModel.srCompanyId.
+     * @param dateOfInitiationFrom  (Optional) Only include records where CrifUserModel.lastModifiedBy is >= this date.
+     * @param crifScoreFilter       (Optional) Filter on CrifReport.crifScore.
+     * @return a Page containing CrifICRMReportRdo records.
+     */
+    public Page<CrifICRMReportRdo> getICRMReport(int page, int size,
+                                                 String mobileFilter,
+                                                 String companyIdFilter,
+                                                 Date dateOfInitiationFrom,
+                                                 Integer crifScoreFilter) {
+
+        // Build criteria for CrifReport fields.
+        List<Criteria> reportCriteriaList = new ArrayList<>();
+        if (mobileFilter != null && !mobileFilter.isEmpty()) {
+            reportCriteriaList.add(Criteria.where("mobile").is(mobileFilter));
+        }
+        if (crifScoreFilter != null) {
+            reportCriteriaList.add(Criteria.where("crifScore").is(crifScoreFilter));
+        }
+        Criteria reportCriteria = reportCriteriaList.isEmpty()
+                ? new Criteria()
+                : new Criteria().andOperator(reportCriteriaList.toArray(new Criteria[0]));
+
+        // Build criteria for the joined CrifUserModel fields.
+        List<Criteria> userCriteriaList = new ArrayList<>();
+        if (companyIdFilter != null && !companyIdFilter.isEmpty()) {
+            userCriteriaList.add(Criteria.where("userModels.srCompanyId").is(companyIdFilter));
+        }
+        if (dateOfInitiationFrom != null) {
+            userCriteriaList.add(Criteria.where("userModels.lastModifiedBy").gte(dateOfInitiationFrom));
+        }
+        Criteria userCriteria = userCriteriaList.isEmpty()
+                ? new Criteria()
+                : new Criteria().andOperator(userCriteriaList.toArray(new Criteria[0]));
+
+        // Create the match stage for CrifReport filtering.
+        MatchOperation reportMatch = Aggregation.match(reportCriteria);
+
+        // Lookup stage: join CrifReport with CrifUserModel on "mobile".
+        LookupOperation lookupUserModels = Aggregation.lookup(
+                "crifUserModel",  // target collection name (adjust if necessary)
+                "mobile",         // local field in CrifReport
+                "mobile",         // foreign field in CrifUserModel
+                "userModels"      // output array field
+        );
+
+        // Unwind the joined array; assuming one matching user per report.
+        AggregationOperation unwind = Aggregation.unwind("userModels");
+
+        // Apply additional matching on the joined CrifUserModel fields.
+        MatchOperation userMatch = Aggregation.match(userCriteria);
+
+        // Sorting based on dateOfInitiation (userModels.lastModifiedBy).
+        AggregationOperation sort = Aggregation.sort(Sort.by(Sort.Direction.DESC, "userModels.lastModifiedBy"));
+
+        // Pagination: skip and limit.
+        AggregationOperation skip = Aggregation.skip((long) page * size);
+        AggregationOperation limit = Aggregation.limit(size);
+
+        // Projection: select only required fields and compute the "name" field.
+        // Here, we use an expression string for name concatenation.
+        AggregationOperation project = Aggregation.project()
+                .and("mobile").as("mobile")
+                .and("crifScore").as("score")
+                .and("userModels.srCompanyId").as("companyId")
+                .and("userModels.lastModifiedBy").as("dateOfInitiation")
+                .and("userModels.utmCampaign").as("utm")
+                .and("userModels.documentType").as("docType")
+                .and("userModels.email").as("email")
+                .andExpression("{ $cond: { if: { $eq: [ '$userModels.lastName', null ] }, then: '$userModels.firstName', else: { $concat: [ '$userModels.firstName', ' ', '$userModels.lastName' ] } } }")
+                .as("name");
+
+        // Build the full aggregation pipeline.
+        Aggregation aggregationPipeline = Aggregation.newAggregation(
+                reportMatch,
+                lookupUserModels,
+                unwind,
+                userMatch,
+                sort,
+                skip,
+                limit,
+                project
+        );
+
+        // Execute the aggregation.
+        List<CrifICRMReportRdo> dtos = mongoTemplate.aggregate(
+                        aggregationPipeline, "crifReport", CrifICRMReportRdo.class)
+                .getMappedResults();
+
+        // To determine the total count for pagination, run a count aggregation.
+        Aggregation countAgg = Aggregation.newAggregation(
+                reportMatch,
+                lookupUserModels,
+                unwind,
+                userMatch,
+                Aggregation.count().as("total")
+        );
+        AggregationResults<Document> countResults = mongoTemplate.aggregate(countAgg, "crifReport", Document.class);
+        long total = 0;
+        Document countDoc = countResults.getUniqueMappedResult();
+        if (countDoc != null && countDoc.get("total") != null) {
+            total = ((Number) countDoc.get("total")).longValue();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "userModels.lastModifiedBy"));
+        return new PageImpl<>(dtos, pageable, total);
+    }
+
+    private CrifICRMReportRdo convertToRdo(CrifReport crifReport, CrifUserModel crifUserModel) {
+        return CrifICRMReportRdo.builder()
+                .utm(crifUserModel.getUtmCampaign())
+                .docType(crifUserModel.getDocumentType())
+                .score(crifReport.getCrifScore())
+                .dateOfInitiation(crifUserModel.getLastModifiedBy())
+                .email(crifUserModel.getEmail())
+                .mobile(crifUserModel.getMobile())
+                .companyId(crifUserModel.getSrCompanyId())
+                .name(crifUserModel.getLastName() != null ? crifUserModel.getFirstName() + " " + crifUserModel.getLastName() : crifUserModel.getFirstName())
+                .build();
+
     }
 
     @Override

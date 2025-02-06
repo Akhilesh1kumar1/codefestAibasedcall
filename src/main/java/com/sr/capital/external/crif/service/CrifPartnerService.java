@@ -5,12 +5,10 @@ import com.sr.capital.external.crif.dto.request.BureauInitiatePayloadRequest;
 import com.sr.capital.external.crif.dto.request.BureauReportPayloadRequest;
 import com.sr.capital.external.crif.dto.request.CrifConsentWithdrawalRequestModel;
 import com.sr.capital.external.crif.dto.request.CrifVerifyOtpRequestModels;
-import com.sr.capital.external.crif.dto.response.BureauInitiateResponse;
-import com.sr.capital.external.crif.dto.response.BureauQuestionnaireResponse;
-import com.sr.capital.external.crif.dto.response.BureauReportResponse;
-import com.sr.capital.external.crif.dto.response.CrifResponse;
+import com.sr.capital.external.crif.dto.response.*;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -40,6 +38,8 @@ public interface CrifPartnerService {
     void purgeExpiredData();
 
     String saveAndGetConsentId();
+
+    Page<CrifICRMReportRdo> getICRMReport(int page, int size);
 
     String getScoreForGivenMobile(String mobileNumber);
 }
