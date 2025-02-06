@@ -9,6 +9,7 @@ import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.external.truthscreen.dto.response.IdSearchResponseDto;
 import com.sr.capital.helpers.constants.Constants;
 import com.sr.capital.los.dto.LosUserDTO;
+import com.sr.capital.los.dto.ScreenNameDTO;
 import com.sr.capital.los.service.LosUserService;
 import com.sr.capital.util.ResponseBuilderUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,14 @@ import static com.sr.capital.helpers.constants.Constants.MessageConstants.REQUES
 
 @RestController
 @RequestMapping("/los/users")
-@RequiredArgsConstructor
-public class LosUserController {
+//@RequiredArgsConstructor
+public class LosController {
 
     private final LosUserService losUserService;
+
+    public LosController(LosUserService losUserService) {
+        this.losUserService = losUserService;
+    }
 
     // GET user by ID
     @GetMapping()
@@ -34,11 +39,16 @@ public class LosUserController {
         return ResponseBuilderUtil.getResponse(losUserService.getUserDetails(token)
                 ,SUCCESS, REQUEST_SUCCESS, 200);
     }
+    @GetMapping("/get-data")
+    public GenericResponse<ScreenNameDTO> fetchData(@RequestHeader(name = Constants.Headers.TOKEN) String token) throws Exception {
+        return ResponseBuilderUtil.getResponse(losUserService.getScreenData(token)
+                ,SUCCESS, REQUEST_SUCCESS, 200);
+    }
 
 
     @PostMapping()
-    public GenericResponse<IdSearchResponseDto<?>> updateUser(@RequestBody LosUserDTO updatedUser) throws Exception {
-            return ResponseBuilderUtil.getResponse(losUserService.updateUser(updatedUser)
+    public GenericResponse<ScreenNameDTO> updateUser(@RequestBody LosUserDTO updatedUser) throws Exception {
+            return ResponseBuilderUtil.getResponse(losUserService.saveDetailes(updatedUser)
                     ,SUCCESS, REQUEST_SUCCESS, 200);
     }
 

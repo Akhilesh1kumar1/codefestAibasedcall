@@ -43,7 +43,7 @@ public class TruthScreenAdapter {
         TruthScreenExternalRequestMetaData requestMetaData = getRequestEndPointAndDocType(request);
 
         try{
-            if (appProperties.getIsTruthScreenEnable()){
+            if (!appProperties.getIsTruthScreenEnable()){
                 return createDummyWebHookData(requestMetaData); 
             }
              Object responseObject  = webClientUtil.makeExternalCallBlocking(ServiceName.TRUTHSCREEN,

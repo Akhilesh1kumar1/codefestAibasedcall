@@ -11,12 +11,18 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.shiprocket.dto.response.InternalTokenUserDetailsResponse;
 import com.sr.capital.external.truthscreen.dto.request.IdSearchRequestDto;
 import com.sr.capital.external.truthscreen.dto.response.IdSearchResponseDto;
+import com.sr.capital.external.truthscreen.entity.Address;
+import com.sr.capital.external.truthscreen.entity.TruthScreenDocDetails;
+import com.sr.capital.external.truthscreen.enums.TruthScreenDocType;
+import com.sr.capital.external.truthscreen.repository.TruthScreenDocDetailsRepository;
 import com.sr.capital.external.truthscreen.service.IdService;
 import com.sr.capital.helpers.enums.CallbackType;
 import com.sr.capital.helpers.enums.CommunicationChannels;
 import com.sr.capital.helpers.enums.KafkaEventTypes;
 import com.sr.capital.helpers.enums.VerificationType;
+import com.sr.capital.kyc.manager.KycDocDetailsManager;
 import com.sr.capital.los.dto.LosUserDTO;
+import com.sr.capital.los.dto.ScreenNameDTO;
 import com.sr.capital.los.utill.ExternalCallStatusEnum;
 import com.sr.capital.repository.mongo.los.LosStatusEntityRepository;
 import com.sr.capital.repository.mongo.los.LosUserRepository;
@@ -28,9 +34,12 @@ import com.sr.capital.util.KafkaMessagePublisherUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.UUID;
 
-import static com.sr.capital.external.truthscreen.enums.TruthScreenDocType.PAN_COMPREHENSIVE;
+import static com.sr.capital.entity.mongo.los.LosUserEntity.REFERENCE_ID_SEQUENCE;
+import static com.sr.capital.external.truthscreen.enums.TruthScreenDocType.*;
+import static com.sr.capital.los.utill.ExternalCallStatusEnum.*;
 
 @RequiredArgsConstructor
 @Service
@@ -44,6 +53,9 @@ public class LosUserServiceImpl implements LosUserService{
     private final KafkaMessagePublisherUtil kafkaMessagePublisherUtil;
     private final AppProperties appProperties;
     private final LosStatusEntityRepository losStatusEntityRepository;
+    private final TruthScreenDocDetailsRepository truthScreenDocDetailsRepository;
+    private final SequenceGeneratorService sequenceGeneratorService;
+    private final KycDocDetailsManager kycDocDetailsManager;
 
     private LosUserDTO convertToDTO(LosUserEntity user) {
         LosUserDTO dto =LosUserDTO.builder()
@@ -65,7 +77,7 @@ public class LosUserServiceImpl implements LosUserService{
 
     @Override
     public LosUserDTO getUserDetails(String token) {
-        LosUserEntity losUserEntity = losUserRepository.findByUserId(String.valueOf(RequestData.getUserId()));
+        LosUserEntity losUserEntity = losUserRepository.findBySrCompanyId(RequestData.getTenantId());
         if (losUserEntity != null) {
             return LosUserDTO.builder().userId(losUserEntity.getSrCompanyId())
                     .firstName(losUserEntity.getFirstName())
@@ -89,13 +101,94 @@ public class LosUserServiceImpl implements LosUserService{
     @Override
     public Object verifyOtp(VerifyOtpRequest verifyOtpRequest) throws Exception {
         if (verificationService.verifyOtp(verifyOtpRequest)) {
-            LosUserEntity losUserEntity = losUserRepository.findByUserId(String.valueOf(RequestData.getUserId()));
+            LosUserEntity losUserEntity = losUserRepository.findBySrCompanyId(RequestData.getTenantId());
             if (losUserEntity != null) {
                 losUserEntity.setIsMobileVerified(true);
                 losUserRepository.save(losUserEntity);
             }
         }
         return null;
+    }
+
+    @Override
+    public ScreenNameDTO getScreenData(String token) throws Exception {
+        LosUserEntity user = losUserRepository.findBySrCompanyId(RequestData.getTenantId());
+        if (user != null) {
+            LosStatusEntity losStatusEntity = losStatusEntityRepository.findByLosUserEntityId(user.getId());
+            if (losStatusEntity != null) {
+                ScreenNameDTO screenStatus = getScreenStatus(losStatusEntity, user.getScreenName());
+                if (screenStatus != null) return screenStatus;
+            }
+        }
+
+        LosUserDTO userDetails = getUserDetails(token);
+        return convertIntoScreenNameDto(BASIC_DETAILS, userDetails);
+    }
+
+
+    public static ScreenNameDTO convertIntoScreenNameDto(ExternalCallStatusEnum screenName, Object data) {
+        ScreenNameDTO dto = ScreenNameDTO.builder().build();
+        dto.setScreenName(screenName.name());
+
+        switch (screenName) {
+            case BASIC_DETAILS:
+                dto.setBasicDetails(data);
+                break;
+
+            case PAN_COMPREHENSIVE_FETCHED:
+                dto.setPersonalDetails(data);
+                break;
+
+            case PAN_TO_GST_FETCHED:
+                dto.setBusinessDetails(data);
+                break;
+
+            case GST_ANALYTICS_DONE:
+                dto.setDocumentUpload(data);
+                break;
+
+            case CORPVEDA_DETAILS_FETCHED:
+                dto.setOfferGeneration(data);
+                break;
+
+//            case OFFER_ACCEPTANCE:
+//                dto.setOfferAcceptance(data);
+//                break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported screen name: " + screenName);
+        }
+        return dto;
+    }
+
+    public ScreenNameDTO getScreenStatus(LosStatusEntity losStatusEntity, String screenName) throws Exception {
+
+        if (losStatusEntity != null) {
+            Set<String> formStatuses = losStatusEntity.getStatus();
+            if (formStatuses.contains(screenName)) {
+                // write in bottom to up because if top status will used first then it will always land on first page not the last page
+
+                if (formStatuses.contains(ExternalCallStatusEnum.GST_ANALYTICS_DONE.getScreenName())) {
+//                    return fetchFromTruthScreenDocDetails(ExternalCallStatusEnum.GST_ANALYTICS_DONE, GSTIN.getValue());
+                }
+
+                if (formStatuses.contains(ExternalCallStatusEnum.PAN_TO_GST_FETCHED.getScreenName())) {
+                    return fetchFromTruthScreenDocDetails(ExternalCallStatusEnum.PAN_TO_GST_FETCHED, PAN_TO_GST.getValue());
+
+                }
+
+                if (formStatuses.contains(ExternalCallStatusEnum.PAN_COMPREHENSIVE_FETCHED.getScreenName())) {
+                    return fetchFromTruthScreenDocDetails(ExternalCallStatusEnum.PAN_COMPREHENSIVE_FETCHED, PAN_COMPREHENSIVE.getValue());
+                }
+            }
+        }
+        return null;
+    }
+    private ScreenNameDTO fetchFromTruthScreenDocDetails(ExternalCallStatusEnum externalCallStatusEnum, int truthScreenDocTypeValue) throws Exception {
+        TruthScreenDocDetails<?> truthScreenDocDetails = truthScreenDocDetailsRepository.findBySrCompanyIdAndTruthScreenDocType(RequestData.getTenantId(),
+                TruthScreenDocType.fromValue(truthScreenDocTypeValue));
+            return convertIntoScreenNameDto(externalCallStatusEnum, truthScreenDocDetails);
+
     }
 
     @Override
@@ -123,7 +216,7 @@ public class LosUserServiceImpl implements LosUserService{
     }
 
     private void saveDetailsIntoLosUserTable(String mobile) throws CustomException {
-        LosUserEntity losUserEntity = losUserRepository.findByUserId(String.valueOf(RequestData.getUserId()));
+        LosUserEntity losUserEntity = losUserRepository.findBySrCompanyId(RequestData.getTenantId());
         if (losUserEntity != null) {
             if (!mobile.equals(losUserEntity.getMobile())) {
                 losUserEntity.setMobile(mobile);
@@ -139,59 +232,123 @@ public class LosUserServiceImpl implements LosUserService{
         }
     }
 
-    @Override
-    public IdSearchResponseDto<?> updateUser(LosUserDTO updatedLosUserDTO) throws Exception {
-        LosUserEntity userEntity;
-        LosUserEntity user = losUserRepository.findByUserId(String.valueOf(RequestData.getUserId()));
+    public ScreenNameDTO saveDetailes(LosUserDTO updatedLosUserDTO) throws Exception {
+        String screenName = updatedLosUserDTO.getScreenName();
+        return switch (screenName) {
+            case "BASIC_DETAILS" -> saveUserBasicDetails(updatedLosUserDTO);
+            case "PERSONAL_DETAILS" -> saveUserPersonalDetails(updatedLosUserDTO);
+            case "BUSINESS_DETAILS" -> saveUserBusinessDetails(updatedLosUserDTO);
+            case "DOCUMENT_UPLOAD" -> updateDocumentAndReturnListOfDocument(updatedLosUserDTO);
+            case "OFFER_GENERATION" -> saveGenerationDetailsAndReturnNextStageData(updatedLosUserDTO);
+            default -> throw new IllegalStateException("Unexpected value: " + screenName);
+        };
+    }
+
+
+    private ScreenNameDTO saveOfferAcceptanceDetailsAndReturnNextStageData(LosUserDTO updatedLosUserDTO) {
+        return null;
+    }
+
+    private ScreenNameDTO saveGenerationDetailsAndReturnNextStageData(LosUserDTO updatedLosUserDTO) {
+        return null;
+    }
+
+    private ScreenNameDTO updateDocumentAndReturnListOfDocument(LosUserDTO updatedLosUserDTO) {
+        return null;
+    }
+
+    private ScreenNameDTO saveUserBusinessDetails(LosUserDTO updatedLosUserDTO) {
+        return null;
+    }
+
+    private ScreenNameDTO saveUserPersonalDetails(LosUserDTO updatedLosUserDTO) throws Exception {
+        LosUserEntity user = losUserRepository.findBySrCompanyId(RequestData.getTenantId());
         if (user != null) {
-            user.setEmail(updatedLosUserDTO.getEmail());
-            user.setTypeOfEntity(updatedLosUserDTO.getTypeOfEntity());
-            user.setPan(updatedLosUserDTO.getPan());
-            user.setLoanAmount(updatedLosUserDTO.getLoanAmount());
-            user.setFirstName(updatedLosUserDTO.getFirstName());
-            user.setLastName(updatedLosUserDTO.getLastName());
-            if (!user.getMobile().equals(updatedLosUserDTO.getMobile())) {
-                user.setMobile(updatedLosUserDTO.getMobile());
-            }
-            userEntity = losUserRepository.save(user);
-        } else {
-            // if user try to go next without verifying mobile number
-            LosUserEntity losUserEntity = LosUserEntity.builder()
-                    .mobile(updatedLosUserDTO.getMobile())
+            Address address = new Address();
+            address.setCity(updatedLosUserDTO.getAddress().getCity());
+            address.setState(updatedLosUserDTO.getAddress().getState());
+            address.setZip(updatedLosUserDTO.getAddress().getPinCode());
+            address.setLine1(updatedLosUserDTO.getAddress().getLine1());
+            address.setLine2(updatedLosUserDTO.getAddress().getLine2());
+            user.setAddress(address);
+
+            user.setScreenName(ExternalCallStatusEnum.PAN_TO_GST_FETCHED.getScreenName());
+            losUserRepository.save(user);
+            LosStatusEntity losStatusEntity = losStatusEntityRepository.findByLosUserEntityId(user.getId());
+
+            return getScreenStatus(losStatusEntity, user.getScreenName());
+        }
+        throw new CustomException("No data found");
+    }
+
+//    private ScreenNameDTO getScreenData(LosUserEntity user, LosUserDTO updatedLosUserDTO, LosScreenStatusEnum currentScreenStatusEnum) {
+//            LosStatusEntity losStatusEntity = losStatusEntityRepository.findByLosUserEntityId(user.getId());
+//            if (losStatusEntity != null) {
+//                if (user.getScreenName().equals(LosScreenStatusEnum.DOCUMENT_UPLOAD.name())) {
+//                    return convertIntoScreenNameDto(LosScreenStatusEnum.DOCUMENT_UPLOAD,
+//                            kycDocDetailsManager.findKycDocDetailsByTenantId(RequestData.getTenantId()));
+//                }
+//                return getScreenStatus(losStatusEntity, token, user);
+//            }
+//
+//        return null;
+//    }
+
+    private ScreenNameDTO saveUserBasicDetails(LosUserDTO updatedLosUserDTO) throws Exception {
+        LosUserEntity user = losUserRepository.findBySrCompanyId(RequestData.getTenantId());
+        if (user == null) {
+            user = LosUserEntity.builder()
                     .srCompanyId(RequestData.getTenantId())
                     .userId(String.valueOf(RequestData.getUserId()))
-                    .email(updatedLosUserDTO.getEmail())
-                    .pan(updatedLosUserDTO.getPan())
-                    .firstName(updatedLosUserDTO.getFirstName())
-                    .lastName(updatedLosUserDTO.getLastName())
-                    .loanAmount(updatedLosUserDTO.getLoanAmount())
-                    .typeOfEntity(updatedLosUserDTO.getTypeOfEntity())
                     .isMobileVerified(false)
                     .build();
-            userEntity = losUserRepository.save(losUserEntity);
+        }
+        user.setEmail(updatedLosUserDTO.getEmail());
+        user.setTypeOfEntity(updatedLosUserDTO.getTypeOfEntity());
+        user.setPan(updatedLosUserDTO.getPan());
+        user.setLoanAmount(updatedLosUserDTO.getLoanAmount());
+        user.setFirstName(updatedLosUserDTO.getFirstName());
+        user.setLastName(updatedLosUserDTO.getLastName());
+        user.setReferenceId(sequenceGeneratorService.generateSequence(REFERENCE_ID_SEQUENCE));
+        if (!user.getMobile().equals(updatedLosUserDTO.getMobile())) {
+            user.setMobile(updatedLosUserDTO.getMobile());
         }
 
-        IdSearchResponseDto<?> idSearchResponseDto = idService.sendRequest(new IdSearchRequestDto(RequestData.getTenantId() + HashUtil.generateRandomId(), PAN_COMPREHENSIVE.getValue(), updatedLosUserDTO.getPan()));
 
-        saveDetailsIntoEventStatusHandlerTable(userEntity.getUserId(), ExternalCallStatusEnum.PAN_COMPREHENSIVE_FETCHED.name());
+
+        user.setScreenName(ExternalCallStatusEnum.PAN_COMPREHENSIVE_FETCHED.getScreenName());
+
+        LosUserEntity userEntity = losUserRepository.save(user);
+        IdSearchResponseDto<?> idSearchResponseDto = sendRequest(PAN_COMPREHENSIVE.getValue(), updatedLosUserDTO.getPan(), userEntity.getId(),
+                ExternalCallStatusEnum.PAN_COMPREHENSIVE_FETCHED.name());
+
 
         kafkaMessagePublisherUtil.publishMessage(appProperties.getCapitalTopicName()
-                ,kafkaMessagePublisherUtil.getKafkaMessage(userEntity.getUserId(),
-                        KafkaEventTypes.LOS_EXTERNAL_CALL_EVENT.name(),null, RequestData.getCorrelationId(),null));
+                , kafkaMessagePublisherUtil.getKafkaMessage(userEntity.getId(),
+                        KafkaEventTypes.LOS_EXTERNAL_CALL_EVENT.name(), null, RequestData.getCorrelationId(), null));
 
 
+        return convertIntoScreenNameDto(PAN_COMPREHENSIVE_FETCHED, idSearchResponseDto);
+    }
+
+    private IdSearchResponseDto<?> sendRequest(int docType, String docValue, String userId, String changeStatusTo) throws Exception {
+        IdSearchResponseDto<?> idSearchResponseDto = idService.sendRequest(new IdSearchRequestDto(RequestData.getTenantId() + HashUtil.generateRandomId(), docType, docValue, null, null, null));
+        updateDetailsIntoEventStatusHandlerTable(userId, changeStatusTo);
         return idSearchResponseDto;
     }
 
-    private void saveDetailsIntoEventStatusHandlerTable(String userEntityId, String statusName) {
+    @Override
+    public void updateDetailsIntoEventStatusHandlerTable(String userEntityId, String statusName) {
         LosStatusEntity losStatusEntity = losStatusEntityRepository.findByLosUserEntityId(userEntityId);
 
         if (losStatusEntity != null) {
-            losStatusEntity.setStatus(statusName);
+            Set<String> status = losStatusEntity.getStatus();
+            status.add(statusName);
+            losStatusEntity.setStatus(status);
         } else {
             losStatusEntity = LosStatusEntity.builder()
                     .losUserEntityId(userEntityId)
-                    .status(statusName)
+                    .status(Set.of(statusName))
                     .build();
         }
         losStatusEntityRepository.save(losStatusEntity);

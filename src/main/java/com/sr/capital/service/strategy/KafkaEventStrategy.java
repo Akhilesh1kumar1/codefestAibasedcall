@@ -17,7 +17,7 @@ public class KafkaEventStrategy {
     final StatusUpdateEventHandlerService statusUpdateEventHandlerService;
     final GetLoanDetailsEventHandlerService getLoanDetailsEventHandlerService;
     final CorpVedaGetDataEventHandlerService corpVedaEventService;
-    final LOSExternalCallEventHandlerService LOSExternalCallEventHandlerService;
+    final LOSExternalCallEventHandlerService losExternalCallEventHandlerService;
 
 
     public <T,U> T handleEvents(U request, KafkaEventTypes type) throws Exception {
@@ -26,7 +26,7 @@ public class KafkaEventStrategy {
             case LOAN_STATUS_UPDATE -> kafkaEventService = statusUpdateEventHandlerService;
             case GET_LOAN_DETAILS -> kafkaEventService = getLoanDetailsEventHandlerService;
             case CORP_VEDA_GET_DATA -> kafkaEventService = corpVedaEventService;
-            case LOS_EXTERNAL_CALL_EVENT -> kafkaEventService = LOSExternalCallEventHandlerService;
+            case LOS_EXTERNAL_CALL_EVENT -> kafkaEventService = losExternalCallEventHandlerService;
             default -> {
                 throw new RequestValidatorNotFoundException();
             }

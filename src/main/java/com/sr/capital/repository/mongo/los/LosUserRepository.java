@@ -1,7 +1,6 @@
 package com.sr.capital.repository.mongo.los;
 
 
-import com.sr.capital.entity.mongo.crif.CrifUserModel;
 import com.sr.capital.entity.mongo.los.LosUserEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -16,5 +15,5 @@ public interface LosUserRepository extends MongoRepository<LosUserEntity, String
     @Query("{ 'created_by': ?0 }")
     List<LosUserEntity> findByCreatedBy(String createdBy);
 
-    LosUserEntity findByUserId(String userId);
+    LosUserEntity findBySrCompanyId(String srCompanyId);
 }
