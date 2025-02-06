@@ -362,7 +362,7 @@ jobs:
   crif:
     purge:
       scheduledTime: 0 0 1 * * ?
-      expireAt: 5 MINUTES
+      expireAt: 6 MONTHS
 aes:
   secret:
     key: ${AES_SECRET_KEY:U0h8UFIwa0BUQCFAIyQmKg==}

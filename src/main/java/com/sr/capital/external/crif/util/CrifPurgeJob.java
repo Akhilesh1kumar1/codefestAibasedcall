@@ -43,6 +43,6 @@ public class CrifPurgeJob {
     public void performCrifPurgeScheduledTask() {
 
         log.info("cron job for crif purge data at :: " + LocalDateTime.now());
-        crifPartnerService.purgeExpiredData();
+//        crifPartnerService.purgeExpiredData();
     }
 }

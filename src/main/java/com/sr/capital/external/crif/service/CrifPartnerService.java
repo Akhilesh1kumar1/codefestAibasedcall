@@ -11,6 +11,7 @@ import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 
 @Service
@@ -40,6 +41,12 @@ public interface CrifPartnerService {
     String saveAndGetConsentId();
 
     Page<CrifICRMReportRdo> getICRMReport(int page, int size);
+
+    Page<CrifICRMReportRdo> getICRMReport(int page, int size,
+                                          String mobileFilter,
+                                          String companyIdFilter,
+                                          Date dateOfInitiationFrom,
+                                          String crifScoreFilter);
 
     String getScoreForGivenMobile(String mobileNumber);
 }

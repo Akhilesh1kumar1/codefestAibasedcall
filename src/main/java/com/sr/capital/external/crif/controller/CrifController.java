@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -79,11 +80,15 @@ public class CrifController {
         return new ResponseEntity<>(new String[]{accessCode, Base64Util.decode(accessCode)}, HttpStatusCode.valueOf(200));
     }
 
-    @PostMapping(value = "/get-report")
+    @GetMapping(value = "/get-report")
     public GenericResponse<Page<CrifICRMReportRdo>> getReport(@RequestParam(name = "page", required = false) Integer pageNumber,
-                                                              @RequestParam(name = "size", required = false) Integer pageSize) {
+                                                              @RequestParam(name = "size", required = false) Integer pageSize,
+                                                              @RequestParam(name = "mobile", required = false) String mobile,
+                                                              @RequestParam(name = "date_of_initiation", required = false) Date dateOfInitiation,
+                                                              @RequestParam(name = "score", required = false) String score,
+                                                              @RequestParam(name = "company_id", required = false) String companyId) {
 
-        return ResponseBuilderUtil.getResponse(crifPartnerService.getICRMReport(pageNumber, pageSize)
+        return ResponseBuilderUtil.getResponse(crifPartnerService.getICRMReport(pageNumber, pageSize, mobile, companyId, dateOfInitiation, score)
                 ,SUCCESS, REQUEST_SUCCESS, 200);
     }
 
