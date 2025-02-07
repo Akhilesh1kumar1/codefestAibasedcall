@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "name": "bypass",
+      "type": "com.sr.capital.config.properties.BypassProperties",
+      "sourceType": "com.sr.capital.config.properties.BypassProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "bypass.apis",
+      "type": "java.util.Map<java.lang.String,com.sr.capital.config.properties.BypassApiDetails>",
+      "sourceType": "com.sr.capital.config.properties.BypassProperties"
+    },
+    {
+      "name": "bypass.eligible-filters",
+      "type": "java.util.Set<java.lang.String>",
+      "sourceType": "com.sr.capital.config.properties.BypassProperties"
+    }
+  ],
+  "hints": []
+}

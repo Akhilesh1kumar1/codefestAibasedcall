@@ -1,0 +1,147 @@
+CREATE TABLE IF NOT EXISTS `account_type`
+ (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account_type_name` varchar(255) NOT NULL UNIQUE,
+  `description` varchar(255) DEFAULT NULL,
+  `display_name` varchar(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+   `created_by` varchar(255) DEFAULT NULL,
+   `updated_at` DATETIME DEFAULT NULL,
+   `updated_by` varchar(255) DEFAULT NULL,
+   `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+-- ALTER TABLE `account_type` ADD CONSTRAINT account_type_name_constraint UNIQUE (account_type_name);
+
+
+
+--ALTER TABLE `adhar_details` ADD CONSTRAINT adhar_number_constraint UNIQUE (adhar_number);
+--ALTER TABLE adhar_details ADD INDEX idx_adhar_number_user_id (adhar_number, user_id);
+
+
+CREATE TABLE if not exists `verification` (
+  `id` binary(16) NOT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `callback` varchar(255) DEFAULT NULL,
+    `channel` varchar(255) DEFAULT NULL,
+    `data` varchar(255) DEFAULT NULL,
+    `expires_at` DATETIME DEFAULT NULL,
+    `failed_counter` int DEFAULT NULL,
+    `request_counter` int DEFAULT NULL,
+    `type` varchar(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+
+
+CREATE TABLE if not exists `bank` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `bank_name` varchar(255) NOT NULL UNIQUE,
+  `description` varchar(255) DEFAULT NULL,
+  `display_name` varchar(255) DEFAULT NULL,
+  `image_link` varchar(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+--ALTER TABLE `bank` ADD CONSTRAINT bank_name_constraint UNIQUE (bank_name);
+
+ CREATE TABLE if not exists `base_credit_partners` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `credit_partner_name` varchar(255) NOT NULL UNIQUE,
+  `description` varchar(255) DEFAULT NULL,
+  `display_name` varchar(255) DEFAULT NULL,
+  `image_link` varchar(255) DEFAULT NULL,
+  provide_rbf bit(1) default 1,
+  provide_pre_approved_loan bit(1) default 1,
+  provide_term_loan bit(1) default 1,
+    invoice_financing bit(1) default 1,
+  loan_against_property bit(1) default 1,
+  line_of_credit bit(1) default 1,
+  business_credit_card bit(1) default 1,
+  gst bit(1) default 1,
+  `created_at` DATETIME DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+--ALTER TABLE `base_credit_partners` ADD CONSTRAINT credit_partner_name_constraint UNIQUE (credit_partner_name);
+
+
+
+ CREATE TABLE if not exists `rsa_keys` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` DATETIME DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `updated_at` DATETIME DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `is_enabled` bit(1) DEFAULT NULL,
+  `private_key` tinytext,
+  `public_key` tinytext,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE `tenant_bank_details` (
+  `id` binary(16) NOT NULL,
+  `account_holder_name` varchar(255) DEFAULT NULL,
+  `account_number` varchar(255) DEFAULT NULL,
+  `account_statement_link` varchar(255) DEFAULT NULL,
+  `bank_account_type` varchar(100) DEFAULT null,
+  `base_bank_id` bigint DEFAULT NULL,
+  `ifsc_code` varchar(255) DEFAULT NULL,
+  `is_account_verified` bit(1) DEFAULT NULL,
+  `statement_password` varchar(255) DEFAULT NULL,
+  `sr_company_id` bigint DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `is_enabled` bit(1) DEFAULT NULL,
+    CONSTRAINT account_number_constraint UNIQUE (account_number,sr_company_id)
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+--ALTER TABLE tenant_bank_details ADD CONSTRAINT account_number_constraint UNIQUE (account_number,sr_company_id);
+
+CREATE TABLE user (
+    id bigint NOT NULL AUTO_INCREMENT,
+    sr_user_id BIGINT NOT NULL UNIQUE,
+    first_name VARCHAR(255),
+    middle_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email VARCHAR(255) not null UNIQUE,
+    is_email_verified TINYINT(1) DEFAULT 0,
+    country_code VARCHAR(10) DEFAULT '+91',
+    mobile VARCHAR(100),
+    comments TEXT,
+    sr_company_id BIGINT,
+    entity_type varchar(255) ,
+    pan_number varchar(100),
+    company_name text,
+    is_mobile_verified bit(1) DEFAULT 0,
+    is_accepted TINYINT(1) DEFAULT 0,
+     `created_at` DATETIME DEFAULT NULL,
+              `created_by` varchar(255) DEFAULT NULL,
+              `updated_at` DATETIME DEFAULT NULL,
+              `updated_by` varchar(255) DEFAULT NULL,
+              `is_enabled` bit(1) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+     KEY `sr_user_id`(`sr_user_id`),
+     index sr_company_id(`sr_company_id`)
+)ENGINE=InnoDB AUTO_INCREMENT=0;
+
+--ALTER TABLE user ADD CONSTRAINT sr_user_id_constraint UNIQUE (sr_user_id);
+--ALTER TABLE user ADD CONSTRAINT email_constraint UNIQUE (email);
+
