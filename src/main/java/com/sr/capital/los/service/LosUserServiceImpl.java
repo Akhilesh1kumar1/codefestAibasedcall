@@ -83,13 +83,15 @@ public class LosUserServiceImpl implements LosUserService{
                     .firstName(losUserEntity.getFirstName())
                     .lastName(losUserEntity.getLastName())
                     .email(losUserEntity.getEmail()).isMobileVerified(losUserEntity.getIsMobileVerified())
-                    .mobile(losUserEntity.getMobile()).pan(losUserEntity.getPan())
+                    .mobile(losUserEntity.getMobile())
+                    .pan(losUserEntity.getPan())
                     .typeOfEntity(losUserEntity.getTypeOfEntity()).build();
         } else {
             InternalTokenUserDetailsResponse userDetailsUsingInternalToken = userService.getUserDetailsUsingInternalToken(token);
             if (userDetailsUsingInternalToken != null) {
                 return LosUserDTO.builder().userId(userDetailsUsingInternalToken.getUserId()).email(userDetailsUsingInternalToken.getEmail())
-                        .mobile(userDetailsUsingInternalToken.getMobile()).isMobileVerified(true)
+                        .mobile(userDetailsUsingInternalToken.getMobile())
+                        .isMobileVerified(true)
                         .firstName(userDetailsUsingInternalToken.getFirstName())
                         .lastName(userDetailsUsingInternalToken.getLastName())
                         .build();
@@ -106,8 +108,9 @@ public class LosUserServiceImpl implements LosUserService{
                 losUserEntity.setIsMobileVerified(true);
                 losUserRepository.save(losUserEntity);
             }
+            return true;
         }
-        return null;
+        return false;
     }
 
     @Override
