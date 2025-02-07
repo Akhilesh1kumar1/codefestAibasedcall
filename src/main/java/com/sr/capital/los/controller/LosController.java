@@ -7,10 +7,12 @@ import com.sr.capital.exception.custom.CustomException;
 import com.sr.capital.external.crif.exeception.CRIFApiException;
 import com.sr.capital.external.crif.exeception.CRIFApiLimitExceededException;
 import com.sr.capital.helpers.constants.Constants;
+import com.sr.capital.los.dto.LosGenerateOtpRequestModel;
 import com.sr.capital.los.dto.LosUserDTO;
 import com.sr.capital.los.dto.ScreenNameDTO;
 import com.sr.capital.los.service.LosUserService;
 import com.sr.capital.util.ResponseBuilderUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -49,8 +51,8 @@ public class LosController {
     }
 
     @PostMapping(value = "/generate-otp")
-    public GenericResponse<Map<String, UUID>> crifGenerateOtp(@RequestBody String mobile) throws CRIFApiException, IOException, CustomException, CRIFApiLimitExceededException {
-        return ResponseBuilderUtil.getResponse(Map.of("token", losUserService.generateOtp(mobile)), SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);
+    public GenericResponse<Map<String, UUID>> crifGenerateOtp(@Valid @RequestBody LosGenerateOtpRequestModel mobile) throws CRIFApiException, IOException, CustomException, CRIFApiLimitExceededException {
+        return ResponseBuilderUtil.getResponse(Map.of("token", losUserService.generateOtp(mobile.getMobileNumber())), SUCCESS, REQUEST_SUCCESS, HttpStatus.SC_OK);
     }
 
     @PostMapping(value = "/verify-otp")
