@@ -106,8 +106,9 @@ public class LosUserServiceImpl implements LosUserService{
                 losUserEntity.setIsMobileVerified(true);
                 losUserRepository.save(losUserEntity);
             }
+            return true;
         }
-        return null;
+        return false;
     }
 
     @Override
