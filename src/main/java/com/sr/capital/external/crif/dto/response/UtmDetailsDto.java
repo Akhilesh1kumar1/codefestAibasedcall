@@ -3,6 +3,7 @@ package com.sr.capital.external.crif.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,14 +11,15 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Builder
-public class CrifICRMReportRdo {
+public class UtmDetailsDto {
 
-    String name;
-    String companyId;
-    String mobile;
-    String email;
-    String docType;
-    String score;
-    UtmDetailsDto utmDetailsDto;
-    String dateOfInitiation;
+    String utmSource;
+
+    String utmMedium;
+
+    String utmCampaign;
+
+    String utmTerm;
+
+    String utmContent;
 }
